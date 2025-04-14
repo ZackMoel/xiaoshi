@@ -367,14 +367,18 @@
 &lt;/h3&gt;&lt;blockquote&gt;
 &lt;p&gt;💡物理机网络连接中可以看到用于与虚拟机连接的虚拟网卡，其中vmnet1虚拟网卡用于仅主机模式，vmnet8用于NAT模式，vmnet0没有显示出来，用于桥接模式的连接。&lt;/p&gt;
 &lt;/blockquote&gt;
-&lt;p&gt;&lt;img src=&#34;https://ZackMoel.github.io/xiaoshi/assets/image-20250212150425-1jo4ou3.png&#34;
-	
-	
-	
+&lt;p&gt;&lt;img src=&#34;https://ZackMoel.github.io/xiaoshi/xiaoshi/p/linux-%E7%BD%91%E7%BB%9C%E9%85%8D%E7%BD%AE%E4%B8%8E%E9%98%B2%E7%81%AB%E5%A2%99/assets/image-20250212150425-1jo4ou3.png&#34;
+	width=&#34;1346&#34;
+	height=&#34;474&#34;
+	srcset=&#34;https://ZackMoel.github.io/xiaoshi/xiaoshi/p/linux-%E7%BD%91%E7%BB%9C%E9%85%8D%E7%BD%AE%E4%B8%8E%E9%98%B2%E7%81%AB%E5%A2%99/assets/image-20250212150425-1jo4ou3_hu11709768045741298387.png 480w, https://ZackMoel.github.io/xiaoshi/xiaoshi/p/linux-%E7%BD%91%E7%BB%9C%E9%85%8D%E7%BD%AE%E4%B8%8E%E9%98%B2%E7%81%AB%E5%A2%99/assets/image-20250212150425-1jo4ou3_hu17991608285650981393.png 1024w&#34;
 	loading=&#34;lazy&#34;
 	
 		alt=&#34;image&#34;
 	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;283&#34;
+		data-flex-basis=&#34;681px&#34;
 	
 &gt;​&lt;/p&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
