@@ -49,14 +49,18 @@
 &lt;/li&gt;
 &lt;/ul&gt;
 &lt;h2 id=&#34;3rsync的备份架构&#34;&gt;3.rsync的备份架构
-&lt;/h2&gt;&lt;p&gt;&lt;img src=&#34;https://ZackMoel.github.io/xiaoshi/xiaoshi/clipImg.png&#34;
-	
-	
-	
+&lt;/h2&gt;&lt;p&gt;&lt;img src=&#34;https://ZackMoel.github.io/xiaoshi/xiaoshi/p/rsync%E6%9C%8D%E5%8A%A1/assets/clipImg.png&#34;
+	width=&#34;655&#34;
+	height=&#34;642&#34;
+	srcset=&#34;https://ZackMoel.github.io/xiaoshi/xiaoshi/p/rsync%E6%9C%8D%E5%8A%A1/assets/clipImg_hu11735525095328912362.png 480w, https://ZackMoel.github.io/xiaoshi/xiaoshi/p/rsync%E6%9C%8D%E5%8A%A1/assets/clipImg_hu16328436143532263319.png 1024w&#34;
 	loading=&#34;lazy&#34;
 	
 		alt=&#34;clipImg&#34;
 	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;102&#34;
+		data-flex-basis=&#34;244px&#34;
 	
 &gt;&lt;/p&gt;
 &lt;p&gt;&lt;img src=&#34;https://ZackMoel.github.io/xiaoshi/xiaoshi/p/rsync%E6%9C%8D%E5%8A%A1/assets/clipImg-1725541020620-2.png&#34;
@@ -73,14 +77,18 @@
 		data-flex-basis=&#34;378px&#34;
 	
 &gt;&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;https://ZackMoel.github.io/xiaoshi/xiaoshi/clipImg-1725541093664-4.png&#34;
-	
-	
-	
+&lt;p&gt;&lt;img src=&#34;https://ZackMoel.github.io/xiaoshi/xiaoshi/p/rsync%E6%9C%8D%E5%8A%A1/assets/clipImg-1725541093664-4.png&#34;
+	width=&#34;1261&#34;
+	height=&#34;443&#34;
+	srcset=&#34;https://ZackMoel.github.io/xiaoshi/xiaoshi/p/rsync%E6%9C%8D%E5%8A%A1/assets/clipImg-1725541093664-4_hu14563012774652941179.png 480w, https://ZackMoel.github.io/xiaoshi/xiaoshi/p/rsync%E6%9C%8D%E5%8A%A1/assets/clipImg-1725541093664-4_hu11867392715320057655.png 1024w&#34;
 	loading=&#34;lazy&#34;
 	
 		alt=&#34;clipImg&#34;
 	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;284&#34;
+		data-flex-basis=&#34;683px&#34;
 	
 &gt;&lt;/p&gt;
 &lt;h1 id=&#34;第2章-rsync本地模式和远程模式&#34;&gt;第2章 Rsync本地模式和远程模式
@@ -541,14 +549,18 @@ bs=10M: 设置块大小（block size）为 10 兆字节（Megabytes）
 &lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
 &lt;/div&gt;
 &lt;/div&gt;&lt;p&gt;配置信息说明：&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;D:/desktop/myblog/myblog/content/post/Rsync%e6%9c%8d%e5%8a%a1/assets/clipImg-1725547817021-8.png&#34;
-	
-	
-	
+&lt;p&gt;&lt;img src=&#34;https://ZackMoel.github.io/xiaoshi/xiaoshi/p/rsync%E6%9C%8D%E5%8A%A1/assets/clipImg-1725547817021-8.png&#34;
+	width=&#34;629&#34;
+	height=&#34;411&#34;
+	srcset=&#34;https://ZackMoel.github.io/xiaoshi/xiaoshi/p/rsync%E6%9C%8D%E5%8A%A1/assets/clipImg-1725547817021-8_hu11191923640687725058.png 480w, https://ZackMoel.github.io/xiaoshi/xiaoshi/p/rsync%E6%9C%8D%E5%8A%A1/assets/clipImg-1725547817021-8_hu7518575917456502612.png 1024w&#34;
 	loading=&#34;lazy&#34;
 	
 		alt=&#34;clipImg&#34;
 	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;153&#34;
+		data-flex-basis=&#34;367px&#34;
 	
 &gt;&lt;/p&gt;
 &lt;h2 id=&#34;3创建用户以及数据目录&#34;&gt;3.创建用户以及数据目录
