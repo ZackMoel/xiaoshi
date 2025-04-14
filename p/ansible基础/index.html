@@ -1,0 +1,3011 @@
+<!DOCTYPE html>
+<html lang="zh-cn" dir="ltr">
+    <head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content="前言 学ansible，基础篇就是一件事 学各种模块的语法，参数 由于模块较多，参数较多，需要做好笔记，以及一定的背诵，敲打建议记忆 基础篇学习路线">
+<title>Ansible基础</title>
+
+<link rel='canonical' href='https://ZackMoel.github.io/xiaoshi/p/ansible%E5%9F%BA%E7%A1%80/'>
+
+<link rel="stylesheet" href="/xiaoshi/scss/style.min.0304c6baf04e01a8fe70693791cb744d56a3578a3120a8796cefc66825aa39c7.css"><meta property='og:title' content="Ansible基础">
+<meta property='og:description' content="前言 学ansible，基础篇就是一件事 学各种模块的语法，参数 由于模块较多，参数较多，需要做好笔记，以及一定的背诵，敲打建议记忆 基础篇学习路线">
+<meta property='og:url' content='https://ZackMoel.github.io/xiaoshi/p/ansible%E5%9F%BA%E7%A1%80/'>
+<meta property='og:site_name' content='小诗的博客'>
+<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:published_time' content='2025-04-14T16:38:41&#43;08:00'/><meta property='article:modified_time' content='2025-04-14T16:38:41&#43;08:00'/>
+<meta name="twitter:title" content="Ansible基础">
+<meta name="twitter:description" content="前言 学ansible，基础篇就是一件事 学各种模块的语法，参数 由于模块较多，参数较多，需要做好笔记，以及一定的背诵，敲打建议记忆 基础篇学习路线">
+  
+
+
+    </head>
+    <body class="
+    article-page
+    ">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex on-phone--column extended"><aside class="sidebar left-sidebar sticky ">
+    <button class="hamburger hamburger--spin" type="button" id="toggle-menu" aria-label="切换菜单">
+        <span class="hamburger-box">
+            <span class="hamburger-inner"></span>
+        </span>
+    </button>
+
+    <header>
+        
+            
+            <figure class="site-avatar">
+                <a href="/xiaoshi/">
+                
+                    
+                    
+                    
+                        
+                        <img src="/xiaoshi/img/avatar_hu8920112365793990935.png" width="300"
+                            height="300" class="site-logo" loading="lazy" alt="Avatar">
+                    
+                
+                </a>
+                
+                    <span class="emoji">🍥</span>
+                
+            </figure>
+            
+        
+        
+        <div class="site-meta">
+            <h1 class="site-name"><a href="/xiaoshi">小诗的博客</a></h1>
+            <h2 class="site-description">欢迎来到小诗的博客</h2>
+        </div>
+    </header><ol class="menu-social">
+            
+                <li>
+                    <a 
+                        href='https://space.bilibili.com/1055981889?spm_id_from=333.1007.0.0'
+                        target="_blank"
+                        title="bilibili"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg  xmlns="http://www.w3.org/2000/svg"  width="24"  height="24"  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  stroke-width="2"  stroke-linecap="round"  stroke-linejoin="round"  class="icon icon-tabler icons-tabler-outline icon-tabler-brand-bilibili"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M3 10a4 4 0 0 1 4 -4h10a4 4 0 0 1 4 4v6a4 4 0 0 1 -4 4h-10a4 4 0 0 1 -4 -4v-6z" /><path d="M8 3l2 3" /><path d="M16 3l-2 3" /><path d="M9 13v-2" /><path d="M15 11v2" /></svg>
+                        
+                    </a>
+                </li>
+            
+                <li>
+                    <a 
+                        href='https://github.com/ZackMoel/xiaoshi.github.io'
+                        target="_blank"
+                        title="GitHub"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-github" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M9 19c-4.3 1.4 -4.3 -2.5 -6 -3m12 5v-3.5c0 -1 .1 -1.4 -.5 -2c2.8 -.3 5.5 -1.4 5.5 -6a4.6 4.6 0 0 0 -1.3 -3.2a4.2 4.2 0 0 0 -.1 -3.2s-1.1 -.3 -3.5 1.3a12.3 12.3 0 0 0 -6.2 0c-2.4 -1.6 -3.5 -1.3 -3.5 -1.3a4.2 4.2 0 0 0 -.1 3.2a4.6 4.6 0 0 0 -1.3 3.2c0 4.6 2.7 5.7 5.5 6c-.6 .6 -.6 1.2 -.5 2v3.5" />
+</svg>
+
+
+
+                        
+                    </a>
+                </li>
+            
+        </ol><ol class="menu" id="main-menu">
+        
+        
+        
+        <li >
+            <a href='/xiaoshi/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-home" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <polyline points="5 12 3 12 12 3 21 12 19 12" />
+  <path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7" />
+  <path d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6" />
+</svg>
+
+
+
+                
+                <span>主页</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/xiaoshi/%E5%85%B3%E4%BA%8E/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-user" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="7" r="4" />
+  <path d="M6 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2" />
+</svg>
+
+
+
+                
+                <span>关于</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/xiaoshi/archives/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-archive" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <rect x="3" y="4" width="18" height="4" rx="2" />
+  <path d="M5 8v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-10" />
+  <line x1="10" y1="12" x2="14" y2="12" />
+</svg>
+
+
+
+                
+                <span>归档</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/xiaoshi/search/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-search" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="10" cy="10" r="7" />
+  <line x1="21" y1="21" x2="15" y2="15" />
+</svg>
+
+
+
+                
+                <span>搜索</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/xiaoshi/%E5%8F%8B%E6%83%85%E9%93%BE%E6%8E%A5/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-link" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M10 14a3.5 3.5 0 0 0 5 0l4 -4a3.5 3.5 0 0 0 -5 -5l-.5 .5" />
+  <path d="M14 10a3.5 3.5 0 0 0 -5 0l-4 4a3.5 3.5 0 0 0 5 5l.5 -.5" />
+</svg>
+
+
+
+                
+                <span>友情链接</span>
+            </a>
+        </li>
+        
+        <li class="menu-bottom-section">
+            <ol class="menu">
+
+                
+                    <li id="dark-mode-toggle">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="8" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="16" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <span>暗色模式</span>
+                    </li>
+                
+            </ol>
+        </li>
+    </ol>
+</aside>
+
+    <aside class="sidebar right-sidebar sticky">
+        
+            
+                
+    <section class="widget archives">
+        <div class="widget-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <line x1="5" y1="9" x2="19" y2="9" />
+  <line x1="5" y1="15" x2="19" y2="15" />
+  <line x1="11" y1="4" x2="7" y2="20" />
+  <line x1="17" y1="4" x2="13" y2="20" />
+</svg>
+
+
+
+        </div>
+        <h2 class="widget-title section-title">目录</h2>
+        
+        <div class="widget--toc">
+            <nav id="TableOfContents">
+  <ol>
+    <li><a href="#在master-61管理机安装">在master-61管理机安装</a></li>
+    <li><a href="#其他被管理的机器">其他被管理的机器</a></li>
+    <li><a href="#主机清单文件主机分组">主机清单文件（主机分组）</a></li>
+  </ol>
+
+  <ol>
+    <li><a href="#ansible基于公私钥认证">ansible基于公私钥认证</a></li>
+    <li><a href="#基于密码认证">基于密码认证</a></li>
+    <li><a href="#ansible主机清单配置文件语法重要">ansible主机清单配置文件语法（重要）</a></li>
+    <li><a href="#给rsync机器进行密码认证">给rsync机器，进行密码认证</a></li>
+    <li><a href="#添加web机器组的信息">添加web机器组的信息</a>
+      <ol>
+        <li>
+          <ol>
+            <li><a href="#拿web机器测试单独操作某主机">拿web机器测试（单独操作某主机）</a></li>
+            <li><a href="#指纹故障解决">指纹故障解决</a></li>
+            <li><a href="#踩坑记录ansible缓存">踩坑记录(ansible缓存)</a></li>
+            <li><a href="#同一组连续的ip">同一组连续的ip</a></li>
+            <li><a href="#公共变量">公共变量</a></li>
+            <li><a href="#测试web组和backup组是否可用">测试web组和backup组是否可用</a></li>
+            <li><a href="#所有主机都生效的变量了解">所有主机都生效的变量【了解】</a></li>
+          </ol>
+        </li>
+      </ol>
+    </li>
+  </ol>
+
+  <ol>
+    <li><a href="#ad-hoc模式">ad-hoc模式</a></li>
+    <li><a href="#playbook模式">Playbook模式</a></li>
+    <li><a href="#ansible-doc命令">ansible-doc命令</a></li>
+  </ol>
+
+  <ol>
+    <li><a href="#ansible执行命令结果状态颜色">ansible执行命令结果（状态颜色）</a></li>
+    <li><a href="#官网文档">官网文档</a></li>
+    <li><a href="#41-ping测试连通性">4.1 ping测试连通性</a></li>
+    <li><a href="#42-command-简单命令模块">4.2 command 简单命令模块</a>
+      <ol>
+        <li><a href="#远程查看主机名">远程查看主机名</a></li>
+        <li><a href="#查看远程主机内存">查看远程主机内存</a></li>
+        <li><a href="#远程创建文件查看文件">远程创建文件、查看文件</a></li>
+        <li><a href="#远程获取机器负载">远程获取机器负载</a></li>
+        <li><a href="#关闭告警信息">关闭告警信息</a></li>
+        <li><a href="#在所有机器上创建baizhi01用户">在所有机器上，创建baizhi01用户</a></li>
+        <li><a href="#使用command提供的专有命令">使用command提供的专有命令</a></li>
+      </ol>
+    </li>
+    <li><a href="#43-shell模块万能模块">4.3 shell模块（万能模块）</a></li>
+    <li><a href="#44-copy拷贝文件">4.4 copy拷贝文件</a>
+      <ol>
+        <li><a href="#copy语法">copy语法</a></li>
+        <li><a href="#简单发送文件">简单发送文件</a></li>
+        <li><a href="#发送文件且指定文件属性">发送文件且指定文件属性</a></li>
+        <li><a href="#发送文件且先做好备份">发送文件且先做好备份</a></li>
+        <li><a href="#指定数据写入到远程文件中">指定数据写入到远程文件中</a></li>
+        <li><a href="#复制文件夹">复制文件夹</a></li>
+      </ol>
+    </li>
+    <li><a href="#45-file文件操作模块">4.5 file文件操作模块</a>
+      <ol>
+        <li><a href="#远程创建文件">远程创建文件</a></li>
+        <li><a href="#创建文件夹">创建文件夹</a></li>
+        <li><a href="#创建文件且设定权限">创建文件且设定权限</a></li>
+        <li><a href="#远程修改文件属性">远程修改文件属性</a></li>
+        <li><a href="#创建软连接文件">创建软连接文件</a></li>
+        <li><a href="#强制性创建文件软连接">强制性创建文件（软连接）</a></li>
+        <li><a href="#修改已存在文件文件夹的属性">修改已存在文件/文件夹的属性</a></li>
+        <li><a href="#关于file模块的所有参数作用">关于file模块的所有参数作用</a></li>
+        <li><a href="#关于file模块的实例用法">关于file模块的实例用法</a></li>
+      </ol>
+    </li>
+    <li><a href="#46-script脚本模块">4.6 script脚本模块</a>
+      <ol>
+        <li><a href="#scripts模块的功能参数">scripts模块的功能参数</a></li>
+        <li><a href="#远程在目标机器执行脚本">远程在目标机器执行脚本</a></li>
+        <li><a href="#查看命令执行详细过程">查看命令执行详细过程</a></li>
+      </ol>
+    </li>
+    <li><a href="#47-cron定时任务模块">4.7 cron定时任务模块</a>
+      <ol>
+        <li><a href="#对比ansible的cron模块以及crontab">对比ansible的cron模块以及crontab</a></li>
+        <li><a href="#添加ntpdate定时任务">添加ntpdate定时任务</a></li>
+        <li><a href="#删除定时任务">删除定时任务</a></li>
+        <li><a href="#创建每分钟执行的任务">创建每分钟执行的任务</a></li>
+        <li><a href="#修改指定名称的定时任务">修改指定名称的定时任务</a></li>
+      </ol>
+    </li>
+    <li><a href="#48-group模块">4.8 group模块</a>
+      <ol>
+        <li><a href="#创建baizhi_ops组gid1234">创建baizhi_ops组，gid=1234</a></li>
+        <li><a href="#删除组">删除组</a></li>
+      </ol>
+    </li>
+    <li><a href="#49-user用户模块">4.9 user用户模块</a>
+      <ol>
+        <li><a href="#语法参数">语法参数</a></li>
+        <li><a href="#创建baizhi001用户uid为8888">创建baizhi001用户，uid为8888</a></li>
+        <li><a href="#创建用户cc01">创建用户cc01</a></li>
+      </ol>
+    </li>
+    <li><a href="#410-yum安装软件">4.10 yum安装软件</a>
+      <ol>
+        <li><a href="#官网文档示例用法">官网文档示例用法</a></li>
+        <li><a href="#安装net-tools最新版本">安装net-tools最新版本</a></li>
+        <li><a href="#卸载net-tools软件">卸载net-tools软件</a></li>
+        <li><a href="#安装rsync服务">安装rsync服务</a></li>
+        <li><a href="#卸载rsync服务">卸载rsync服务</a></li>
+      </ol>
+    </li>
+    <li><a href="#411-servicesystemd模块">4.11 service/systemd模块</a>
+      <ol>
+        <li><a href="#systemd模块参数">systemd模块参数</a></li>
+        <li><a href="#安装启动nginx服务">安装、启动nginx服务</a></li>
+      </ol>
+    </li>
+    <li><a href="#412-mount挂载模块">4.12 mount挂载模块</a>
+      <ol>
+        <li><a href="#在nfs-31机器准备nfs">在nfs-31机器准备nfs</a></li>
+        <li><a href="#给web-7机器挂载nfs目录只写入etcfstab而不立即挂载">给web-7机器挂载nfs目录（只写入/etc/fstab而不立即挂载）</a></li>
+        <li><a href="#给web-7机器挂载nfs目录立即挂载且写入etcfstab">给web-7机器挂载nfs目录（立即挂载且写入/etc/fstab）</a></li>
+        <li><a href="#取消挂载以及删除fstab记录">取消挂载，以及删除fstab记录</a></li>
+        <li><a href="#取消挂载不删除fstab记录">取消挂载，不删除fstab记录</a></li>
+        <li><a href="#state总结参数">state总结参数</a></li>
+      </ol>
+    </li>
+    <li><a href="#413-archive压缩模块">4.13 archive压缩模块</a>
+      <ol>
+        <li><a href="#支持压缩类型">支持压缩类型</a></li>
+        <li><a href="#压缩etc配置文件到指定路径">压缩/etc配置文件到指定路径</a></li>
+        <li><a href="#压缩varlog为zip类型到指定路径">压缩/var/log为zip类型到指定路径</a></li>
+      </ol>
+    </li>
+    <li><a href="#414-unarchive解压缩模块">4.14 unarchive解压缩模块</a>
+      <ol>
+        <li><a href="#解压缩etctgz到指定目录远程解压">解压缩etc.tgz到指定目录（远程解压）</a></li>
+        <li><a href="#将管理机的压缩包解压到远程机器上">将管理机的压缩包，解压到远程机器上</a></li>
+      </ol>
+    </li>
+  </ol>
+</nav>
+        </div>
+    </section>
+
+            
+        
+    </aside>
+
+
+            <main class="main full-width">
+    <article class="main-article">
+    <header class="article-header">
+
+    <div class="article-details">
+    
+
+    <div class="article-title-wrapper">
+        <h2 class="article-title">
+            <a href="/xiaoshi/p/ansible%E5%9F%BA%E7%A1%80/">Ansible基础</a>
+        </h2>
+    
+        
+    </div>
+
+    
+    
+    
+    
+    <footer class="article-time">
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
+  <circle cx="18" cy="18" r="4" />
+  <path d="M15 3v4" />
+  <path d="M7 3v4" />
+  <path d="M3 11h16" />
+  <path d="M18 16.496v1.504l1 1" />
+</svg>
+                <time class="article-time--published">2025-04-14</time>
+            </div>
+        
+
+        
+    </footer>
+    
+
+    
+</div>
+
+</header>
+
+    <section class="article-content">
+    
+    
+    <h1 id="前言">前言
+</h1><p>学ansible，基础篇就是一件事</p>
+<ul>
+<li>学各种模块的语法，参数</li>
+<li>由于模块较多，参数较多，需要做好笔记，以及一定的背诵，敲打建议记忆</li>
+</ul>
+<p>基础篇学习路线</p>
+<ul>
+<li>1.主机清单语法，学会如何批量管理服务器组，配置服务器认证，服务器变量</li>
+<li>2.学习常见的模块，语法，参数，用法</li>
+<li>3.改造shell脚本为ansible模块</li>
+</ul>
+<h1 id="自动化运维好处">自动化运维好处
+</h1><ul>
+<li>提高工作效率，减少重复性工作</li>
+<li>大大减少人为出错的可能性</li>
+<li>数据化管理、数据化汇报、问题可追溯</li>
+</ul>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">ansible
+</span></span><span class="line"><span class="cl">saltstack
+</span></span><span class="line"><span class="cl">这俩自动化运维工具均为python编写
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">例如：
+</span></span><span class="line"><span class="cl">master-61机器，管理了100台目标机器
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">如果使用shell脚本，就需要结合for循环处理这100个机器，存在的问题如下：
+</span></span><span class="line"><span class="cl">free -m &gt; xxx.file
+</span></span><span class="line"><span class="cl">cpuinfo
+</span></span><span class="line"><span class="cl">shell，命令导出的数据就是一堆普通的文本字符串，难以加工处理；但有时希望能导出为数据交换格式，如json、如yaml、如xml等，就可以很轻松的发给各种编程语言，实现数据加工，格式化处理，发给前端去做网页展示
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">使用ansible几条命令就可以实现了
+</span></span><span class="line"><span class="cl">并且ansible导出的服务器信息，如内存，磁盘，网卡，等等一堆信息，可以直接导出为json数据，而json数据就可以直接发给前端，前端就可以展示出服务器的信息
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">综上，这就是运维开发做的事
+</span></span><span class="line"><span class="cl">后端python+ansible获取数据，导出json，发给前端
+</span></span><span class="line"><span class="cl">前端写html，js，对json数据展示
+</span></span><span class="line"><span class="cl">一个运维平台就搭建出来了
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h1 id="如何学习ansible">如何学习ansible
+</h1><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">1.打开ansible官网，查看所有最新的功能，不要看其他的文档，可能已经很陈旧了，python3也已经更新了很多，导致用法变化等。
+</span></span><span class="line"><span class="cl">最新官网文档：     https://zackmoel.github.io/hugo-dev/
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">shell脚本（nfs服务、rsync服务），堆砌了各种部署的命令
+</span></span><span class="line"><span class="cl">↓
+</span></span><span class="line"><span class="cl">把这个脚本，所有的操作，全部替换为ansible的模块
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">2.你可能要执行的各种命令，ansible都提供了模块，如文件拷贝，如软件安装，服务重启等；
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">3.你使用ansible，必须严格按照ansible提供的语法来，否则只有报错
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">4.先学语法，语法基本功扎实后，面对千变万化的需求，才能游刃有余
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">5.多动手，ansible需要记忆的操作比较多
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h1 id="初识ansible命令">初识ansible命令：
+</h1><p>命令语法：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">ansible 主机组 -m 模块名  [模块参数]
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/xiaoshi/p/ansible%E5%9F%BA%E7%A1%80/pic/image-20220506094153857.png"
+	width="3839"
+	height="1336"
+	srcset="/xiaoshi/p/ansible%E5%9F%BA%E7%A1%80/pic/image-20220506094153857_hu2456948428469298153.png 480w, /xiaoshi/p/ansible%E5%9F%BA%E7%A1%80/pic/image-20220506094153857_hu5902346363159738942.png 1024w"
+	loading="lazy"
+	
+		alt="image-20220506094153857"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="287"
+		data-flex-basis="689px"
+	
+></p>
+<h1 id="1ansible安装部署">1、ansible安装部署
+</h1><h2 id="在master-61管理机安装">在master-61管理机安装
+</h2><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl"><span class="o">[</span>root@master-61 ~<span class="o">]</span><span class="c1">#yum install epel-release ansible libselinux-python -y</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">前提你配置好了阿里云的epel源可以直接安装
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@master-61 ~<span class="o">]</span><span class="c1">#yum install ansible -y </span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@master-61 ~<span class="o">]</span><span class="c1">#ansible --version</span>
+</span></span><span class="line"><span class="cl">ansible 2.9.27
+</span></span><span class="line"><span class="cl">  config <span class="nv">file</span> <span class="o">=</span> /etc/ansible/ansible.cfg
+</span></span><span class="line"><span class="cl">  configured module search <span class="nv">path</span> <span class="o">=</span> <span class="o">[</span>u<span class="s1">&#39;/root/.ansible/plugins/modules&#39;</span>, u<span class="s1">&#39;/usr/share/ansible/plugins/modules&#39;</span><span class="o">]</span>
+</span></span><span class="line"><span class="cl">  ansible python module <span class="nv">location</span> <span class="o">=</span> /usr/lib/python2.7/site-packages/ansible
+</span></span><span class="line"><span class="cl">  executable <span class="nv">location</span> <span class="o">=</span> /usr/bin/ansible
+</span></span><span class="line"><span class="cl">  python <span class="nv">version</span> <span class="o">=</span> 2.7.5 <span class="o">(</span>default, Apr <span class="m">11</span> 2018, 07:36:10<span class="o">)</span> <span class="o">[</span>GCC 4.8.5 <span class="m">20150623</span> <span class="o">(</span>Red Hat 4.8.5-28<span class="o">)]</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="其他被管理的机器">其他被管理的机器
+</h2><p>准备</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">web-7
+</span></span><span class="line"><span class="cl">web-8
+</span></span><span class="line"><span class="cl">web-9
+</span></span><span class="line"><span class="cl">nfs-31
+</span></span><span class="line"><span class="cl">rsync-41
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>全部初始化，还原sshd原本的配置即可</p>
+<p>安装ansible</p>
+<p>用于学习ansible的主机连接配置参数</p>
+<h2 id="主机清单文件主机分组">主机清单文件（主机分组）
+</h2><p><a class="link" href="https://docs.ansible.com/ansible/latest/user_guide/intro_inventory.html#inventory-basics-formats-hosts-and-groups"  target="_blank" rel="noopener"
+    >https://docs.ansible.com/ansible/latest/user_guide/intro_inventory.html#inventory-basics-formats-hosts-and-groups</a></p>
+<p>把综合架构需要用到的机器，进行分组</p>
+<p>主机清单配置文件</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl"><span class="o">[</span>root@master-61 ~<span class="o">]</span><span class="c1">#vim /etc/ansible/hosts </span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="o">[</span>web<span class="o">]</span>
+</span></span><span class="line"><span class="cl">172.16.1.7
+</span></span><span class="line"><span class="cl">172.16.1.8
+</span></span><span class="line"><span class="cl">172.16.1.9
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="o">[</span>nfs<span class="o">]</span>
+</span></span><span class="line"><span class="cl">172.16.1.31
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="o">[</span>backup<span class="o">]</span>	
+</span></span><span class="line"><span class="cl">172.16.1.41
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>主机分组后，执行命令测试，批量管理一组机器、</p>
+<p>管理所有的机器，使用特殊主机组，all</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">让所有的主机，远程执行hostname，返回主机名信息
+</span></span><span class="line"><span class="cl">[root@master-61 ~]#ansible all -m shell -a &#34;hostname&#34;
+</span></span><span class="line"><span class="cl">但是默认没配置认证方式，权限被拒绝：
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/xiaoshi/p/ansible%E5%9F%BA%E7%A1%80/assets/image-20240510094514125.png"
+	width="1135"
+	height="607"
+	srcset="/xiaoshi/p/ansible%E5%9F%BA%E7%A1%80/assets/image-20240510094514125_hu12994008662289641402.png 480w, /xiaoshi/p/ansible%E5%9F%BA%E7%A1%80/assets/image-20240510094514125_hu10901028134512292044.png 1024w"
+	loading="lazy"
+	
+		alt="image-20240510094514125"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="186"
+		data-flex-basis="448px"
+	
+></p>
+<h1 id="2ansible主机登录认证">2、ansible主机登录认证
+</h1><p>Ansible批量管理主机有两种方式：</p>
+<ul>
+<li>传统的密码认证</li>
+<li>公钥认证</li>
+</ul>
+<h2 id="ansible基于公私钥认证">ansible基于公私钥认证
+</h2><p>1.将master61机器的公钥，分发给想免密登录的机器</p>
+<p>2.后续在对该机器操作，就直接进行ssh的公钥认证了，可以免密码，直接远程执行</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">1.配置好master-61免密登录31机器
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@master-61 ~<span class="o">]</span><span class="c1">#ssh-keygen</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@master-61 ~<span class="o">]</span><span class="c1">#ssh-copy-id root@172.16.1.31</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">2.后续可以免密执行ansible的各种模块了
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@master-61 ~<span class="o">]</span><span class="c1">#ansible nfs -m command -a &#34;hostname&#34;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">你可以配置所有机器的公钥一键分发，就可以实现all所有主机的远程命令执行
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@master-61 ~<span class="o">]</span><span class="c1">#ansible all -m shell &#34;hostname&#34; # 返回结果给master-61机器</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="基于密码认证">基于密码认证
+</h2><ul>
+<li>在你的客户端机器、修改了ssh默认端口、以及密码需要修改主机清单文件才可以正确连接。</li>
+<li>注意你得配置允许密码登录才能进行如下测试，可以再开一个web-9机器。</li>
+</ul>
+<h2 id="ansible主机清单配置文件语法重要">ansible主机清单配置文件语法（重要）
+</h2><p>官网地址：</p>
+<p><a class="link" href="https://docs.ansible.com/ansible/latest/user_guide/intro_inventory.html#connecting-to-hosts-behavioral-inventory-parameters"  target="_blank" rel="noopener"
+    >https://docs.ansible.com/ansible/latest/user_guide/intro_inventory.html#connecting-to-hosts-behavioral-inventory-parameters</a></p>
+<p>可选参数：</p>
+<div class="table-wrapper"><table>
+<thead>
+<tr>
+<th>参数</th>
+<th>参数类型</th>
+<th>参数说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>ansible_host</td>
+<td>主机地址</td>
+<td>远程主机ip</td>
+</tr>
+<tr>
+<td>ansible_port</td>
+<td>主机端口</td>
+<td>设置SSH连接端口，默认22</td>
+</tr>
+<tr>
+<td>ansible_user</td>
+<td>主机用户</td>
+<td>默认SSH远程连接的用户身份，默认root</td>
+</tr>
+<tr>
+<td>ansible_password</td>
+<td>用户密码</td>
+<td>指定SSH远程主机密码</td>
+</tr>
+</tbody>
+</table></div>
+<h2 id="给rsync机器进行密码认证">给rsync机器，进行密码认证
+</h2><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">编辑主机清单文件
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@master-61 ~<span class="o">]</span><span class="c1">#vim /etc/ansible/hosts </span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">1.给rsync机器，添加密码，端口等信息
+</span></span><span class="line"><span class="cl"><span class="o">[</span>backup<span class="o">]</span>
+</span></span><span class="line"><span class="cl">172.16.1.41  <span class="nv">ansible_port</span><span class="o">=</span><span class="m">22</span>  <span class="nv">ansible_password</span><span class="o">=</span><span class="s1">&#39;123123&#39;</span>  
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">2.如果目标机器的ssh信息都被改了，这里也得改
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@rsync-41 ~<span class="o">]</span><span class="c1">#vi /etc/ssh/sshd_config</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="o">[</span>backup<span class="o">]</span>
+</span></span><span class="line"><span class="cl">172.16.1.41  <span class="nv">ansible_port</span><span class="o">=</span><span class="m">22999</span>  <span class="nv">ansible_password</span><span class="o">=</span><span class="s1">&#39;123123&#39;</span> 
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>测试执行</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl"><span class="o">[</span>root@master-61 ~<span class="o">]</span><span class="c1">#ansible backup -m ping</span>
+</span></span><span class="line"><span class="cl">172.16.1.41 <span class="p">|</span> <span class="nv">SUCCESS</span> <span class="o">=</span>&gt; <span class="o">{</span>
+</span></span><span class="line"><span class="cl">    <span class="s2">&#34;ansible_facts&#34;</span>: <span class="o">{</span>
+</span></span><span class="line"><span class="cl">        <span class="s2">&#34;discovered_interpreter_python&#34;</span>: <span class="s2">&#34;/usr/bin/python&#34;</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span>, 
+</span></span><span class="line"><span class="cl">    <span class="s2">&#34;changed&#34;</span>: false, 
+</span></span><span class="line"><span class="cl">    <span class="s2">&#34;ping&#34;</span>: <span class="s2">&#34;pong&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="o">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="添加web机器组的信息">添加web机器组的信息
+</h2><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl"><span class="o">[</span>root@master-61 ~<span class="o">]</span><span class="c1">#vim /etc/ansible/hosts </span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="o">[</span>web<span class="o">]</span>
+</span></span><span class="line"><span class="cl">172.16.1.7 <span class="nv">ansible_port</span><span class="o">=</span><span class="m">22999</span> <span class="nv">ansible_user</span><span class="o">=</span>root <span class="nv">ansible_password</span><span class="o">=</span><span class="m">123123</span>
+</span></span><span class="line"><span class="cl">172.16.1.8 <span class="nv">ansible_port</span><span class="o">=</span><span class="m">22999</span> <span class="nv">ansible_user</span><span class="o">=</span>root <span class="nv">ansible_password</span><span class="o">=</span><span class="m">123123</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="o">[</span>nfs<span class="o">]</span>
+</span></span><span class="line"><span class="cl">172.16.1.31
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="o">[</span>backup<span class="o">]</span>
+</span></span><span class="line"><span class="cl">172.16.1.41 <span class="nv">ansible_ssh_port</span><span class="o">=</span><span class="m">22999</span> <span class="nv">ansible_ssh_user</span><span class="o">=</span>root <span class="nv">ansible_ssh_pass</span><span class="o">=</span><span class="m">123123</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>测试执行</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl"><span class="o">[</span>root@master-61 ~<span class="o">]</span><span class="c1">#ansible web -m ping</span>
+</span></span><span class="line"><span class="cl">172.16.1.8 <span class="p">|</span> <span class="nv">SUCCESS</span> <span class="o">=</span>&gt; <span class="o">{</span>
+</span></span><span class="line"><span class="cl">    <span class="s2">&#34;ansible_facts&#34;</span>: <span class="o">{</span>
+</span></span><span class="line"><span class="cl">        <span class="s2">&#34;discovered_interpreter_python&#34;</span>: <span class="s2">&#34;/usr/bin/python&#34;</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span>, 
+</span></span><span class="line"><span class="cl">    <span class="s2">&#34;changed&#34;</span>: false, 
+</span></span><span class="line"><span class="cl">    <span class="s2">&#34;ping&#34;</span>: <span class="s2">&#34;pong&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="o">}</span>
+</span></span><span class="line"><span class="cl">172.16.1.7 <span class="p">|</span> <span class="nv">SUCCESS</span> <span class="o">=</span>&gt; <span class="o">{</span>
+</span></span><span class="line"><span class="cl">    <span class="s2">&#34;ansible_facts&#34;</span>: <span class="o">{</span>
+</span></span><span class="line"><span class="cl">        <span class="s2">&#34;discovered_interpreter_python&#34;</span>: <span class="s2">&#34;/usr/bin/python&#34;</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span>, 
+</span></span><span class="line"><span class="cl">    <span class="s2">&#34;changed&#34;</span>: false, 
+</span></span><span class="line"><span class="cl">    <span class="s2">&#34;ping&#34;</span>: <span class="s2">&#34;pong&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="o">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h4 id="拿web机器测试单独操作某主机">拿web机器测试（单独操作某主机）
+</h4><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">1.先配置主机组的参数
+</span></span><span class="line"><span class="cl"><span class="o">[</span>web<span class="o">]</span>
+</span></span><span class="line"><span class="cl">172.16.1.7 <span class="nv">ansible_port</span><span class="o">=</span><span class="m">22999</span> <span class="nv">ansible_password</span><span class="o">=</span><span class="s1">&#39;123123&#39;</span>
+</span></span><span class="line"><span class="cl">172.16.1.8 <span class="nv">ansible_port</span><span class="o">=</span><span class="m">22999</span> <span class="nv">ansible_password</span><span class="o">=</span><span class="s1">&#39;123123&#39;</span>
+</span></span><span class="line"><span class="cl">172.16.1.9 <span class="nv">ansible_port</span><span class="o">=</span><span class="m">22999</span> <span class="nv">ansible_password</span><span class="o">=</span><span class="s1">&#39;123123&#39;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">2.执行ping模块，看下是否和远程主机通信
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@master-61 ~<span class="o">]</span><span class="c1">#ansible  web -m ping</span>
+</span></span><span class="line"><span class="cl">172.16.1.7 <span class="p">|</span> <span class="nv">SUCCESS</span> <span class="o">=</span>&gt; <span class="o">{</span>
+</span></span><span class="line"><span class="cl">    <span class="s2">&#34;ansible_facts&#34;</span>: <span class="o">{</span>
+</span></span><span class="line"><span class="cl">        <span class="s2">&#34;discovered_interpreter_python&#34;</span>: <span class="s2">&#34;/usr/bin/python&#34;</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span>, 
+</span></span><span class="line"><span class="cl">    <span class="s2">&#34;changed&#34;</span>: false, 
+</span></span><span class="line"><span class="cl">    <span class="s2">&#34;ping&#34;</span>: <span class="s2">&#34;pong&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="o">}</span>
+</span></span><span class="line"><span class="cl">172.16.1.9 <span class="p">|</span> <span class="nv">SUCCESS</span> <span class="o">=</span>&gt; <span class="o">{</span>
+</span></span><span class="line"><span class="cl">    <span class="s2">&#34;ansible_facts&#34;</span>: <span class="o">{</span>
+</span></span><span class="line"><span class="cl">        <span class="s2">&#34;discovered_interpreter_python&#34;</span>: <span class="s2">&#34;/usr/bin/python&#34;</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span>, 
+</span></span><span class="line"><span class="cl">    <span class="s2">&#34;changed&#34;</span>: false, 
+</span></span><span class="line"><span class="cl">    <span class="s2">&#34;ping&#34;</span>: <span class="s2">&#34;pong&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="o">}</span>
+</span></span><span class="line"><span class="cl">172.16.1.8 <span class="p">|</span> <span class="nv">SUCCESS</span> <span class="o">=</span>&gt; <span class="o">{</span>
+</span></span><span class="line"><span class="cl">    <span class="s2">&#34;ansible_facts&#34;</span>: <span class="o">{</span>
+</span></span><span class="line"><span class="cl">        <span class="s2">&#34;discovered_interpreter_python&#34;</span>: <span class="s2">&#34;/usr/bin/python&#34;</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span>, 
+</span></span><span class="line"><span class="cl">    <span class="s2">&#34;changed&#34;</span>: false, 
+</span></span><span class="line"><span class="cl">    <span class="s2">&#34;ping&#34;</span>: <span class="s2">&#34;pong&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="o">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h4 id="指纹故障解决">指纹故障解决
+</h4><p>你可能会遇见如下问题，关于新机器的<strong>指纹确认</strong>问题。</p>
+<p><img src="/xiaoshi/p/ansible%E5%9F%BA%E7%A1%80/assets/image-20240510155811488.png"
+	width="1575"
+	height="85"
+	srcset="/xiaoshi/p/ansible%E5%9F%BA%E7%A1%80/assets/image-20240510155811488_hu13786837463817608804.png 480w, /xiaoshi/p/ansible%E5%9F%BA%E7%A1%80/assets/image-20240510155811488_hu8917252128851260123.png 1024w"
+	loading="lazy"
+	
+		alt="image-20240510155811488"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="1852"
+		data-flex-basis="4447px"
+	
+></p>
+<p>解决办法1，手动ssh连接，进行指纹确认，写入到本机的</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl"><span class="o">[</span>root@master-61 ~<span class="o">]</span><span class="c1">#cat ~/.ssh/known_hosts</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>解决办法2，ansible配置文件中忽略指纹确认</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl"><span class="o">[</span>root@master-61 ~<span class="o">]</span><span class="c1">#grep &#39;host_key_checking&#39; /etc/ansible/ansible.cfg </span>
+</span></span><span class="line"><span class="cl"><span class="nv">host_key_checking</span> <span class="o">=</span> False
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>问题以及解决，可以正确操作web-9机器</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl"><span class="o">[</span>root@master-61 ~<span class="o">]</span><span class="c1">#ansible 172.16.1.9 -m ping</span>
+</span></span><span class="line"><span class="cl">172.16.1.9 <span class="p">|</span> <span class="nv">SUCCESS</span> <span class="o">=</span>&gt; <span class="o">{</span>
+</span></span><span class="line"><span class="cl">    <span class="s2">&#34;ansible_facts&#34;</span>: <span class="o">{</span>
+</span></span><span class="line"><span class="cl">        <span class="s2">&#34;discovered_interpreter_python&#34;</span>: <span class="s2">&#34;/usr/bin/python&#34;</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span>, 
+</span></span><span class="line"><span class="cl">    <span class="s2">&#34;changed&#34;</span>: false, 
+</span></span><span class="line"><span class="cl">    <span class="s2">&#34;ping&#34;</span>: <span class="s2">&#34;pong&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="o">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h4 id="踩坑记录ansible缓存">踩坑记录(ansible缓存)
+</h4><p>由于ansible在对远程主机操作之前，默认会先通过setup模块获取机器的facts（静态属性），并且会生成缓存，便于加速远程主机的操作；</p>
+<p>但缓存也会导致一些奇怪的现象，比如客户端的机器信息更新了，服务端依旧使用的是旧数据，那就不准确了，因此可以删除缓存。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">关于缓存导致bug的文章，https://serverfault.com/questions/630253/ansible-stuck-on-gathering-facts
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">清理ansible的缓存目录即可
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@master-61 ~<span class="o">]</span><span class="c1">#rm -rf ~/.ansible/cp/*</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h4 id="同一组连续的ip">同一组连续的ip
+</h4><p>可以修改主机清单文件如下，前提是该些主机的配置一致</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl"><span class="o">[</span>web<span class="o">]</span>
+</span></span><span class="line"><span class="cl">172.16.1.<span class="o">[</span>7:9<span class="o">]</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h4 id="公共变量">公共变量
+</h4><p>当主机清单里，很多主机组，有相同的变量属性，可以写成公共变量</p>
+<p>这部分配置是针对web主机组，抽象的变量</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl"><span class="o">[</span>root@master-61 ~<span class="o">]</span><span class="c1">#grep -vE &#39;^#|^$&#39; /etc/ansible/hosts </span>
+</span></span><span class="line"><span class="cl"><span class="o">[</span>web:vars<span class="o">]</span>
+</span></span><span class="line"><span class="cl"><span class="nv">ansible_ssh_port</span><span class="o">=</span><span class="m">22999</span>
+</span></span><span class="line"><span class="cl"><span class="nv">ansible_ssh_user</span><span class="o">=</span>root
+</span></span><span class="line"><span class="cl"><span class="nv">ansible_ssh_pass</span><span class="o">=</span><span class="m">123123</span>
+</span></span><span class="line"><span class="cl"><span class="o">[</span>web<span class="o">]</span>
+</span></span><span class="line"><span class="cl">172.16.1.<span class="o">[</span>7:9<span class="o">]</span>
+</span></span><span class="line"><span class="cl"><span class="o">[</span>nfs<span class="o">]</span>
+</span></span><span class="line"><span class="cl">172.16.1.31 <span class="nv">ansible_ssh_port</span><span class="o">=</span><span class="m">22999</span> 
+</span></span><span class="line"><span class="cl"><span class="o">[</span>backup<span class="o">]</span>
+</span></span><span class="line"><span class="cl">172.16.1.41 <span class="nv">ansible_ssh_port</span><span class="o">=</span><span class="m">22999</span> <span class="nv">ansible_ssh_user</span><span class="o">=</span>root <span class="nv">ansible_ssh_pass</span><span class="o">=</span><span class="m">123123</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h4 id="测试web组和backup组是否可用">测试web组和backup组是否可用
+</h4><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl"><span class="o">[</span>root@master-61 ~<span class="o">]</span><span class="c1">#ansible web -m ping</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@master-61 ~<span class="o">]</span><span class="c1">#ansible backup -m shell -a &#34;ls /opt/&#34;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@master-61 ~<span class="o">]</span><span class="c1">#ansible web -m shell -a hostname</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h4 id="所有主机都生效的变量了解">所有主机都生效的变量【了解】
+</h4><p>指定主机组名all，即可针对所有主机生效，前提是，你要确保这个信息是所有主机通用的。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl"><span class="o">[</span>root@master-61 ~<span class="o">]</span><span class="c1">#grep -vE &#39;^#|^$&#39; /etc/ansible/hosts </span>
+</span></span><span class="line"><span class="cl"><span class="o">[</span>all:vars<span class="o">]</span>
+</span></span><span class="line"><span class="cl"><span class="nv">ansible_port</span><span class="o">=</span><span class="m">22999</span>
+</span></span><span class="line"><span class="cl"><span class="c1">#ansible_user=root</span>
+</span></span><span class="line"><span class="cl"><span class="c1">#ansible_password=123456</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="o">[</span>web<span class="o">]</span>
+</span></span><span class="line"><span class="cl">172.16.1.7
+</span></span><span class="line"><span class="cl">172.16.1.8
+</span></span><span class="line"><span class="cl">172.16.1.9
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="o">[</span>nfs<span class="o">]</span>
+</span></span><span class="line"><span class="cl">172.16.1.31
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="o">[</span>backup<span class="o">]</span>
+</span></span><span class="line"><span class="cl">172.16.1.41
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>远程执行命令</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl"><span class="o">[</span>root@master-61 ~<span class="o">]</span><span class="c1">#rm -rf ~/.ansible/cp/*</span>
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@master-61 ~<span class="o">]</span><span class="c1">#</span>
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@master-61 ~<span class="o">]</span><span class="c1">#ansible all -m shell -a hostname</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@master-61 ~<span class="o">]</span><span class="c1">#ansible all -m shell -a hostname</span>
+</span></span><span class="line"><span class="cl">172.16.1.31 <span class="p">|</span> CHANGED <span class="p">|</span> <span class="nv">rc</span><span class="o">=</span><span class="m">0</span> &gt;&gt;
+</span></span><span class="line"><span class="cl">nfs-31
+</span></span><span class="line"><span class="cl">172.16.1.8 <span class="p">|</span> CHANGED <span class="p">|</span> <span class="nv">rc</span><span class="o">=</span><span class="m">0</span> &gt;&gt;
+</span></span><span class="line"><span class="cl">web-8
+</span></span><span class="line"><span class="cl">172.16.1.41 <span class="p">|</span> CHANGED <span class="p">|</span> <span class="nv">rc</span><span class="o">=</span><span class="m">0</span> &gt;&gt;
+</span></span><span class="line"><span class="cl">rsync-41
+</span></span><span class="line"><span class="cl">172.16.1.7 <span class="p">|</span> CHANGED <span class="p">|</span> <span class="nv">rc</span><span class="o">=</span><span class="m">0</span> &gt;&gt;
+</span></span><span class="line"><span class="cl">web-7
+</span></span><span class="line"><span class="cl">172.16.1.9 <span class="p">|</span> CHANGED <span class="p">|</span> <span class="nv">rc</span><span class="o">=</span><span class="m">0</span> &gt;&gt;
+</span></span><span class="line"><span class="cl">web-9
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h1 id="3ansible命令执行方式">3、ansible命令执行方式
+</h1><p>Ansible实现批量管理主机的模式主要有俩：</p>
+<ul>
+<li>利用ansible命令实现批量管理（ad-hoc）模式</li>
+<li>利用ansible剧本实现批量管理（playbook）模式</li>
+</ul>
+<p>Ad-hoc和playbook的关系就好比shell命令与shell scripts的关系</p>
+<h2 id="ad-hoc模式">ad-hoc模式
+</h2><p>Ansible的ad-hoc模式也就是ansible的命令行模式，该模式通常用来临时处理一些任务。例如</p>
+<ul>
+<li>临时批量查看所有被管控机器的内存、负载、磁盘</li>
+<li>临时批量分发某个特定文件</li>
+</ul>
+<h2 id="playbook模式">Playbook模式
+</h2><p>Ansible的playbook模式就是针对特定的具体较大的任务，事先写好执行剧本，然后在其他机器上批量执行相同的任务，属于定制化的批量执行任务，例如</p>
+<ul>
+<li>一键安装Rsync</li>
+<li>一键搭建LNMP集群等</li>
+</ul>
+<h2 id="ansible-doc命令">ansible-doc命令
+</h2><p>列出ansible所有支持的模块，这就是ansible这个万能工具箱所有的零件了。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl"><span class="o">[</span>root@master-61 ~<span class="o">]</span><span class="c1">#ansible-doc -l |grep ^ping</span>
+</span></span><span class="line"><span class="cl">ping                                                          Try to connect to host, verify a usable python and re...
+</span></span><span class="line"><span class="cl">pingdom                                                       Pause/unpause Pingdom alerts   
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@master-61 ~<span class="o">]</span><span class="c1">#ansible-doc -l |grep ^shell</span>
+</span></span><span class="line"><span class="cl">shell  
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">当前ansible支持3387个模块
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@master-61 ~<span class="o">]</span><span class="c1">#ansible-doc -l |wc -l</span>
+</span></span><span class="line"><span class="cl"><span class="m">3387</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>当前ansible支持的模块数量</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl"><span class="o">[</span>root@master-61 ~<span class="o">]</span><span class="c1">#ansible-doc -l |wc -l</span>
+</span></span><span class="line"><span class="cl"><span class="m">3387</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>查看某个模块的具体用法</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl"><span class="o">[</span>root@master-61 ~<span class="o">]</span><span class="c1">#ansible-doc -s shell</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@master-61 ~<span class="o">]</span><span class="c1">#ansible-doc -s ping</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h1 id="4ansible核心内容模块学习">4、ansible核心内容（模块学习）
+</h1><h2 id="ansible执行命令结果状态颜色">ansible执行命令结果（状态颜色）
+</h2><p>你后续使用各种模块操作，会有不同的颜色结果，都是有意义的</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">运维远程执行命令，有2个方式
+</span></span><span class="line"><span class="cl">shell脚本，远程执行
+</span></span><span class="line"><span class="cl">ansible模块，远程执行
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">shell脚本不够智能，不会记录上一次的执行状态，以及修改的状态，因此导致，傻瓜式的，重复性执行。效率是极其低下的，不做状态记录
+</span></span><span class="line"><span class="cl">例如安装软件：
+</span></span><span class="line"><span class="cl">shell   yum install  rsync<span class="p">;</span>  mkdir -p<span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">而ansible的模块，yum模块会记录执行的状态
+</span></span><span class="line"><span class="cl">第一次执行,装完之后，的确对目标机器产生了修改的状态，会给master-61返回一个命令的执行结果，执行状态，存储下来
+</span></span><span class="line"><span class="cl">ansible web -m yum -a <span class="s2">&#34;name=rsync  state=installed&#34;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">ansible会检测目标机器，对比这个状态，如果状态没变，ansible就不会再执行该命令，因此效率很高
+</span></span><span class="line"><span class="cl">ansible web -m yum -a <span class="s2">&#34;name=rsync  state=installed&#34;</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>ansible的状态，就是如下的颜色区分，看到不同的状态</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span><span class="lnt">9
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">绿色：命令以用户期望的执行了，但是状态没有发生改变；
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">黄色：命令以用户期望的执行了，并且状态发生了改变；
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">紫色：警告信息，说明ansible提示你有更合适的用法；出现了warning警告
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">红色：命令错误，执行失败；
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">蓝色：详细的执行过程；
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="官网文档">官网文档
+</h2><p>网址：<a class="link" href="https://docs.ansible.com/ansible/latest/collections/ansible/builtin/index.html#plugins-in-ansible-builtin"  target="_blank" rel="noopener"
+    >Ansible.Builtin — Ansible Community Documentation</a></p>
+<p>Ansible自动化软件的核心功能就在于其众多的模块，可以说学习Ansible就是学习模块的使用。</p>
+<p>剩余的是对Ansible剧本编写的熟练度。</p>
+<h2 id="41-ping测试连通性">4.1 ping测试连通性
+</h2><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">通过master-61查看目标机器是否运行
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">ansible all -m ping
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><a class="link" href="https://docs.ansible.com/ansible/latest/collections/ansible/builtin/ping_module.html#ansible-collections-ansible-builtin-ping-module"  target="_blank" rel="noopener"
+    >https://docs.ansible.com/ansible/latest/collections/ansible/builtin/ping_module.html#ansible-collections-ansible-builtin-ping-module</a></p>
+<p>查看模块解释</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl"><span class="o">[</span>root@master-61 ~<span class="o">]</span><span class="c1">#ansible-doc -s ping</span>
+</span></span><span class="line"><span class="cl">- name: Try to connect to host, verify a usable python and <span class="k">return</span> <span class="sb">`</span>pong<span class="s1">&#39; on success
+</span></span></span><span class="line"><span class="cl"><span class="s1">  ping:
+</span></span></span><span class="line"><span class="cl"><span class="s1">      data:                  # Data to return for the `ping&#39;</span> <span class="k">return</span> value. If this parameter is <span class="nb">set</span> to <span class="sb">`</span>crash<span class="err">&#39;</span>, the
+</span></span><span class="line"><span class="cl">                               module will cause an exception.
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@master-61 ~<span class="o">]</span><span class="c1">#</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>执行</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl"><span class="o">[</span>root@master-61 ~<span class="o">]</span><span class="c1">#ansible web -m ping</span>
+</span></span><span class="line"><span class="cl">172.16.1.8 <span class="p">|</span> <span class="nv">SUCCESS</span> <span class="o">=</span>&gt; <span class="o">{</span>
+</span></span><span class="line"><span class="cl">    <span class="s2">&#34;ansible_facts&#34;</span>: <span class="o">{</span>
+</span></span><span class="line"><span class="cl">        <span class="s2">&#34;discovered_interpreter_python&#34;</span>: <span class="s2">&#34;/usr/bin/python&#34;</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span>, 
+</span></span><span class="line"><span class="cl">    <span class="s2">&#34;changed&#34;</span>: false, 
+</span></span><span class="line"><span class="cl">    <span class="s2">&#34;ping&#34;</span>: <span class="s2">&#34;pong&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="o">}</span>
+</span></span><span class="line"><span class="cl">172.16.1.9 <span class="p">|</span> <span class="nv">SUCCESS</span> <span class="o">=</span>&gt; <span class="o">{</span>
+</span></span><span class="line"><span class="cl">    <span class="s2">&#34;ansible_facts&#34;</span>: <span class="o">{</span>
+</span></span><span class="line"><span class="cl">        <span class="s2">&#34;discovered_interpreter_python&#34;</span>: <span class="s2">&#34;/usr/bin/python&#34;</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span>, 
+</span></span><span class="line"><span class="cl">    <span class="s2">&#34;changed&#34;</span>: false, 
+</span></span><span class="line"><span class="cl">    <span class="s2">&#34;ping&#34;</span>: <span class="s2">&#34;pong&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="o">}</span>
+</span></span><span class="line"><span class="cl">172.16.1.7 <span class="p">|</span> <span class="nv">SUCCESS</span> <span class="o">=</span>&gt; <span class="o">{</span>
+</span></span><span class="line"><span class="cl">    <span class="s2">&#34;ansible_facts&#34;</span>: <span class="o">{</span>
+</span></span><span class="line"><span class="cl">        <span class="s2">&#34;discovered_interpreter_python&#34;</span>: <span class="s2">&#34;/usr/bin/python&#34;</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span>, 
+</span></span><span class="line"><span class="cl">    <span class="s2">&#34;changed&#34;</span>: false, 
+</span></span><span class="line"><span class="cl">    <span class="s2">&#34;ping&#34;</span>: <span class="s2">&#34;pong&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="o">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="42-command-简单命令模块">4.2 command 简单命令模块
+</h2><p><a class="link" href="https://docs.ansible.com/ansible/latest/collections/ansible/builtin/command_module.html#ansible-collections-ansible-builtin-command-module"  target="_blank" rel="noopener"
+    >https://docs.ansible.com/ansible/latest/collections/ansible/builtin/command_module.html#ansible-collections-ansible-builtin-command-module</a></p>
+<p>语法</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl"><span class="o">[</span>root@master-61 ~<span class="o">]</span><span class="c1">#ansible-doc -s command</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">ansible 主机组 -m <span class="nb">command</span> -a <span class="s2">&#34;需要批量执行的命令&#34;</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>该模块作用：在远程节点上执行一个命令</p>
+<ul>
+<li>command模块是ansible默认的模块，也就是默认就指定了 -m command</li>
+<li>只支持简单命令命令执行，比如你想远程看下服务器的资源信息，普通的linux命令</li>
+</ul>
+<p>command模块是ansible命令基本模块，无法使用复杂的linux命令</p>
+<ul>
+<li>
+<p>使用command模块执行远程命令，命令不得用变量（$HOME）</p>
+</li>
+<li>
+<p>不得出现特殊符号</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">&lt; 、&gt;、|、；、&amp;
+</span></span></code></pre></td></tr></table>
+</div>
+</div></li>
+</ul>
+<h3 id="远程查看主机名">远程查看主机名
+</h3><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl"><span class="o">[</span>root@master-61 ~<span class="o">]</span><span class="c1">#ansible web -m command -a &#34;hostname&#34;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">简写：
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@master-61 ~<span class="o">]</span><span class="c1">#ansible web -a &#34;hostname&#34;</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="查看远程主机内存">查看远程主机内存
+</h3><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl"><span class="o">[</span>root@master-61 ~<span class="o">]</span><span class="c1">#ansible web -a &#34;free -m&#34;</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="远程创建文件查看文件">远程创建文件、查看文件
+</h3><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl"><span class="o">[</span>root@master-61 ~<span class="o">]</span><span class="c1">#ansible web -m command -a &#34;touch /opt/bbb.log&#34;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@master-61 ~<span class="o">]</span><span class="c1">#ansible web -m command -a &#34;cat /opt/bbb.log&#34;</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="远程获取机器负载">远程获取机器负载
+</h3><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl"><span class="o">[</span>root@master-61 ~<span class="o">]</span><span class="c1">#ansible web -a &#34;uptime&#34;</span>
+</span></span><span class="line"><span class="cl">172.16.1.9 <span class="p">|</span> CHANGED <span class="p">|</span> <span class="nv">rc</span><span class="o">=</span><span class="m">0</span> &gt;&gt;
+</span></span><span class="line"><span class="cl"> 11:35:36 up <span class="m">3</span> days,  5:09,  <span class="m">2</span> users,  load average: 0.00, 0.01, 0.05
+</span></span><span class="line"><span class="cl">172.16.1.7 <span class="p">|</span> CHANGED <span class="p">|</span> <span class="nv">rc</span><span class="o">=</span><span class="m">0</span> &gt;&gt;
+</span></span><span class="line"><span class="cl"> 11:35:36 up  2:56,  <span class="m">2</span> users,  load average: 0.00, 0.01, 0.02
+</span></span><span class="line"><span class="cl">172.16.1.8 <span class="p">|</span> CHANGED <span class="p">|</span> <span class="nv">rc</span><span class="o">=</span><span class="m">0</span> &gt;&gt;
+</span></span><span class="line"><span class="cl"> 11:35:36 up  2:26,  <span class="m">2</span> users,  load average: 0.00, 0.01, 0.03
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="关闭告警信息">关闭告警信息
+</h3><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl"><span class="o">[</span>root@master-61 ~<span class="o">]</span><span class="c1">#ansible web  -m command -a &#34;touch /opt/ccc.log    warn=false&#34;</span>
+</span></span><span class="line"><span class="cl">172.16.1.9 <span class="p">|</span> CHANGED <span class="p">|</span> <span class="nv">rc</span><span class="o">=</span><span class="m">0</span> &gt;&gt;
+</span></span><span class="line"><span class="cl">172.16.1.8 <span class="p">|</span> CHANGED <span class="p">|</span> <span class="nv">rc</span><span class="o">=</span><span class="m">0</span> &gt;&gt;
+</span></span><span class="line"><span class="cl">172.16.1.7 <span class="p">|</span> CHANGED <span class="p">|</span> <span class="nv">rc</span><span class="o">=</span><span class="m">0</span> &gt;&gt;
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="在所有机器上创建baizhi01用户">在所有机器上，创建baizhi01用户
+</h3><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl"><span class="o">[</span>root@master-61 ~<span class="o">]</span><span class="c1">#ansible web -m command -a &#34;useradd baizhi01&#34;</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="使用command提供的专有命令">使用command提供的专有命令
+</h3><p>这些命令用于编写ansible-playbook，完成服务器部署的各种复杂条件限定。</p>
+<div class="table-wrapper"><table>
+<thead>
+<tr>
+<th>选项参数</th>
+<th>选项说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>chdir</td>
+<td>在执行命令执行，通过cd命令进入指定目录</td>
+</tr>
+<tr>
+<td>creates</td>
+<td>定义一个文件是否存在，若不存在，则运行相应命令；存在则跳过</td>
+</tr>
+<tr>
+<td>free_form（必须）</td>
+<td>参数信息中可以输入任何系统命令，实现远程管理</td>
+</tr>
+<tr>
+<td>removes</td>
+<td>定义一个文件是否存在，如果存在，则运行相应命令；如果不存在则跳过</td>
+</tr>
+</tbody>
+</table></div>
+<ul>
+<li>备份/var/log日志目录，需要先进入根目录</li>
+</ul>
+<p><code>cd / &amp;&amp; tar -zcvf /opt/log.tgz   /var/log</code></p>
+<p>注意你备份文件存放的文件夹是否存在</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl"><span class="o">[</span>root@master-61 ~<span class="o">]</span><span class="c1">#ansible web -m command -a &#34;tar -zcf /opt/log.tgz   /var/log   chdir=/&#34;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@master-61 ~<span class="o">]</span><span class="c1">#ansible web -a &#34;ls -l /opt&#34;</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><ul>
+<li>在/opt下创建baizhi666.log</li>
+</ul>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">原写法：
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@master-61 ~<span class="o">]</span><span class="c1">#ansible  web -a &#34;touch /opt/chaoge666.log&#34;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@master-61 ~<span class="o">]</span><span class="c1">#ansible web -a &#34;touch chaoge666.log  chdir=/opt&#34;</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><ul>
+<li>备份/etc所有配置文件到 /backup_config/etc.tgz 。</li>
+</ul>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl"><span class="o">[</span>root@master-61 ~<span class="o">]</span><span class="c1">#ansible web -a &#34;tar -zcf /backup_config/etc.tgz etc chdir=/&#34;</span>
+</span></span><span class="line"><span class="cl">目标目录不存在则会报错
+</span></span></code></pre></td></tr></table>
+</div>
+</div><ul>
+<li>removes命令</li>
+</ul>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">1.这里就得提前考虑 /backup_config文件夹是否存在，必须先有文件夹，才能执行该备份命令
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">2.判断如果该文件夹不存在，则不执行备份
+</span></span><span class="line"><span class="cl">目标文件夹不存在，这个命令不会对目标机器产生任何修改，因此绿色结果
+</span></span><span class="line"><span class="cl">ansible web -a <span class="s2">&#34;tar -zcf /backup_config/etc.tgz   etc chdir=/  removes=/backup_config&#34;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">3.你必须先创建该文件夹
+</span></span><span class="line"><span class="cl">ansible web -a <span class="s2">&#34;mkdir -p /backup_config&#34;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">4.再次执行该命令
+</span></span><span class="line"><span class="cl">ansible web -a <span class="s2">&#34;tar -zcf /backup_config/etc.tgz   etc chdir=/  removes=/backup_config&#34;</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><ul>
+<li>测试creates命令，如果目标目录已经存在了，就别创建该目录了</li>
+</ul>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl"><span class="o">[</span>root@master-61 ~<span class="o">]</span><span class="c1">#ansible backup -m command -a &#39;mkdir /opt creates=/opt&#39;</span>
+</span></span><span class="line"><span class="cl">172.16.1.41 <span class="p">|</span> SUCCESS <span class="p">|</span> <span class="nv">rc</span><span class="o">=</span><span class="m">0</span> &gt;&gt;
+</span></span><span class="line"><span class="cl">skipped, since /opt exists
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="43-shell模块万能模块">4.3 shell模块（万能模块）
+</h2><p>shell模块功能：在远程节点上执行命令（复杂的命令）</p>
+<p><a class="link" href="https://docs.ansible.com/ansible/latest/collections/ansible/builtin/shell_module.html#ansible-collections-ansible-builtin-shell-module"  target="_blank" rel="noopener"
+    >https://docs.ansible.com/ansible/latest/collections/ansible/builtin/shell_module.html#ansible-collections-ansible-builtin-shell-module</a></p>
+<p>也就是等于你在linux上直接执行任何复杂的命令都可以</p>
+<p>但是ansible的使用理念是，人家提供了几千个模块，并且有很复杂的功能，你在用shell模块之前，先查一查是否有对应的模块。</p>
+<p>你如果想使用ansible提供的状态功能，记录你每次执行命令的结果，你就必须得使用专有的模块，否则无法使用该功能</p>
+<p>shell模块可以识别特殊符号，就等于远程执行命令了</p>
+<ul>
+<li>远程过滤ssh进程信息</li>
+</ul>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl"><span class="o">[</span>root@master-61 ~<span class="o">]</span><span class="c1">#ansible all -m shell -a &#34;ps -ef|grep ssh&#34;</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><ul>
+<li>使用重定向符号，创建文件</li>
+</ul>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl"><span class="c1"># 远程获取时间信息，且写入到文件中，但command不认识重定向</span>
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@master-61 ~<span class="o">]</span><span class="c1">#ansible web -m command -a &#34;date &gt; /tmp/date.log&#34;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@master-61 ~<span class="o">]</span><span class="c1">#ansible web -m shell -a &#34;date &#39;+%F %T&#39; &gt; /tmp/date.log&#34;  #等价操作date “+%Y-%m-%d %H:%M:%S”</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@master-61 ~<span class="o">]</span><span class="c1">#ansible web -m shell -a &#39;cat /tmp/date.log&#39;</span>
+</span></span><span class="line"><span class="cl">172.16.1.8 <span class="p">|</span> CHANGED <span class="p">|</span> <span class="nv">rc</span><span class="o">=</span><span class="m">0</span> &gt;&gt;
+</span></span><span class="line"><span class="cl">2022-05-06 12:06:23
+</span></span><span class="line"><span class="cl">172.16.1.9 <span class="p">|</span> CHANGED <span class="p">|</span> <span class="nv">rc</span><span class="o">=</span><span class="m">0</span> &gt;&gt;
+</span></span><span class="line"><span class="cl">2022-05-06 12:06:23
+</span></span><span class="line"><span class="cl">172.16.1.7 <span class="p">|</span> CHANGED <span class="p">|</span> <span class="nv">rc</span><span class="o">=</span><span class="m">0</span> &gt;&gt;
+</span></span><span class="line"><span class="cl">2022-05-06 12:06:23
+</span></span></code></pre></td></tr></table>
+</div>
+</div><ul>
+<li>
+<p>远程执行复杂linux命令</p>
+<ul>
+<li>创建文件夹</li>
+<li>生成sh脚本文件(查看主机名)</li>
+<li>赋予脚本可执行权限</li>
+<li>执行脚本</li>
+<li>忽略warning信息</li>
+</ul>
+</li>
+</ul>
+<p>这个命令就无法在command中执行</p>
+<p>通过一条命令，做如下事情</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl"><span class="o">[</span>root@master-61 ~<span class="o">]</span><span class="c1">#ansible web  -m shell  -a &#34;mkdir /0224/;echo &#39;hostname&#39; &gt; /0224/hostname.sh;chmod +x /0224/hostname.sh;/0224/hostname.sh;  warn=false&#34;</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><blockquote>
+<p>shell命令别过度依赖，那就等于用ansible远程帮你执行了个普通的shell命令；</p>
+</blockquote>
+<h2 id="44-copy拷贝文件">4.4 copy拷贝文件
+</h2><p>copy模块是远程推送数据模块，只能把数据推送给远程主机节点，无法拉取数据到本地。</p>
+<p>既然是文件拷贝，可用参数也就是围绕文件属性。</p>
+<div class="table-wrapper"><table>
+<thead>
+<tr>
+<th>参数名</th>
+<th>是否  必须</th>
+<th>默 认 值</th>
+<th>选项</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>src</td>
+<td>no</td>
+<td></td>
+<td></td>
+<td><strong>用于定位ansible执行的机器上的文件</strong>，需要绝对路径。如果拷贝的是文件夹，那么文件夹会整体拷贝，如果结 尾是&quot; / &ldquo;,那么只有文件夹内的东西被拷过去。(类似于rsync)</td>
+</tr>
+<tr>
+<td>content</td>
+<td>no</td>
+<td></td>
+<td></td>
+<td>用来替代src,用于将指定文件的内容，拷贝到远程文件内</td>
+</tr>
+<tr>
+<td>dest</td>
+<td>yes</td>
+<td></td>
+<td></td>
+<td>用于定位远程节点上的文件，需要绝对路径。如果src指向的是文件夹，这个参数也必须是指向文件夹</td>
+</tr>
+<tr>
+<td>backup</td>
+<td>no</td>
+<td>no</td>
+<td>yes/no</td>
+<td>备份远程节点上的原始文件，在拷贝之前。如果发生什么意外，原始文件还能使用。</td>
+</tr>
+<tr>
+<td>directory_mode</td>
+<td>no</td>
+<td></td>
+<td></td>
+<td>这个参数只能用于拷贝文件夹时候，这个设定后，文件夹内新建的文件会被拷贝。而老旧的不会被拷贝</td>
+</tr>
+<tr>
+<td>follow</td>
+<td>no</td>
+<td>no</td>
+<td>yes/no</td>
+<td>当拷贝的文件夹内有link存在的时候，那么拷贝过去的也会有link</td>
+</tr>
+<tr>
+<td>force</td>
+<td>no</td>
+<td>yes</td>
+<td>yes/no</td>
+<td>默认为yes,会覆盖远程的内容不一样的文件(可能文件名一样)。如果是no,就不会拷贝文件，如果远程有这 个文件</td>
+</tr>
+<tr>
+<td>group</td>
+<td>no</td>
+<td></td>
+<td></td>
+<td>设定一个群组拥有拷贝到远程节点的文件权限</td>
+</tr>
+<tr>
+<td>mode</td>
+<td>no</td>
+<td></td>
+<td></td>
+<td>等同于chmod,参数可以为&quot;u+rwx or u=rw,g=r,o=r&rdquo;</td>
+</tr>
+<tr>
+<td>owner</td>
+<td>no</td>
+<td></td>
+<td></td>
+<td>设定一个用户拥有拷贝到远程节点的文件权限</td>
+</tr>
+</tbody>
+</table></div>
+<h3 id="copy语法">copy语法
+</h3><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">ansible 主机组 -m copy -a <span class="s2">&#34;参数&#34;</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="简单发送文件">简单发送文件
+</h3><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl"><span class="o">[</span>root@master-61 ~<span class="o">]</span><span class="c1">#ansible web -m copy   -a &#34;src=/tmp/61-dnf.log   dest=/tmp/web-dnf.log&#34;</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><blockquote>
+<p>并且ansible的模块记录了文件属性，文件的md5值，得到了文件的唯一校验值，判断文件内容是否变化，如果未变化，不做处理，提升批量管理的效率</p>
+</blockquote>
+<h3 id="发送文件且指定文件属性">发送文件且指定文件属性
+</h3><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">61
+</span></span><span class="line"><span class="cl">↓
+</span></span><span class="line"><span class="cl">web机器组(属性变化，baizhi001，600)
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>权限改为600、修改为baizhi001用户（要求目标机器存在该用户）</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">创建baizhi001用户
+</span></span><span class="line"><span class="cl">ansible web -m shell -a <span class="s2">&#34;useradd baizhi001&#34;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">远程拷贝文件，且修改权限，为600
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@master-61 ~<span class="o">]</span><span class="c1">#ansible web -m copy -a &#34;src=/tmp/61-dnf.log   dest=/opt/web-dnf.log  group=baizhi001 owner=baizhi001   mode=600 &#34;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">远程检查文件信息
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@master-61 ~<span class="o">]</span><span class="c1">#ansible web -m shell -a &#34;ls -l  /opt/web-dnf.log&#34;</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="发送文件且先做好备份">发送文件且先做好备份
+</h3><p>使用backup参数，防止覆盖远程文件，丢失备份，提前备份该目标机器的数据</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">1.检查目标机器的文件
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@master-61 ~<span class="o">]</span><span class="c1">#ansible web -m shell -a &#34;ls -l  /opt/web-dnf.log&#34;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">2.远程拷贝文件，且做好备份
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@master-61 ~<span class="o">]</span><span class="c1">#ansible web -m copy -a &#34;src=/tmp/61-dnf.log  dest=/opt/web-dnf.log   backup=yes&#34;  </span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">3.发现ansible帮你做好了备份
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@master-61 ~<span class="o">]</span><span class="c1">#ansible web -m shell -a &#34;ls -l /opt/web*&#34;											·</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="指定数据写入到远程文件中">指定数据写入到远程文件中
+</h3><p>向rsyncd.conf中填入账号密码，覆盖其原有的文件内容</p>
+<p>content参数</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl"><span class="o">[</span>root@master-61 ~<span class="o">]</span><span class="c1"># </span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>注意像这样的覆盖操作，还是添加备份参数更合适</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl"><span class="o">[</span>root@master-61 ~<span class="o">]</span><span class="c1">#ansible web -m copy -a &#34;content=&#39;byebye LINUX&#39;   dest=/opt/web-dnf.log   backup=yes  &#34;</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="复制文件夹">复制文件夹
+</h3><p>注意结尾斜杠</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">远程拷贝/opt/ 下的所有内容到目标机器
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@master-61 ~<span class="o">]</span><span class="c1">#ansible web -m copy -a &#34;src=/opt/  dest=/tmp/&#34;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">远程拷贝/opt  整个目录到目标机器
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@master-61 ~<span class="o">]</span><span class="c1">#ansible web -m copy -a &#34;src=/opt  dest=/tmp/&#34;</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="45-file文件操作模块">4.5 file文件操作模块
+</h2><p>需要和copy区别开，file模块主要是对文件属性各种操作的，用于创建文件、目录数据，以及对现有的文件、目录权限进行修改</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">copy模块，src(管理机器上 )  dest(目标机器上)
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">file专门用于在远程机器上，关于文件的所有操作
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">file  src(目标机器上的文件)   dest(目标机器上的文件)  
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>官网：https://docs.ansible.com/ansible/latest/modules/file_module.html#file-module</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">或者看命令帮助
+</span></span><span class="line"><span class="cl">[root@master-61 ~]#ansible-doc -s file
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="远程创建文件">远程创建文件
+</h3><p>ansible每次命令的执行，都会记录下当前的状态</p>
+<p>state参数、path参数</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-sh" data-lang="sh"><span class="line"><span class="cl">远程在web服务器组中，创建一个文本，  hello_ansible.log
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@master-61 ~<span class="o">]</span><span class="c1"># ansible web -m file -a &#34;path=/opt/hello_ansible.log state=touch&#34;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@master-61 ~<span class="o">]</span><span class="c1"># ansible web -m shell -a &#34;ls -ld /opt/hello*&#34;</span>
+</span></span><span class="line"><span class="cl">172.16.1.7 <span class="p">|</span> CHANGED <span class="p">|</span> <span class="nv">rc</span><span class="o">=</span><span class="m">0</span> &gt;&gt;
+</span></span><span class="line"><span class="cl">drwxr-xr-x <span class="m">2</span> root root <span class="m">6</span> May  <span class="m">6</span> 14:56 /opt/hello_ansible
+</span></span><span class="line"><span class="cl">-rw-r--r-- <span class="m">1</span> root root <span class="m">0</span> May  <span class="m">6</span> 14:54 /opt/hello_ansible.log
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="创建文件夹">创建文件夹
+</h3><p>state参数、path参数</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-sh" data-lang="sh"><span class="line"><span class="cl"><span class="o">[</span>root@master-61 ~<span class="o">]</span><span class="c1">#ansible web -m file -a &#34;path=/opt/hello_ansible  state=directory&#34;</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="创建文件且设定权限">创建文件且设定权限
+</h3><p>state参数、path参数、owner参数、group参数</p>
+<p>path=/opt/hello-linux.log</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-sh" data-lang="sh"><span class="line"><span class="cl"><span class="o">[</span>root@master-61 ~<span class="o">]</span><span class="c1">#ansible web -m file -a &#34;path=/opt/hello-linux.log  state=touch owner=baizhi001 group=baizhi001&#34;</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="远程修改文件属性">远程修改文件属性
+</h3><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-sh" data-lang="sh"><span class="line"><span class="cl"><span class="o">[</span>root@master-61 ~<span class="o">]</span><span class="c1">#ansible web -m file -a &#34;path=/opt/hello-linux.log state=touch owner=baizhi001 group=baizhi001 mode=777&#34;</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="创建软连接文件">创建软连接文件
+</h3><p>软连接，也就是在目标机器上，指定源文件，创建软连接</p>
+<p>src、dest、state</p>
+<p>给web服务器组的 /etc/hosts文件，添加软连接到/opt/hosts文件</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-sh" data-lang="sh"><span class="line"><span class="cl"><span class="o">[</span>root@master-61 ~<span class="o">]</span><span class="c1"># ansible web -m file -a &#34;src=/etc/hosts  dest=/opt/hosts state=link&#34;</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="强制性创建文件软连接">强制性创建文件（软连接）
+</h3><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-sh" data-lang="sh"><span class="line"><span class="cl">意义不大，查看force参数的作用
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@master-61 ~<span class="o">]</span><span class="c1">#ansible web -m file -a &#34;src=/etc/hostsss dest=/opt/hosts state=link  force=yes &#34;	</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="修改已存在文件文件夹的属性">修改已存在文件/文件夹的属性
+</h3><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-sh" data-lang="sh"><span class="line"><span class="cl">修改文件 Path、mode
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@master-61 ~<span class="o">]</span><span class="c1">#ansible 172.16.1.7 -m file -a &#34;path=/opt/chaoge666.log  owner=baizhi001 group=baizhi001  mode=666&#34;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">修改文件夹 Path、mode owner,group
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@master-61 ~<span class="o">]</span><span class="c1">#ansible 172.16.1.7 -m file -a &#34;path=/opt/hello_ansible  owner=baizhi001 group=baizhi001&#34;</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="关于file模块的所有参数作用">关于file模块的所有参数作用
+</h3><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-http" data-lang="http"><span class="line"><span class="cl"><span class="err">https://docs.ansible.com/ansible/latest/collections/ansible/builtin/file_module.html#parameters
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="关于file模块的实例用法">关于file模块的实例用法
+</h3><p>playbook剧本的写法，yaml写法</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-http" data-lang="http"><span class="line"><span class="cl"><span class="err">https://docs.ansible.com/ansible/latest/collections/ansible/builtin/file_module.html#examples
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="46-script脚本模块">4.6 script脚本模块
+</h2><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">一键部署rsync，nfs，nginx等，两种做法:
+</span></span><span class="line"><span class="cl">1.把脚本发到目标机器上执行，
+</span></span><span class="line"><span class="cl">2.远程执行，目标机器上不需要存在这个脚本
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>官网</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-http" data-lang="http"><span class="line"><span class="cl"><span class="err">https://docs.ansible.com/ansible/latest/collections/ansible/builtin/script_module.html#ansible-collections-ansible-builtin-script-module
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p>scripts模块功能：把本地脚本传输到远程节点上并运行脚本</p>
+<p>为什么需要用scripts模块，是因为比起<code>shell</code>模块，script模块功能更强大，管理机本地有一份脚本，就可以在所有机器上运行，斌且script模块可以反复执行命令、远程执行脚本</p>
+<h3 id="scripts模块的功能参数">scripts模块的功能参数
+</h3><div class="table-wrapper"><table>
+<thead>
+<tr>
+<th>选项参数</th>
+<th>选项说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>creates</td>
+<td>定义一个文件是否存在，若不存在，则运行相应命令；存在则跳过</td>
+</tr>
+<tr>
+<td>free_form（必须）</td>
+<td>参数信息中可以输入任何系统命令，实现远程管理</td>
+</tr>
+<tr>
+<td>removes</td>
+<td>定义一个文件是否存在，如果存在，则运行相应命令；如果不存在则跳过</td>
+</tr>
+</tbody>
+</table></div>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-sh" data-lang="sh"><span class="line"><span class="cl">1.管理机创建测试脚本
+</span></span><span class="line"><span class="cl">master-61创建该脚本
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@master-61 ~<span class="o">]</span><span class="c1">#vim echo_server_info.sh </span>
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@master-61 ~<span class="o">]</span><span class="c1">#cat echo_server_info.sh </span>
+</span></span><span class="line"><span class="cl"><span class="nb">echo</span> <span class="s2">&#34;</span><span class="k">$(</span>hostname -I<span class="k">)</span><span class="s2">&#34;</span> &gt;&gt; /tmp/server_info.log
+</span></span><span class="line"><span class="cl"><span class="nb">echo</span> <span class="s2">&#34;</span><span class="k">$(</span>uptime<span class="k">)</span><span class="s2">&#34;</span> &gt;&gt; /tmp/server_info.log
+</span></span><span class="line"><span class="cl"><span class="nb">echo</span> <span class="s2">&#34;</span><span class="k">$(</span>free -m<span class="k">)</span><span class="s2">&#34;</span> &gt;&gt; /tmp/server_info.log
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">2.添加执行权限
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@master-61 ~<span class="o">]</span><span class="c1">#chmod +x echo_server_info.sh </span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">3.远程执行
+</span></span><span class="line"><span class="cl">发给nfs机器去执行
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@master-61 ~<span class="o">]</span><span class="c1">#ansible nfs -m script -a &#34;/root/echo_server_info.sh&#34;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">4.检查结果
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@master-61 ~<span class="o">]</span><span class="c1">#ansible nfs -m shell -a &#34;cat /tmp/server_info.log&#34;</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="远程在目标机器执行脚本">远程在目标机器执行脚本
+</h3><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">远程安装nginx脚本
+</span></span><span class="line"><span class="cl">[root@master-61 ~]#cat install_nginx.sh 
+</span></span><span class="line"><span class="cl">#yum install nginx -y
+</span></span><span class="line"><span class="cl">#yum remove nginx -y
+</span></span><span class="line"><span class="cl">echo &#34;nginx操作完毕&#34;
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">[root@master-61 ~]#ansible nfs -m script -a &#34;/root/install_nginx.sh&#34;
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="查看命令执行详细过程">查看命令执行详细过程
+</h3><p>显示命令执行的详细过程，开启了debug日志模式，-vvvvv参数显示详细过程，v越多，越详细</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">[root@master-61 ~]#ansible nfs -vvvv -m shell -a &#34;cat /tmp/server_info.log&#34; 
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="47-cron定时任务模块">4.7 cron定时任务模块
+</h2><p>cron模块用于管理定时任务的记录，编写任务</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-http" data-lang="http"><span class="line"><span class="cl"><span class="err">官网文档
+</span></span></span><span class="line"><span class="cl"><span class="err">https://docs.ansible.com/ansible/latest/modules/cron_module.html#cron-module
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="对比ansible的cron模块以及crontab">对比ansible的cron模块以及crontab
+</h3><p>常见的参数如此，使用ansible编写定时任务，和直接编写是没有什么区别的</p>
+<p><img src="/xiaoshi/p/ansible%E5%9F%BA%E7%A1%80/assets/aff7e1c089d7fbf568a8ca351a46d5a1.jpeg"
+	width="1888"
+	height="413"
+	srcset="/xiaoshi/p/ansible%E5%9F%BA%E7%A1%80/assets/aff7e1c089d7fbf568a8ca351a46d5a1_hu3400507602043994949.jpeg 480w, /xiaoshi/p/ansible%E5%9F%BA%E7%A1%80/assets/aff7e1c089d7fbf568a8ca351a46d5a1_hu6034676024120022660.jpeg 1024w"
+	loading="lazy"
+	
+		alt="aff7e1c089d7fbf568a8ca351a46d5a1"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="457"
+		data-flex-basis="1097px"
+	
+></p>
+<h3 id="添加ntpdate定时任务">添加ntpdate定时任务
+</h3><p>添加每5分钟执行一次和阿里云时间同步</p>
+<p>name、job、minute参数</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-sh" data-lang="sh"><span class="line"><span class="cl">cron模块创建定时任务
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@master-61 ~<span class="o">]</span><span class="c1">#ansible nfs  -m cron   -a &#34;name=&#39;ntp aliyun&#39;   minute=*/5   job=&#39;ntpdate -u ntp.aliyun.com&#39;&#34;</span>
+</span></span><span class="line"><span class="cl">172.16.1.31 <span class="p">|</span> <span class="nv">CHANGED</span> <span class="o">=</span>&gt; <span class="o">{</span>
+</span></span><span class="line"><span class="cl">    <span class="s2">&#34;ansible_facts&#34;</span>: <span class="o">{</span>
+</span></span><span class="line"><span class="cl">        <span class="s2">&#34;discovered_interpreter_python&#34;</span>: <span class="s2">&#34;/usr/bin/python&#34;</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span>, 
+</span></span><span class="line"><span class="cl">    <span class="s2">&#34;changed&#34;</span>: true, 
+</span></span><span class="line"><span class="cl">    <span class="s2">&#34;envs&#34;</span>: <span class="o">[]</span>, 
+</span></span><span class="line"><span class="cl">    <span class="s2">&#34;jobs&#34;</span>: <span class="o">[</span>
+</span></span><span class="line"><span class="cl">        <span class="s2">&#34;ntp aliyun&#34;</span>
+</span></span><span class="line"><span class="cl">    <span class="o">]</span>
+</span></span><span class="line"><span class="cl"><span class="o">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">查看远程机器的crontab记录
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@master-61 ~<span class="o">]</span><span class="c1">#ansible nfs -m shell -a &#34;crontab -l&#34;</span>
+</span></span><span class="line"><span class="cl">172.16.1.31 <span class="p">|</span> CHANGED <span class="p">|</span> <span class="nv">rc</span><span class="o">=</span><span class="m">0</span> &gt;&gt;
+</span></span><span class="line"><span class="cl">* * * * * /usr/sbin/ntpdate time1.aliyun.com &gt; /dev/null 2&gt;<span class="p">&amp;</span><span class="m">1</span>
+</span></span><span class="line"><span class="cl"><span class="c1">#Ansible: ntp aliyun</span>
+</span></span><span class="line"><span class="cl">*/5 * * * * ntpdate -u ntp.aliyun.com
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="删除定时任务">删除定时任务
+</h3><p>只能基于cron模块指定名字的修改</p>
+<p>name参数，state参数</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-sh" data-lang="sh"><span class="line"><span class="cl">cron模块用法
+</span></span><span class="line"><span class="cl">ansible nfs -m cron -a <span class="s2">&#34;name=&#39;ntp aliyun&#39;  state=absent &#34;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">shell模块用法
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@master-61 ~<span class="o">]</span><span class="c1">#ansible nfs -m shell -a &#34;crontab -r&#34;</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="创建每分钟执行的任务">创建每分钟执行的任务
+</h3><p>不指定任何时间规则，默认是每分钟</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">[root@master-61 ~]#ansible nfs -m cron -a &#34;name=&#39;一句话&#39;  job=&#39;echo &#34;hellolinux&#34; &gt;&gt;/tmp/hello.log &#39;&#34;
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">[root@master-61 ~]#ansible nfs -m shell -a &#34;crontab -l&#34;
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="修改指定名称的定时任务">修改指定名称的定时任务
+</h3><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">[root@master-61 ~]#ansible nfs -m cron -a &#34;name=&#39;一句话&#39;    minute=30  hour=23   job=&#39;echo hellolinux &gt;&gt;/tmp/hello.log&#39; &#34;
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">[root@master-61 ~]#ansible nfs -m shell -a &#34;crontab -l&#34;
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="48-group模块">4.8 group模块
+</h2><p>管理系统用户组的模块</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-http" data-lang="http"><span class="line"><span class="cl"><span class="err">官网文档
+</span></span></span><span class="line"><span class="cl"><span class="err">https://docs.ansible.com/ansible/latest/modules/group_module.html#group-
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p>语法:</p>
+<div class="table-wrapper"><table>
+<thead>
+<tr>
+<th>模块参数</th>
+<th>参数描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>name</td>
+<td>创建指定的组名</td>
+</tr>
+<tr>
+<td>gid</td>
+<td>组的GID</td>
+</tr>
+<tr>
+<td>state</td>
+<td>absent，移除远程主机的组</td>
+</tr>
+<tr>
+<td></td>
+<td>present，创建远端主机的组</td>
+</tr>
+</tbody>
+</table></div>
+<h3 id="创建baizhi_ops组gid1234">创建baizhi_ops组，gid=1234
+</h3><p>name、gid</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl"><span class="o">[</span>root@master-61 ~<span class="o">]</span><span class="c1">#ansible nfs  -m group  -a &#34;name=baizhi_ops   gid=1234&#34;</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="删除组">删除组
+</h3><p>name、gid、state</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl"><span class="o">[</span>root@master-61 ~<span class="o">]</span><span class="c1">#ansible nfs  -m group  -a &#34;name=baizhi_ops   gid=1234  state=absent&#34;  </span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="49-user用户模块">4.9 user用户模块
+</h2><p>用户管理，也就是关于用户的</p>
+<ul>
+<li>uid</li>
+<li>用户名</li>
+<li>用户主组</li>
+<li>用户附加组</li>
+<li>创建用户</li>
+<li>删除用户</li>
+<li>创建关于用户的公私钥</li>
+<li>用户过期时间</li>
+<li>用户密码过期时间</li>
+</ul>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-http" data-lang="http"><span class="line"><span class="cl"><span class="err">官网文档
+</span></span></span><span class="line"><span class="cl"><span class="err">https://docs.ansible.com/ansible/latest/modules/user_module.html#user-module
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="语法参数">语法参数
+</h3><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-http" data-lang="http"><span class="line"><span class="cl"><span class="err">实例用法
+</span></span></span><span class="line"><span class="cl"><span class="err">https://docs.ansible.com/ansible/latest/collections/ansible/builtin/user_module.html#examples
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><div class="table-wrapper"><table>
+<thead>
+<tr>
+<th>模块参数</th>
+<th>参数描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>create_home</td>
+<td>创建家目录，设置no则不创建家目录</td>
+</tr>
+<tr>
+<td>group</td>
+<td>创建用户组</td>
+</tr>
+<tr>
+<td>name</td>
+<td>创建用户的名字</td>
+</tr>
+<tr>
+<td>password</td>
+<td>创建用户的密码</td>
+</tr>
+<tr>
+<td>uid</td>
+<td>创建用户的UID</td>
+</tr>
+<tr>
+<td>shell</td>
+<td>用户登录解释器</td>
+</tr>
+<tr>
+<td>state</td>
+<td>Absent（删除用户）present（默认参数，创建）</td>
+</tr>
+<tr>
+<td>expires</td>
+<td>账户过期时间</td>
+</tr>
+</tbody>
+</table></div>
+<h3 id="创建baizhi001用户uid为8888">创建baizhi001用户，uid为8888
+</h3><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-sh" data-lang="sh"><span class="line"><span class="cl"><span class="o">[</span>root@master-61 ~<span class="o">]</span><span class="c1">#ansible nfs -m user -a &#34;name=baizhi001  uid=8888&#34;</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="创建用户cc01">创建用户cc01
+</h3><ul>
+<li>uid、gid为1777</li>
+<li>没有家目录、不允许登录</li>
+</ul>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span><span class="lnt">9
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-sh" data-lang="sh"><span class="line"><span class="cl">注意该用户组是否存在，否则报错
+</span></span><span class="line"><span class="cl">group、name、gid
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@master-61 ~<span class="o">]</span><span class="c1">#ansible nfs -m group -a &#34;name=cc01 gid=1777&#34;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">创建用户，设置权限
+</span></span><span class="line"><span class="cl">user、name、uid、group、create_home、shell
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@master-61 ~<span class="o">]</span><span class="c1">#ansible nfs -m user -a &#34;name=cc01 uid=1777 group=1777 create_home=no  shell=/sbin/nologin &#34;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">检查用户
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="410-yum安装软件">4.10 yum安装软件
+</h2><p>yum模块明显就是一个专门用于管理软件的模块。yum模块其实就是在远程节点上，执行yum命令，你可以快速登录到目标机器，查看进程</p>
+<h3 id="官网文档示例用法">官网文档示例用法
+</h3><p><img src="/xiaoshi/p/ansible%E5%9F%BA%E7%A1%80/assets/image-20200317164841904.png"
+	width="1576"
+	height="858"
+	srcset="/xiaoshi/p/ansible%E5%9F%BA%E7%A1%80/assets/image-20200317164841904_hu8118940964493789301.png 480w, /xiaoshi/p/ansible%E5%9F%BA%E7%A1%80/assets/image-20200317164841904_hu4372038433789442210.png 1024w"
+	loading="lazy"
+	
+		alt="image-20200317164841904"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="183"
+		data-flex-basis="440px"
+	
+></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-http" data-lang="http"><span class="line"><span class="cl"><span class="err">https://docs.ansible.com/ansible/latest/collections/ansible/builtin/yum_module.html#examples
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="安装net-tools最新版本">安装net-tools最新版本
+</h3><p>latest参数也用于升级软件包</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-sh" data-lang="sh"><span class="line"><span class="cl"><span class="o">[</span>root@master-61 ~<span class="o">]</span><span class="c1">#ansible backup -m yum -a &#34;name=net-tools state=latest&#34;</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="卸载net-tools软件">卸载net-tools软件
+</h3><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-sh" data-lang="sh"><span class="line"><span class="cl"><span class="o">[</span>root@master-61 ~<span class="o">]</span><span class="c1">#ansible backup -m yum -a &#34;name=net-tools state=absent&#34;</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="安装rsync服务">安装rsync服务
+</h3><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-sh" data-lang="sh"><span class="line"><span class="cl"><span class="o">[</span>root@master-61 ~<span class="o">]</span><span class="c1">#ansible backup -m yum -a &#34;name=rsync state=installed&#34;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">检查rsync
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@master-61 ~<span class="o">]</span><span class="c1">#ansible backup -m shell -a &#34;rpm -qa rsync&#34;</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="卸载rsync服务">卸载rsync服务
+</h3><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-sh" data-lang="sh"><span class="line"><span class="cl"><span class="o">[</span>root@master-61 ~<span class="o">]</span><span class="c1">#ansible backup -m yum -a &#34;name=rsync state=removed&#34;</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="411-servicesystemd模块">4.11 service/systemd模块
+</h2><p>该模块作用是针对yum包管理</p>
+<p>service适用于centos6前的系统</p>
+<p>systemd命令应用于centos7系统</p>
+<p><strong>要注意的是service模块依旧对centos7有效，但是建议大家使用systemd模块</strong></p>
+<blockquote>
+<ul>
+<li>systemd模块用于控制远程主机的systemd服务，说白了，就是Linux下的systemd命令。需要远程主机支持systemd</li>
+<li>用法和service模块基本相同</li>
+</ul>
+</blockquote>
+<h3 id="systemd模块参数">systemd模块参数
+</h3><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-gdscript3" data-lang="gdscript3"><span class="line"><span class="cl"><span class="err">如果使用</span><span class="n">systemctl</span> <span class="err">管理程序的话，可以使用</span><span class="n">systemd模块</span><span class="err">，</span><span class="n">systemctl</span> <span class="err">可以</span> <span class="err">控制程序启</span><span class="o">/</span><span class="err">停，</span><span class="n">reload</span><span class="err">，开机启动，观察程序状态（</span><span class="n">status</span><span class="err">）等，掌握使用后管理就更方便了</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="err">主要参数</span>
+</span></span><span class="line"><span class="cl"><span class="n">daemon_reload</span><span class="err">：在执行任何其他操作之前运行守护进程重新加载，以确保</span><span class="n">systemd已经读取其他更改</span>
+</span></span><span class="line"><span class="cl"><span class="n">enabled</span><span class="err">：服务是否开机自动启动</span><span class="n">yes</span><span class="o">|</span><span class="n">no</span><span class="err">。</span><span class="n">enabled和state至少要有一个被定义</span>
+</span></span><span class="line"><span class="cl"><span class="n">masked</span><span class="err">：是否将服务设置为</span><span class="n">masked状态</span><span class="err">，被</span><span class="n">mask的服务是无法启动的</span>
+</span></span><span class="line"><span class="cl"><span class="n">name</span><span class="err">：必选项，服务名称</span>
+</span></span><span class="line"><span class="cl"><span class="n">no_block</span><span class="p">(</span><span class="mf">2.3</span><span class="err">后新增</span><span class="p">)</span><span class="err">：不要同步等待操作请求完成</span>
+</span></span><span class="line"><span class="cl"><span class="n">state</span><span class="err">：对当前服务执行启动，停止、重启、重新加载等操作（</span><span class="n">started</span><span class="p">,</span><span class="n">stopped</span><span class="p">,</span><span class="n">restarted</span><span class="p">,</span><span class="n">reloaded</span><span class="err">）</span>
+</span></span><span class="line"><span class="cl"><span class="n">user</span><span class="err">：使用服务的调用者运行</span><span class="n">systemctl</span><span class="err">，而不是系统的服务管理者</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="安装启动nginx服务">安装、启动nginx服务
+</h3><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-sh" data-lang="sh"><span class="line"><span class="cl">1.安装nginx服务
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@master-61 ~<span class="o">]</span><span class="c1">#ansible web -m yum -a &#34;name=nginx state=installed&#34;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">2.启动服务
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@master-61 ~<span class="o">]</span><span class="c1">#ansible web -m systemd -a &#34;name=nginx state=started&#34;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">3.查询状态，这里ansible未直接提供status参数，你可以借助command模块即可
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@master-61 ~<span class="o">]</span><span class="c1">#ansible web -a &#34;systemctl status nginx&#34;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">4.停止nginx服务
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@master-61 ~<span class="o">]</span><span class="c1">#ansible web -m systemd -a &#34;name=nginx state=stopped&#34;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">5.设置nginx开机自启
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@master-61 ~<span class="o">]</span><span class="c1">#ansible web -m systemd -a &#34;name=nginx state=started enabled=yes&#34;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">6.检查nginx状态
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@master-61 ~<span class="o">]</span><span class="c1">#ansible web -a &#34;systemctl is-enabled nginx&#34;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@master-61 ~<span class="o">]</span><span class="c1">#ansible web -a &#34;systemctl status nginx&#34;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">7.关闭开机自启、且停止服务
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@master-61 ~<span class="o">]</span><span class="c1">#ansible web -m systemd -a &#34;name=nginx state=stopped  enabled=no&#34;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">8.再次检查状态
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@master-61 ~<span class="o">]</span><span class="c1">#ansible web  -m shell -a &#34;systemctl is-enabled nginx;systemctl status nginx&#34;</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="412-mount挂载模块">4.12 mount挂载模块
+</h2><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-http" data-lang="http"><span class="line"><span class="cl"><span class="err">官网
+</span></span></span><span class="line"><span class="cl"><span class="err">https://docs.ansible.com/ansible/latest/collections/ansible/posix/mount_module.html#mount-
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="在nfs-31机器准备nfs">在nfs-31机器准备nfs
+</h3><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-sh" data-lang="sh"><span class="line"><span class="cl"><span class="o">[</span>root@nfs-31 ~<span class="o">]</span><span class="c1">#yum install nfs-utils rpcbind -y</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@nfs-31 ~<span class="o">]</span><span class="c1">#mkdir /nfs-data</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@nfs-31 ~<span class="o">]</span><span class="c1">#vim /etc/exports</span>
+</span></span><span class="line"><span class="cl">/nfs-data 172.16.1.0/24<span class="o">(</span>rw<span class="o">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@nfs-31 ~<span class="o">]</span><span class="c1">#systemctl restart nfs</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@nfs-31 ~<span class="o">]</span><span class="c1">#showmount -e 127.0.0.1</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="给web-7机器挂载nfs目录只写入etcfstab而不立即挂载">给web-7机器挂载nfs目录（只写入/etc/fstab而不立即挂载）
+</h3><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-sh" data-lang="sh"><span class="line"><span class="cl"><span class="o">[</span>root@master-61 ~<span class="o">]</span><span class="c1">#ansible  172.16.1.7  -m mount  -a &#34;src=&#39;172.16.1.31:/nfs-data&#39; path=&#39;/test-nfs&#39;    state=present  fstype=nfs &#34;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">查看挂载状态
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@master-61 ~<span class="o">]</span><span class="c1">#ansible 172.16.1.7 -m shell -a &#34;cat /etc/fstab&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@master-61 ~<span class="o">]</span><span class="c1">#ansible 172.16.1.7 -a &#34;df -h&#34;</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="给web-7机器挂载nfs目录立即挂载且写入etcfstab">给web-7机器挂载nfs目录（立即挂载且写入/etc/fstab）
+</h3><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-sh" data-lang="sh"><span class="line"><span class="cl"><span class="o">[</span>root@master-61 ~<span class="o">]</span><span class="c1">#ansible  172.16.1.7  -m mount  -a &#34;src=&#39;172.16.1.31:/nfs-data&#39; path=&#39;/test-nfs&#39;    state=mounted  fstype=nfs &#34;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">检查
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@master-61 ~<span class="o">]</span><span class="c1">#ansible 172.16.1.7 -a &#34;df -h&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@master-61 ~<span class="o">]</span><span class="c1">#ansible 172.16.1.7 -a &#34;cat /etc/fstab&#34;</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="取消挂载以及删除fstab记录">取消挂载，以及删除fstab记录
+</h3><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-sh" data-lang="sh"><span class="line"><span class="cl"><span class="o">[</span>root@master-61 ~<span class="o">]</span><span class="c1">#ansible  172.16.1.7  -m mount  -a &#34;src=&#39;172.16.1.31:/nfs-data&#39; path=&#39;/test-nfs&#39;    state=absent  fstype=nfs &#34;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">验证
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@master-61 ~<span class="o">]</span><span class="c1">#ansible 172.16.1.7 -a &#34;df -h&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@master-61 ~<span class="o">]</span><span class="c1">#ansible 172.16.1.7 -a &#34;cat /etc/fstab&#34;</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="取消挂载不删除fstab记录">取消挂载，不删除fstab记录
+</h3><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-sh" data-lang="sh"><span class="line"><span class="cl"><span class="o">[</span>root@master-61 ~<span class="o">]</span><span class="c1">#ansible  172.16.1.7  -m mount  -a &#34;src=&#39;172.16.1.31:/nfs-data&#39; path=&#39;/test-nfs&#39;    state=unmounted  fstype=nfs &#34;</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="state总结参数">state总结参数
+</h3><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">mounted 挂载设备且写入fstab
+</span></span><span class="line"><span class="cl">present 仅写入fstab 不挂载
+</span></span><span class="line"><span class="cl">absent  卸载且删除fstab记录
+</span></span><span class="line"><span class="cl">umounted 只卸载不删除fstab记录
+</span></span><span class="line"><span class="cl">remounted 重新挂载这个设备
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="413-archive压缩模块">4.13 archive压缩模块
+</h2><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-http" data-lang="http"><span class="line"><span class="cl"><span class="err">官网文档
+</span></span></span><span class="line"><span class="cl"><span class="err">https://docs.ansible.com/ansible/latest/collections/community/general/archive_module.html
+</span></span></span><span class="line"><span class="cl"><span class="err">用法文档
+</span></span></span><span class="line"><span class="cl"><span class="err">https://docs.ansible.com/ansible/latest/collections/community/general/archive_module.html#examples
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="支持压缩类型">支持压缩类型
+</h3><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">bz2
+</span></span><span class="line"><span class="cl">gz ← (default)
+</span></span><span class="line"><span class="cl">tar
+</span></span><span class="line"><span class="cl">xz
+</span></span><span class="line"><span class="cl">zip 
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="压缩etc配置文件到指定路径">压缩/etc配置文件到指定路径
+</h3><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-sh" data-lang="sh"><span class="line"><span class="cl"><span class="o">[</span>root@master-61 ~<span class="o">]</span><span class="c1">#ansible web -m archive -a &#34;path=/etc dest=/opt/etc.tgz&#34;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@master-61 ~<span class="o">]</span><span class="c1">#ansible web -a &#34;ls /opt -l&#34;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@master-61 ~<span class="o">]</span><span class="c1">#ansible web -a &#34;file /opt/etc.tgz&#34;</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="压缩varlog为zip类型到指定路径">压缩/var/log为zip类型到指定路径
+</h3><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-sh" data-lang="sh"><span class="line"><span class="cl"><span class="o">[</span>root@master-61 ~<span class="o">]</span><span class="c1">#ansible web -m archive -a &#34;path=/var/log dest=/opt/log.zip format=zip&#34;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@master-61 ~<span class="o">]</span><span class="c1">#ansible web -a &#34;file /opt/log.zip&#34;</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="414-unarchive解压缩模块">4.14 unarchive解压缩模块
+</h2><p>注意了，你现在是远程解压缩，而不是在本机直接解压缩</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-http" data-lang="http"><span class="line"><span class="cl"><span class="err">https://docs.ansible.com/ansible/latest/collections/ansible/builtin/unarchive_module.html#examples
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="解压缩etctgz到指定目录远程解压">解压缩etc.tgz到指定目录（远程解压）
+</h3><p>remote_src远程数据源</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-sh" data-lang="sh"><span class="line"><span class="cl">指定目录必须存在
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@master-61 ~<span class="o">]</span><span class="c1">#ansible web -m file -a &#34;path=/opt/etc_file state=directory&#34;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">解压缩
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@master-61 ~<span class="o">]</span><span class="c1">#ansible web -m unarchive -a &#34;src=/opt/etc.tgz dest=/opt/etc_file/ remote_src=yes&#34;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">查看
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@master-61 ~<span class="o">]</span><span class="c1">#ansible web -a &#34;ls /opt/etc_file/etc/&#34;</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="将管理机的压缩包解压到远程机器上">将管理机的压缩包，解压到远程机器上
+</h3><p>将master-61的压缩文件，解压到web-7机器上</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-sh" data-lang="sh"><span class="line"><span class="cl">1.生成etc.tgz数据
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@master-61 ~<span class="o">]</span><span class="c1">#cd / &amp;&amp; tar -zcf /opt/etc.tgz etc</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">2.远程解压到web-7机器上
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@master-61 /<span class="o">]</span><span class="c1">#ansible web -m unarchive -a &#34;src=/opt/etc.tgz  dest=/tmp/&#34;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">3.检查
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@master-61 /<span class="o">]</span><span class="c1">#ansible web -a &#34;ls /tmp/etc/&#34;</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div>
+</section>
+
+
+    <footer class="article-footer">
+    
+
+    </footer>
+
+
+    
+</article>
+
+    
+
+    
+
+     
+    
+        
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+        2025 小诗
+    </section>
+    
+    <section class="powerby">
+        使用 <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> 构建 <br />
+        主题 <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.26.0">Stack</a></b> 由 <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a> 设计
+    </section>
+</footer>
+
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css"crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css"crossorigin="anonymous"
+            >
+
+            </main>
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.6/dist/vibrant.min.js"integrity="sha256-awcR2jno4kI5X0zL8ex0vi2z&#43;KMkF24hUW8WePSA9HM="crossorigin="anonymous"
+                
+                >
+            </script><script type="text/javascript" src="/xiaoshi/ts/main.js" defer></script>
+<script>
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+
+    </body>
+</html>

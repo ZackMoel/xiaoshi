@@ -1,0 +1,1565 @@
+<!DOCTYPE html>
+<html lang="zh-cn" dir="ltr">
+    <head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content="role的官网介绍 Roles — Ansible Community Documentation 为什么用role 1 2 3 4 5 6 7 8 9 10 11 12 把单个的大剧本，拆分为小剧本，便于维护，修改、使用 完成解耦、结构更清晰、">
+<title>Ansible角色</title>
+
+<link rel='canonical' href='https://ZackMoel.github.io/xiaoshi/p/ansible%E8%A7%92%E8%89%B2/'>
+
+<link rel="stylesheet" href="/xiaoshi/scss/style.min.0304c6baf04e01a8fe70693791cb744d56a3578a3120a8796cefc66825aa39c7.css"><meta property='og:title' content="Ansible角色">
+<meta property='og:description' content="role的官网介绍 Roles — Ansible Community Documentation 为什么用role 1 2 3 4 5 6 7 8 9 10 11 12 把单个的大剧本，拆分为小剧本，便于维护，修改、使用 完成解耦、结构更清晰、">
+<meta property='og:url' content='https://ZackMoel.github.io/xiaoshi/p/ansible%E8%A7%92%E8%89%B2/'>
+<meta property='og:site_name' content='小诗的博客'>
+<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:published_time' content='2025-04-14T16:39:02&#43;08:00'/><meta property='article:modified_time' content='2025-04-14T16:39:02&#43;08:00'/>
+<meta name="twitter:title" content="Ansible角色">
+<meta name="twitter:description" content="role的官网介绍 Roles — Ansible Community Documentation 为什么用role 1 2 3 4 5 6 7 8 9 10 11 12 把单个的大剧本，拆分为小剧本，便于维护，修改、使用 完成解耦、结构更清晰、">
+  
+
+
+    </head>
+    <body class="
+    article-page
+    ">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex on-phone--column extended"><aside class="sidebar left-sidebar sticky ">
+    <button class="hamburger hamburger--spin" type="button" id="toggle-menu" aria-label="切换菜单">
+        <span class="hamburger-box">
+            <span class="hamburger-inner"></span>
+        </span>
+    </button>
+
+    <header>
+        
+            
+            <figure class="site-avatar">
+                <a href="/xiaoshi/">
+                
+                    
+                    
+                    
+                        
+                        <img src="/xiaoshi/img/avatar_hu8920112365793990935.png" width="300"
+                            height="300" class="site-logo" loading="lazy" alt="Avatar">
+                    
+                
+                </a>
+                
+                    <span class="emoji">🍥</span>
+                
+            </figure>
+            
+        
+        
+        <div class="site-meta">
+            <h1 class="site-name"><a href="/xiaoshi">小诗的博客</a></h1>
+            <h2 class="site-description">欢迎来到小诗的博客</h2>
+        </div>
+    </header><ol class="menu-social">
+            
+                <li>
+                    <a 
+                        href='https://space.bilibili.com/1055981889?spm_id_from=333.1007.0.0'
+                        target="_blank"
+                        title="bilibili"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg  xmlns="http://www.w3.org/2000/svg"  width="24"  height="24"  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  stroke-width="2"  stroke-linecap="round"  stroke-linejoin="round"  class="icon icon-tabler icons-tabler-outline icon-tabler-brand-bilibili"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M3 10a4 4 0 0 1 4 -4h10a4 4 0 0 1 4 4v6a4 4 0 0 1 -4 4h-10a4 4 0 0 1 -4 -4v-6z" /><path d="M8 3l2 3" /><path d="M16 3l-2 3" /><path d="M9 13v-2" /><path d="M15 11v2" /></svg>
+                        
+                    </a>
+                </li>
+            
+                <li>
+                    <a 
+                        href='https://github.com/ZackMoel/xiaoshi.github.io'
+                        target="_blank"
+                        title="GitHub"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-github" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M9 19c-4.3 1.4 -4.3 -2.5 -6 -3m12 5v-3.5c0 -1 .1 -1.4 -.5 -2c2.8 -.3 5.5 -1.4 5.5 -6a4.6 4.6 0 0 0 -1.3 -3.2a4.2 4.2 0 0 0 -.1 -3.2s-1.1 -.3 -3.5 1.3a12.3 12.3 0 0 0 -6.2 0c-2.4 -1.6 -3.5 -1.3 -3.5 -1.3a4.2 4.2 0 0 0 -.1 3.2a4.6 4.6 0 0 0 -1.3 3.2c0 4.6 2.7 5.7 5.5 6c-.6 .6 -.6 1.2 -.5 2v3.5" />
+</svg>
+
+
+
+                        
+                    </a>
+                </li>
+            
+        </ol><ol class="menu" id="main-menu">
+        
+        
+        
+        <li >
+            <a href='/xiaoshi/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-home" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <polyline points="5 12 3 12 12 3 21 12 19 12" />
+  <path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7" />
+  <path d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6" />
+</svg>
+
+
+
+                
+                <span>主页</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/xiaoshi/%E5%85%B3%E4%BA%8E/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-user" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="7" r="4" />
+  <path d="M6 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2" />
+</svg>
+
+
+
+                
+                <span>关于</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/xiaoshi/archives/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-archive" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <rect x="3" y="4" width="18" height="4" rx="2" />
+  <path d="M5 8v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-10" />
+  <line x1="10" y1="12" x2="14" y2="12" />
+</svg>
+
+
+
+                
+                <span>归档</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/xiaoshi/search/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-search" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="10" cy="10" r="7" />
+  <line x1="21" y1="21" x2="15" y2="15" />
+</svg>
+
+
+
+                
+                <span>搜索</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/xiaoshi/%E5%8F%8B%E6%83%85%E9%93%BE%E6%8E%A5/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-link" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M10 14a3.5 3.5 0 0 0 5 0l4 -4a3.5 3.5 0 0 0 -5 -5l-.5 .5" />
+  <path d="M14 10a3.5 3.5 0 0 0 -5 0l-4 4a3.5 3.5 0 0 0 5 5l.5 -.5" />
+</svg>
+
+
+
+                
+                <span>友情链接</span>
+            </a>
+        </li>
+        
+        <li class="menu-bottom-section">
+            <ol class="menu">
+
+                
+                    <li id="dark-mode-toggle">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="8" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="16" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <span>暗色模式</span>
+                    </li>
+                
+            </ol>
+        </li>
+    </ol>
+</aside>
+
+    <aside class="sidebar right-sidebar sticky">
+        
+            
+                
+    <section class="widget archives">
+        <div class="widget-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <line x1="5" y1="9" x2="19" y2="9" />
+  <line x1="5" y1="15" x2="19" y2="15" />
+  <line x1="11" y1="4" x2="7" y2="20" />
+  <line x1="17" y1="4" x2="13" y2="20" />
+</svg>
+
+
+
+        </div>
+        <h2 class="widget-title section-title">目录</h2>
+        
+        <div class="widget--toc">
+            <nav id="TableOfContents">
+  <ol>
+    <li><a href="#先写好纯playbook形式">先写好纯playbook形式</a></li>
+    <li><a href="#将剧本拆为role的形式">将剧本拆为role的形式</a>
+      <ol>
+        <li><a href="#拆tasks任务">拆tasks（任务）</a></li>
+        <li><a href="#拆-varsmainyml">拆 vars/main.yml</a></li>
+        <li><a href="#拆配置文件">拆配置文件</a></li>
+        <li><a href="#拆handlers">拆handlers</a></li>
+        <li><a href="#创建启动文件">创建启动文件</a></li>
+        <li><a href="#正式运行该rsync角色">正式运行该rsync角色</a></li>
+      </ol>
+    </li>
+    <li><a href="#测试handlers的执行">测试handlers的执行</a></li>
+  </ol>
+
+  <ol>
+    <li><a href="#改为变量形式的配置文件">改为变量形式的配置文件</a></li>
+    <li><a href="#使用template模板替换配置文件的思路">使用template模板替换配置文件的思路</a></li>
+    <li><a href="#以部署sshd服务为演示role角色">以部署sshd服务为演示（role角色）</a>
+      <ol>
+        <li><a href="#1创建sshd_server角色目录">1.创建sshd_server角色目录</a></li>
+        <li><a href="#2需要创建role目录下的每一个目录资料">2.需要创建role目录下的每一个目录资料</a></li>
+        <li><a href="#先创建部署sshd的tasks任务文件">先创建部署sshd的tasks任务文件</a></li>
+        <li><a href="#3创建template信息">3.创建template信息</a></li>
+        <li><a href="#4创建变量文件">4.创建变量文件</a></li>
+        <li><a href="#5创建handlers文件用于重启sshd">5.创建handlers文件，用于重启sshd</a></li>
+        <li><a href="#6检查当前服务的roles目录信息">6.检查当前服务的roles目录信息</a></li>
+        <li><a href="#7创建启动文件就完事">7.创建启动文件就完事</a></li>
+      </ol>
+    </li>
+  </ol>
+</nav>
+        </div>
+    </section>
+
+            
+        
+    </aside>
+
+
+            <main class="main full-width">
+    <article class="main-article">
+    <header class="article-header">
+
+    <div class="article-details">
+    
+
+    <div class="article-title-wrapper">
+        <h2 class="article-title">
+            <a href="/xiaoshi/p/ansible%E8%A7%92%E8%89%B2/">Ansible角色</a>
+        </h2>
+    
+        
+    </div>
+
+    
+    
+    
+    
+    <footer class="article-time">
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
+  <circle cx="18" cy="18" r="4" />
+  <path d="M15 3v4" />
+  <path d="M7 3v4" />
+  <path d="M3 11h16" />
+  <path d="M18 16.496v1.504l1 1" />
+</svg>
+                <time class="article-time--published">2025-04-14</time>
+            </div>
+        
+
+        
+    </footer>
+    
+
+    
+</div>
+
+</header>
+
+    <section class="article-content">
+    
+    
+    <h1 id="role的官网介绍">role的官网介绍
+</h1><p><a class="link" href="https://docs.ansible.com/ansible/latest/playbook_guide/playbooks_reuse_roles.html"  target="_blank" rel="noopener"
+    >Roles — Ansible Community Documentation</a></p>
+<h1 id="为什么用role">为什么用role
+</h1><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">把单个的大剧本，拆分为小剧本，便于维护，修改、使用
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">完成解耦、结构更清晰、调试更方便
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">如果是小部署， 还是剧本更方便
+</span></span><span class="line"><span class="cl">大型项目，必须通过role管理
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">在实际的工作当中，一个完整的项目实际上是很多功能体的组合，如果将所有的功能写在一个playbook中会存在如代码耦合程度高、playbook长而维护成本大、灵活性低等一系列的问题。
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">使用roles能巧妙的解决这一系列的问题。
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">roles是ansible1.2版本后加入的新功能，适合于大项目playbook的编排架构。
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h1 id="具体role的用法">具体role的用法
+</h1><ul>
+<li>role（角色）用于层次化、结构化的组织多个playbook.</li>
+<li>role主要的作用是可以单独的通过一个有组织的结构，通过单独的目录管理如变量、文件、任务、模块等，并且可以通过include导入使用这些目录。</li>
+<li>roles主要依赖于目录的命名和摆放，默认tasks/main.yml是所有任务的入口，使用roles的过程也可以认为是目录规范化命名的过程</li>
+<li>roles每个目录下均由main.yml定义该功能的任务集，tasks/main.yml默认执行所有定义的任务；</li>
+<li>roles目录建议放在ansible.cfg中&quot;roles_path&quot;定义的目录下.</li>
+</ul>
+<p><img src="/Ansible%e5%9f%ba%e7%a1%80/assets/ca14868c9670757defc6b8a6a1d6ccb.jpg"
+	
+	
+	
+	loading="lazy"
+	
+		alt="ca14868c9670757defc6b8a6a1d6ccb"
+	
+	
+></p>
+<ul>
+<li>使用role的好处：</li>
+</ul>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">1.难度会大大降低
+</span></span><span class="line"><span class="cl">role理念就是把你以前部署的playbook进行拆分，拆成固定的目录格式
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">2. 你来了新任务，直接基于role去部署
+</span></span><span class="line"><span class="cl">等于
+</span></span><span class="line"><span class="cl">ad-hoc 临时命令
+</span></span><span class="line"><span class="cl">再去写成palybook
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h1 id="创建role的规范目录">创建role的规范目录
+</h1><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span><span class="lnt">43
+</span><span class="lnt">44
+</span><span class="lnt">45
+</span><span class="lnt">46
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-sh" data-lang="sh"><span class="line"><span class="cl">1.定义好role存放路径
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@master-61 ~<span class="o">]</span><span class="c1">#vim /etc/ansible/ansible.cfg</span>
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@master-61 /etc/ansible<span class="o">]</span><span class="c1">#grep &#39;^role&#39; /etc/ansible/ansible.cfg </span>
+</span></span><span class="line"><span class="cl"><span class="nv">roles_path</span>    <span class="o">=</span> /etc/ansible/roles
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@master-61 ~<span class="o">]</span><span class="c1">#mkdir -p /etc/ansible/roles</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">2. 创建role的固定目录
+</span></span><span class="line"><span class="cl"><span class="c1"># baizhi.com  ansible-role</span>
+</span></span><span class="line"><span class="cl">site.yml                    <span class="c1"># role入口</span>
+</span></span><span class="line"><span class="cl">nfs_servers.yml             <span class="c1"># role入口</span>
+</span></span><span class="line"><span class="cl">rsync_servers.yml           <span class="c1"># role入口</span>
+</span></span><span class="line"><span class="cl">roles/                      <span class="c1"># role规范目录结构</span>
+</span></span><span class="line"><span class="cl">    nfs_servers/            <span class="c1"># role具体名字</span>
+</span></span><span class="line"><span class="cl">        tasks/              <span class="c1"># 剧本任务</span>
+</span></span><span class="line"><span class="cl">        handlers/           <span class="c1"># 剧本里存放的handlers</span>
+</span></span><span class="line"><span class="cl">        files/              <span class="c1"># 如压缩文件，如需要拷贝的文件</span>
+</span></span><span class="line"><span class="cl">        templates/          <span class="c1"># 存放配置文件</span>
+</span></span><span class="line"><span class="cl">        vars/               <span class="c1"># 存放变量文件</span>
+</span></span><span class="line"><span class="cl">    rsync_servers/
+</span></span><span class="line"><span class="cl">        tasks/
+</span></span><span class="line"><span class="cl">        handlers/
+</span></span><span class="line"><span class="cl">        files/
+</span></span><span class="line"><span class="cl">        templates/
+</span></span><span class="line"><span class="cl">        vars/ 
+</span></span><span class="line"><span class="cl">3. 这里定义的文件名，必须和roles目录下的每一个任务目录同名
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@master-61 ~<span class="o">]</span><span class="c1">#touch  /etc/ansible/{site.yml,nfs_servers.yml,rsync_servers.yml}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">4. 创建关于rsync_servers的目录
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@master-61 ~<span class="o">]</span><span class="c1">#mkdir -p /etc/ansible/roles/rsync_servers/{tasks,handlers,files,templates,vars}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">5.检查创建好的目录结构
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@master-61 /etc/ansible<span class="o">]</span><span class="c1">#tree /etc/ansible/</span>
+</span></span><span class="line"><span class="cl">/etc/ansible/
+</span></span><span class="line"><span class="cl">├── ansible.cfg
+</span></span><span class="line"><span class="cl">├── hosts
+</span></span><span class="line"><span class="cl">├── nfs_servers.yml
+</span></span><span class="line"><span class="cl">├── roles
+</span></span><span class="line"><span class="cl">│   └── rsync_servers
+</span></span><span class="line"><span class="cl">│       ├── files  <span class="c1"># 指的是目录中，存放剧本运行需要用到的文件</span>
+</span></span><span class="line"><span class="cl">│       ├── handlers
+</span></span><span class="line"><span class="cl">│       ├── tasks
+</span></span><span class="line"><span class="cl">│       ├── templates
+</span></span><span class="line"><span class="cl">│       └── vars
+</span></span><span class="line"><span class="cl">├── rsync_servers.yml
+</span></span><span class="line"><span class="cl">└── site.yml
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h1 id="部署rsyncd服务的role角色">部署rsyncd服务的role角色
+</h1><p>1.准备写装rsync服务的role</p>
+<p>2.创建好对应的目录结构</p>
+<p>3.写好playbook模式</p>
+<p>4.拆开即可</p>
+<h2 id="先写好纯playbook形式">先写好纯playbook形式
+</h2><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span><span class="lnt">43
+</span><span class="lnt">44
+</span><span class="lnt">45
+</span><span class="lnt">46
+</span><span class="lnt">47
+</span><span class="lnt">48
+</span><span class="lnt">49
+</span><span class="lnt">50
+</span><span class="lnt">51
+</span><span class="lnt">52
+</span><span class="lnt">53
+</span><span class="lnt">54
+</span><span class="lnt">55
+</span><span class="lnt">56
+</span><span class="lnt">57
+</span><span class="lnt">58
+</span><span class="lnt">59
+</span><span class="lnt">60
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-yml" data-lang="yml"><span class="line"><span class="cl">- <span class="nt">hosts</span><span class="p">:</span><span class="w"> </span><span class="l">backup</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">vars</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">user_id</span><span class="p">:</span><span class="w"> </span><span class="s1">&#39;666&#39;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">rsync_user</span><span class="p">:</span><span class="w"> </span><span class="s1">&#39;www&#39;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">tasks</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="c"># 1.创建www用户和组</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span>- <span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">01_create_group</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">group</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s2">&#34;{{ rsync_user }}&#34;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">gid</span><span class="p">:</span><span class="w"> </span><span class="s2">&#34;{{ user_id }}&#34;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="c"># 2.创建www用户</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span>- <span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">02_create_user</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">user</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s2">&#34;{{ rsync_user }}&#34;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">gid</span><span class="p">:</span><span class="w"> </span><span class="s2">&#34;{{ user_id }}&#34;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">group</span><span class="p">:</span><span class="w"> </span><span class="s2">&#34;{{ rsync_user}}&#34;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">create_home</span><span class="p">:</span><span class="w"> </span><span class="kc">no</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">shell</span><span class="p">:</span><span class="w"> </span><span class="l">/sbin/nologin</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="c"># 3.创建数据目录且授权</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span>- <span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">03_createUdata</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">file</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">path</span><span class="p">:</span><span class="w"> </span><span class="s2">&#34;{{ item }}&#34;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">state</span><span class="p">:</span><span class="w"> </span><span class="l">direcotry</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">owner</span><span class="p">:</span><span class="w"> </span><span class="s2">&#34;{{ rsync_user }}&#34;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">group</span><span class="p">:</span><span class="w"> </span><span class="s2">&#34;{{ rsync_user}}&#34;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">mode</span><span class="p">:</span><span class="w"> </span><span class="s2">&#34;755&#34;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">loop</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span>- <span class="l">/data</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span>- <span class="l">/backup</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="c"># 4.安装rsync软件</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span>- <span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">04_install_rsync</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">yum</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">rsync</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">state</span><span class="p">:</span><span class="w"> </span><span class="l">latest</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="c"># 5.复制配置文件与密码文件</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span>- <span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">05_copy_config</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">copy</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">src</span><span class="p">:</span><span class="w"> </span><span class="s2">&#34;{{ item.src }}&#34;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">dest</span><span class="p">:</span><span class="w"> </span><span class="l">/etc/</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">mode</span><span class="p">:</span><span class="w"> </span><span class="s2">&#34;{{ item.mode }}&#34;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">notify</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span>- <span class="l">restart_rsyncd</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">loop</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span>- {<span class="w"> </span><span class="l">src:/script/rsyncd.conf,mode:&#39;644&#39;}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span>- {<span class="w"> </span><span class="l">src:/script/rsync.passwd,mode:&#39;600&#39;}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="c"># 6.启动服务</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span>- <span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">06_start_rsync</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">systemd</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">rsyncd</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">state</span><span class="p">:</span><span class="w"> </span><span class="l">started</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">enabled</span><span class="p">:</span><span class="w"> </span><span class="kc">yes</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="c"># 7.重启服务</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">handlers</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span>- <span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">restart_rsyncd</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">systemd</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">rsyncd</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="nt">state</span><span class="p">:</span><span class="w"> </span><span class="l">restarted</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="将剧本拆为role的形式">将剧本拆为role的形式
+</h2><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">1.如何拆，先看你的剧本中，有多少个部分，是符合role的目录规范的（有多少部分需要拆）
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">2.对配置文件，解析完毕后，可以去逐步的拆了
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="拆tasks任务">拆tasks（任务）
+</h3><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span><span class="lnt">43
+</span><span class="lnt">44
+</span><span class="lnt">45
+</span><span class="lnt">46
+</span><span class="lnt">47
+</span><span class="lnt">48
+</span><span class="lnt">49
+</span><span class="lnt">50
+</span><span class="lnt">51
+</span><span class="lnt">52
+</span><span class="lnt">53
+</span><span class="lnt">54
+</span><span class="lnt">55
+</span><span class="lnt">56
+</span><span class="lnt">57
+</span><span class="lnt">58
+</span><span class="lnt">59
+</span><span class="lnt">60
+</span><span class="lnt">61
+</span><span class="lnt">62
+</span><span class="lnt">63
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-sh" data-lang="sh"><span class="line"><span class="cl">1.创建tasks/main.yml
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@master-61 /script<span class="o">]</span><span class="c1">#touch /etc/ansible/roles/rsync_servers/tasks/main.yml</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">2.往tasks的主体文件中，写入拆分出来的任务列表
+</span></span><span class="line"><span class="cl">只需要复制原本的剧本中的 tasks任务列表，无须携带tasks这个key了，复制粘贴如下的任务列表即可，写入到该 tasks/main.yml
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">剧本中，依然会调用 变量信息，但是不写在这个tasks/main.yml中了
+</span></span><span class="line"><span class="cl">而是，role角色会自动的去 vars/main.yml 寻找这个变量 <span class="o">{{</span>rsync_user<span class="o">}}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># 1.创建www组</span>
+</span></span><span class="line"><span class="cl">- name: 01_create_group
+</span></span><span class="line"><span class="cl">  group:
+</span></span><span class="line"><span class="cl">    name: <span class="s2">&#34;{{rsync_user}}&#34;</span>
+</span></span><span class="line"><span class="cl">    gid: <span class="s2">&#34;{{user_id}}&#34;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># 2.创建www用户</span>
+</span></span><span class="line"><span class="cl">- name: 02_create_user
+</span></span><span class="line"><span class="cl">  user:
+</span></span><span class="line"><span class="cl">    name: <span class="s2">&#34;{{rsync_user}}&#34;</span>
+</span></span><span class="line"><span class="cl">    uid: <span class="s2">&#34;{{user_id}}&#34;</span>
+</span></span><span class="line"><span class="cl">    group: <span class="s2">&#34;{{rsync_user}}&#34;</span>
+</span></span><span class="line"><span class="cl">    create_home: no
+</span></span><span class="line"><span class="cl">    shell: /sbin/nologin
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># 3.创建数据目录并更改授权</span>
+</span></span><span class="line"><span class="cl">- name: 03_create_data
+</span></span><span class="line"><span class="cl">  file:
+</span></span><span class="line"><span class="cl">    path: <span class="s2">&#34;{{item}}&#34;</span>
+</span></span><span class="line"><span class="cl">    state: directory
+</span></span><span class="line"><span class="cl">    owner: <span class="s2">&#34;{{rsync_user}}&#34;</span>
+</span></span><span class="line"><span class="cl">    group: <span class="s2">&#34;{{rsync_user}}&#34;</span>
+</span></span><span class="line"><span class="cl">    mode: <span class="s1">&#39;755&#39;</span>
+</span></span><span class="line"><span class="cl">  loop:
+</span></span><span class="line"><span class="cl">    - /data
+</span></span><span class="line"><span class="cl">    - /backup/
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># 4.安装rsync软件</span>
+</span></span><span class="line"><span class="cl">- name: 04_install_rsync
+</span></span><span class="line"><span class="cl">  yum:
+</span></span><span class="line"><span class="cl">    name: rsync
+</span></span><span class="line"><span class="cl">    state: latest
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># 5.复制文件</span>
+</span></span><span class="line"><span class="cl">- name: 05-copy config
+</span></span><span class="line"><span class="cl">  copy:
+</span></span><span class="line"><span class="cl">    src: <span class="s2">&#34;{{item.src}}&#34;</span>
+</span></span><span class="line"><span class="cl">    dest: /etc
+</span></span><span class="line"><span class="cl">    mode: <span class="s2">&#34;{{item.mode}}&#34;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  notify:
+</span></span><span class="line"><span class="cl">    - restart_rsyncd
+</span></span><span class="line"><span class="cl">  loop:
+</span></span><span class="line"><span class="cl">    - <span class="o">{</span>src: rsyncd.conf,mode: <span class="s1">&#39;644&#39;</span><span class="o">}</span>
+</span></span><span class="line"><span class="cl">    - <span class="o">{</span>src: rsync.passwd,mode: <span class="s1">&#39;600&#39;</span><span class="o">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># 6. 启动服务</span>
+</span></span><span class="line"><span class="cl">- name: start service
+</span></span><span class="line"><span class="cl">  systemd:
+</span></span><span class="line"><span class="cl">    name: rsyncd
+</span></span><span class="line"><span class="cl">    state: started
+</span></span><span class="line"><span class="cl">    enabled: yes
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="拆-varsmainyml">拆 vars/main.yml
+</h3><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-gdscript3" data-lang="gdscript3"><span class="line"><span class="cl"><span class="mf">1.</span><span class="err">写入</span> <span class="err">剧本需要用到的变量即可，也是一样，不需要添加</span> <span class="n">vars</span><span class="p">:</span> <span class="err">这个脑袋了</span>
+</span></span><span class="line"><span class="cl"><span class="n">roles判断</span><span class="err">，只要在</span> <span class="n">vars</span><span class="o">/</span><span class="n">main</span><span class="o">.</span><span class="n">yml</span> <span class="err">就识别这是一个变量</span><span class="n">yml文件</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="mf">2.</span><span class="err">创建</span>  <span class="n">vars</span><span class="o">/</span><span class="n">main</span><span class="o">.</span><span class="n">yml</span>
+</span></span><span class="line"><span class="cl"><span class="err">写入如下信息，无须缩进：</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">user_id</span><span class="p">:</span> <span class="s1">&#39;666&#39;</span>
+</span></span><span class="line"><span class="cl"><span class="n">rsync_user</span><span class="p">:</span> <span class="s1">&#39;www&#39;</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="拆配置文件">拆配置文件
+</h3><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-sh" data-lang="sh"><span class="line"><span class="cl">1. 找到你原本的配置文件所在地儿，复制到 roles的 files目录下即可
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">2.创建文件如下
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@master-61 /etc/ansible/roles/rsync_servers<span class="o">]</span><span class="c1">#cp /script/rsync* /etc/ansible/roles/rsync_servers/files/</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@master-61 /etc/ansible/roles/rsync_servers<span class="o">]</span><span class="c1">#ls files/ rsyncd.conf  rsync.passwd</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="拆handlers">拆handlers
+</h3><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-sh" data-lang="sh"><span class="line"><span class="cl">创建handlers文件
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@master-61 /etc/ansible/roles/rsync_servers<span class="o">]</span><span class="c1">#cat handlers/main.yml </span>
+</span></span><span class="line"><span class="cl">- name: restart_rsyncd
+</span></span><span class="line"><span class="cl">  systemd:
+</span></span><span class="line"><span class="cl">    name: rsyncd
+</span></span><span class="line"><span class="cl">    state: restarted
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="创建启动文件">创建启动文件
+</h3><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-sh" data-lang="sh"><span class="line"><span class="cl">注意：该启动文件，入口在 和 roles这个目录，平级的地方，且写入需要操作的主机组，以及定义角色的名字（和角色文件夹对应即可）
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">1.修改这个role的启动剧本 ，正确的入口文件，语法如下
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@master-61 /etc/ansible<span class="o">]</span><span class="c1">#cat /etc/ansible/rsync_servers.yml </span>
+</span></span><span class="line"><span class="cl">- hosts: backup
+</span></span><span class="line"><span class="cl">  roles:
+</span></span><span class="line"><span class="cl">    - rsync_servers
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">2.调试该启动剧本是否可以运行，语法是否正确
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@master-61 /etc/ansible<span class="o">]</span><span class="c1">#ansible-playbook -C rsync_servers.yml</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="正式运行该rsync角色">正式运行该rsync角色
+</h3><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-sh" data-lang="sh"><span class="line"><span class="cl">1.准备好新机器，rsync-41机器测试
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">2. 运行角色程序
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@master-61 /etc/ansible<span class="o">]</span><span class="c1">#ansible-playbook  rsync_servers.yml</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">PLAY <span class="o">[</span>backup<span class="o">]</span> **************************************************************************************************************
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">TASK <span class="o">[</span>Gathering Facts<span class="o">]</span> *****************************************************************************************************
+</span></span><span class="line"><span class="cl">ok: <span class="o">[</span>172.16.1.41<span class="o">]</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">TASK <span class="o">[</span>rsync_servers : 01_create_group<span class="o">]</span> *************************************************************************************
+</span></span><span class="line"><span class="cl">ok: <span class="o">[</span>172.16.1.41<span class="o">]</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">TASK <span class="o">[</span>rsync_servers : 02_create_user<span class="o">]</span> **************************************************************************************
+</span></span><span class="line"><span class="cl">ok: <span class="o">[</span>172.16.1.41<span class="o">]</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">TASK <span class="o">[</span>rsync_servers : 03_create_data<span class="o">]</span> **************************************************************************************
+</span></span><span class="line"><span class="cl">ok: <span class="o">[</span>172.16.1.41<span class="o">]</span> <span class="o">=</span>&gt; <span class="o">(</span><span class="nv">item</span><span class="o">=</span>/data<span class="o">)</span>
+</span></span><span class="line"><span class="cl">ok: <span class="o">[</span>172.16.1.41<span class="o">]</span> <span class="o">=</span>&gt; <span class="o">(</span><span class="nv">item</span><span class="o">=</span>/backup/<span class="o">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">TASK <span class="o">[</span>rsync_servers : 04_install_rsync<span class="o">]</span> ************************************************************************************
+</span></span><span class="line"><span class="cl">ok: <span class="o">[</span>172.16.1.41<span class="o">]</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">TASK <span class="o">[</span>rsync_servers : 05-copy config<span class="o">]</span> **************************************************************************************
+</span></span><span class="line"><span class="cl">ok: <span class="o">[</span>172.16.1.41<span class="o">]</span> <span class="o">=</span>&gt; <span class="o">(</span><span class="nv">item</span><span class="o">={</span>u<span class="s1">&#39;src&#39;</span>: u<span class="s1">&#39;rsyncd.conf&#39;</span>, u<span class="s1">&#39;mode&#39;</span>: u<span class="s1">&#39;644&#39;</span><span class="o">})</span>
+</span></span><span class="line"><span class="cl">ok: <span class="o">[</span>172.16.1.41<span class="o">]</span> <span class="o">=</span>&gt; <span class="o">(</span><span class="nv">item</span><span class="o">={</span>u<span class="s1">&#39;src&#39;</span>: u<span class="s1">&#39;rsync.passwd&#39;</span>, u<span class="s1">&#39;mode&#39;</span>: u<span class="s1">&#39;600&#39;</span><span class="o">})</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">TASK <span class="o">[</span>rsync_servers : start service<span class="o">]</span> ***************************************************************************************
+</span></span><span class="line"><span class="cl">changed: <span class="o">[</span>172.16.1.41<span class="o">]</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">PLAY RECAP *****************************************************************************************************************
+</span></span><span class="line"><span class="cl">172.16.1.41                : <span class="nv">ok</span><span class="o">=</span><span class="m">7</span>    <span class="nv">changed</span><span class="o">=</span><span class="m">1</span>    <span class="nv">unreachable</span><span class="o">=</span><span class="m">0</span>    <span class="nv">failed</span><span class="o">=</span><span class="m">0</span>    <span class="nv">skipped</span><span class="o">=</span><span class="m">0</span>    <span class="nv">rescued</span><span class="o">=</span><span class="m">0</span>    <span class="nv">ignored</span><span class="o">=</span><span class="m">0</span>   
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="测试handlers的执行">测试handlers的执行
+</h2><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">1.需要修改配置文件，触发notify，然后handlers才会执行
+</span></span><span class="line"><span class="cl">需要修改 roles目录下的 files目录，里面的配置文件
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">[root@master-61 /etc/ansible]#ansible-playbook rsync_servers.yml 
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">PLAY [backup] **************************************************************************************************************
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">TASK [Gathering Facts] *****************************************************************************************************
+</span></span><span class="line"><span class="cl">ok: [172.16.1.41]
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">TASK [rsync_servers : 01_create_group] *************************************************************************************
+</span></span><span class="line"><span class="cl">ok: [172.16.1.41]
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">TASK [rsync_servers : 02_create_user] **************************************************************************************
+</span></span><span class="line"><span class="cl">ok: [172.16.1.41]
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">TASK [rsync_servers : 03_create_data] **************************************************************************************
+</span></span><span class="line"><span class="cl">ok: [172.16.1.41] =&gt; (item=/data)
+</span></span><span class="line"><span class="cl">ok: [172.16.1.41] =&gt; (item=/backup/)
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">TASK [rsync_servers : 04_install_rsync] ************************************************************************************
+</span></span><span class="line"><span class="cl">ok: [172.16.1.41]
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">TASK [rsync_servers : 05-copy config] **************************************************************************************
+</span></span><span class="line"><span class="cl">changed: [172.16.1.41] =&gt; (item={u&#39;src&#39;: u&#39;rsyncd.conf&#39;, u&#39;mode&#39;: u&#39;644&#39;})
+</span></span><span class="line"><span class="cl">ok: [172.16.1.41] =&gt; (item={u&#39;src&#39;: u&#39;rsync.passwd&#39;, u&#39;mode&#39;: u&#39;600&#39;})
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">TASK [rsync_servers : start service] ***************************************************************************************
+</span></span><span class="line"><span class="cl">ok: [172.16.1.41]
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">RUNNING HANDLER [rsync_servers : restart_rsyncd] ***************************************************************************
+</span></span><span class="line"><span class="cl">changed: [172.16.1.41]
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">PLAY RECAP *****************************************************************************************************************
+</span></span><span class="line"><span class="cl">172.16.1.41                : ok=8    changed=2    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0  
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/Ansible%e5%9f%ba%e7%a1%80/pic/image-20220512115804845.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="image-20220512115804845"
+	
+	
+></p>
+<h1 id="template模板模块">template（模板）模块
+</h1><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">作用是专门用于动态替换配置文件中的值，需要学习jinja2这个模板语言（内容太多，支持循环语句，条件判断，以后有机会再学。。）
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">这里学习它的 创建，使用规则；以及变量替换功能；实现配置文件的变量替换；
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="改为变量形式的配置文件">改为变量形式的配置文件
+</h2><p>一个纯普通的文本文件，是没法识别这样的变量的</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-gdscript3" data-lang="gdscript3"><span class="line"><span class="cl"><span class="n">rsyncd</span><span class="o">.</span><span class="n">conf</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">uid</span> <span class="o">=</span> <span class="n">www</span> 
+</span></span><span class="line"><span class="cl"><span class="n">gid</span> <span class="o">=</span> <span class="n">www</span> 
+</span></span><span class="line"><span class="cl"><span class="n">port</span> <span class="o">=</span> <span class="mi">873</span>
+</span></span><span class="line"><span class="cl"><span class="n">fake</span> <span class="n">super</span> <span class="o">=</span> <span class="n">yes</span>
+</span></span><span class="line"><span class="cl"><span class="n">use</span> <span class="n">chroot</span> <span class="o">=</span> <span class="n">no</span>
+</span></span><span class="line"><span class="cl"><span class="nb">max</span> <span class="n">connections</span> <span class="o">=</span> <span class="mi">200</span>
+</span></span><span class="line"><span class="cl"><span class="n">timeout</span> <span class="o">=</span> <span class="mi">600</span>
+</span></span><span class="line"><span class="cl"><span class="n">ignore</span> <span class="n">errors</span>
+</span></span><span class="line"><span class="cl"><span class="n">read</span> <span class="n">only</span> <span class="o">=</span> <span class="bp">false</span>
+</span></span><span class="line"><span class="cl"><span class="n">list</span> <span class="o">=</span> <span class="bp">false</span>
+</span></span><span class="line"><span class="cl"><span class="n">auth</span> <span class="n">users</span> <span class="o">=</span> <span class="n">rsync_bakcup</span>
+</span></span><span class="line"><span class="cl"><span class="n">secrets</span> <span class="n">file</span> <span class="o">=</span> <span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">rsync</span><span class="o">.</span><span class="n">passwd</span>
+</span></span><span class="line"><span class="cl"><span class="nb">log</span> <span class="n">file</span> <span class="o">=</span> <span class="o">/</span><span class="k">var</span><span class="o">/</span><span class="nb">log</span><span class="o">/</span><span class="n">rsyncd</span><span class="o">.</span><span class="n">log</span>
+</span></span><span class="line"><span class="cl"><span class="p">[</span><span class="n">backup</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl"><span class="n">comment</span> <span class="o">=</span> <span class="n">chaoge</span> <span class="n">rsync</span> <span class="n">backup</span><span class="o">!</span>
+</span></span><span class="line"><span class="cl"><span class="n">path</span> <span class="o">=</span> <span class="o">/</span><span class="n">backup</span>
+</span></span><span class="line"><span class="cl"><span class="p">[</span><span class="n">data</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl"><span class="n">comment</span> <span class="o">=</span> <span class="n">baizhi</span><span class="o">.</span><span class="n">com</span> <span class="n">rsync</span><span class="o">!</span>
+</span></span><span class="line"><span class="cl"><span class="n">path</span> <span class="o">=</span> <span class="o">/</span><span class="n">data</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="使用template模板替换配置文件的思路">使用template模板替换配置文件的思路
+</h2><p>因此ansible提供了一个jinja2模板语言，要求如下</p>
+<p>第一件事，改造配置文件为 j2类型</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-gdscript3" data-lang="gdscript3"><span class="line"><span class="cl"><span class="mf">1.</span><span class="err">创建配置文件，但是后缀必须是</span> <span class="n">j2格式的</span>
+</span></span><span class="line"><span class="cl"><span class="n">rsyncd</span><span class="o">.</span><span class="n">j2</span>
+</span></span><span class="line"><span class="cl"><span class="err">该</span><span class="n">j2文件写入配置</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl"><span class="n">uid</span> <span class="o">=</span> <span class="n">www</span> 
+</span></span><span class="line"><span class="cl"><span class="n">gid</span> <span class="o">=</span> <span class="n">www</span> 
+</span></span><span class="line"><span class="cl"><span class="n">port</span> <span class="o">=</span> <span class="mi">873</span>
+</span></span><span class="line"><span class="cl"><span class="n">fake</span> <span class="n">super</span> <span class="o">=</span> <span class="n">yes</span>
+</span></span><span class="line"><span class="cl"><span class="n">use</span> <span class="n">chroot</span> <span class="o">=</span> <span class="n">no</span>
+</span></span><span class="line"><span class="cl"><span class="nb">max</span> <span class="n">connections</span> <span class="o">=</span> <span class="mi">200</span>
+</span></span><span class="line"><span class="cl"><span class="n">timeout</span> <span class="o">=</span> <span class="mi">600</span>
+</span></span><span class="line"><span class="cl"><span class="n">ignore</span> <span class="n">errors</span>
+</span></span><span class="line"><span class="cl"><span class="n">read</span> <span class="n">only</span> <span class="o">=</span> <span class="bp">false</span>
+</span></span><span class="line"><span class="cl"><span class="n">list</span> <span class="o">=</span> <span class="bp">false</span>
+</span></span><span class="line"><span class="cl"><span class="n">auth</span> <span class="n">users</span> <span class="o">=</span> <span class="p">{{</span> <span class="n">rsync_auth_user</span> <span class="p">}}</span>
+</span></span><span class="line"><span class="cl"><span class="n">secrets</span> <span class="n">file</span> <span class="o">=</span> <span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">rsync</span><span class="o">.</span><span class="n">passwd</span>
+</span></span><span class="line"><span class="cl"><span class="nb">log</span> <span class="n">file</span> <span class="o">=</span> <span class="o">/</span><span class="k">var</span><span class="o">/</span><span class="nb">log</span><span class="o">/</span><span class="n">rsyncd</span><span class="o">.</span><span class="n">log</span>
+</span></span><span class="line"><span class="cl"><span class="p">[</span><span class="n">backup</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl"><span class="n">comment</span> <span class="o">=</span> <span class="n">chaoge</span> <span class="n">rsync</span> <span class="n">backup</span><span class="o">!</span>
+</span></span><span class="line"><span class="cl"><span class="n">path</span> <span class="o">=</span> <span class="o">/</span><span class="n">backup</span>
+</span></span><span class="line"><span class="cl"><span class="p">[</span><span class="n">data</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl"><span class="n">comment</span> <span class="o">=</span> <span class="n">baizhi</span><span class="o">.</span><span class="n">com</span> <span class="n">rsync</span><span class="o">!</span>
+</span></span><span class="line"><span class="cl"><span class="n">path</span> <span class="o">=</span> <span class="o">/</span><span class="n">data</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>第二件事，修改vars变量文件，去替换j2文件中的变量值</p>
+<p>只需要在vars/main.yml中写入变量即可</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">rsync_auth_user: &#34;rsync_backup&#34;
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>第三件事，修改tasks任务yaml文件</p>
+<p>还得修改tasks任务yaml文件，指定配置文件路径，为j2模板形式</p>
+<h2 id="以部署sshd服务为演示role角色">以部署sshd服务为演示（role角色）
+</h2><h3 id="1创建sshd_server角色目录">1.创建sshd_server角色目录
+</h3><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-sh" data-lang="sh"><span class="line"><span class="cl"><span class="o">[</span>root@master-61 /etc/ansible<span class="o">]</span><span class="c1">#mkdir -p /etc/ansible/roles/sshd_server/{files,handlers,tasks,vars,templates}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">检查
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@master-61 /etc/ansible<span class="o">]</span><span class="c1">#tree /etc/ansible/roles/sshd_server/ </span>
+</span></span><span class="line"><span class="cl">/etc/ansible/roles/sshd_server/
+</span></span><span class="line"><span class="cl">├── files
+</span></span><span class="line"><span class="cl">├── handlers
+</span></span><span class="line"><span class="cl">├── tasks
+</span></span><span class="line"><span class="cl">├── templates
+</span></span><span class="line"><span class="cl">└── vars
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="m">5</span> directories, <span class="m">0</span> files
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="2需要创建role目录下的每一个目录资料">2.需要创建role目录下的每一个目录资料
+</h3><p>直接写roles剧本了</p>
+<ul>
+<li>
+<p>tasks</p>
+</li>
+<li>
+<p>vars</p>
+</li>
+<li>
+<p>templates</p>
+</li>
+</ul>
+<h3 id="先创建部署sshd的tasks任务文件">先创建部署sshd的tasks任务文件
+</h3><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-sh" data-lang="sh"><span class="line"><span class="cl">1. 创建tasks/main.yml
+</span></span><span class="line"><span class="cl">vim tasks/main.yml
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># 2. 写入剧本语法</span>
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@master-61 /etc/ansible/roles/sshd_server<span class="o">]</span><span class="c1">#cat tasks/main.yaml </span>
+</span></span><span class="line"><span class="cl"><span class="c1"># 1.复制文件</span>
+</span></span><span class="line"><span class="cl">- name: 01_copy_sshd
+</span></span><span class="line"><span class="cl">  template:
+</span></span><span class="line"><span class="cl">    src: sshd_config.j2
+</span></span><span class="line"><span class="cl">    dest: /etc/ssh/sshd_config
+</span></span><span class="line"><span class="cl">    mode: <span class="s1">&#39;600&#39;</span>
+</span></span><span class="line"><span class="cl">    backup: yes
+</span></span><span class="line"><span class="cl">  notify:
+</span></span><span class="line"><span class="cl">    - restart sshd
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># 2.启动服务</span>
+</span></span><span class="line"><span class="cl">- name: start sshd service
+</span></span><span class="line"><span class="cl">  systemd:
+</span></span><span class="line"><span class="cl">    name: sshd
+</span></span><span class="line"><span class="cl">    state: started
+</span></span><span class="line"><span class="cl">    enabled: yes
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="3创建template信息">3.创建template信息
+</h3><p>创建模板配置文件，设置变量用于替换配置文件的值</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-sh" data-lang="sh"><span class="line"><span class="cl">1.你要准备好 sshd_config的配置文件
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@master-61 /etc/ansible/roles/sshd_server<span class="o">]</span><span class="c1">#cp /etc/ssh/sshd_config /etc/ansible/roles/sshd_server/templates/sshd_config.j2</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@master-61 /etc/ansible/roles/sshd_server<span class="o">]</span><span class="c1">#ls templates/</span>
+</span></span><span class="line"><span class="cl">sshd_config.j2
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">2.修改这个sshd_config.j2文件，修改需要用变量替换的参数
+</span></span><span class="line"><span class="cl">修改端口
+</span></span><span class="line"><span class="cl">禁止公钥登录
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">Port <span class="o">{{</span> sshd_port  <span class="o">}}</span>
+</span></span><span class="line"><span class="cl">PubkeyAuthentication <span class="o">{{</span> pubkey_yes_no  <span class="o">}}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="4创建变量文件">4.创建变量文件
+</h3><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-sh" data-lang="sh"><span class="line"><span class="cl">1.创建文件
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@master-61 /etc/ansible/roles/sshd_server<span class="o">]</span><span class="c1">#cat vars/main.yml </span>
+</span></span><span class="line"><span class="cl">sshd_port: <span class="s2">&#34;2999&#34;</span>
+</span></span><span class="line"><span class="cl">pubkey_yes_no:  <span class="s2">&#34;no&#34;</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="5创建handlers文件用于重启sshd">5.创建handlers文件，用于重启sshd
+</h3><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-sh" data-lang="sh"><span class="line"><span class="cl"><span class="o">[</span>root@master-61 /etc/ansible/roles/sshd_server<span class="o">]</span><span class="c1">#cat  handlers/main.yml</span>
+</span></span><span class="line"><span class="cl">- name: restart sshd
+</span></span><span class="line"><span class="cl">  systemd: 
+</span></span><span class="line"><span class="cl">    name: sshd
+</span></span><span class="line"><span class="cl">    state: restarted
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="6检查当前服务的roles目录信息">6.检查当前服务的roles目录信息
+</h3><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-sh" data-lang="sh"><span class="line"><span class="cl"><span class="o">[</span>root@master-61 /etc/ansible/roles/sshd_server<span class="o">]</span><span class="c1">#tree</span>
+</span></span><span class="line"><span class="cl">.
+</span></span><span class="line"><span class="cl">├── files
+</span></span><span class="line"><span class="cl">├── handlers
+</span></span><span class="line"><span class="cl">│   └── main.yml
+</span></span><span class="line"><span class="cl">├── tasks
+</span></span><span class="line"><span class="cl">│   └── main.yml
+</span></span><span class="line"><span class="cl">├── templates
+</span></span><span class="line"><span class="cl">│   └── sshd_config.j2
+</span></span><span class="line"><span class="cl">└── vars
+</span></span><span class="line"><span class="cl">    └── main.yml
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="m">5</span> directories, <span class="m">4</span> files
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="7创建启动文件就完事">7.创建启动文件就完事
+</h3><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-sh" data-lang="sh"><span class="line"><span class="cl">1.必须和roles同级
+</span></span><span class="line"><span class="cl">2.roles角色定义的工作目录名，必须和roles/文件夹名字对应的上
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># 先进入/etc/ansible目录，创建启动文件</span>
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@master-61 /etc/ansible<span class="o">]</span><span class="c1">#cat start_sshd.yml </span>
+</span></span><span class="line"><span class="cl">- hosts: backup
+</span></span><span class="line"><span class="cl">  roles:
+</span></span><span class="line"><span class="cl">    - sshd_server
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">3.测试剧本运行
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@master-61 /etc/ansible/roles/sshd_server<span class="o">]</span><span class="c1">#ansible-playbook /etc/ansible/start_sshd.yml </span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">PLAY <span class="o">[</span>backup<span class="o">]</span> *************************************************************************************************************
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">TASK <span class="o">[</span>Gathering Facts<span class="o">]</span> ****************************************************************************************************
+</span></span><span class="line"><span class="cl">ok: <span class="o">[</span>172.16.1.41<span class="o">]</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">TASK <span class="o">[</span>sshd_server : 01_copy_sshd<span class="o">]</span> *****************************************************************************************
+</span></span><span class="line"><span class="cl">changed: <span class="o">[</span>172.16.1.41<span class="o">]</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">TASK <span class="o">[</span>sshd_server : start sshd service<span class="o">]</span> ***********************************************************************************
+</span></span><span class="line"><span class="cl">ok: <span class="o">[</span>172.16.1.41<span class="o">]</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">RUNNING HANDLER <span class="o">[</span>sshd_server : restart sshd<span class="o">]</span> ******************************************************************************
+</span></span><span class="line"><span class="cl">changed: <span class="o">[</span>172.16.1.41<span class="o">]</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">PLAY RECAP ****************************************************************************************************************
+</span></span><span class="line"><span class="cl">172.16.1.41                : <span class="nv">ok</span><span class="o">=</span><span class="m">4</span>    <span class="nv">changed</span><span class="o">=</span><span class="m">2</span>    <span class="nv">unreachable</span><span class="o">=</span><span class="m">0</span>    <span class="nv">failed</span><span class="o">=</span><span class="m">0</span>    <span class="nv">skipped</span><span class="o">=</span><span class="m">0</span>    <span class="nv">rescued</span><span class="o">=</span><span class="m">0</span>    <span class="nv">ignored</span><span class="o">=</span><span class="m">0</span>   
+</span></span></code></pre></td></tr></table>
+</div>
+</div>
+</section>
+
+
+    <footer class="article-footer">
+    
+
+    </footer>
+
+
+    
+</article>
+
+    
+
+    
+
+     
+    
+        
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+        2025 小诗
+    </section>
+    
+    <section class="powerby">
+        使用 <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> 构建 <br />
+        主题 <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.26.0">Stack</a></b> 由 <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a> 设计
+    </section>
+</footer>
+
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css"crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css"crossorigin="anonymous"
+            >
+
+            </main>
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.6/dist/vibrant.min.js"integrity="sha256-awcR2jno4kI5X0zL8ex0vi2z&#43;KMkF24hUW8WePSA9HM="crossorigin="anonymous"
+                
+                >
+            </script><script type="text/javascript" src="/xiaoshi/ts/main.js" defer></script>
+<script>
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+
+    </body>
+</html>
