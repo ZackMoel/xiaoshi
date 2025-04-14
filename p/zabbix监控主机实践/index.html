@@ -1,0 +1,1563 @@
+<!DOCTYPE html>
+<html lang="zh-cn" dir="ltr">
+    <head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content="今日内容 1 2 3 4 5 6 7 8 9 10 11 1. zabbix架构图，特点 2. zabbix核心知识点理念 3. zabbix快速添加agent（db51,db52），">
+<title>Zabbix监控主机实践</title>
+
+<link rel='canonical' href='https://ZackMoel.github.io/xiaoshi/p/zabbix%E7%9B%91%E6%8E%A7%E4%B8%BB%E6%9C%BA%E5%AE%9E%E8%B7%B5/'>
+
+<link rel="stylesheet" href="/xiaoshi/scss/style.min.0304c6baf04e01a8fe70693791cb744d56a3578a3120a8796cefc66825aa39c7.css"><meta property='og:title' content="Zabbix监控主机实践">
+<meta property='og:description' content="今日内容 1 2 3 4 5 6 7 8 9 10 11 1. zabbix架构图，特点 2. zabbix核心知识点理念 3. zabbix快速添加agent（db51,db52），">
+<meta property='og:url' content='https://ZackMoel.github.io/xiaoshi/p/zabbix%E7%9B%91%E6%8E%A7%E4%B8%BB%E6%9C%BA%E5%AE%9E%E8%B7%B5/'>
+<meta property='og:site_name' content='小诗'>
+<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:published_time' content='2025-04-14T17:08:06&#43;08:00'/><meta property='article:modified_time' content='2025-04-14T17:08:06&#43;08:00'/>
+<meta name="twitter:title" content="Zabbix监控主机实践">
+<meta name="twitter:description" content="今日内容 1 2 3 4 5 6 7 8 9 10 11 1. zabbix架构图，特点 2. zabbix核心知识点理念 3. zabbix快速添加agent（db51,db52），">
+  
+
+
+    </head>
+    <body class="
+    article-page
+    ">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex on-phone--column extended"><aside class="sidebar left-sidebar sticky ">
+    <button class="hamburger hamburger--spin" type="button" id="toggle-menu" aria-label="切换菜单">
+        <span class="hamburger-box">
+            <span class="hamburger-inner"></span>
+        </span>
+    </button>
+
+    <header>
+        
+            
+            <figure class="site-avatar">
+                <a href="/xiaoshi/">
+                
+                    
+                    
+                    
+                        
+                        <img src="/xiaoshi/img/avatar_hu8920112365793990935.png" width="300"
+                            height="300" class="site-logo" loading="lazy" alt="Avatar">
+                    
+                
+                </a>
+                
+                    <span class="emoji">🍥</span>
+                
+            </figure>
+            
+        
+        
+        <div class="site-meta">
+            <h1 class="site-name"><a href="/xiaoshi">小诗</a></h1>
+            <h2 class="site-description">欢迎来到小诗的博客</h2>
+        </div>
+    </header><ol class="menu-social">
+            
+                <li>
+                    <a 
+                        href='https://space.bilibili.com/1055981889?spm_id_from=333.1007.0.0'
+                        target="_blank"
+                        title="bilibili"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg  xmlns="http://www.w3.org/2000/svg"  width="24"  height="24"  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  stroke-width="2"  stroke-linecap="round"  stroke-linejoin="round"  class="icon icon-tabler icons-tabler-outline icon-tabler-brand-bilibili"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M3 10a4 4 0 0 1 4 -4h10a4 4 0 0 1 4 4v6a4 4 0 0 1 -4 4h-10a4 4 0 0 1 -4 -4v-6z" /><path d="M8 3l2 3" /><path d="M16 3l-2 3" /><path d="M9 13v-2" /><path d="M15 11v2" /></svg>
+                        
+                    </a>
+                </li>
+            
+                <li>
+                    <a 
+                        href='https://github.com/ZackMoel/xiaoshi.github.io'
+                        target="_blank"
+                        title="GitHub"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-github" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M9 19c-4.3 1.4 -4.3 -2.5 -6 -3m12 5v-3.5c0 -1 .1 -1.4 -.5 -2c2.8 -.3 5.5 -1.4 5.5 -6a4.6 4.6 0 0 0 -1.3 -3.2a4.2 4.2 0 0 0 -.1 -3.2s-1.1 -.3 -3.5 1.3a12.3 12.3 0 0 0 -6.2 0c-2.4 -1.6 -3.5 -1.3 -3.5 -1.3a4.2 4.2 0 0 0 -.1 3.2a4.6 4.6 0 0 0 -1.3 3.2c0 4.6 2.7 5.7 5.5 6c-.6 .6 -.6 1.2 -.5 2v3.5" />
+</svg>
+
+
+
+                        
+                    </a>
+                </li>
+            
+        </ol><ol class="menu" id="main-menu">
+        
+        
+        
+        <li >
+            <a href='/xiaoshi/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-home" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <polyline points="5 12 3 12 12 3 21 12 19 12" />
+  <path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7" />
+  <path d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6" />
+</svg>
+
+
+
+                
+                <span>主页</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/xiaoshi/%E5%85%B3%E4%BA%8E/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-user" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="7" r="4" />
+  <path d="M6 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2" />
+</svg>
+
+
+
+                
+                <span>关于</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/xiaoshi/archives/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-archive" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <rect x="3" y="4" width="18" height="4" rx="2" />
+  <path d="M5 8v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-10" />
+  <line x1="10" y1="12" x2="14" y2="12" />
+</svg>
+
+
+
+                
+                <span>归档</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/xiaoshi/search/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-search" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="10" cy="10" r="7" />
+  <line x1="21" y1="21" x2="15" y2="15" />
+</svg>
+
+
+
+                
+                <span>搜索</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/xiaoshi/%E5%8F%8B%E6%83%85%E9%93%BE%E6%8E%A5/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-link" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M10 14a3.5 3.5 0 0 0 5 0l4 -4a3.5 3.5 0 0 0 -5 -5l-.5 .5" />
+  <path d="M14 10a3.5 3.5 0 0 0 -5 0l-4 4a3.5 3.5 0 0 0 5 5l.5 -.5" />
+</svg>
+
+
+
+                
+                <span>友情链接</span>
+            </a>
+        </li>
+        
+        <li class="menu-bottom-section">
+            <ol class="menu">
+
+                
+                    <li id="dark-mode-toggle">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="8" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="16" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <span>暗色模式</span>
+                    </li>
+                
+            </ol>
+        </li>
+    </ol>
+</aside>
+
+    <aside class="sidebar right-sidebar sticky">
+        
+            
+                
+    <section class="widget archives">
+        <div class="widget-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <line x1="5" y1="9" x2="19" y2="9" />
+  <line x1="5" y1="15" x2="19" y2="15" />
+  <line x1="11" y1="4" x2="7" y2="20" />
+  <line x1="17" y1="4" x2="13" y2="20" />
+</svg>
+
+
+
+        </div>
+        <h2 class="widget-title section-title">目录</h2>
+        
+        <div class="widget--toc">
+            <nav id="TableOfContents">
+  <ol>
+    <li><a href="#zabbix-server进程的作用">zabbix-server进程的作用</a></li>
+  </ol>
+
+  <ol>
+    <li><a href="#31zabbix-server监控自己">3.1zabbix-server监控自己</a></li>
+    <li><a href="#32agent装好后查看最新数据">3.2agent装好后，查看最新数据</a></li>
+    <li><a href="#33-同样的操作添加db-51机器作为练习db51db-52都给监控上即可">3.3 同样的操作，添加db-51机器，作为练习，db51,db-52都给监控上即可</a></li>
+    <li><a href="#34-添加db-52的全部操作">3.4 添加db-52的全部操作</a></li>
+    <li><a href="#35-安装zabbix-get命令检测是否通信了">3.5 安装zabbix-get命令，检测是否通信了</a></li>
+    <li><a href="#36-模板监控项图解以及结合zabbix_get命令">3.6 模板、监控项图解，以及结合zabbix_get命令</a>
+      <ol>
+        <li><a href="#模板和监控项的关系">模板和监控项的关系</a></li>
+        <li><a href="#拿默认的-os-linux模板举例详解">拿默认的 os linux模板举例，详解</a></li>
+        <li><a href="#基于命令行主动采集数据">基于命令行，主动采集数据</a></li>
+      </ol>
+    </li>
+    <li><a href="#37-亮灯之后就表示server-和agent通信了">3.7 亮灯之后，就表示server 和agent通信了</a>
+      <ol>
+        <li><a href="#图形只查看db-51的图形采集数据">图形只查看db-51的图形采集数据</a></li>
+        <li><a href="#最新数据">最新数据</a></li>
+      </ol>
+    </li>
+  </ol>
+
+  <ol>
+    <li><a href="#41-为什么要自定义监控项">4.1 为什么要自定义监控项</a></li>
+    <li><a href="#42-自定义监控项流程">4.2 自定义监控项流程</a></li>
+  </ol>
+
+  <ol>
+    <li><a href="#zabbix自定义监控11种tcp状态全操作">zabbix自定义监控11种TCP状态全操作</a>
+      <ol>
+        <li><a href="#图解zabbix自定义key的配置文件">图解zabbix自定义key的配置文件</a></li>
+      </ol>
+    </li>
+    <li><a href="#图形化zabbix添加监控项监控tcp的状态web7添加监控项">图形化zabbix添加监控项，监控TCP的状态(web7添加监控项)</a>
+      <ol>
+        <li><a href="#图形化添加监控项的步骤">图形化添加监控项的步骤</a></li>
+      </ol>
+    </li>
+    <li><a href="#克隆监控项">克隆监控项</a>
+      <ol>
+        <li><a href="#最新数据-1">最新数据</a></li>
+        <li><a href="#图形数据">图形数据</a></li>
+        <li><a href="#查看web7的图形数据">查看web7的图形数据</a></li>
+        <li><a href="#小结">小结</a></li>
+      </ol>
+    </li>
+    <li><a href="#触发器的添加">触发器的添加</a>
+      <ol>
+        <li><a href="#给web7的time_wait监控项设置触发器超过500个值就报警">给web7的TIME_WAIT监控项，设置触发器，超过500个值就报警</a></li>
+      </ol>
+    </li>
+  </ol>
+</nav>
+        </div>
+    </section>
+
+            
+        
+    </aside>
+
+
+            <main class="main full-width">
+    <article class="main-article">
+    <header class="article-header">
+
+    <div class="article-details">
+    
+
+    <div class="article-title-wrapper">
+        <h2 class="article-title">
+            <a href="/xiaoshi/p/zabbix%E7%9B%91%E6%8E%A7%E4%B8%BB%E6%9C%BA%E5%AE%9E%E8%B7%B5/">Zabbix监控主机实践</a>
+        </h2>
+    
+        
+    </div>
+
+    
+    
+    
+    
+    <footer class="article-time">
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
+  <circle cx="18" cy="18" r="4" />
+  <path d="M15 3v4" />
+  <path d="M7 3v4" />
+  <path d="M3 11h16" />
+  <path d="M18 16.496v1.504l1 1" />
+</svg>
+                <time class="article-time--published">2025-04-14</time>
+            </div>
+        
+
+        
+    </footer>
+    
+
+    
+</div>
+
+</header>
+
+    <section class="article-content">
+    
+    
+    <h1 id="今日内容">今日内容
+</h1><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">1. zabbix架构图，特点
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">2. zabbix核心知识点理念
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">3. zabbix快速添加agent（db51,db52），关联模板，查看最新数据
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">4. zabbix-get检查
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">5.zabbix添加web组（web7,web8），关联模板，图形查看
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">6.自定义监控项，报警动作
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>![屏幕截图 2024-06-26 202235](../zabbix安装/assets/屏幕截图 2024-06-26 202235.png)</p>
+<h1 id="1zabbix架构理念">1.zabbix架构理念
+</h1><p>Server 服务端</p>
+<p>Zabbix Server 是 Zabbix 的核心组件，其功能为将 Agent 采集到的数据持久化 存储到数据库里。</p>
+<p>数据库存储
+存储所有由 Agent 采集到的数据，Zabbix 支持多种数据存储，例如:
+Mysql,Oracle,PostgreSQL,Elasticsearch 等。</p>
+<p>Web 界面
+Zabbix 提供了友好的 Web 界面方便我们操作，Web 界面的运行环境可以是 Nginx+PHP或者Apache+PHP服务组成。</p>
+<p>Web界面也是ZabbixServer的一部分。</p>
+<p>Proxy 代理端
+对于分布式环境，Zabbix 也提供了代理的方案，可以代替 Zabbie Server 收集 多个 Agent 的数据，然后在将收集到的数据汇总到 Zabbix Server，Proxy 可以 起到分担 Zabbix Server 负载的作用。</p>
+<p>Agent 客户端
+Zabbix Agent 被部署在需要监控主机上，用于采集监控数据并发送到 Zabbix Server 端。</p>
+<p><img src="/zabbix%e5%ae%89%e8%a3%85/pic/image-20220707095246809.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="image-20220707095246809"
+	
+	
+></p>
+<h1 id="2-zabbix核心知识点理念">2. zabbix核心知识点理念
+</h1><p>主机 ( HOST ) : 就是具体的一个监控对象，某一个被监控的实例，可以是一个数据库，也可以是一个操作系统。</p>
+<p>模板 ( Template )：定义了具体一类监控对象的抽象，比如 Windows 模板，就是用来专门在监控Windows的时候，直接选择这个模板就可以实现开箱即用的数据采集。</p>
+<p>监控项 ( ITEM )：监控项定义了具体的某一项采集指标，比如 CPU使用率，设备温度等，采集方式可以是多种支持的采集协议。</p>
+<p>触发器 ( Trigger )：触发器是基于监控项存在的，通过WEB页面定义触发器表达式创建。比如 CPU温度大于90度，可以定义为：last(/zabbix_server/cpu_temp) &gt; 90</p>
+<p>动作 ( Action )：动作是基于触发器存在的，创建动作时可以选择具体的某个触发器，当触发器表达式满足要求时，会触发对应的Action执行，具体的动作定义可以执行 JavaScript，Shell脚本 等。</p>
+<h2 id="zabbix-server进程的作用">zabbix-server进程的作用
+</h2><p>Zabbix Server 是 C 语言开发的 Zabbix 服务端，有着 强悍的采集和计算性能，而且资源使用率很低。主要的功能如下：</p>
+<p>定时读取 Zabbix 数据库，同步 Zabbix UI 配置的信息到缓存，下发到 Zabbix Agent 或者 Zabbix Proxy。</p>
+<p>关于这俩不同的采集进程，可以通过(ps -ef|grep zabbix 查看进程列表)</p>
+<p>对于被动采集（主动和被动是从设备侧角度来看的）, Zabbix Server 会有专门的 Poller 线程去采集数据，可以定义特定的时间区间或者特定的频率。</p>
+<p>对于主动采集，就是Agent或者设备主动上报数据，Zabbix Server 也会有专门的 Trapper 线程来接收数据，时间间隔或者频率取决于设备侧或者Agent上报配置。</p>
+<p>接收到的历史数据（来自于 Agent、Proxy、设备侧），Zabbix Server 会缓存下来，进行告警表达式计算，进行动作触发，最终会同步到数据库的历史记录表，history开头的表。</p>
+<h1 id="3快速实践zabbix添加主机去监控">3.快速实践，zabbix添加主机去监控
+</h1><h2 id="31zabbix-server监控自己">3.1zabbix-server监控自己
+</h2><p>给zabbix-server机器安装上agent进程，改配置，启动即可</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">1.修正时间
+</span></span><span class="line"><span class="cl"><span class="c1"># 1.目标机器安装zabbix-agent </span>
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@zabbix-server-71 ~<span class="o">]</span><span class="c1">#rpm -ivh https://mirrors.tuna.tsinghua.edu.cn/zabbix/zabbix/4.0/rhel/7/x86_64/zabbix-agent-4.0.11-1.el7.x86_64.rpm</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># 友情提醒，先做好时间同步</span>
+</span></span><span class="line"><span class="cl">ntpdate -u ntp.aliyun.com
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># 2.修改zabbix-agent配置文件</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">官网资料，关于配置文件的解释
+</span></span><span class="line"><span class="cl">https://www.zabbix.com/documentation/4.0/zh/manual/appendix/config/zabbix_agentd
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">修改配置如下，保证和我一样先
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@web-7 ~<span class="o">]</span><span class="c1">#grep -E &#39;^[a-Z]&#39; /etc/zabbix/zabbix_agentd.conf </span>
+</span></span><span class="line"><span class="cl"><span class="nv">PidFile</span><span class="o">=</span>/var/run/zabbix/zabbix_agentd.pid 
+</span></span><span class="line"><span class="cl"><span class="nv">LogFile</span><span class="o">=</span>/var/log/zabbix/zabbix_agentd.log
+</span></span><span class="line"><span class="cl"><span class="nv">LogFileSize</span><span class="o">=</span><span class="m">0</span>
+</span></span><span class="line"><span class="cl"><span class="nv">Server</span><span class="o">=</span>10.0.0.71
+</span></span><span class="line"><span class="cl"><span class="nv">Include</span><span class="o">=</span>/etc/zabbix/zabbix_agentd.d/*.conf
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">3.启动agent
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@web-7 ~<span class="o">]</span><span class="c1">#systemctl start zabbix-agent </span>
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@web-7 ~<span class="o">]</span><span class="c1">#systemctl enable zabbix-agent</span>
+</span></span><span class="line"><span class="cl">Created symlink from /etc/systemd/system/multi-user.target.wants/zabbix-agent.service to /usr/lib/systemd/system/zabbix-agent.service.
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">4.检查,agent的端口是10050
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@web-7 ~<span class="o">]</span><span class="c1">#netstat -tunlp|grep zabbix</span>
+</span></span><span class="line"><span class="cl">tcp        <span class="m">0</span>      <span class="m">0</span> 0.0.0.0:10050           0.0.0.0:*               LISTEN      1644/zabbix_agentd  
+</span></span><span class="line"><span class="cl">tcp6       <span class="m">0</span>      <span class="m">0</span> :::10050                :::*                    LISTEN      1644/zabbix_agentd
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">5. 小结
+</span></span><span class="line"><span class="cl">zabbix-server 地址是 10.0.0.71::10051
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">zabbix-agent 地址是 10.0.0.71:10050
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/zabbix%e5%ae%89%e8%a3%85/pic/image-20220707101729499.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="image-20220707101729499"
+	
+	
+></p>
+<h2 id="32agent装好后查看最新数据">3.2agent装好后，查看最新数据
+</h2><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">zabbix-agent装好之后，就已经有了采集数据的功能
+</span></span><span class="line"><span class="cl">继续来看zabbix-UI的操作，如何查看到采集了什么数据
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/zabbix%e5%ae%89%e8%a3%85/assets/image-20220707102202981.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="image-20220707102202981"
+	
+	
+></p>
+<p><img src="/zabbix%e5%ae%89%e8%a3%85/pic/image-20220707102343923.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="image-20220707102343923"
+	
+	
+></p>
+<p><img src="/zabbix%e5%ae%89%e8%a3%85/pic/image-20220707102422785.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="image-20220707102422785"
+	
+	
+></p>
+<h2 id="33-同样的操作添加db-51机器作为练习db51db-52都给监控上即可">3.3 同样的操作，添加db-51机器，作为练习，db51,db-52都给监控上即可
+</h2><ol>
+<li>先在服务器上做好agent的安装配置的脚本</li>
+</ol>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-gdscript3" data-lang="gdscript3"><span class="line"><span class="cl"><span class="n">rpm</span> <span class="o">-</span><span class="n">ivh</span> <span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">mirrors</span><span class="o">.</span><span class="n">tuna</span><span class="o">.</span><span class="n">tsinghua</span><span class="o">.</span><span class="n">edu</span><span class="o">.</span><span class="n">cn</span><span class="o">/</span><span class="n">zabbix</span><span class="o">/</span><span class="n">zabbix</span><span class="o">/</span><span class="mf">4.0</span><span class="o">/</span><span class="n">rhel</span><span class="o">/</span><span class="mi">7</span><span class="o">/</span><span class="n">x86_64</span><span class="o">/</span><span class="n">zabbix</span><span class="o">-</span><span class="n">agent</span><span class="o">-</span><span class="mf">4.0</span><span class="o">.</span><span class="mi">11</span><span class="o">-</span><span class="mf">1.</span><span class="n">el7</span><span class="o">.</span><span class="n">x86_64</span><span class="o">.</span><span class="n">rpm</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">ntpdate</span> <span class="o">-</span><span class="n">u</span> <span class="n">ntp</span><span class="o">.</span><span class="n">aliyun</span><span class="o">.</span><span class="n">com</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">cat</span> <span class="o">&gt;</span>  <span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">zabbix</span><span class="o">/</span><span class="n">zabbix_agentd</span><span class="o">.</span><span class="n">conf</span>  <span class="o">&lt;&lt;</span><span class="s1">&#39;EOF&#39;</span>
+</span></span><span class="line"><span class="cl"><span class="n">PidFile</span><span class="o">=/</span><span class="k">var</span><span class="o">/</span><span class="n">run</span><span class="o">/</span><span class="n">zabbix</span><span class="o">/</span><span class="n">zabbix_agentd</span><span class="o">.</span><span class="n">pid</span> 
+</span></span><span class="line"><span class="cl"><span class="n">LogFile</span><span class="o">=/</span><span class="k">var</span><span class="o">/</span><span class="nb">log</span><span class="o">/</span><span class="n">zabbix</span><span class="o">/</span><span class="n">zabbix_agentd</span><span class="o">.</span><span class="n">log</span>
+</span></span><span class="line"><span class="cl"><span class="n">LogFileSize</span><span class="o">=</span><span class="mi">0</span>
+</span></span><span class="line"><span class="cl"><span class="n">Server</span><span class="o">=</span><span class="mf">10.0</span><span class="o">.</span><span class="mf">0.71</span>
+</span></span><span class="line"><span class="cl"><span class="n">ServerActive</span><span class="o">=</span><span class="mf">10.0</span><span class="o">.</span><span class="mf">0.71</span>
+</span></span><span class="line"><span class="cl"><span class="n">Hostname</span><span class="o">=</span><span class="n">web</span><span class="o">-</span><span class="mi">9</span>
+</span></span><span class="line"><span class="cl"><span class="n">HostMetadata</span><span class="o">=</span><span class="n">mylinux</span>
+</span></span><span class="line"><span class="cl"><span class="n">Include</span><span class="o">=/</span><span class="n">etc</span><span class="o">/</span><span class="n">zabbix</span><span class="o">/</span><span class="n">zabbix_agentd</span><span class="o">.</span><span class="n">d</span><span class="o">/*.</span><span class="n">conf</span>
+</span></span><span class="line"><span class="cl"><span class="n">EOF</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">systemctl</span> <span class="n">start</span> <span class="n">zabbix</span><span class="o">-</span><span class="n">agent</span>  <span class="o">&amp;&amp;</span> <span class="n">systemctl</span> <span class="n">enable</span> <span class="n">zabbix</span><span class="o">-</span><span class="n">agent</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># 检查</span>
+</span></span><span class="line"><span class="cl"><span class="n">netstat</span> <span class="o">-</span><span class="n">tunlp</span><span class="o">|</span><span class="n">grep</span> <span class="n">zabbix</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>2.添加一个db-server组，专门管理都是数据库的服务器组</p>
+<p><img src="/zabbix%e5%ae%89%e8%a3%85/pic/image-20220707103125023.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="image-20220707103125023"
+	
+	
+></p>
+<p>3.去zabbix-UI界面去添加了</p>
+<p><img src="/zabbix%e5%ae%89%e8%a3%85/pic/image-20220707103012443.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="image-20220707103012443"
+	
+	
+></p>
+<p>4.添加模板</p>
+<p><img src="/zabbix%e5%ae%89%e8%a3%85/assets/image-20220707110832640.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="image-20220707110832640"
+	
+	
+></p>
+<p>5.添加完毕db-51主机</p>
+<p><img src="/zabbix%e5%ae%89%e8%a3%85/pic/image-20220707103256129.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="image-20220707103256129"
+	
+	
+></p>
+<p>6.查看最新数据，是否能拿到数据，这2个机器，默认都有了监控项 了，因此是会有采集的数据目标的</p>
+<p><img src="/zabbix%e5%ae%89%e8%a3%85/pic/image-20220707103408170.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="image-20220707103408170"
+	
+	
+></p>
+<h2 id="34-添加db-52的全部操作">3.4 添加db-52的全部操作
+</h2><p>务必确保时间正确</p>
+<p>linux机器的操作就没问题了</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-gdscript3" data-lang="gdscript3"><span class="line"><span class="cl"><span class="n">rpm</span> <span class="o">-</span><span class="n">ivh</span> <span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">mirrors</span><span class="o">.</span><span class="n">tuna</span><span class="o">.</span><span class="n">tsinghua</span><span class="o">.</span><span class="n">edu</span><span class="o">.</span><span class="n">cn</span><span class="o">/</span><span class="n">zabbix</span><span class="o">/</span><span class="n">zabbix</span><span class="o">/</span><span class="mf">4.0</span><span class="o">/</span><span class="n">rhel</span><span class="o">/</span><span class="mi">7</span><span class="o">/</span><span class="n">x86_64</span><span class="o">/</span><span class="n">zabbix</span><span class="o">-</span><span class="n">agent</span><span class="o">-</span><span class="mf">4.0</span><span class="o">.</span><span class="mi">11</span><span class="o">-</span><span class="mf">1.</span><span class="n">el7</span><span class="o">.</span><span class="n">x86_64</span><span class="o">.</span><span class="n">rpm</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">ntpdate</span> <span class="o">-</span><span class="n">u</span> <span class="n">ntp</span><span class="o">.</span><span class="n">aliyun</span><span class="o">.</span><span class="n">com</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">cat</span> <span class="o">&gt;</span>  <span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">zabbix</span><span class="o">/</span><span class="n">zabbix_agentd</span><span class="o">.</span><span class="n">conf</span>  <span class="o">&lt;&lt;</span><span class="s1">&#39;EOF&#39;</span>
+</span></span><span class="line"><span class="cl"><span class="n">PidFile</span><span class="o">=/</span><span class="k">var</span><span class="o">/</span><span class="n">run</span><span class="o">/</span><span class="n">zabbix</span><span class="o">/</span><span class="n">zabbix_agentd</span><span class="o">.</span><span class="n">pid</span> 
+</span></span><span class="line"><span class="cl"><span class="n">LogFile</span><span class="o">=/</span><span class="k">var</span><span class="o">/</span><span class="nb">log</span><span class="o">/</span><span class="n">zabbix</span><span class="o">/</span><span class="n">zabbix_agentd</span><span class="o">.</span><span class="n">log</span>
+</span></span><span class="line"><span class="cl"><span class="n">LogFileSize</span><span class="o">=</span><span class="mi">0</span>
+</span></span><span class="line"><span class="cl"><span class="n">Server</span><span class="o">=</span><span class="mf">10.0</span><span class="o">.</span><span class="mf">0.71</span>
+</span></span><span class="line"><span class="cl"><span class="n">Include</span><span class="o">=/</span><span class="n">etc</span><span class="o">/</span><span class="n">zabbix</span><span class="o">/</span><span class="n">zabbix_agentd</span><span class="o">.</span><span class="n">d</span><span class="o">/*.</span><span class="n">conf</span>
+</span></span><span class="line"><span class="cl"><span class="n">EOF</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">systemctl</span> <span class="n">start</span> <span class="n">zabbix</span><span class="o">-</span><span class="n">agent</span>  <span class="o">&amp;&amp;</span> <span class="n">systemctl</span> <span class="n">enable</span> <span class="n">zabbix</span><span class="o">-</span><span class="n">agent</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># 检查</span>
+</span></span><span class="line"><span class="cl"><span class="n">netstat</span> <span class="o">-</span><span class="n">tunlp</span><span class="o">|</span><span class="n">grep</span> <span class="n">zabbix</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>zabbix-UI操作</p>
+<p><img src="/zabbix%e5%ae%89%e8%a3%85/pic/image-20220707110334742.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="image-20220707110334742"
+	
+	
+></p>
+<h2 id="35-安装zabbix-get命令检测是否通信了">3.5 安装zabbix-get命令，检测是否通信了
+</h2><p>从2个角度，验证server和agent是否通信</p>
+<p>角度1，看日志</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-gdscript3" data-lang="gdscript3"><span class="line"><span class="cl"><span class="p">[</span><span class="n">root</span><span class="err">@</span><span class="n">db</span><span class="o">-</span><span class="mi">52</span> <span class="o">~</span><span class="p">]</span><span class="c1">#</span>
+</span></span><span class="line"><span class="cl"><span class="p">[</span><span class="n">root</span><span class="err">@</span><span class="n">db</span><span class="o">-</span><span class="mi">52</span> <span class="o">~</span><span class="p">]</span><span class="c1">#tail -f /var/log/zabbix/*</span>
+</span></span><span class="line"><span class="cl">  <span class="mi">1592</span><span class="p">:</span><span class="mi">20220707</span><span class="p">:</span><span class="mf">110151.706</span> <span class="o">****</span> <span class="n">Enabled</span> <span class="n">features</span> <span class="o">****</span>
+</span></span><span class="line"><span class="cl">  <span class="mi">1592</span><span class="p">:</span><span class="mi">20220707</span><span class="p">:</span><span class="mf">110151.706</span> <span class="n">IPv6</span> <span class="n">support</span><span class="p">:</span>          <span class="n">YES</span>
+</span></span><span class="line"><span class="cl">  <span class="mi">1592</span><span class="p">:</span><span class="mi">20220707</span><span class="p">:</span><span class="mf">110151.706</span> <span class="n">TLS</span> <span class="n">support</span><span class="p">:</span>           <span class="n">YES</span>
+</span></span><span class="line"><span class="cl">  <span class="mi">1592</span><span class="p">:</span><span class="mi">20220707</span><span class="p">:</span><span class="mf">110151.706</span> <span class="o">**************************</span>
+</span></span><span class="line"><span class="cl">  <span class="mi">1592</span><span class="p">:</span><span class="mi">20220707</span><span class="p">:</span><span class="mf">110151.706</span> <span class="n">using</span> <span class="n">configuration</span> <span class="n">file</span><span class="p">:</span> <span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">zabbix</span><span class="o">/</span><span class="n">zabbix_agentd</span><span class="o">.</span><span class="n">conf</span>
+</span></span><span class="line"><span class="cl">  <span class="mi">1592</span><span class="p">:</span><span class="mi">20220707</span><span class="p">:</span><span class="mf">110151.706</span> <span class="n">agent</span> <span class="c1">#0 started [main process]</span>
+</span></span><span class="line"><span class="cl">  <span class="mi">1593</span><span class="p">:</span><span class="mi">20220707</span><span class="p">:</span><span class="mf">110151.707</span> <span class="n">agent</span> <span class="c1">#1 started [collector]</span>
+</span></span><span class="line"><span class="cl">  <span class="mi">1594</span><span class="p">:</span><span class="mi">20220707</span><span class="p">:</span><span class="mf">110151.707</span> <span class="n">agent</span> <span class="c1">#2 started [listener #1]</span>
+</span></span><span class="line"><span class="cl">  <span class="mi">1595</span><span class="p">:</span><span class="mi">20220707</span><span class="p">:</span><span class="mf">110151.707</span> <span class="n">agent</span> <span class="c1">#3 started [listener #2]</span>
+</span></span><span class="line"><span class="cl">  <span class="mi">1596</span><span class="p">:</span><span class="mi">20220707</span><span class="p">:</span><span class="mf">110151.708</span> <span class="n">agent</span> <span class="c1">#4 started [listener #3]</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>角度2，zabbix-get命令</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">[root@zabbix-server-71 ~]#yum install zabbix-get -y
+</span></span><span class="line"><span class="cl">Loaded plugins: fastestmirror
+</span></span><span class="line"><span class="cl">Loading mirror speeds from cached hostfile
+</span></span><span class="line"><span class="cl"> * base: mirrors.aliyun.com
+</span></span><span class="line"><span class="cl"> * extras: mirrors.aliyun.com
+</span></span><span class="line"><span class="cl"> * updates: mirrors.aliyun.com
+</span></span><span class="line"><span class="cl">Package zabbix-get-4.0.42-1.el7.x86_64 already installed and latest version
+</span></span><span class="line"><span class="cl">Nothing to do
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">通过自带的zabbix key 检查 server和agent是否通信
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">[root@zabbix-server-71 ~]#zabbix_get  -s 10.0.0.52  -k  agent.ping 
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/zabbix%e5%ae%89%e8%a3%85/assets/image-20220707110752531.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="image-20220707110752531"
+	
+	
+></p>
+<h2 id="36-模板监控项图解以及结合zabbix_get命令">3.6 模板、监控项图解，以及结合zabbix_get命令
+</h2><p><img src="/zabbix%e5%ae%89%e8%a3%85/assets/image-20220707110946169.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="image-20220707110946169"
+	
+	
+></p>
+<h3 id="模板和监控项的关系">模板和监控项的关系
+</h3><p><img src="/zabbix%e5%ae%89%e8%a3%85/assets/image-20220707114435095.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="image-20220707114435095"
+	
+	
+></p>
+<h3 id="拿默认的-os-linux模板举例详解">拿默认的 os linux模板举例，详解
+</h3><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">一般去检测linux服务器，
+</span></span><span class="line"><span class="cl">默认直接用 templates os linux模板就很好用了
+</span></span><span class="line"><span class="cl">基本的需求，监控内容，都包含了
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/zabbix%e5%ae%89%e8%a3%85/pic/image-20220707111419172.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="image-20220707111419172"
+	
+	
+></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">玩zabbix的流程就是如下，以及排错的流程也是如下
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">如何部署，且检查agent的流程
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">1. 安装agent，检查配置文件，启动
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">2. zabbix-server 通过zabbix_get 检测，agent.ping 是否通信 （这就等于命令行版本的监控，采集数据了）
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">2.1 这个zabbix_get -k agent.ping 再图形化页面上的表现，就是 
+</span></span><span class="line"><span class="cl">模板 &gt; 
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">3. 去图形化版本添加主机等信息
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/zabbix%e5%ae%89%e8%a3%85/pic/image-20220707113816777.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="image-20220707113816777"
+	
+	
+></p>
+<p><img src="/zabbix%e5%ae%89%e8%a3%85/pic/image-20220707115122913.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="image-20220707115122913"
+	
+	
+></p>
+<h3 id="基于命令行主动采集数据">基于命令行，主动采集数据
+</h3><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">zabbix_get  -s 目标agent的地址  -k  zabbix提供的key，或者自定义的key
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/zabbix%e5%ae%89%e8%a3%85/pic/image-20220707115335744.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="image-20220707115335744"
+	
+	
+></p>
+<p><img src="/zabbix%e5%ae%89%e8%a3%85/pic/image-20220707115647294.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="image-20220707115647294"
+	
+	
+></p>
+<p><img src="/zabbix%e5%ae%89%e8%a3%85/pic/image-20220707115827481.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="image-20220707115827481"
+	
+	
+></p>
+<h2 id="37-亮灯之后就表示server-和agent通信了">3.7 亮灯之后，就表示server 和agent通信了
+</h2><p>此时即可查看图形、最新数据等了</p>
+<h3 id="图形只查看db-51的图形采集数据">图形只查看db-51的图形采集数据
+</h3><p>数据可视化</p>
+<p><img src="/zabbix%e5%ae%89%e8%a3%85/pic/image-20220707120227048.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="image-20220707120227048"
+	
+	
+></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">展示5分钟内，db-52机器的 cpu动态
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/zabbix%e5%ae%89%e8%a3%85/pic/image-20220707120444590.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="image-20220707120444590"
+	
+	
+></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">while的死循环
+</span></span><span class="line"><span class="cl">[root@db-52 ~]#while true;do echo &#34;hello baizhi&#34;;done
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="最新数据">最新数据
+</h3><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">一般，监控完毕某个主机之后，
+</span></span><span class="line"><span class="cl">为了确认监控项，是否拿到数据，立即去看 最新数据功能即可
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">看一看，zabbix-server机器，目前登录了几个用户的最新数据，安全相关
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/zabbix%e5%ae%89%e8%a3%85/pic/image-20220707121230959.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="image-20220707121230959"
+	
+	
+></p>
+<h1 id="4除了自带的模板提供的各种监控项可以获取的数据也支持自定义">4.除了自带的模板，提供的各种监控项，可以获取的数据，也支持自定义
+</h1><h2 id="41-为什么要自定义监控项">4.1 为什么要自定义监控项
+</h2><p>模板里面提供了大量的监控项，为何还要自定义?</p>
+<p>那肯定是有些你想监控的内容，模板里没有。</p>
+<p>当然，zabbix支持你自定义的监控项，所以才那么流行</p>
+<h2 id="42-自定义监控项流程">4.2 自定义监控项流程
+</h2><p>自定义监控项的表现形式是(命令、脚本),只要能获取到值，就可以通过zabbix展示
+完全流程
+1.写命令、脚本
+2.编写zabbix的自定义监控项的配置文件
+3.重启zabix-agent
+4.试试zabbix-get能拿到数据吗
+5.去zabbix-ui添加监控项</p>
+<p><img src="/zabbix%e5%ae%89%e8%a3%85/assets/image-20220707143657268.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="image-20220707143657268"
+	
+	
+></p>
+<h1 id="5实战案例tcp的11个状态监控">5.实战案例，tcp的11个状态监控
+</h1><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">你要学会这个实战之后，理解自定义监控需求的操作流程
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">完成更多其他的操作，其实操作都一样
+</span></span><span class="line"><span class="cl">只不过第一步的 命令采集的数据不一样的而已。
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">精确分析tcp连接状态，可以精准得知服务器的链接情况，确保web服务器的健康
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">1. 想采集tcp状态，你的linux基本功得过关
+</span></span><span class="line"><span class="cl">命令获取tcp的状态
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">linux下的socket是什么作用？
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">ip:port  网络套接字链接，2台机器之间建立的链接，称之为socket链接
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">机器A                    访问机器B的 nginx
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">机器A-ip:随机端口
+</span></span><span class="line"><span class="cl">10.0.0.7:44154     &gt;     10.0.0.8:80
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">这就是一个socket链接记录，可以通过netstat看到，是谁，连接了web8这个机器
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># -a 显示所有socket、-t显示tcp协议连接  -n 只显示ip（系统打印主机名）</span>
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@web-7 ~<span class="o">]</span><span class="c1">#netstat -ant</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/zabbix%e5%ae%89%e8%a3%85/assets/image-20220707144930027.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="image-20220707144930027"
+	
+	
+></p>
+<p>只显示，tcp，和ip的信息</p>
+<p><img src="/zabbix%e5%ae%89%e8%a3%85/assets/image-20220707145453740.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="image-20220707145453740"
+	
+	
+></p>
+<h2 id="zabbix自定义监控11种tcp状态全操作">zabbix自定义监控11种TCP状态全操作
+</h2><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">1. 思考清楚，11种状态如何采集的命令
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">netstat -ant <span class="p">|</span>grep -c <span class="s1">&#39;TCP状态&#39;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">2. 编写zabbix-agent的配置文件，自定义key的配置文件
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># 给了大家3种TCP状态的采集写法，作为参考</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">cat &gt;/etc/zabbix/zabbix_agentd.d/tcp_status.conf <span class="s">&lt;&lt;&#39;EOF&#39;
+</span></span></span><span class="line"><span class="cl"><span class="s">UserParameter=LISTEN,netstat -ant|grep -c LISTEN
+</span></span></span><span class="line"><span class="cl"><span class="s">UserParameter=TIME_WAIT,netstat -ant|grep -c TIME_WAIT
+</span></span></span><span class="line"><span class="cl"><span class="s">UserParameter=ESTABLISHED,netstat -ant|grep -c ESTABLISHED
+</span></span></span><span class="line"><span class="cl"><span class="s">EOF</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">重启agent
+</span></span><span class="line"><span class="cl">systemctl restart zabbix-agent.service 
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">去服务端zabbix_get 验证下
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@zabbix-server-71 ~<span class="o">]</span><span class="c1">#zabbix_get -s 10.0.0.7 -k LISTEN</span>
+</span></span><span class="line"><span class="cl"><span class="m">8</span>
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@zabbix-server-71 ~<span class="o">]</span><span class="c1">#</span>
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@zabbix-server-71 ~<span class="o">]</span><span class="c1">#zabbix_get -s 10.0.0.7 -k TIME_WAIT</span>
+</span></span><span class="line"><span class="cl"><span class="m">1</span>
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@zabbix-server-71 ~<span class="o">]</span><span class="c1">#</span>
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@zabbix-server-71 ~<span class="o">]</span><span class="c1">#zabbix_get -s 10.0.0.7 -k ESTABLISHED</span>
+</span></span><span class="line"><span class="cl"><span class="m">2</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">确认OK后 ，即可去web页面，添加监控项，采集数据了
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">但是，建议用如下优化写法，传参形式，一个配置文件语法，即可提取11种状态的值
+</span></span><span class="line"><span class="cl">否则你的配置文件就得写11行，有点搓。
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">#zabbix配置文件，支持传参的用法</span>
+</span></span><span class="line"><span class="cl">cat &gt; /etc/zabbix/zabbix_agentd.d/tcp_status.conf <span class="s">&lt;&lt;&#39;EOF&#39;
+</span></span></span><span class="line"><span class="cl"><span class="s">UserParameter=tcp_status[*],netstat -ant|grep -c $1
+</span></span></span><span class="line"><span class="cl"><span class="s">EOF</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/zabbix%e5%ae%89%e8%a3%85/assets/image-20220707152229684.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="image-20220707152229684"
+	
+	
+></p>
+<p><img src="/zabbix%e5%ae%89%e8%a3%85/assets/image-20220707152421534.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="image-20220707152421534"
+	
+	
+></p>
+<h3 id="图解zabbix自定义key的配置文件">图解zabbix自定义key的配置文件
+</h3><p><img src="/zabbix%e5%ae%89%e8%a3%85/assets/image-20220707150150559.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="image-20220707150150559"
+	
+	
+></p>
+<h2 id="图形化zabbix添加监控项监控tcp的状态web7添加监控项">图形化zabbix添加监控项，监控TCP的状态(web7添加监控项)
+</h2><p>web7</p>
+<p>web8</p>
+<p>web9</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">1. 添加模板，模板中包含了11个监控项（TCP11个状态）
+</span></span><span class="line"><span class="cl">2. 哪台机器想检测这个TCP的数据，就和这个模板关联即可
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">但是咱现在由简到难，先对一个单独的机器添加即可
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">1. 配置选项卡
+</span></span><span class="line"><span class="cl">2. 点击主机
+</span></span><span class="line"><span class="cl">3. 给web7机器添加监控项（自定义的监控项即可）
+</span></span><span class="line"><span class="cl">4. 给web7添加三种TCP状态的监控项，作业是自己完成11种的添加
+</span></span><span class="line"><span class="cl">LISTEN
+</span></span><span class="line"><span class="cl">TIME_WAIT
+</span></span><span class="line"><span class="cl">ESTABLISHED
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="图形化添加监控项的步骤">图形化添加监控项的步骤
+</h3><p><img src="/zabbix%e5%ae%89%e8%a3%85/assets/image-20220707153415528.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="image-20220707153415528"
+	
+	
+></p>
+<h2 id="克隆监控项">克隆监控项
+</h2><p>针对LISTEN状态的监控项，直接克隆，修改key值即可，加上TIME_WAIT 和 ESTABLISHED俩状态。</p>
+<p><img src="/zabbix%e5%ae%89%e8%a3%85/assets/image-20220707153647863.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="image-20220707153647863"
+	
+	
+></p>
+<p><img src="/zabbix%e5%ae%89%e8%a3%85/assets/image-20220707153821832.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="image-20220707153821832"
+	
+	
+></p>
+<h3 id="最新数据-1">最新数据
+</h3><p><img src="/zabbix%e5%ae%89%e8%a3%85/assets/image-20220707153936000.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="image-20220707153936000"
+	
+	
+></p>
+<p>自定义监控项，自定义，让zabbix展示，你自己定义的命令，采集到的，你想要的数据，就已经通过zabbix图形化展示了。</p>
+<h3 id="图形数据">图形数据
+</h3><p>添加tcp的三个图形数据</p>
+<p><img src="/zabbix%e5%ae%89%e8%a3%85/assets/image-20220707154104879.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="image-20220707154104879"
+	
+	
+></p>
+<p>.<img src="/zabbix%e5%ae%89%e8%a3%85/assets/image-20220707154307057.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="image-20220707154307057"
+	
+	
+></p>
+<h3 id="查看web7的图形数据">查看web7的图形数据
+</h3><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">1. 给web7发1000个请求试试，1000个tcp状态
+</span></span><span class="line"><span class="cl">[root@zabbix-server-71 ~]#ab -c 10 -n 1000 http://10.0.0.7/    
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">2. 查看图形数据5分钟内的变化
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/zabbix%e5%ae%89%e8%a3%85/assets/image-20220707154616802.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="image-20220707154616802"
+	
+	
+></p>
+<p><img src="/zabbix%e5%ae%89%e8%a3%85/assets/image-20220707155319473.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="image-20220707155319473"
+	
+	
+></p>
+<h3 id="小结">小结
+</h3><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">1. 在agent客户端，创建自定义key的配置文件（定义的 tcp_status[LISTEN ]）
+</span></span><span class="line"><span class="cl">2. 重启agent
+</span></span><span class="line"><span class="cl">3. 去web页面，创建了3个监控项
+</span></span><span class="line"><span class="cl">4. 根据监控项采集到的数据，添加了图形展示
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="触发器的添加">触发器的添加
+</h2><p>图形化点点点就完事</p>
+<h3 id="给web7的time_wait监控项设置触发器超过500个值就报警">给web7的TIME_WAIT监控项，设置触发器，超过500个值就报警
+</h3><p><img src="/zabbix%e5%ae%89%e8%a3%85/assets/image-20220707155930404.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="image-20220707155930404"
+	
+	
+></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">完成TIME_WAIT超过500个就报警的判断表达式
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/zabbix%e5%ae%89%e8%a3%85/assets/image-20220707155958174.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="image-20220707155958174"
+	
+	
+></p>
+<p><img src="/zabbix%e5%ae%89%e8%a3%85/assets/image-20220707160308604.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="image-20220707160308604"
+	
+	
+></p>
+<p>.</p>
+<hr>
+<p><img src="/zabbix%e5%ae%89%e8%a3%85/assets/image-20220707160505667.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="image-20220707160505667"
+	
+	
+></p>
+<p>发现报警了</p>
+
+</section>
+
+
+    <footer class="article-footer">
+    
+
+    </footer>
+
+
+    
+</article>
+
+    
+
+    
+
+     
+    
+        
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+        2025 小诗
+    </section>
+    
+    <section class="powerby">
+        使用 <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> 构建 <br />
+        主题 <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.26.0">Stack</a></b> 由 <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a> 设计
+    </section>
+</footer>
+
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css"crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css"crossorigin="anonymous"
+            >
+
+            </main>
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.6/dist/vibrant.min.js"integrity="sha256-awcR2jno4kI5X0zL8ex0vi2z&#43;KMkF24hUW8WePSA9HM="crossorigin="anonymous"
+                
+                >
+            </script><script type="text/javascript" src="/xiaoshi/ts/main.js" defer></script>
+<script>
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+
+    </body>
+</html>

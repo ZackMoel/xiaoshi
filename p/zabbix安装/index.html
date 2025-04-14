@@ -1,0 +1,1231 @@
+<!DOCTYPE html>
+<html lang="zh-cn" dir="ltr">
+    <head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content="1.监控的背景 岗位需求 1 2 3 4 5 1. 无论是小公司，也会招聘专门的监控运维岗、或是对运维软件有一定的技术要求 2. 或者是大公司，假设北京总部有70个">
+<title>Zabbix安装</title>
+
+<link rel='canonical' href='https://ZackMoel.github.io/xiaoshi/p/zabbix%E5%AE%89%E8%A3%85/'>
+
+<link rel="stylesheet" href="/xiaoshi/scss/style.min.0304c6baf04e01a8fe70693791cb744d56a3578a3120a8796cefc66825aa39c7.css"><meta property='og:title' content="Zabbix安装">
+<meta property='og:description' content="1.监控的背景 岗位需求 1 2 3 4 5 1. 无论是小公司，也会招聘专门的监控运维岗、或是对运维软件有一定的技术要求 2. 或者是大公司，假设北京总部有70个">
+<meta property='og:url' content='https://ZackMoel.github.io/xiaoshi/p/zabbix%E5%AE%89%E8%A3%85/'>
+<meta property='og:site_name' content='小诗'>
+<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:published_time' content='2025-04-14T17:07:51&#43;08:00'/><meta property='article:modified_time' content='2025-04-14T17:07:51&#43;08:00'/>
+<meta name="twitter:title" content="Zabbix安装">
+<meta name="twitter:description" content="1.监控的背景 岗位需求 1 2 3 4 5 1. 无论是小公司，也会招聘专门的监控运维岗、或是对运维软件有一定的技术要求 2. 或者是大公司，假设北京总部有70个">
+  
+
+
+    </head>
+    <body class="
+    article-page
+    ">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex on-phone--column extended"><aside class="sidebar left-sidebar sticky ">
+    <button class="hamburger hamburger--spin" type="button" id="toggle-menu" aria-label="切换菜单">
+        <span class="hamburger-box">
+            <span class="hamburger-inner"></span>
+        </span>
+    </button>
+
+    <header>
+        
+            
+            <figure class="site-avatar">
+                <a href="/xiaoshi/">
+                
+                    
+                    
+                    
+                        
+                        <img src="/xiaoshi/img/avatar_hu8920112365793990935.png" width="300"
+                            height="300" class="site-logo" loading="lazy" alt="Avatar">
+                    
+                
+                </a>
+                
+                    <span class="emoji">🍥</span>
+                
+            </figure>
+            
+        
+        
+        <div class="site-meta">
+            <h1 class="site-name"><a href="/xiaoshi">小诗</a></h1>
+            <h2 class="site-description">欢迎来到小诗的博客</h2>
+        </div>
+    </header><ol class="menu-social">
+            
+                <li>
+                    <a 
+                        href='https://space.bilibili.com/1055981889?spm_id_from=333.1007.0.0'
+                        target="_blank"
+                        title="bilibili"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg  xmlns="http://www.w3.org/2000/svg"  width="24"  height="24"  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  stroke-width="2"  stroke-linecap="round"  stroke-linejoin="round"  class="icon icon-tabler icons-tabler-outline icon-tabler-brand-bilibili"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M3 10a4 4 0 0 1 4 -4h10a4 4 0 0 1 4 4v6a4 4 0 0 1 -4 4h-10a4 4 0 0 1 -4 -4v-6z" /><path d="M8 3l2 3" /><path d="M16 3l-2 3" /><path d="M9 13v-2" /><path d="M15 11v2" /></svg>
+                        
+                    </a>
+                </li>
+            
+                <li>
+                    <a 
+                        href='https://github.com/ZackMoel/xiaoshi.github.io'
+                        target="_blank"
+                        title="GitHub"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-github" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M9 19c-4.3 1.4 -4.3 -2.5 -6 -3m12 5v-3.5c0 -1 .1 -1.4 -.5 -2c2.8 -.3 5.5 -1.4 5.5 -6a4.6 4.6 0 0 0 -1.3 -3.2a4.2 4.2 0 0 0 -.1 -3.2s-1.1 -.3 -3.5 1.3a12.3 12.3 0 0 0 -6.2 0c-2.4 -1.6 -3.5 -1.3 -3.5 -1.3a4.2 4.2 0 0 0 -.1 3.2a4.6 4.6 0 0 0 -1.3 3.2c0 4.6 2.7 5.7 5.5 6c-.6 .6 -.6 1.2 -.5 2v3.5" />
+</svg>
+
+
+
+                        
+                    </a>
+                </li>
+            
+        </ol><ol class="menu" id="main-menu">
+        
+        
+        
+        <li >
+            <a href='/xiaoshi/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-home" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <polyline points="5 12 3 12 12 3 21 12 19 12" />
+  <path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7" />
+  <path d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6" />
+</svg>
+
+
+
+                
+                <span>主页</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/xiaoshi/%E5%85%B3%E4%BA%8E/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-user" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="7" r="4" />
+  <path d="M6 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2" />
+</svg>
+
+
+
+                
+                <span>关于</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/xiaoshi/archives/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-archive" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <rect x="3" y="4" width="18" height="4" rx="2" />
+  <path d="M5 8v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-10" />
+  <line x1="10" y1="12" x2="14" y2="12" />
+</svg>
+
+
+
+                
+                <span>归档</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/xiaoshi/search/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-search" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="10" cy="10" r="7" />
+  <line x1="21" y1="21" x2="15" y2="15" />
+</svg>
+
+
+
+                
+                <span>搜索</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/xiaoshi/%E5%8F%8B%E6%83%85%E9%93%BE%E6%8E%A5/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-link" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M10 14a3.5 3.5 0 0 0 5 0l4 -4a3.5 3.5 0 0 0 -5 -5l-.5 .5" />
+  <path d="M14 10a3.5 3.5 0 0 0 -5 0l-4 4a3.5 3.5 0 0 0 5 5l.5 -.5" />
+</svg>
+
+
+
+                
+                <span>友情链接</span>
+            </a>
+        </li>
+        
+        <li class="menu-bottom-section">
+            <ol class="menu">
+
+                
+                    <li id="dark-mode-toggle">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="8" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="16" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <span>暗色模式</span>
+                    </li>
+                
+            </ol>
+        </li>
+    </ol>
+</aside>
+
+    <aside class="sidebar right-sidebar sticky">
+        
+            
+                
+    <section class="widget archives">
+        <div class="widget-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <line x1="5" y1="9" x2="19" y2="9" />
+  <line x1="5" y1="15" x2="19" y2="15" />
+  <line x1="11" y1="4" x2="7" y2="20" />
+  <line x1="17" y1="4" x2="13" y2="20" />
+</svg>
+
+
+
+        </div>
+        <h2 class="widget-title section-title">目录</h2>
+        
+        <div class="widget--toc">
+            <nav id="TableOfContents">
+  <ol>
+    <li><a href="#岗位需求">岗位需求</a></li>
+    <li><a href="#生活里的监控">生活里的监控</a></li>
+    <li><a href="#运维的职责">运维的职责</a></li>
+    <li><a href="#监控软件的必要性">监控软件的必要性</a></li>
+    <li><a href="#互联网公司里的运维">互联网公司里的运维</a></li>
+    <li><a href="#运维工作会遇见的难题">运维工作会遇见的难题</a></li>
+    <li><a href="#运维自动化">运维自动化</a></li>
+    <li><a href="#监控生命周期">监控生命周期</a></li>
+    <li><a href="#理想化的监控软件应该支持的功能">理想化的监控软件应该支持的功能</a></li>
+  </ol>
+
+  <ol>
+    <li><a href="#21为什么要有监控">2.1为什么要有监控</a></li>
+    <li><a href="#22主流的监控软件">2.2主流的监控软件</a></li>
+    <li><a href="#新入职后如何着手监控工作">新入职后、如何着手监控工作?</a></li>
+  </ol>
+
+  <ol>
+    <li><a href="#apache配置">apache配置</a></li>
+    <li><a href="#测试apache装好后是一个lamp环境">测试apache装好后，是一个LAMP环境</a></li>
+    <li><a href="#zabbix-ui前端配置">zabbix-UI前端配置</a></li>
+    <li><a href="#修改zabbix为中文语言">修改zabbix为中文语言</a></li>
+    <li><a href="#修改图形的数据展示默认字体有问题">修改图形的数据展示（默认字体有问题）</a></li>
+    <li><a href="#补充知识关于apache和zabbix是怎么结合的">补充知识，关于apache和zabbix是怎么结合的？</a></li>
+  </ol>
+</nav>
+        </div>
+    </section>
+
+            
+        
+    </aside>
+
+
+            <main class="main full-width">
+    <article class="main-article">
+    <header class="article-header">
+
+    <div class="article-details">
+    
+
+    <div class="article-title-wrapper">
+        <h2 class="article-title">
+            <a href="/xiaoshi/p/zabbix%E5%AE%89%E8%A3%85/">Zabbix安装</a>
+        </h2>
+    
+        
+    </div>
+
+    
+    
+    
+    
+    <footer class="article-time">
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
+  <circle cx="18" cy="18" r="4" />
+  <path d="M15 3v4" />
+  <path d="M7 3v4" />
+  <path d="M3 11h16" />
+  <path d="M18 16.496v1.504l1 1" />
+</svg>
+                <time class="article-time--published">2025-04-14</time>
+            </div>
+        
+
+        
+    </footer>
+    
+
+    
+</div>
+
+</header>
+
+    <section class="article-content">
+    
+    
+    <h1 id="1监控的背景">1.监控的背景
+</h1><h2 id="岗位需求">岗位需求
+</h2><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">1. 无论是小公司，也会招聘专门的监控运维岗、或是对运维软件有一定的技术要求
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">2. 或者是大公司，假设北京总部有70个运维，里面可能有20个SRE高级运维，3个devops运维开发，3个监控运维（维护zabbix、prometheus）、剩下的就是桌面运维（维护硬件资产、发放笔记本、显示器、台式机，等工作）、或者IT机房硬件运维。
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">监控，是运维工作里的一大重要环节。
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="生活里的监控">生活里的监控
+</h2><p>我们的生活里，离不开监控，监控能够最大程度上，发挥如下作用：</p>
+<ul>
+<li>实时监测，即使你不在电脑前，也能实时掌握监控区域情况，提高工作效率</li>
+<li>事后录像查询，如果不法事件未能及时发现制止，可以调取录像，让不法分子无处遁形。给予不法分子震慑作用，当不法分子意识到自己暴露在监控内，就不敢使坏。</li>
+<li>远程查看，远程操控，只需要联网，即可在任何设备上，查看监控。</li>
+</ul>
+<h2 id="运维的职责">运维的职责
+</h2><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">1.保障企业数据的安全可意
+</span></span><span class="line"><span class="cl">2.为客户提供7*24小时服务
+</span></span><span class="line"><span class="cl">3.不断提开用户的体验
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="监控软件的必要性">监控软件的必要性
+</h2><ul>
+<li>在有监控系统之前，运维人员需要登录服务器手动敲打命令来获取系统数据，例如前面学过的iotop, glances, htop, free, ps等查看服务器状态的命令。</li>
+<li>运维人员通过系统管理的命令来获取服务器数据，为了分析问题，可能会把数据复制到本地机器，通过excel 等工具进行制表，画图分析服务器性能动态。</li>
+<li>这种手动管理服务器的麻烦在于，服务器出现问题的时候，运维无法即使的发现，可能服务器内存满了，网站应用挂了，用户过来投诉才能发现，那此时可能已经产生了损失。</li>
+</ul>
+<hr>
+<p>作为一个运维人员，会使用监控系统查看服务器状态以及网站流量指标，利用监控系统的数据去了解上线发布的结果，和网站的健康状态，</p>
+<p>利用一个优秀的监控软件，我们可以</p>
+<ul>
+<li>通过一个友好的界面进行浏览整个网站所有的服务器状态</li>
+<li>可以在web前端方便的查看监控数据</li>
+<li>可以回湖寻找事故发生时系统的问题和报警情况</li>
+</ul>
+<p>有了一套完善的监控体系，你就可以悠闲的喝着咖啡干活，而不用提心吊胆。</p>
+<p>监控系统是整个运维自动化体系中非常重要的环节，从服务器上架到机房，到最后下架回收，整个过程都应该有监控的存在。</p>
+<ul>
+<li>
+<p>服务器上架的硬件监控，检测线路，服务器接口状态</p>
+</li>
+<li>
+<p>服务器运行时的监控，系统指标监控，且在出现异常的时候发出报警通知对应的人员</p>
+</li>
+<li>
+<p>在服务器回收的时候，要取消硬件，软件的监控</p>
+</li>
+</ul>
+<p>并且大型公司还会对监控系统进行开发，确保有API能够方便的和其他部门同事进行协同工作。</p>
+<h2 id="互联网公司里的运维">互联网公司里的运维
+</h2><p>一般公司里的运维，大致可以分为基础运维、应用运维、运维开发、监控组四大部分。</p>
+<ul>
+<li>基础运维，负责IDC运维，服务器上下架，网络设备等</li>
+<li>应用运维，也就是system administrator,系统管理员</li>
+<li>运维开发，负责运维工具的开发，系统开发等，例如开发监控系统，代码发布系统</li>
+<li>监控组，也就是24小时值班的人员，需要时刻关注服务器，网站的状况，出现问题后，第一时间联系相关运维以及研发人品。</li>
+</ul>
+<h2 id="运维工作会遇见的难题">运维工作会遇见的难题
+</h2><ul>
+<li>国内的互联网大厂，拥有几百，几干台服务器是很常见的，因此运维工程师的招聘需求量很大，且工作量也很大，每天在几千台服务器上敲命令，查看系统状态，发布代码，任务是非常繁琐的。</li>
+<li>国内常见的运维新闻就是：
+<ul>
+<li>又是一年一度的双十一，今晚又是一个不眠之夜，对于程序员，运维，整个IT团队都要熬夜了（但是他们的收益也是巨大的）</li>
+<li>新浪某男星又被爆出丑闻，微博又疲痪啦!</li>
+</ul>
+</li>
+<li>以下这些都是运维新人，会遇见的难题，需要通过不断学习运维技术，解决如下问题：
+<ul>
+<li>服务器崩溃，网站后台500挂了，由于没有监控，大伙都还不知道，直到其他部门的同事打来电话一顿凶</li>
+<li>代码发布太过于繁琐，每一台机器都要自己手动执行部署，一台一台的检査</li>
+<li>机器之间环境不统一，代码一样，但是这台能行，另一台就不行</li>
+<li>分析问题困难，比如想要知道服务器历史状态，就比较麻烦</li>
+<li>资产统计困难，作为运维新人，都不清楚公司的服务器架构，资产状况</li>
+</ul>
+</li>
+<li>结局途径：
+<ul>
+<li>部署监控系统，实时监测，实时报警</li>
+<li>自动化构建系统搭建+shell+ansible完成统一化部署</li>
+<li>查看history、部署堡垒机做好历史监控、资产管理，组织架构管理</li>
+</ul>
+</li>
+</ul>
+<h2 id="运维自动化">运维自动化
+</h2><p><img src="/xiaoshi/p/zabbix%E5%AE%89%E8%A3%85/assets/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20240527161800-1716888984272-1.jpg"
+	width="1588"
+	height="751"
+	srcset="/xiaoshi/p/zabbix%E5%AE%89%E8%A3%85/assets/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20240527161800-1716888984272-1_hu8724192995231297219.jpg 480w, /xiaoshi/p/zabbix%E5%AE%89%E8%A3%85/assets/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20240527161800-1716888984272-1_hu8383589272180658849.jpg 1024w"
+	loading="lazy"
+	
+		alt="微信图片_20240527161800"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="211"
+		data-flex-basis="507px"
+	
+></p>
+<ul>
+<li>
+<p>上图中主要体现了三个角度的运维自动化</p>
+<ul>
+<li>
+<p>硬件标准化，包括服务器所有的硬件指标</p>
+</li>
+<li>
+<p>软件标准化，软件版本，系统环境一致性等</p>
+</li>
+<li>
+<p>运维自动化，监控体系，代码发布体系，CMDB</p>
+</li>
+</ul>
+</li>
+<li>
+<p>监控体系，部署如zabbix等系统实现：</p>
+<ul>
+<li>系统状态监控</li>
+<li>应用状态监控</li>
+<li>出错时及时告警</li>
+</ul>
+</li>
+<li>
+<p>发布系统，部署CI/CD运维体系；</p>
+<ul>
+<li>代码发布</li>
+<li>代码检查</li>
+<li>代码回滚，发布</li>
+</ul>
+</li>
+<li>
+<p>服务器标准化，部署如cobbler+pxe实现自动化装机，ansible实现工程自动化配置，做到硬件、软件的标准化。</p>
+</li>
+<li>
+<p>CMDB系统，也读作配置管理数据库，存储了所有的运维数据，包括服务器硬件信息，网络设备信息，属于运维的心脏。</p>
+</li>
+</ul>
+<h2 id="监控生命周期">监控生命周期
+</h2><blockquote>
+<p>运维如何从零到一、部署一套监控系统?</p>
+</blockquote>
+<p>1.服务器上架机柜</p>
+<p>2.进行基础设施监控</p>
+<ul>
+<li>
+<p>服务器温度，风扇转速(ipmitool命令对服务器进行远程管理，注意只能用在物理机,vmware不行）</p>
+</li>
+<li>
+<p>存储的容量，性能 (df, fdisk, dd, iotop)</p>
+</li>
+<li>
+<p>CPU性能好坏 (lscpu, uptime, top, htop, glances)</p>
+</li>
+<li>
+<p>内存容量 （free)</p>
+</li>
+<li>
+<p>网络情况 (iftop，nethogs)</p>
+</li>
+</ul>
+<p>3.应用监控</p>
+<ul>
+<li>数据库mysql,redis</li>
+<li>nginx</li>
+<li>php-fpm</li>
+<li>python</li>
+</ul>
+<p>4.注意：若是服务器在维护中，还得暂停监控指标，否则监控会不停的报警。</p>
+<p>5.监控系统在运维自动化系统中，实现如下功能</p>
+<ul>
+<li>监控数据收集，可视化展示（图表展示，柱状图，曲线图，折线图） - zabbix图形创建</li>
+<li>异常数据报警 - zabbix触发器</li>
+<li>结合如CMDB等系统协同工作</li>
+</ul>
+<h2 id="理想化的监控软件应该支持的功能">理想化的监控软件应该支持的功能
+</h2><p>一个完善且理想的监控系统，得有如下特点</p>
+<ul>
+<li>
+<p>监控系统能够自定义监控的内容，自己通过脚本采集所需的数据</p>
+</li>
+<li>
+<p>数据需要存入到数据库，日后对该数据进行分析计算</p>
+</li>
+<li>
+<p>监控系统可以简易、快速地部署到服务器</p>
+</li>
+<li>
+<p>数据可视化清晰直观</p>
+</li>
+</ul>
+<p>异常告警通知；</p>
+<ul>
+<li>
+<p>可以定义复杂度告警逻辑，做到监控项之间的关联告警，例如程序之间的依赖检测，而不是只单独检测某一个指标</p>
+</li>
+<li>
+<p>告警可以确认响应，让运维组内的人知道已经有人在处理告警问题了</p>
+</li>
+<li>
+<p>报警方式可以自定义，如短信，邮件，以及微信，钉钉等</p>
+</li>
+<li>
+<p>告警内容可以自定义，能够写入一些简单的分析，便于运维人员直观了解数据，否则还得去服务器查看</p>
+</li>
+<li>
+<p>报警后，可以预处理一些任务，如自我修复，重启，采集数据等</p>
+</li>
+</ul>
+<p>协同工作：</p>
+<ul>
+<li>
+<p>监控系统有强大的API，提供给研发同学调用，其他系统调用。</p>
+</li>
+<li>
+<p>监控数据是开放性，数据结构主流，便于解析。</p>
+</li>
+<li>
+<p>监控可视化可以简易的插件使用，而非复杂的js文件</p>
+</li>
+</ul>
+<h1 id="2监控系统总结概述">2.监控系统总结概述
+</h1><h2 id="21为什么要有监控">2.1为什么要有监控
+</h2><p>1.对系统不间断7*24的实时监控
+2.实时反馈、可视化展示服务器运行状态
+3.保证业务高度可用性，提前预警
+4.保证了业务的可靠性、稳定性、安全性</p>
+<h2 id="22主流的监控软件">2.2主流的监控软件
+</h2><p>1.zabbix监控王者https://www.zabbix.com/documentation/4.0/zh/manual
+2.夜鹰系统https://www.didiyun.com/production/ops.html
+3.普罗米修斯https://prometheus.io/ （新时代监控王者，主要结合容器、k8s使用)</p>
+<h2 id="新入职后如何着手监控工作">新入职后、如何着手监控工作?
+</h2><p>以下思路作为参考，属于全链路的监控搭建，具体从哪个环节开始，以你工作需求为切入点。
+1.硬件监控、路由器、交换机、防火墙的流量监控
+2.系统资源监控、cpu、内存、磁盘、网络流量、进程存活、tcp链接数
+3.服务监控、nginx、php-fpm、tomcat、mysql、redis、django
+4.web监控、nginx-status、http请求响应耗时
+5.日志监控、所有服务的日志收集、存储、分析、展示(部署ELK架构)、或者购买日志易系统
+6.安全监控、系统防火墙firewalld、web应用防火墙(nginx+lua)、牛盾(<a class="link" href="https://newdun.com/#/home"  target="_blank" rel="noopener"
+    >Newdun.com-牛盾安全，无忧网络</a>)、安全狗(ht
+7.网络监控、smokeping
+8.业务监控分析公司搞秒杀、抢购等活动时产生的瞬时流量、注册量、判断产生的价值</p>
+<h1 id="3zabbix40服务端-部署全流程">3.zabbix4.0服务端 部署全流程
+</h1><p>zabbix官网：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">https://www.zabbix.com/documentation/4.0/zh/manual
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>安装流程：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span><span class="lnt">43
+</span><span class="lnt">44
+</span><span class="lnt">45
+</span><span class="lnt">46
+</span><span class="lnt">47
+</span><span class="lnt">48
+</span><span class="lnt">49
+</span><span class="lnt">50
+</span><span class="lnt">51
+</span><span class="lnt">52
+</span><span class="lnt">53
+</span><span class="lnt">54
+</span><span class="lnt">55
+</span><span class="lnt">56
+</span><span class="lnt">57
+</span><span class="lnt">58
+</span><span class="lnt">59
+</span><span class="lnt">60
+</span><span class="lnt">61
+</span><span class="lnt">62
+</span><span class="lnt">63
+</span><span class="lnt">64
+</span><span class="lnt">65
+</span><span class="lnt">66
+</span><span class="lnt">67
+</span><span class="lnt">68
+</span><span class="lnt">69
+</span><span class="lnt">70
+</span><span class="lnt">71
+</span><span class="lnt">72
+</span><span class="lnt">73
+</span><span class="lnt">74
+</span><span class="lnt">75
+</span><span class="lnt">76
+</span><span class="lnt">77
+</span><span class="lnt">78
+</span><span class="lnt">79
+</span><span class="lnt">80
+</span><span class="lnt">81
+</span><span class="lnt">82
+</span><span class="lnt">83
+</span><span class="lnt">84
+</span><span class="lnt">85
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">1.创建新虚拟机zabbix-server-71
+</span></span><span class="line"><span class="cl">注意：克隆完成之后记得修改ip第四段为71
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">2.配置yum仓库
+</span></span><span class="line"><span class="cl">https://mirrors.tuna.tsinghua.edu.cn/zabbix/zabbix/
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@zabbix-server-71 ~<span class="o">]</span><span class="c1">#cd /etc/yum.repos.d</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># 安装两个zabbix.repo仓库文件</span>
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@zabbix-server-71 /etc/yum.repos.d<span class="o">]</span><span class="c1">#rpm -ivh https://mirrors.tuna.tsinghua.edu.cn/zabbix/zabbix/4.0/rhel/7/x86_64/zabbix-release-4.0-1.el7.noarch.rpm</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># 改成清华的</span>
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@zabbix-server-71 /etc/yum.repos.d<span class="o">]</span><span class="c1">#sed -i &#39;s#repo.zabbix.com#mirrors.tuna.tsinghua.edu.cn/zabbix#g&#39; /etc/yum.repos.d/zabbix.repo</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">3. 安装zabbix-server服务端，以及数据库
+</span></span><span class="line"><span class="cl"><span class="c1">#  zabbix-server-mysql   以mysql作为存储开发的zabbix-server服务端程序</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># zabbix-web-mysql 		php核心程序，zabbix-UI页面，也是以mysql为存储版本</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># zabbix-agent		   采集客户端数据的核心程序 ，自己监控自己</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># mariadb-server		安装mysql服务端程序</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@zabbix-server-71 /etc/yum.repos.d<span class="o">]</span><span class="c1">#yum install -y zabbix-server-mysql zabbix-web-mysql zabbix-agent mariadb-server</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># 启动mysql，切创建用户，待会用于和zabbix链接，以及创建zabbix库，存储数据。</span>
+</span></span><span class="line"><span class="cl">启动mariadb数据库，设置开机自启
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@zabbix-server-71 /etc/yum.repos.d<span class="o">]</span><span class="c1">#systemctl start mariadb &amp;&amp; systemctl enable mariadb</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">4.设置mariadb数据库，创建zabbix库，存储监控数据，且创建账号
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@zabbix-server-71 /etc/yum.repos.d<span class="o">]</span><span class="c1">#mysqladmin password root</span>
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@zabbix-server-71 /etc/yum.repos.d<span class="o">]</span><span class="c1">#mysql -uroot -proot -e &#39;create database zabbix character set utf8 collate utf8_bin;&#39;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># 创建用户账户，zabbix 密码是 root</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># 给与权限是，zabbix这个用户 ，对于zabbix这个库，下的所有表，都是最大权限</span>
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@zabbix-server-71 /etc/yum.repos.d<span class="o">]</span><span class="c1">#mysql -uroot -proot -e &#34;grant all privileges on zabbix.* to zabbix@localhost identified by &#39;root&#39;;&#34;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">5.导入zabbix服务端的数据库内容
+</span></span><span class="line"><span class="cl"><span class="c1"># 用zcat直接读取gz压缩包的数据，且管道符交给mysql命令导入数据，往zabbix库中导入数据</span>
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@zabbix-server-71 /etc/yum.repos.d<span class="o">]</span><span class="c1">#zcat /usr/share/doc/zabbix-server-mysql-4.0.50/create.sql.gz | mysql -uroot -proot zabbix</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># 技巧，查找命令来自于哪个软件包，便于你去安装  1111</span>
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@zabbix-server-71 /etc/yum.repos.d<span class="o">]</span><span class="c1">#yum provides zcat </span>
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@zabbix-server-71 /etc/yum.repos.d<span class="o">]</span><span class="c1">#yum install gzip -y</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">6. 修改zabbix-server服务端配置文件，指明自己的ip，便于agent去连接
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@zabbix-server-71 /etc/yum.repos.d<span class="o">]</span><span class="c1">#cat &gt; /etc/zabbix/zabbix_server.conf &lt;&lt;&#39;EOF&#39;</span>
+</span></span><span class="line"><span class="cl"><span class="nv">LogFile</span><span class="o">=</span>/var/log/zabbix/zabbix_server.log
+</span></span><span class="line"><span class="cl"><span class="nv">LogFileSize</span><span class="o">=</span><span class="m">0</span>
+</span></span><span class="line"><span class="cl"><span class="nv">PidFile</span><span class="o">=</span>/var/run/zabbix/zabbix_server.pid
+</span></span><span class="line"><span class="cl"><span class="nv">SocketDir</span><span class="o">=</span>/var/run/zabbix
+</span></span><span class="line"><span class="cl"><span class="nv">DBHost</span><span class="o">=</span>localhost 
+</span></span><span class="line"><span class="cl"><span class="nv">DBName</span><span class="o">=</span>zabbix
+</span></span><span class="line"><span class="cl"><span class="nv">DBUser</span><span class="o">=</span>zabbix
+</span></span><span class="line"><span class="cl"><span class="nv">DBPassword</span><span class="o">=</span>root
+</span></span><span class="line"><span class="cl"><span class="nv">SNMPTrapperFile</span><span class="o">=</span>/var/log/snmptrap/snmptrap.log
+</span></span><span class="line"><span class="cl"><span class="nv">Timeout</span><span class="o">=</span><span class="m">4</span>
+</span></span><span class="line"><span class="cl"><span class="nv">AlertScriptsPath</span><span class="o">=</span>/usr/lib/zabbix/alertscripts
+</span></span><span class="line"><span class="cl"><span class="nv">ExternalScripts</span><span class="o">=</span>/usr/lib/zabbix/externalscripts
+</span></span><span class="line"><span class="cl"><span class="nv">LogSlowQueries</span><span class="o">=</span><span class="m">3000</span>
+</span></span><span class="line"><span class="cl">EOF
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># 配置文件里面，不支持中文，因此笔记自己看就行</span>
+</span></span><span class="line"><span class="cl"><span class="nv">LogFile</span><span class="o">=</span>/var/log/zabbix/zabbix_server.log
+</span></span><span class="line"><span class="cl"><span class="nv">LogFileSize</span><span class="o">=</span><span class="m">0</span>
+</span></span><span class="line"><span class="cl"><span class="nv">PidFile</span><span class="o">=</span>/var/run/zabbix/zabbix_server.pid
+</span></span><span class="line"><span class="cl"><span class="nv">SocketDir</span><span class="o">=</span>/var/run/zabbix
+</span></span><span class="line"><span class="cl"><span class="nv">DBHost</span><span class="o">=</span>localhost   <span class="c1"># 指明mysql的地址 zabboix-server mysql </span>
+</span></span><span class="line"><span class="cl"><span class="nv">DBName</span><span class="o">=</span>zabbix   <span class="c1"># 数据库名字</span>
+</span></span><span class="line"><span class="cl"><span class="nv">DBUser</span><span class="o">=</span>zabbix	<span class="c1"># 数据库的链接用户  </span>
+</span></span><span class="line"><span class="cl"><span class="nv">DBPassword</span><span class="o">=</span>root  <span class="c1"># 数据库密码</span>
+</span></span><span class="line"><span class="cl"><span class="nv">SNMPTrapperFile</span><span class="o">=</span>/var/log/snmptrap/snmptrap.log
+</span></span><span class="line"><span class="cl"><span class="nv">Timeout</span><span class="o">=</span><span class="m">4</span>
+</span></span><span class="line"><span class="cl"><span class="nv">AlertScriptsPath</span><span class="o">=</span>/usr/lib/zabbix/alertscripts   <span class="c1"># 存放自定义监控项脚本的目录 </span>
+</span></span><span class="line"><span class="cl"><span class="nv">ExternalScripts</span><span class="o">=</span>/usr/lib/zabbix/externalscripts
+</span></span><span class="line"><span class="cl"><span class="nv">LogSlowQueries</span><span class="o">=</span><span class="m">3000</span>
+</span></span><span class="line"><span class="cl">EOF
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">7.服务端配置文件也写好了
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@zabbix-server-71 /etc/yum.repos.d<span class="o">]</span><span class="c1">#systemctl start zabbix-server &amp;&amp; systemctl enable zabbix-server</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">8.检查zabbix-server的端口是否运行  <span class="m">10051</span>
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@zabbix-server-71 ~<span class="o">]</span><span class="c1">#netstat -tunlp|grep zabbix</span>
+</span></span><span class="line"><span class="cl">tcp        <span class="m">0</span>      <span class="m">0</span> 0.0.0.0:10051           0.0.0.0:*               LISTEN      2145/zabbix_server  
+</span></span><span class="line"><span class="cl">tcp6       <span class="m">0</span>      <span class="m">0</span> :::10051                :::*                    LISTEN      2145/zabbix_server  
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">至此，zabbix-server，服务端核心程序就装好了，以及zabbix-UI这个Php程序也装好了
+</span></span><span class="line"><span class="cl">但是还不能访问
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="apache配置">apache配置
+</h2><p>只需要改一个时区设置，改为中国即可，因为你得让zabbix支持中文</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">[root@zabbix-server-71 ~]#grep -i shanghai /etc/httpd/conf.d/zabbix.conf 
+</span></span><span class="line"><span class="cl">        php_value date.timezone Asia/Shanghai
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">启动80端口的apache服务了
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">systemctl start httpd
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="测试apache装好后是一个lamp环境">测试apache装好后，是一个LAMP环境
+</h2><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-gdscript3" data-lang="gdscript3"><span class="line"><span class="cl"><span class="err">基于</span><span class="n">phpinfo页面去测试</span><span class="err">，看是否能解析</span><span class="n">php代码</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="err">进入</span><span class="n">apache的默认网页根目录</span><span class="err">，存放</span><span class="n">html的地方</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">cd</span> <span class="o">/</span><span class="k">var</span><span class="o">/</span><span class="n">www</span><span class="o">/</span><span class="n">html</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">php是什么时候装的</span><span class="err">？</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">zabbix</span><span class="o">-</span><span class="n">web</span><span class="o">-</span><span class="n">mysql</span>  <span class="err">该程序</span> <span class="err">封装了</span> <span class="n">php程序</span>   <span class="n">httpd程序</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="err">这里的部署，没有单独启动</span><span class="n">php进程</span><span class="err">，只是</span><span class="n">php解释器去执行代码了</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">php</span><span class="o">-</span><span class="n">fpm是2个意思</span> <span class="err">（</span><span class="n">php解释器去执行</span><span class="o">*.</span><span class="n">php代码</span><span class="err">）</span>  <span class="err">基于</span><span class="n">fastcgi协议去运行的一个独立进程</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="zabbix-ui前端配置">zabbix-UI前端配置
+</h2><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">10.0.0.71:80/zabbix   访问改url才能访问zabbix
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">浏览器  &gt; httpd  &gt;  转发给底层处理php请求的模块
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">默认账户密码
+</span></span><span class="line"><span class="cl">Admin
+</span></span><span class="line"><span class="cl">zabbix
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/xiaoshi/p/zabbix%E5%AE%89%E8%A3%85/pic/image-20220706123934102.png"
+	width="3441"
+	height="1420"
+	srcset="/xiaoshi/p/zabbix%E5%AE%89%E8%A3%85/pic/image-20220706123934102_hu4707215126627988328.png 480w, /xiaoshi/p/zabbix%E5%AE%89%E8%A3%85/pic/image-20220706123934102_hu1601206700489167151.png 1024w"
+	loading="lazy"
+	
+		alt="image-20220706123934102"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="242"
+		data-flex-basis="581px"
+	
+></p>
+<h2 id="修改zabbix为中文语言">修改zabbix为中文语言
+</h2><p><img src="/xiaoshi/p/zabbix%E5%AE%89%E8%A3%85/pic/image-20220706124747685.png"
+	width="2495"
+	height="1306"
+	srcset="/xiaoshi/p/zabbix%E5%AE%89%E8%A3%85/pic/image-20220706124747685_hu192262714715772425.png 480w, /xiaoshi/p/zabbix%E5%AE%89%E8%A3%85/pic/image-20220706124747685_hu17484002915150838253.png 1024w"
+	loading="lazy"
+	
+		alt="image-20220706124747685"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="191"
+		data-flex-basis="458px"
+	
+></p>
+<p><img src="/xiaoshi/p/zabbix%E5%AE%89%E8%A3%85/pic/image-20220706125033650.png"
+	width="3229"
+	height="1701"
+	srcset="/xiaoshi/p/zabbix%E5%AE%89%E8%A3%85/pic/image-20220706125033650_hu9283309134163113297.png 480w, /xiaoshi/p/zabbix%E5%AE%89%E8%A3%85/pic/image-20220706125033650_hu17455787410760234928.png 1024w"
+	loading="lazy"
+	
+		alt="image-20220706125033650"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="189"
+		data-flex-basis="455px"
+	
+></p>
+<h2 id="修改图形的数据展示默认字体有问题">修改图形的数据展示（默认字体有问题）
+</h2><p><img src="/xiaoshi/p/zabbix%E5%AE%89%E8%A3%85/pic/image-20220706125201230.png"
+	width="3464"
+	height="1669"
+	srcset="/xiaoshi/p/zabbix%E5%AE%89%E8%A3%85/pic/image-20220706125201230_hu4353787309108302358.png 480w, /xiaoshi/p/zabbix%E5%AE%89%E8%A3%85/pic/image-20220706125201230_hu18141311583323705010.png 1024w"
+	loading="lazy"
+	
+		alt="image-20220706125201230"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="207"
+		data-flex-basis="498px"
+	
+></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">下载字体，修改zabbix的字体支持
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">解决办法，这是因为缺少zabbix所需的字体
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"># 文泉仪微黑字体
+</span></span><span class="line"><span class="cl">[root@zabbix4-server ~]#yum install wqy-microhei-fonts -y
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"># 拷贝字体给zabbix用，覆盖图形字体
+</span></span><span class="line"><span class="cl">[root@zabbix4-server ~]#cp /usr/share/fonts/wqy-microhei/wqy-microhei.ttc /usr/share/zabbix/assets/fonts/graphfont.ttf 
+</span></span><span class="line"><span class="cl">cp: overwrite ‘/usr/share/zabbix/assets/fonts/graphfont.ttf’? y
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/xiaoshi/p/zabbix%E5%AE%89%E8%A3%85/pic/image-20220706125414796.png"
+	width="2463"
+	height="1738"
+	srcset="/xiaoshi/p/zabbix%E5%AE%89%E8%A3%85/pic/image-20220706125414796_hu3885730989592026005.png 480w, /xiaoshi/p/zabbix%E5%AE%89%E8%A3%85/pic/image-20220706125414796_hu18277116870800081937.png 1024w"
+	loading="lazy"
+	
+		alt="image-20220706125414796"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="141"
+		data-flex-basis="340px"
+	
+></p>
+<h2 id="补充知识关于apache和zabbix是怎么结合的">补充知识，关于apache和zabbix是怎么结合的？
+</h2><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span><span class="lnt">43
+</span><span class="lnt">44
+</span><span class="lnt">45
+</span><span class="lnt">46
+</span><span class="lnt">47
+</span><span class="lnt">48
+</span><span class="lnt">49
+</span><span class="lnt">50
+</span><span class="lnt">51
+</span><span class="lnt">52
+</span><span class="lnt">53
+</span><span class="lnt">54
+</span><span class="lnt">55
+</span><span class="lnt">56
+</span><span class="lnt">57
+</span><span class="lnt">58
+</span><span class="lnt">59
+</span><span class="lnt">60
+</span><span class="lnt">61
+</span><span class="lnt">62
+</span><span class="lnt">63
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="c1"># LAMP</span>
+</span></span><span class="line"><span class="cl"><span class="c1">#  你访问zabbix 的图形化页面，用户&gt; apache &gt; php(zabbix图形化页面所有功能代码是php)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># 访问 web服务器入口  80端口，apache</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># apache请求转发给php的模块去处理 </span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># 看apache配置文件就行了，你可以访问zabbix路由即可，apache自动加载php模块，解析请求</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@zabbix4-server /var/www/html<span class="o">]</span><span class="c1">#cat  /etc/httpd/conf.d/zabbix.conf </span>
+</span></span><span class="line"><span class="cl"><span class="c1">#</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># Zabbix monitoring system php web frontend</span>
+</span></span><span class="line"><span class="cl"><span class="c1">#</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># 定义url别名，</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># 10.0.0.71/zabbix  </span>
+</span></span><span class="line"><span class="cl"><span class="c1"># 等于 </span>
+</span></span><span class="line"><span class="cl">Alias /zabbix /usr/share/zabbix
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># 定义网页根目录的设置</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># web服务器配置的参数意思，对比nginx的配置去理解即可</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># 这里是apache的知识点</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">&lt;Directory <span class="s2">&#34;/usr/share/zabbix&#34;</span>&gt;
+</span></span><span class="line"><span class="cl">    Options FollowSymLinks
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">    AllowOverride None
+</span></span><span class="line"><span class="cl">    <span class="c1"># 该目录的资料允许访问，</span>
+</span></span><span class="line"><span class="cl">    Require all granted
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">	<span class="c1"># apache代理php的配置区域</span>
+</span></span><span class="line"><span class="cl">	<span class="c1"># 用户请求的是php程序，就交给这里的 mod_php5.c 底层驱动去解析代码</span>
+</span></span><span class="line"><span class="cl">	<span class="c1"># </span>
+</span></span><span class="line"><span class="cl">    &lt;IfModule mod_php5.c&gt;
+</span></span><span class="line"><span class="cl">        php_value max_execution_time <span class="m">300</span>
+</span></span><span class="line"><span class="cl">        php_value memory_limit 128M
+</span></span><span class="line"><span class="cl">        php_value post_max_size 16M
+</span></span><span class="line"><span class="cl">        php_value upload_max_filesize 2M
+</span></span><span class="line"><span class="cl">        php_value max_input_time <span class="m">300</span>
+</span></span><span class="line"><span class="cl">        php_value max_input_vars <span class="m">10000</span>
+</span></span><span class="line"><span class="cl">        php_value always_populate_raw_post_data -1
+</span></span><span class="line"><span class="cl">        php_value date.timezone Asia/Shanghai
+</span></span><span class="line"><span class="cl">    &lt;/IfModule&gt;
+</span></span><span class="line"><span class="cl">&lt;/Directory&gt;
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># 其他目录的访问权限设置，这些4个字母目录全部拒绝访问</span>
+</span></span><span class="line"><span class="cl">&lt;Directory <span class="s2">&#34;/usr/share/zabbix/conf&#34;</span>&gt;
+</span></span><span class="line"><span class="cl">    Require all denied
+</span></span><span class="line"><span class="cl">&lt;/Directory&gt;
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">&lt;Directory <span class="s2">&#34;/usr/share/zabbix/app&#34;</span>&gt;
+</span></span><span class="line"><span class="cl">    Require all denied
+</span></span><span class="line"><span class="cl">&lt;/Directory&gt;
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">&lt;Directory <span class="s2">&#34;/usr/share/zabbix/include&#34;</span>&gt;
+</span></span><span class="line"><span class="cl">    Require all denied
+</span></span><span class="line"><span class="cl">&lt;/Directory&gt;
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">&lt;Directory <span class="s2">&#34;/usr/share/zabbix/local&#34;</span>&gt;
+</span></span><span class="line"><span class="cl">	<span class="c1"># denied 都拒绝访问的意思</span>
+</span></span><span class="line"><span class="cl">    Require all denied
+</span></span><span class="line"><span class="cl">&lt;/Directory&gt;
+</span></span></code></pre></td></tr></table>
+</div>
+</div>
+</section>
+
+
+    <footer class="article-footer">
+    
+
+    </footer>
+
+
+    
+</article>
+
+    
+
+    
+
+     
+    
+        
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+        2025 小诗
+    </section>
+    
+    <section class="powerby">
+        使用 <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> 构建 <br />
+        主题 <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.26.0">Stack</a></b> 由 <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a> 设计
+    </section>
+</footer>
+
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css"crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css"crossorigin="anonymous"
+            >
+
+            </main>
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.6/dist/vibrant.min.js"integrity="sha256-awcR2jno4kI5X0zL8ex0vi2z&#43;KMkF24hUW8WePSA9HM="crossorigin="anonymous"
+                
+                >
+            </script><script type="text/javascript" src="/xiaoshi/ts/main.js" defer></script>
+<script>
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+
+    </body>
+</html>
