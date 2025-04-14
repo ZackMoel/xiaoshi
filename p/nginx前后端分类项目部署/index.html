@@ -1,0 +1,1046 @@
+<!DOCTYPE html>
+<html lang="zh-cn" dir="ltr">
+    <head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content="项目部署实战 单体项目架构 服务架构 代码架构 常见技术名词，和他所属的服务器关系。 \u200d 项目简介 技术选型 开发环境 后端 1 2 3 4 5 6 7 8 9 10 11 12 1、系统环">
+<title>Nginx前后端分类项目部署</title>
+
+<link rel='canonical' href='https://ZackMoel.github.io/xiaoshi/p/nginx%E5%89%8D%E5%90%8E%E7%AB%AF%E5%88%86%E7%B1%BB%E9%A1%B9%E7%9B%AE%E9%83%A8%E7%BD%B2/'>
+
+<link rel="stylesheet" href="/xiaoshi/scss/style.min.0304c6baf04e01a8fe70693791cb744d56a3578a3120a8796cefc66825aa39c7.css"><meta property='og:title' content="Nginx前后端分类项目部署">
+<meta property='og:description' content="项目部署实战 单体项目架构 服务架构 代码架构 常见技术名词，和他所属的服务器关系。 \u200d 项目简介 技术选型 开发环境 后端 1 2 3 4 5 6 7 8 9 10 11 12 1、系统环">
+<meta property='og:url' content='https://ZackMoel.github.io/xiaoshi/p/nginx%E5%89%8D%E5%90%8E%E7%AB%AF%E5%88%86%E7%B1%BB%E9%A1%B9%E7%9B%AE%E9%83%A8%E7%BD%B2/'>
+<meta property='og:site_name' content='小诗的博客'>
+<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:published_time' content='2025-04-14T16:56:07&#43;08:00'/><meta property='article:modified_time' content='2025-04-14T16:56:07&#43;08:00'/>
+<meta name="twitter:title" content="Nginx前后端分类项目部署">
+<meta name="twitter:description" content="项目部署实战 单体项目架构 服务架构 代码架构 常见技术名词，和他所属的服务器关系。 \u200d 项目简介 技术选型 开发环境 后端 1 2 3 4 5 6 7 8 9 10 11 12 1、系统环">
+  
+
+
+    </head>
+    <body class="
+    article-page
+    ">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex on-phone--column extended"><aside class="sidebar left-sidebar sticky ">
+    <button class="hamburger hamburger--spin" type="button" id="toggle-menu" aria-label="切换菜单">
+        <span class="hamburger-box">
+            <span class="hamburger-inner"></span>
+        </span>
+    </button>
+
+    <header>
+        
+            
+            <figure class="site-avatar">
+                <a href="/xiaoshi/">
+                
+                    
+                    
+                    
+                        
+                        <img src="/xiaoshi/img/avatar_hu8920112365793990935.png" width="300"
+                            height="300" class="site-logo" loading="lazy" alt="Avatar">
+                    
+                
+                </a>
+                
+                    <span class="emoji">🍥</span>
+                
+            </figure>
+            
+        
+        
+        <div class="site-meta">
+            <h1 class="site-name"><a href="/xiaoshi">小诗的博客</a></h1>
+            <h2 class="site-description">欢迎来到小诗的博客</h2>
+        </div>
+    </header><ol class="menu-social">
+            
+                <li>
+                    <a 
+                        href='https://space.bilibili.com/1055981889?spm_id_from=333.1007.0.0'
+                        target="_blank"
+                        title="bilibili"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg  xmlns="http://www.w3.org/2000/svg"  width="24"  height="24"  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  stroke-width="2"  stroke-linecap="round"  stroke-linejoin="round"  class="icon icon-tabler icons-tabler-outline icon-tabler-brand-bilibili"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M3 10a4 4 0 0 1 4 -4h10a4 4 0 0 1 4 4v6a4 4 0 0 1 -4 4h-10a4 4 0 0 1 -4 -4v-6z" /><path d="M8 3l2 3" /><path d="M16 3l-2 3" /><path d="M9 13v-2" /><path d="M15 11v2" /></svg>
+                        
+                    </a>
+                </li>
+            
+                <li>
+                    <a 
+                        href='https://github.com/ZackMoel/xiaoshi.github.io'
+                        target="_blank"
+                        title="GitHub"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-github" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M9 19c-4.3 1.4 -4.3 -2.5 -6 -3m12 5v-3.5c0 -1 .1 -1.4 -.5 -2c2.8 -.3 5.5 -1.4 5.5 -6a4.6 4.6 0 0 0 -1.3 -3.2a4.2 4.2 0 0 0 -.1 -3.2s-1.1 -.3 -3.5 1.3a12.3 12.3 0 0 0 -6.2 0c-2.4 -1.6 -3.5 -1.3 -3.5 -1.3a4.2 4.2 0 0 0 -.1 3.2a4.6 4.6 0 0 0 -1.3 3.2c0 4.6 2.7 5.7 5.5 6c-.6 .6 -.6 1.2 -.5 2v3.5" />
+</svg>
+
+
+
+                        
+                    </a>
+                </li>
+            
+        </ol><ol class="menu" id="main-menu">
+        
+        
+        
+        <li >
+            <a href='/xiaoshi/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-home" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <polyline points="5 12 3 12 12 3 21 12 19 12" />
+  <path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7" />
+  <path d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6" />
+</svg>
+
+
+
+                
+                <span>主页</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/xiaoshi/%E5%85%B3%E4%BA%8E/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-user" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="7" r="4" />
+  <path d="M6 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2" />
+</svg>
+
+
+
+                
+                <span>关于</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/xiaoshi/archives/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-archive" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <rect x="3" y="4" width="18" height="4" rx="2" />
+  <path d="M5 8v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-10" />
+  <line x1="10" y1="12" x2="14" y2="12" />
+</svg>
+
+
+
+                
+                <span>归档</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/xiaoshi/search/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-search" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="10" cy="10" r="7" />
+  <line x1="21" y1="21" x2="15" y2="15" />
+</svg>
+
+
+
+                
+                <span>搜索</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/xiaoshi/%E5%8F%8B%E6%83%85%E9%93%BE%E6%8E%A5/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-link" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M10 14a3.5 3.5 0 0 0 5 0l4 -4a3.5 3.5 0 0 0 -5 -5l-.5 .5" />
+  <path d="M14 10a3.5 3.5 0 0 0 -5 0l-4 4a3.5 3.5 0 0 0 5 5l.5 -.5" />
+</svg>
+
+
+
+                
+                <span>友情链接</span>
+            </a>
+        </li>
+        
+        <li class="menu-bottom-section">
+            <ol class="menu">
+
+                
+                    <li id="dark-mode-toggle">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="8" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="16" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <span>暗色模式</span>
+                    </li>
+                
+            </ol>
+        </li>
+    </ol>
+</aside>
+
+    <aside class="sidebar right-sidebar sticky">
+        
+            
+                
+    <section class="widget archives">
+        <div class="widget-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <line x1="5" y1="9" x2="19" y2="9" />
+  <line x1="5" y1="15" x2="19" y2="15" />
+  <line x1="11" y1="4" x2="7" y2="20" />
+  <line x1="17" y1="4" x2="13" y2="20" />
+</svg>
+
+
+
+        </div>
+        <h2 class="widget-title section-title">目录</h2>
+        
+        <div class="widget--toc">
+            <nav id="TableOfContents">
+  <ol>
+    <li><a href="#单体项目架构">单体项目架构</a>
+      <ol>
+        <li><a href="#服务架构">服务架构</a></li>
+        <li><a href="#代码架构">代码架构</a></li>
+      </ol>
+    </li>
+    <li><a href="#项目简介">项目简介</a>
+      <ol>
+        <li><a href="#技术选型">技术选型</a>
+          <ol>
+            <li><a href="#开发环境">开发环境</a></li>
+            <li><a href="#部署环境">部署环境</a></li>
+          </ol>
+        </li>
+        <li><a href="#资源">资源</a></li>
+      </ol>
+    </li>
+    <li><a href="#项目部署思路">项目部署思路</a>
+      <ol>
+        <li><a href="#安装环境">安装环境</a></li>
+      </ol>
+    </li>
+    <li><a href="#部署实战">部署实战</a>
+      <ol>
+        <li><a href="#项目打包">项目打包</a></li>
+        <li><a href="#部署">部署</a>
+          <ol>
+            <li><a href="#上传资源包">上传资源包</a></li>
+            <li><a href="#数据库">数据库</a></li>
+            <li><a href="#应用程序java">应用程序Java</a></li>
+            <li><a href="#前端">前端</a></li>
+            <li><a href="#后端项目规范">后端项目规范</a></li>
+          </ol>
+        </li>
+      </ol>
+    </li>
+  </ol>
+
+  <ol>
+    <li>
+      <ol>
+        <li><a href="#工作职责">工作职责</a></li>
+        <li><a href="#工作日常">工作日常</a>
+          <ol>
+            <li><a href="#一公司内部维护">一、公司内部维护</a></li>
+            <li><a href="#二云端服务器的维护">二、云端服务器的维护</a></li>
+            <li><a href="#三客户侧的维护">三、客户侧的维护</a></li>
+          </ol>
+        </li>
+        <li><a href="#技能列表">技能列表</a>
+          <ol>
+            <li><a href="#格式">格式</a></li>
+            <li><a href="#注意">注意</a></li>
+            <li><a href="#总结">总结</a></li>
+          </ol>
+        </li>
+        <li><a href="#项目经验">项目经验</a></li>
+      </ol>
+    </li>
+  </ol>
+</nav>
+        </div>
+    </section>
+
+            
+        
+    </aside>
+
+
+            <main class="main full-width">
+    <article class="main-article">
+    <header class="article-header">
+
+    <div class="article-details">
+    
+
+    <div class="article-title-wrapper">
+        <h2 class="article-title">
+            <a href="/xiaoshi/p/nginx%E5%89%8D%E5%90%8E%E7%AB%AF%E5%88%86%E7%B1%BB%E9%A1%B9%E7%9B%AE%E9%83%A8%E7%BD%B2/">Nginx前后端分类项目部署</a>
+        </h2>
+    
+        
+    </div>
+
+    
+    
+    
+    
+    <footer class="article-time">
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
+  <circle cx="18" cy="18" r="4" />
+  <path d="M15 3v4" />
+  <path d="M7 3v4" />
+  <path d="M3 11h16" />
+  <path d="M18 16.496v1.504l1 1" />
+</svg>
+                <time class="article-time--published">2025-04-14</time>
+            </div>
+        
+
+        
+    </footer>
+    
+
+    
+</div>
+
+</header>
+
+    <section class="article-content">
+    
+    
+    <h1 id="项目部署实战">项目部署实战
+</h1><h2 id="单体项目架构">单体项目架构
+</h2><h3 id="服务架构">服务架构
+</h3><p><img src="/xiaoshi/p/nginx%E5%89%8D%E5%90%8E%E7%AB%AF%E5%88%86%E7%B1%BB%E9%A1%B9%E7%9B%AE%E9%83%A8%E7%BD%B2/assets/1743578874041.png"
+	width="2322"
+	height="884"
+	srcset="/xiaoshi/p/nginx%E5%89%8D%E5%90%8E%E7%AB%AF%E5%88%86%E7%B1%BB%E9%A1%B9%E7%9B%AE%E9%83%A8%E7%BD%B2/assets/1743578874041_hu9878140932216943176.png 480w, /xiaoshi/p/nginx%E5%89%8D%E5%90%8E%E7%AB%AF%E5%88%86%E7%B1%BB%E9%A1%B9%E7%9B%AE%E9%83%A8%E7%BD%B2/assets/1743578874041_hu4733846406318156545.png 1024w"
+	loading="lazy"
+	
+		alt="1743578874041"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="262"
+		data-flex-basis="630px"
+	
+></p>
+<h3 id="代码架构">代码架构
+</h3><blockquote>
+<p>常见技术名词，和他所属的服务器关系。</p>
+</blockquote>
+<p><img src="/xiaoshi/p/nginx%E5%89%8D%E5%90%8E%E7%AB%AF%E5%88%86%E7%B1%BB%E9%A1%B9%E7%9B%AE%E9%83%A8%E7%BD%B2/assets/1743578896210.png"
+	width="1400"
+	height="340"
+	srcset="/xiaoshi/p/nginx%E5%89%8D%E5%90%8E%E7%AB%AF%E5%88%86%E7%B1%BB%E9%A1%B9%E7%9B%AE%E9%83%A8%E7%BD%B2/assets/1743578896210_hu1853609024418831568.png 480w, /xiaoshi/p/nginx%E5%89%8D%E5%90%8E%E7%AB%AF%E5%88%86%E7%B1%BB%E9%A1%B9%E7%9B%AE%E9%83%A8%E7%BD%B2/assets/1743578896210_hu12443394141146562469.png 1024w"
+	loading="lazy"
+	
+		alt="1743578896210"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="411"
+		data-flex-basis="988px"
+	
+></p>
+<p>‍</p>
+<h2 id="项目简介">项目简介
+</h2><h3 id="技术选型">技术选型
+</h3><h4 id="开发环境">开发环境
+</h4><ol>
+<li>
+<p>后端</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">1、系统环境
+</span></span><span class="line"><span class="cl">Java EE <span class="m">8</span>
+</span></span><span class="line"><span class="cl">Servlet 3.0
+</span></span><span class="line"><span class="cl">Apache Maven <span class="m">3</span>
+</span></span><span class="line"><span class="cl">2、主框架
+</span></span><span class="line"><span class="cl">Spring Boot 2.2.x
+</span></span><span class="line"><span class="cl">Spring Framework 5.2.x
+</span></span><span class="line"><span class="cl">Apache Shiro 1.7
+</span></span><span class="line"><span class="cl">3、持久层
+</span></span><span class="line"><span class="cl">Apache MyBatis 3.5.x
+</span></span><span class="line"><span class="cl">Hibernate Validation 6.0.x
+</span></span><span class="line"><span class="cl">Alibaba Druid 1.2.x
+</span></span></code></pre></td></tr></table>
+</div>
+</div></li>
+<li>
+<p>前端</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">Vue 2.6.x
+</span></span><span class="line"><span class="cl">Axios 0.21.x
+</span></span><span class="line"><span class="cl">Element 2.15.x
+</span></span></code></pre></td></tr></table>
+</div>
+</div></li>
+</ol>
+<h4 id="部署环境">部署环境
+</h4><ol>
+<li>
+<p>JDK（JVM） &gt;= 1.8</p>
+</li>
+<li>
+<p>MySQL &gt;= 5.7</p>
+</li>
+<li>
+<p>Maven（java项目源代码编译） &gt;= 3.0</p>
+<ul>
+<li>
+<p>打包：<code>war</code>​、<strong>​<code>jar</code>​</strong>​</p>
+</li>
+<li>
+<p>如果未打包：<code>mvn clean package</code>​→ war | jar</p>
+</li>
+</ul>
+</li>
+<li>
+<p>Node（类nginx） &gt;= 12</p>
+<ul>
+<li>打包：<strong>​<code>dist</code>​</strong>​</li>
+<li>未打包：<code>npm install</code>​ <code>&amp;</code>​ <code>npm run build</code>​</li>
+</ul>
+</li>
+<li>
+<p>Redis &gt;= 3</p>
+</li>
+</ol>
+<h3 id="资源">资源
+</h3><p><a class="link" href="%e8%b5%84%e6%96%99/ruoyi-20250318225341-pabepef.zip" >ruoyi.zip</a></p>
+<h2 id="项目部署思路">项目部署思路
+</h2><h3 id="安装环境">安装环境
+</h3><h2 id="部署实战">部署实战
+</h2><h3 id="项目打包">项目打包
+</h3><ol>
+<li>
+<p>前端</p>
+<p>前端程序员负责。</p>
+</li>
+<li>
+<p>后端</p>
+<p>后端程序员负责。</p>
+</li>
+</ol>
+<h3 id="部署">部署
+</h3><h4 id="上传资源包">上传资源包
+</h4><ol>
+<li>
+<p>规划项目目录</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">/opt/app/web <span class="c1"># 前端</span>
+</span></span><span class="line"><span class="cl">/opt/app/java <span class="c1"># 后端</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div></li>
+</ol>
+<h4 id="数据库">数据库
+</h4><ol>
+<li>
+<p>安装MySQL、Redis。</p>
+</li>
+<li>
+<p>查看数据库相关配置</p>
+<ol>
+<li>数据库database名字</li>
+<li>密码</li>
+</ol>
+<p>java项目：<code>application-xxx.yml</code>​、<code>xxxx.properties</code>​</p>
+</li>
+<li>
+<p>创建database</p>
+<p><code>mysql -uroot -padmins -e &quot;create database ry_vue;&quot;</code>​</p>
+</li>
+<li>
+<p>初始化sql文件</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">mysql -uroot -padmins ry_vue &lt; ./db/ry_20240629.sql
+</span></span><span class="line"><span class="cl">mysql -uroot -padmins ry_vue &lt; ./db/quartz.sql
+</span></span></code></pre></td></tr></table>
+</div>
+</div></li>
+</ol>
+<h4 id="应用程序java">应用程序Java
+</h4><ol>
+<li>
+<p>安装JDK</p>
+</li>
+<li>
+<p>安装Tomcat(略)</p>
+</li>
+<li>
+<p>MySQL配置</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-yml" data-lang="yml"><span class="line"><span class="cl"><span class="w">	</span><span class="nt">url</span><span class="p">:</span><span class="w"> </span><span class="l">jdbc:mysql://192.168.32.30:3306/ry_vue?useUnicode=true&amp;characterEncoding=utf8&amp;zeroDateTimeBehavior=convertToNull&amp;useSSL=true&amp;serverTimezone=GMT%2B8</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">	</span><span class="nt">username</span><span class="p">:</span><span class="w"> </span><span class="l">root</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">	</span><span class="nt">password</span><span class="p">:</span><span class="w"> </span><span class="l">admins</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div></li>
+<li>
+<p>Redis配置</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-yml" data-lang="yml"><span class="line"><span class="cl"><span class="c"># redis 配置</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">redis</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="c"># 地址</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">host</span><span class="p">:</span><span class="w"> </span><span class="m">192.168.32.30</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="c"># 端口，默认为6379</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">port</span><span class="p">:</span><span class="w"> </span><span class="m">6379</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="c"># 数据库索引</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">database</span><span class="p">:</span><span class="w"> </span><span class="m">0</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="c"># 密码</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">password</span><span class="p">:</span><span class="w"> 
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="c"># 连接超时时间</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">timeout</span><span class="p">:</span><span class="w"> </span><span class="l">10s</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div></li>
+<li>
+<p>设置文件上传路径</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-gdscript3" data-lang="gdscript3"><span class="line"><span class="cl"><span class="n">profile</span><span class="p">:</span> <span class="o">/</span><span class="n">home</span><span class="o">/</span><span class="n">ruoyi</span><span class="o">/</span><span class="n">uploadPath</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div></li>
+<li>
+<p>启动项目</p>
+<p><code>java -jar xxx.jar --spring.config.location=/xx/xx/xx.yml</code>​</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-yml" data-lang="yml"><span class="line"><span class="cl"><span class="l">java -jar ruoyi-admin.jar --spring.config.location=./java_config/application.yml</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div></li>
+</ol>
+<h4 id="前端">前端
+</h4><ol>
+<li>
+<p>安装nginx</p>
+</li>
+<li>
+<p>准备web项目资源</p>
+</li>
+<li>
+<p>配置nginx.config</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-gdscript3" data-lang="gdscript3"><span class="line"><span class="cl"><span class="n">server</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="n">listen</span> <span class="mi">80</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">        <span class="n">server_name</span> <span class="n">www</span><span class="o">.</span><span class="n">mall</span><span class="o">.</span><span class="n">vip</span><span class="p">;</span>     <span class="c1"># 主机地址，或者域名。</span>
+</span></span><span class="line"><span class="cl">        <span class="n">charset</span> <span class="n">utf</span><span class="o">-</span><span class="mi">8</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">        <span class="c1"># access_log 访问日志</span>
+</span></span><span class="line"><span class="cl">        <span class="n">access_log</span> <span class="o">/</span><span class="k">var</span><span class="o">/</span><span class="nb">log</span><span class="o">/</span><span class="n">nginx</span><span class="o">/</span><span class="n">mall_access</span><span class="o">.</span><span class="n">log</span> <span class="n">main</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">        <span class="c1"># error_log 错误日志</span>
+</span></span><span class="line"><span class="cl">        <span class="n">error_log</span> <span class="o">/</span><span class="k">var</span><span class="o">/</span><span class="nb">log</span><span class="o">/</span><span class="n">nginx</span><span class="o">/</span><span class="n">mall_error</span><span class="o">.</span><span class="n">log</span> <span class="n">warn</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">        <span class="n">location</span> <span class="o">/</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">            <span class="n">root</span> <span class="o">/</span><span class="n">opt</span><span class="o">/</span><span class="n">app</span><span class="o">/</span><span class="n">web</span><span class="o">/</span><span class="n">dist</span><span class="o">/</span><span class="p">;</span>  <span class="c1"># 网站资源根目录</span>
+</span></span><span class="line"><span class="cl">            <span class="n">index</span> <span class="o">/</span><span class="n">index</span><span class="o">.</span><span class="n">html</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">            <span class="n">try_files</span> <span class="o">$</span><span class="n">uri</span> <span class="o">$</span><span class="n">uri</span><span class="o">/</span> <span class="o">/</span><span class="n">index</span><span class="o">.</span><span class="n">html</span><span class="p">;</span> <span class="c1"># 如果找不到网页，则选择/index.html显示</span>
+</span></span><span class="line"><span class="cl">        <span class="p">}</span>
+</span></span><span class="line"><span class="cl">        <span class="n">location</span> <span class="o">/</span><span class="n">prod</span><span class="o">-</span><span class="n">api</span><span class="o">/</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">            <span class="n">proxy_set_header</span> <span class="n">Host</span> <span class="o">$</span><span class="n">http_host</span><span class="p">;</span> <span class="c1"># 将http_host主机域名www.crm.vip 写入Host请求，避免nginx的host覆盖</span>
+</span></span><span class="line"><span class="cl">            <span class="n">proxy_set_header</span> <span class="n">X</span><span class="o">-</span><span class="n">Real</span><span class="o">-</span><span class="ne">IP</span> <span class="o">$</span><span class="n">remote_addr</span><span class="p">;</span> <span class="c1"># 将$remote_addr客户端真实ip，写入x-real-ip真实ip，再请求后端，防止nginx的ip地址覆盖</span>
+</span></span><span class="line"><span class="cl">            <span class="n">proxy_pass</span> <span class="n">http</span><span class="p">:</span><span class="o">//</span><span class="mf">192.168</span><span class="o">.</span><span class="mf">199.20</span><span class="p">:</span><span class="mi">8080</span><span class="o">/</span><span class="p">;</span> <span class="c1"># 将/prod-api请求路径，转发给后台java的服务器地址。</span>
+</span></span><span class="line"><span class="cl">        <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div></li>
+<li>
+<p>启动加载配置文件</p>
+</li>
+<li>
+<p>访问</p>
+<ul>
+<li>
+<p>在访问主机配置域名hosts</p>
+<p><code>nginxip www.ruoyi.vip</code>​</p>
+</li>
+<li>
+<p>访问</p>
+<p><code>http://www.ruoyi.vip</code>​</p>
+</li>
+<li>
+<p>默认超管用户名密码</p>
+<p>用户：admin</p>
+<p>密码：admin123</p>
+</li>
+</ul>
+</li>
+</ol>
+<h4 id="后端项目规范">后端项目规范
+</h4><ol>
+<li>
+<p>自测试启动</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">java -jar ruoyi-admin.jar --spring.config.location<span class="o">=</span>./java_config/application.yml
+</span></span></code></pre></td></tr></table>
+</div>
+</div></li>
+<li>
+<p>内部测试</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">java -jar ruoyi-admin.jar --spring.config.location<span class="o">=</span>./java_config/application.yml &gt; /dev/null 2&gt;<span class="p">&amp;</span><span class="m">1</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># /dev/null 是一个输出黑洞，类似垃圾桶，写入不需要输出的东西</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># 2&gt;&amp;1 将错误输出，重定向到控制台输出，这样错误也会写入/dev/null</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div></li>
+<li>
+<p>正式启动记录日志</p>
+<ul>
+<li><code>nohup</code>​：以守护进程方式启动，脱离当前shell，关闭shell，也不会挂断该命令的程序。</li>
+<li><code>&amp;</code>​ ：后台启动，不在前台输出日志。</li>
+</ul>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="c1"># 创建日志目录</span>
+</span></span><span class="line"><span class="cl">mkdir /var/log <span class="c1">#如果有就不用创建</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># 启动</span>
+</span></span><span class="line"><span class="cl">nohup java -jar ruoyi-admin.jar --spring.config.location<span class="o">=</span>./java_config/application.yml &gt; /var/log/ruoyi-admin.log 2&gt;<span class="p">&amp;</span><span class="m">1</span> <span class="p">&amp;</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div></li>
+</ol>
+<h1 id="运维工作内容">‍运维工作内容
+</h1><h3 id="工作职责">工作职责
+</h3><ol>
+<li>
+<p>项目部署：将代码，部署服务器上，供测试，供预发布(灰度发布)，正式上线。</p>
+</li>
+<li>
+<p>Linux系统运维：磁盘管理、网络管理监控、防火墙管理、系统进程监控管理</p>
+</li>
+<li>
+<p>监控告警：监控项目状态，如果有问题，告警，预警。</p>
+<p>系统资源监控、服务状态监控、故障监控。</p>
+</li>
+<li>
+<p>数据备份：</p>
+<ul>
+<li>mysql数据*.ibd文件,库表数据：mysqldump，xbk。</li>
+<li>Redis持久化数据：备份。</li>
+<li>日志文件：</li>
+<li>代码：</li>
+<li>配置文件</li>
+</ul>
+</li>
+<li>
+<p>日志分析：</p>
+<ul>
+<li>nginx日志分析：危险IP，分析DDOS，nginx访问压力，页面路径的访问压力分析。</li>
+<li>mysql的lowlog：sql调优，优化mysql配置。</li>
+<li>xxxx所有服务程序：日志都需要分析。</li>
+<li>代码日志：分析程序的执行日志，找出bug异常，转开发人员。</li>
+</ul>
+</li>
+<li>
+<p>系统优化：</p>
+<ul>
+<li>Linux系统优化：swap设置</li>
+<li>网络优化</li>
+<li>服务器组件：Redis、MySQL。</li>
+</ul>
+</li>
+<li>
+<p>自动化</p>
+<ol>
+<li>
+<p>自动化工具Ansible+Shell+Python+Zabbix+Kubernets</p>
+<p>‍</p>
+</li>
+</ol>
+</li>
+</ol>
+<h3 id="工作日常">工作日常
+</h3><blockquote>
+<p>作为工作经历/实习经历，工作内容。</p>
+</blockquote>
+<h4 id="一公司内部维护">一、公司内部维护
+</h4><ol>
+<li>对SVN、git(代码的，代码地址)每日备份，编写shell自动定期对SVN的账号进行密码更新，并且发送邮件通知。开发数据库和测试数据库的每日按库表备份。</li>
+<li>使用markdown(Typora)，建立小型的wiki(知识库)，编写公司内部的信息文档，避免重复、无用、过期的信息交换。</li>
+<li>测试环境编写Dockerfile，进行构建Docker镜像，用于测试代码的发布，避免环境混乱，易于管理。</li>
+<li>建立公司内部连接客户服务器的VPN通道，方便故障时调试处理。(远程操作，外部访问公司内部服务器)(花生壳,内网穿透,todesk)</li>
+<li>编写脚本监控预发布环境与生产环境的数据库结构差异，避免发布的代码缺少字段或表。</li>
+<li>编写Dockercompose，提供环境给实施部门培训测试。</li>
+</ol>
+<h4 id="二云端服务器的维护">二、云端服务器的维护
+</h4><ol>
+<li>使用zabbix监控云端服务器与mysql数据库，到阈值时进行钉钉通知。</li>
+<li>提供云端全部项目的日志展示，方便研发与值班人员查到定位问题。（ELK）</li>
+<li>编写了shell脚本，监控进程或者API，进行故障时的重启拉起。</li>
+<li>部署了haproxy+nginx的负载均衡，对大流量项目访问进行分发负载。</li>
+<li>部署了redis 3+3集群，提供缓存负载。</li>
+<li>建立mysql多源同步，使用mysql proxy与mycat（不同的项目）进行读写分离。</li>
+<li>建立rsync服务器，定时在服务器之间进行数据的互相备份，并且最终汇总到一台备用服务器上，统一拉回公司服务器上进行归档。</li>
+<li>编写shell采集全部客户服务器信息，包含：CPU、内存、硬盘、nginx、php、redis、部署的服务等。超过阈值则进行短信、邮件与钉钉通知。</li>
+<li>编写shell脚本监控云端的mysql多源同步情况，故障时进行邮件与钉钉通知。</li>
+<li>监控云端服务器到期时间，进行监控通知。</li>
+</ol>
+<h4 id="三客户侧的维护">三、客户侧的维护
+</h4><p>进行编写脚本，自动进行一些工作：</p>
+<ol>
+<li>自动更新本地的维护脚本、自动定期修改密码、自动更新软件包与配置、自动更新mysql配置、自动刷新文件权限、rsync配置更新</li>
+<li>通过shell脚本监控本地程序进程与API的保活：包含Mysql（包含同步监控）、redis、nginx、OpenVpn、php-fpm、Rsync、Tomcat等等。故障非忙时自动重启，并且进行钉钉与邮件通知。</li>
+<li>每日的日志切割，归档：mysql的gerenalLog、nginx日志、tomcat日志。</li>
+<li>客户侧监控，包含：shell脚本监控（生成信息由云端的shell脚本进行采集，进行钉钉、短信、邮件的通知）、atop（主要记录进程的变化，日志保留7天）、prometheus（node_exporter）、硬盘坏道检查定期检查（结果进行钉钉通知）、自定义的node_exporter</li>
+<li>定期备份数据库，并且加密压缩包，密码由云端的脚本提供，每日随机生成。定期自动修复数据库中的信息变化，比如本地IP发送变化，apikey发送了变化。</li>
+<li>有主从服务器的环境，进行互相的数据备份，包含用户文件、日志、数据库备份等。并且每日自动同步云端服务器上，最小化避免客户服务器故障时数据丢失。</li>
+<li>建立keepalived，主服务器故障时，IP偏移至备用服务器。</li>
+<li>一套日志服务，可通过公司内部的DNS，进行访问客户服务器查看日志。（web日志系统，账号管理，公网）。</li>
+<li>所有的shell与python脚本，执行的内容都会进行日志保存，可追溯之前执行脚本的情况。</li>
+</ol>
+<h3 id="技能列表">技能列表
+</h3><blockquote>
+<p>在简历中体现你的技能模块。</p>
+</blockquote>
+<h4 id="格式">格式
+</h4><p><strong>技能列表</strong></p>
+<ol>
+<li>熟悉（熟练掌握）xxxx技术，AAAA、BBBB、技术点、技术亮点、技术难点、面试重点。</li>
+<li>掌握xxxx</li>
+<li>了解xxx</li>
+<li>熟悉linux系统，文件管理机制、磁盘和逻辑卷、网络管理、firewalld防火墙、系统服务进程管理、系统权限、软件管理rpm、tar、yum，病毒程序的防护和处理，定时任务crontab。</li>
+<li>vscode windows idea notepad++</li>
+</ol>
+<h4 id="注意">注意
+</h4><ol>
+<li>简历技能列表，就是你给面试官画的面试范围。</li>
+<li>不要在语言中兑水：虚词。</li>
+<li>技术名词不要写错，注意大小写。</li>
+<li>如果技术内容太多，合并，删除不太重要技术。</li>
+<li>写自己会的，不会不要写，可以写了解。</li>
+</ol>
+<h4 id="总结">总结
+</h4><ol>
+<li><strong>掌握Linux操作系统</strong>：文件管理机制、磁盘和逻辑卷、网络管理、firewalld防火墙、系统服务进程管理、系统权限、Linux软件管理rpm、tar、yum，病毒程序的防护和处理，定时任务crontab。</li>
+<li><strong>掌握MySQL数据库</strong>：MySQL架构组成、存储引擎、ibd文件系统底层、B+索引和存储机制、慢查询和SQL调优、MySQL优化配置、逻辑备份mdp、物理备份xbk、5大日志系统、optimize磁盘优化、库表设计。</li>
+<li>**<del>数据库架构设计：</del>**​<del>高可用Altas，主从复制，读写分离Mycat。</del></li>
+<li><strong>掌握Shell编程</strong>：系统资源监控、nginx日志分析、监控告警、MySQL数据备份脚本，正则表达式、文本分析命令 awk、sed、egrep、xargs。</li>
+<li><strong>掌握服务器运维工具</strong>：nfs文件共享，rsync文件同步，logrotate日志轮转。</li>
+<li><strong>掌握服务器部署</strong>：Nginx服务器组成，location匹配规则，反向代理，日志系统。Tomcat和JDK部署配置，前后端分离项目部署。</li>
+<li><strong>掌握NoSQL数据库：</strong> Redis内存机制，常用数据类型，压测和监控，持久化机制AOF、RDB和混合模式，AOF重写。</li>
+</ol>
+<h3 id="项目经验">项目经验
+</h3><p><strong>项目名</strong></p>
+<pre><code>写法1: 项目是什么xxxx，供xxxx使用，包含xxx功能。
+
+写法2：为了保证项目测试，进行项目部署，以及数据备份和日志系，确保系统的稳定运行，监控系统运行状态，通过优化提高系统并发能力和性能。
+</code></pre>
+<p><strong>个人职责</strong></p>
+<ul>
+<li>规范：使用了xxxx技术，解决了xxx问题</li>
+<li>参数项目的技术研讨会，并负责项目库表设计，和MySQL优化和初始化配置。</li>
+<li>对项目部署环境进行初始化配置，磁盘分区和逻辑卷设置，防火墙设置，保证项目运行环境稳定和安全。</li>
+<li>负责项目的完整部署，包含nginx、springjar、redis、MySQL，提供测试环境和预发布的项目部署</li>
+<li>使用xbk物理备份和定时任务，对MySQL数据做每日数据备份。</li>
+<li>编写shell脚本，对项目的访问日志，做分析PV、UV。</li>
+<li>使用logrotate对nginx、javajar、mysql的日志，做按日轮转切割。并做NFS的异地同步和归档。</li>
+</ul>
+<p>‍</p>
+
+</section>
+
+
+    <footer class="article-footer">
+    
+
+    </footer>
+
+
+    
+</article>
+
+    
+
+    
+
+     
+    
+        
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+        2025 小诗
+    </section>
+    
+    <section class="powerby">
+        使用 <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> 构建 <br />
+        主题 <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.26.0">Stack</a></b> 由 <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a> 设计
+    </section>
+</footer>
+
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css"crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css"crossorigin="anonymous"
+            >
+
+            </main>
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.6/dist/vibrant.min.js"integrity="sha256-awcR2jno4kI5X0zL8ex0vi2z&#43;KMkF24hUW8WePSA9HM="crossorigin="anonymous"
+                
+                >
+            </script><script type="text/javascript" src="/xiaoshi/ts/main.js" defer></script>
+<script>
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+
+    </body>
+</html>

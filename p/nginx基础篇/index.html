@@ -1,0 +1,1014 @@
+<!DOCTYPE html>
+<html lang="zh-cn" dir="ltr">
+    <head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content="web服务器介绍 Web服务器常指的是(world wide web,www)服务器、也是HTTP服务器，主要用于提供网上信息测览。我们大部分人接触互联">
+<title>Nginx基础篇</title>
+
+<link rel='canonical' href='https://ZackMoel.github.io/xiaoshi/p/nginx%E5%9F%BA%E7%A1%80%E7%AF%87/'>
+
+<link rel="stylesheet" href="/xiaoshi/scss/style.min.0304c6baf04e01a8fe70693791cb744d56a3578a3120a8796cefc66825aa39c7.css"><meta property='og:title' content="Nginx基础篇">
+<meta property='og:description' content="web服务器介绍 Web服务器常指的是(world wide web,www)服务器、也是HTTP服务器，主要用于提供网上信息测览。我们大部分人接触互联">
+<meta property='og:url' content='https://ZackMoel.github.io/xiaoshi/p/nginx%E5%9F%BA%E7%A1%80%E7%AF%87/'>
+<meta property='og:site_name' content='小诗的博客'>
+<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:published_time' content='2025-04-14T16:48:49&#43;08:00'/><meta property='article:modified_time' content='2025-04-14T16:48:49&#43;08:00'/>
+<meta name="twitter:title" content="Nginx基础篇">
+<meta name="twitter:description" content="web服务器介绍 Web服务器常指的是(world wide web,www)服务器、也是HTTP服务器，主要用于提供网上信息测览。我们大部分人接触互联">
+  
+
+
+    </head>
+    <body class="
+    article-page
+    ">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex on-phone--column extended"><aside class="sidebar left-sidebar sticky ">
+    <button class="hamburger hamburger--spin" type="button" id="toggle-menu" aria-label="切换菜单">
+        <span class="hamburger-box">
+            <span class="hamburger-inner"></span>
+        </span>
+    </button>
+
+    <header>
+        
+            
+            <figure class="site-avatar">
+                <a href="/xiaoshi/">
+                
+                    
+                    
+                    
+                        
+                        <img src="/xiaoshi/img/avatar_hu8920112365793990935.png" width="300"
+                            height="300" class="site-logo" loading="lazy" alt="Avatar">
+                    
+                
+                </a>
+                
+                    <span class="emoji">🍥</span>
+                
+            </figure>
+            
+        
+        
+        <div class="site-meta">
+            <h1 class="site-name"><a href="/xiaoshi">小诗的博客</a></h1>
+            <h2 class="site-description">欢迎来到小诗的博客</h2>
+        </div>
+    </header><ol class="menu-social">
+            
+                <li>
+                    <a 
+                        href='https://space.bilibili.com/1055981889?spm_id_from=333.1007.0.0'
+                        target="_blank"
+                        title="bilibili"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg  xmlns="http://www.w3.org/2000/svg"  width="24"  height="24"  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  stroke-width="2"  stroke-linecap="round"  stroke-linejoin="round"  class="icon icon-tabler icons-tabler-outline icon-tabler-brand-bilibili"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M3 10a4 4 0 0 1 4 -4h10a4 4 0 0 1 4 4v6a4 4 0 0 1 -4 4h-10a4 4 0 0 1 -4 -4v-6z" /><path d="M8 3l2 3" /><path d="M16 3l-2 3" /><path d="M9 13v-2" /><path d="M15 11v2" /></svg>
+                        
+                    </a>
+                </li>
+            
+                <li>
+                    <a 
+                        href='https://github.com/ZackMoel/xiaoshi.github.io'
+                        target="_blank"
+                        title="GitHub"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-github" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M9 19c-4.3 1.4 -4.3 -2.5 -6 -3m12 5v-3.5c0 -1 .1 -1.4 -.5 -2c2.8 -.3 5.5 -1.4 5.5 -6a4.6 4.6 0 0 0 -1.3 -3.2a4.2 4.2 0 0 0 -.1 -3.2s-1.1 -.3 -3.5 1.3a12.3 12.3 0 0 0 -6.2 0c-2.4 -1.6 -3.5 -1.3 -3.5 -1.3a4.2 4.2 0 0 0 -.1 3.2a4.6 4.6 0 0 0 -1.3 3.2c0 4.6 2.7 5.7 5.5 6c-.6 .6 -.6 1.2 -.5 2v3.5" />
+</svg>
+
+
+
+                        
+                    </a>
+                </li>
+            
+        </ol><ol class="menu" id="main-menu">
+        
+        
+        
+        <li >
+            <a href='/xiaoshi/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-home" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <polyline points="5 12 3 12 12 3 21 12 19 12" />
+  <path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7" />
+  <path d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6" />
+</svg>
+
+
+
+                
+                <span>主页</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/xiaoshi/%E5%85%B3%E4%BA%8E/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-user" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="7" r="4" />
+  <path d="M6 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2" />
+</svg>
+
+
+
+                
+                <span>关于</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/xiaoshi/archives/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-archive" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <rect x="3" y="4" width="18" height="4" rx="2" />
+  <path d="M5 8v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-10" />
+  <line x1="10" y1="12" x2="14" y2="12" />
+</svg>
+
+
+
+                
+                <span>归档</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/xiaoshi/search/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-search" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="10" cy="10" r="7" />
+  <line x1="21" y1="21" x2="15" y2="15" />
+</svg>
+
+
+
+                
+                <span>搜索</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/xiaoshi/%E5%8F%8B%E6%83%85%E9%93%BE%E6%8E%A5/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-link" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M10 14a3.5 3.5 0 0 0 5 0l4 -4a3.5 3.5 0 0 0 -5 -5l-.5 .5" />
+  <path d="M14 10a3.5 3.5 0 0 0 -5 0l-4 4a3.5 3.5 0 0 0 5 5l.5 -.5" />
+</svg>
+
+
+
+                
+                <span>友情链接</span>
+            </a>
+        </li>
+        
+        <li class="menu-bottom-section">
+            <ol class="menu">
+
+                
+                    <li id="dark-mode-toggle">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="8" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="16" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <span>暗色模式</span>
+                    </li>
+                
+            </ol>
+        </li>
+    </ol>
+</aside>
+
+    <aside class="sidebar right-sidebar sticky">
+        
+            
+                
+    <section class="widget archives">
+        <div class="widget-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <line x1="5" y1="9" x2="19" y2="9" />
+  <line x1="5" y1="15" x2="19" y2="15" />
+  <line x1="11" y1="4" x2="7" y2="20" />
+  <line x1="17" y1="4" x2="13" y2="20" />
+</svg>
+
+
+
+        </div>
+        <h2 class="widget-title section-title">目录</h2>
+        
+        <div class="widget--toc">
+            <nav id="TableOfContents">
+  <ol>
+    <li><a href="#在线自动生成nginx配置文件">在线自动生成nginx配置文件</a></li>
+  </ol>
+
+  <ol>
+    <li><a href="#yum安装">yum安装</a></li>
+    <li><a href="#nginx管理命令">nginx管理命令</a></li>
+  </ol>
+
+  <ol>
+    <li><a href="#通过官网yum仓库默认安装的nginxconf">通过官网yum仓库默认安装的nginx.conf</a></li>
+  </ol>
+</nav>
+        </div>
+    </section>
+
+            
+        
+    </aside>
+
+
+            <main class="main full-width">
+    <article class="main-article">
+    <header class="article-header">
+
+    <div class="article-details">
+    
+
+    <div class="article-title-wrapper">
+        <h2 class="article-title">
+            <a href="/xiaoshi/p/nginx%E5%9F%BA%E7%A1%80%E7%AF%87/">Nginx基础篇</a>
+        </h2>
+    
+        
+    </div>
+
+    
+    
+    
+    
+    <footer class="article-time">
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
+  <circle cx="18" cy="18" r="4" />
+  <path d="M15 3v4" />
+  <path d="M7 3v4" />
+  <path d="M3 11h16" />
+  <path d="M18 16.496v1.504l1 1" />
+</svg>
+                <time class="article-time--published">2025-04-14</time>
+            </div>
+        
+
+        
+    </footer>
+    
+
+    
+</div>
+
+</header>
+
+    <section class="article-content">
+    
+    
+    <h1 id="web服务器介绍">web服务器介绍
+</h1><p>Web服务器常指的是(world wide web,www)服务器、也是HTTP服务器，主要用于提供网上信息测览。我们大部分人接触互联网，都基本上是通过浏览器访问互联网中各种资源。</p>
+<p>Web网络服务是一种被动访问的服务程序，即只有接收到互联网中其他主机发出的请求后才会响应，最终用于提供服务程序的Web服务器会通过HTTP(超文本传输协议)或HTTPS(安全超文本传输协议)把请求的内容传送给用户</p>
+<p>Unix和Linux平台下的常用Web服务器常见有：</p>
+<ul>
+<li>Apache</li>
+<li>Nginx</li>
+<li>Lighttpd</li>
+<li>Tomcat</li>
+<li>IBM WebSphere</li>
+</ul>
+<p>其中最为广泛的是Nginx,在Windows平台上最常用的是微软的IS(Internet Information Server,互联网信息服务)是Windows系统中默认的Web服务程序。</p>
+<h1 id="nginx-介绍">nginx 介绍
+</h1><p><img src="/xiaoshi/p/nginx%E5%9F%BA%E7%A1%80%E7%AF%87/assets/clipImg-1727311113331-1.png"
+	width="520"
+	height="228"
+	srcset="/xiaoshi/p/nginx%E5%9F%BA%E7%A1%80%E7%AF%87/assets/clipImg-1727311113331-1_hu806225405724685984.png 480w, /xiaoshi/p/nginx%E5%9F%BA%E7%A1%80%E7%AF%87/assets/clipImg-1727311113331-1_hu14807144037024601102.png 1024w"
+	loading="lazy"
+	
+		alt="clipImg"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="228"
+		data-flex-basis="547px"
+	
+></p>
+<p>Nginx是俄罗斯人lgor Sysoev(伊戈尔·塞索耶夫)开发的一款高性能的HTTP和反向代理服务器。</p>
+<p>Nginx以高效的epoll,kqueue,eventport作为网络IO模型，在高并发场景下，Nginx能够轻松支持5w并发连接数的响应，并且消耗的服务器内存、CPU等系统资源消耗却很低，运行非常稳定。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">当前想让nginx支持5万并发，甚至百万级的并发，都是可以的，但需要做很多的优化工作，如
+</span></span><span class="line"><span class="cl">想至少支持5万并发的基本调优
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">1.服务器内存、CPU硬件支持，如8核16线程、32G内存的服务器
+</span></span><span class="line"><span class="cl">2.磁盘使用SSD、或者购买至少15000转的SAS企业级硬盘，做成RAID 0
+</span></span><span class="line"><span class="cl">3.安装光纤网口
+</span></span><span class="line"><span class="cl">4.使用Linux系绕，如centos7,优化内核参数，对TCP连接的设置
+</span></span><span class="line"><span class="cl">5.优化nginx.conf中井发相关的参数，如：
+</span></span><span class="line"><span class="cl">worker_processes 16
+</span></span><span class="line"><span class="cl">worker_connections 50000;
+</span></span><span class="line"><span class="cl">6. ......
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>国内著名站点，新浪博客、网易、淘宝、豆瓣、迅雷等大型网站都在使用Nginx作为Web服务器或是反向代理服务器</p>
+<h2 id="在线自动生成nginx配置文件">在线自动生成nginx配置文件
+</h2><p><a class="link" href="https://www.digitalocean.com/community/tools/nginx?global.app.lang=zhCN"  target="_blank" rel="noopener"
+    >https://www.digitalocean.com/community/tools/nginx?global.app.lang=zhCN</a></p>
+<p>可以自由选择所需的应用，生成nginx配置作为参考。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">根据你的业务需求，自动生成复杂的nginx配置文件，提供你作为参考，非常好用
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h1 id="nginx企业用它干啥">nginx企业用它干啥
+</h1><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">1.提供静态页面展示，网页服务  
+</span></span><span class="line"><span class="cl">2.提供多个网站、多个域名的网页服务
+</span></span><span class="line"><span class="cl">3.提供反向代理服务（结合动态应用程序）
+</span></span><span class="line"><span class="cl">4.提供简单资源下载服务（密码认证） ftp服务
+</span></span><span class="line"><span class="cl">5.用户行为分析（日志功能）
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h1 id="nginx的运行架构">nginx的运行架构
+</h1><p>nginx是多进程架构，当启动nginx会使用root创建master进程，由master进程创建多个Worker进程</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">nginx运行后，是多进程，调用多个cpu去解析用户的请求
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">在linux中进行多进程开发，开辟多个进程，调用多个cpu，当然也会消耗更多的机器资源，内存，cpu资源，给服务器带来更大的压力
+</span></span><span class="line"><span class="cl">- 不是说进程越多，干活越快，合理的分配，才能达到最高效的处理效率
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">=====
+</span></span><span class="line"><span class="cl">有一个屋子要装修，请1个工人干活，还是请5个工人干活，请500个工人干活
+</span></span><span class="line"><span class="cl">哪一个效率是最高的呢？ 最合适的？
+</span></span><span class="line"><span class="cl">=====
+</span></span><span class="line"><span class="cl">关于nginx的优化设置，nginx默认应该启动多少个进程去工作呢？
+</span></span><span class="line"><span class="cl">默认就是根据cpu的核数去设置进程数即可。 
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h1 id="master进程">master进程
+</h1><p>包工头进程，管理nginx的数据，创建worker工作进程。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-gdscript3" data-lang="gdscript3"><span class="line"><span class="cl"><span class="mf">1.</span><span class="err">启动时检查</span><span class="n">nginx</span><span class="o">.</span><span class="n">conf是否正确</span><span class="err">，语法错误；</span>
+</span></span><span class="line"><span class="cl"><span class="mf">2.</span><span class="err">根据配置文件的参数创建、且监控</span><span class="n">worker进程的数量和状态</span><span class="err">；</span>
+</span></span><span class="line"><span class="cl"><span class="mf">3.</span><span class="err">监听</span><span class="n">socket</span><span class="err">，接收</span><span class="n">client发起的请求</span><span class="err">，然后</span><span class="n">worker竞争抢夺链接</span><span class="err">，获胜的可以处理且响应请求。</span>
+</span></span><span class="line"><span class="cl"><span class="mf">4.</span><span class="err">接收运维人员发送的管理</span><span class="n">nginx进程的信号</span><span class="err">，并且将信号通知到</span><span class="n">worker进程</span><span class="err">。</span>
+</span></span><span class="line"><span class="cl"><span class="mf">5.</span><span class="err">如果运维人员发送了</span><span class="n">reload命令</span><span class="err">，则读取新配置文件，创建新的</span><span class="n">worker进程</span><span class="err">，结束旧的</span><span class="n">worker进程</span><span class="err">。</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><blockquote>
+<p>简单测试：reload重新加载进程，worker-pid会变化吗</p>
+</blockquote>
+<h1 id="worker进程">worker进程
+</h1><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">1.实际处理client网络请求的是worker
+</span></span><span class="line"><span class="cl">2.master根据nginx.conf决定worker的数量
+</span></span><span class="line"><span class="cl">3.有client用户请求到达时，worker之间进程竞争。获胜者和client建立连接且处理用户请求：
+</span></span><span class="line"><span class="cl">4.接收用户请求后，若需要代理转发给后端，则后端处理完毕后接收处理结果，再响应给用户
+</span></span><span class="line"><span class="cl">5.接收并处理master发来的进程信号，如启动、重启、重载、停止
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h1 id="nginx进程通信">nginx进程通信
+</h1><p>![屏幕截图 2024-09-26 085527](assets/屏幕截图 2024-09-26 085527.png)</p>
+<h1 id="nginx处理http请求流程">nginx处理http请求流程
+</h1><p><img src="/xiaoshi/p/nginx%E5%9F%BA%E7%A1%80%E7%AF%87/assets/clipImg-1727312382132-4.png"
+	width="204"
+	height="483"
+	srcset="/xiaoshi/p/nginx%E5%9F%BA%E7%A1%80%E7%AF%87/assets/clipImg-1727312382132-4_hu2749999051526795967.png 480w, /xiaoshi/p/nginx%E5%9F%BA%E7%A1%80%E7%AF%87/assets/clipImg-1727312382132-4_hu5348534900334856227.png 1024w"
+	loading="lazy"
+	
+		alt="clipImg"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="42"
+		data-flex-basis="101px"
+	
+></p>
+<h1 id="nginx模块介绍">nginx模块介绍
+</h1><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">利用nginx -V  命令可以看到当前操作的这个命令二进制命令，详细的信息，包括支持了哪些模块
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h1 id="nginx安装实践">nginx安装实践
+</h1><h1 id="nginx的安装形式">nginx的安装形式
+</h1><ul>
+<li>
+<p>源代码编译安装，优点</p>
+<ul>
+<li><a class="link" href="https://nginx.org/en/docs/configure.html"  target="_blank" rel="noopener"
+    >Building nginx from Sources</a></li>
+<li>版本，可以获取官网最新的软件包，甚至最新测试版，都可以直接编译安装</li>
+<li>还有稳定版本</li>
+<li>自由定义，安装路径自由定义，</li>
+<li>自由定义第三方插件</li>
+<li>缺点，安装步骤繁琐，耗时太长，看你要装多少个模块，编译添加的模块多，安装的就更久</li>
+</ul>
+</li>
+<li>
+<p>rpm安装</p>
+<ul>
+<li>得提前准备好nginx本身的rpm包，以及相关依赖的rpm包</li>
+<li>用于离线安装nginx的环境</li>
+</ul>
+</li>
+<li>
+<p>yum安装</p>
+<ul>
+<li>阿里云第三方仓库（centos-base.repo,epel.repo）
+<ul>
+<li>这个其实都不靠谱。</li>
+</ul>
+</li>
+<li>自建yum仓库（得提前准备好nginx本身的rpm包，以及相关依赖的rpm包）</li>
+<li>nginx官网仓库（获取官网最新稳定版的yum源仓库）
+<ul>
+<li>yum一键安装，省心省事，版本也是有一定的保障的，rpm的安全性也是有保障的</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h2 id="yum安装">yum安装
+</h2><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-gdscript3" data-lang="gdscript3"><span class="line"><span class="cl"><span class="mf">1.</span> <span class="err">配置官网</span><span class="n">yum源</span><span class="err">，一键安装即可</span>
+</span></span><span class="line"><span class="cl"><span class="n">cat</span> <span class="o">&gt;</span> <span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">yum</span><span class="o">.</span><span class="n">repos</span><span class="o">.</span><span class="n">d</span><span class="o">/</span><span class="n">nginx</span><span class="o">.</span><span class="n">repo</span> <span class="o">&lt;&lt;</span> <span class="s1">&#39;EOF&#39;</span>
+</span></span><span class="line"><span class="cl"><span class="p">[</span><span class="n">nginx</span><span class="o">-</span><span class="n">stable</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl"><span class="n">name</span><span class="o">=</span><span class="n">nginx</span> <span class="n">stable</span> <span class="n">repo</span>
+</span></span><span class="line"><span class="cl"><span class="n">baseurl</span><span class="o">=</span><span class="n">http</span><span class="p">:</span><span class="o">//</span><span class="n">nginx</span><span class="o">.</span><span class="n">org</span><span class="o">/</span><span class="n">packages</span><span class="o">/</span><span class="n">centos</span><span class="o">/$</span><span class="n">releasever</span><span class="o">/$</span><span class="n">basearch</span><span class="o">/</span>
+</span></span><span class="line"><span class="cl"><span class="n">gpgcheck</span><span class="o">=</span><span class="mi">1</span>
+</span></span><span class="line"><span class="cl"><span class="n">enabled</span><span class="o">=</span><span class="mi">1</span>
+</span></span><span class="line"><span class="cl"><span class="n">gpgkey</span><span class="o">=</span><span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">nginx</span><span class="o">.</span><span class="n">org</span><span class="o">/</span><span class="n">keys</span><span class="o">/</span><span class="n">nginx_signing</span><span class="o">.</span><span class="n">key</span>
+</span></span><span class="line"><span class="cl"><span class="n">EOF</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="mf">2.</span><span class="err">清空</span><span class="n">yum源</span><span class="err">，安装最新版</span><span class="n">nginx</span>
+</span></span><span class="line"><span class="cl"><span class="p">[</span><span class="n">root</span><span class="err">@</span><span class="n">web</span><span class="o">-</span><span class="mi">8</span> <span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">yum</span><span class="o">.</span><span class="n">repos</span><span class="o">.</span><span class="n">d</span><span class="p">]</span><span class="c1">#yum clean all</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="p">[</span><span class="n">root</span><span class="err">@</span><span class="n">web</span><span class="o">-</span><span class="mi">8</span> <span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">yum</span><span class="o">.</span><span class="n">repos</span><span class="o">.</span><span class="n">d</span><span class="p">]</span><span class="c1">#yum install nginx -y</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="mf">3.</span><span class="err">查看</span><span class="n">PATH变量</span>
+</span></span><span class="line"><span class="cl"><span class="p">[</span><span class="n">root</span><span class="err">@</span><span class="n">web</span><span class="o">-</span><span class="mi">8</span> <span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">yum</span><span class="o">.</span><span class="n">repos</span><span class="o">.</span><span class="n">d</span><span class="p">]</span><span class="c1">#which nginx</span>
+</span></span><span class="line"><span class="cl"><span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="n">sbin</span><span class="o">/</span><span class="n">nginx</span>
+</span></span><span class="line"><span class="cl"><span class="p">[</span><span class="n">root</span><span class="err">@</span><span class="n">web</span><span class="o">-</span><span class="mi">8</span> <span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">yum</span><span class="o">.</span><span class="n">repos</span><span class="o">.</span><span class="n">d</span><span class="p">]</span><span class="c1">#ll /usr/sbin/nginx</span>
+</span></span><span class="line"><span class="cl"><span class="o">-</span><span class="n">rwxr</span><span class="o">-</span><span class="n">xr</span><span class="o">-</span><span class="n">x</span> <span class="mi">1</span> <span class="n">root</span> <span class="n">root</span> <span class="mi">1377720</span> <span class="n">Nov</span> <span class="mi">16</span>  <span class="mi">2021</span> <span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="n">sbin</span><span class="o">/</span><span class="n">nginx</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="p">[</span><span class="n">root</span><span class="err">@</span><span class="n">web</span><span class="o">-</span><span class="mi">8</span> <span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">yum</span><span class="o">.</span><span class="n">repos</span><span class="o">.</span><span class="n">d</span><span class="p">]</span><span class="c1">#nginx -V</span>
+</span></span><span class="line"><span class="cl"><span class="n">nginx</span> <span class="n">version</span><span class="p">:</span> <span class="n">nginx</span><span class="o">/</span><span class="mf">1.20</span><span class="o">.</span><span class="mi">2</span>
+</span></span><span class="line"><span class="cl"><span class="n">built</span> <span class="n">by</span> <span class="n">gcc</span> <span class="mf">4.8</span><span class="o">.</span><span class="mi">5</span> <span class="mi">20150623</span> <span class="p">(</span><span class="n">Red</span> <span class="n">Hat</span> <span class="mf">4.8</span><span class="o">.</span><span class="mi">5</span><span class="o">-</span><span class="mi">44</span><span class="p">)</span> <span class="p">(</span><span class="n">GCC</span><span class="p">)</span> 
+</span></span><span class="line"><span class="cl"><span class="n">built</span> <span class="n">with</span> <span class="n">OpenSSL</span> <span class="mf">1.0</span><span class="o">.</span><span class="mi">2</span><span class="n">k</span><span class="o">-</span><span class="n">fips</span>  <span class="mi">26</span> <span class="n">Jan</span> <span class="mi">2017</span>
+</span></span><span class="line"><span class="cl"><span class="n">TLS</span> <span class="n">SNI</span> <span class="n">support</span> <span class="n">enabled</span>
+</span></span><span class="line"><span class="cl"><span class="n">configure</span> <span class="n">arguments</span><span class="p">:</span> <span class="o">--</span><span class="n">prefix</span><span class="o">=/</span><span class="n">etc</span><span class="o">/</span><span class="n">nginx</span> <span class="o">--</span><span class="n">sbin</span><span class="o">-</span><span class="n">path</span><span class="o">=/</span><span class="n">usr</span><span class="o">/</span><span class="n">sbin</span><span class="o">/</span><span class="n">nginx</span> <span class="o">--</span><span class="n">modules</span><span class="o">-</span><span class="n">path</span><span class="o">=/</span><span class="n">usr</span><span class="o">/</span><span class="n">lib64</span><span class="o">/</span><span class="n">nginx</span><span class="o">/</span><span class="n">modules</span> <span class="o">--</span><span class="n">conf</span><span class="o">-</span><span class="n">path</span><span class="o">=/</span><span class="n">etc</span><span class="o">/</span><span class="n">nginx</span><span class="o">/</span><span class="n">nginx</span><span class="o">.</span><span class="n">conf</span> <span class="o">--</span><span class="n">error</span><span class="o">-</span><span class="nb">log</span><span class="o">-</span><span class="n">path</span><span class="o">=/</span><span class="k">var</span><span class="o">/</span><span class="nb">log</span><span class="o">/</span><span class="n">nginx</span><span class="o">/</span><span class="n">error</span><span class="o">.</span><span class="n">log</span> <span class="o">--</span><span class="n">http</span><span class="o">-</span><span class="nb">log</span><span class="o">-</span><span class="n">path</span><span class="o">=/</span><span class="k">var</span><span class="o">/</span><span class="nb">log</span><span class="o">/</span><span class="n">nginx</span><span class="o">/</span><span class="n">access</span><span class="o">.</span><span class="n">log</span> <span class="o">--</span><span class="n">pid</span><span class="o">-</span><span class="n">path</span><span class="o">=/</span><span class="k">var</span><span class="o">/</span><span class="n">run</span><span class="o">/</span><span class="n">nginx</span><span class="o">.</span><span class="n">pid</span> <span class="o">--</span><span class="n">lock</span><span class="o">-</span><span class="n">path</span><span class="o">=/</span><span class="k">var</span><span class="o">/</span><span class="n">run</span><span class="o">/</span><span class="n">nginx</span><span class="o">.</span><span class="n">lock</span> <span class="o">--</span><span class="n">http</span><span class="o">-</span><span class="n">client</span><span class="o">-</span><span class="n">body</span><span class="o">-</span><span class="n">temp</span><span class="o">-</span><span class="n">path</span><span class="o">=/</span><span class="k">var</span><span class="o">/</span><span class="n">cache</span><span class="o">/</span><span class="n">nginx</span><span class="o">/</span><span class="n">client_temp</span> <span class="o">--</span><span class="n">http</span><span class="o">-</span><span class="n">proxy</span><span class="o">-</span><span class="n">temp</span><span class="o">-</span><span class="n">path</span><span class="o">=/</span><span class="k">var</span><span class="o">/</span><span class="n">cache</span><span class="o">/</span><span class="n">nginx</span><span class="o">/</span><span class="n">proxy_temp</span> <span class="o">--</span><span class="n">http</span><span class="o">-</span><span class="n">fastcgi</span><span class="o">-</span><span class="n">temp</span><span class="o">-</span><span class="n">path</span><span class="o">=/</span><span class="k">var</span><span class="o">/</span><span class="n">cache</span><span class="o">/</span><span class="n">nginx</span><span class="o">/</span><span class="n">fastcgi_temp</span> <span class="o">--</span><span class="n">http</span><span class="o">-</span><span class="n">uwsgi</span><span class="o">-</span><span class="n">temp</span><span class="o">-</span><span class="n">path</span><span class="o">=/</span><span class="k">var</span><span class="o">/</span><span class="n">cache</span><span class="o">/</span><span class="n">nginx</span><span class="o">/</span><span class="n">uwsgi_temp</span> <span class="o">--</span><span class="n">http</span><span class="o">-</span><span class="n">scgi</span><span class="o">-</span><span class="n">temp</span><span class="o">-</span><span class="n">path</span><span class="o">=/</span><span class="k">var</span><span class="o">/</span><span class="n">cache</span><span class="o">/</span><span class="n">nginx</span><span class="o">/</span><span class="n">scgi_temp</span> <span class="o">--</span><span class="n">user</span><span class="o">=</span><span class="n">nginx</span> <span class="o">--</span><span class="n">group</span><span class="o">=</span><span class="n">nginx</span> <span class="o">--</span><span class="n">with</span><span class="o">-</span><span class="n">compat</span> <span class="o">--</span><span class="n">with</span><span class="o">-</span><span class="n">file</span><span class="o">-</span><span class="n">aio</span> <span class="o">--</span><span class="n">with</span><span class="o">-</span><span class="n">threads</span> <span class="o">--</span><span class="n">with</span><span class="o">-</span><span class="n">http_addition_module</span> <span class="o">--</span><span class="n">with</span><span class="o">-</span><span class="n">http_auth_request_module</span> <span class="o">--</span><span class="n">with</span><span class="o">-</span><span class="n">http_dav_module</span> <span class="o">--</span><span class="n">with</span><span class="o">-</span><span class="n">http_flv_module</span> <span class="o">--</span><span class="n">with</span><span class="o">-</span><span class="n">http_gunzip_module</span> <span class="o">--</span><span class="n">with</span><span class="o">-</span><span class="n">http_gzip_static_module</span> <span class="o">--</span><span class="n">with</span><span class="o">-</span><span class="n">http_mp4_module</span> <span class="o">--</span><span class="n">with</span><span class="o">-</span><span class="n">http_random_index_module</span> <span class="o">--</span><span class="n">with</span><span class="o">-</span><span class="n">http_realip_module</span> <span class="o">--</span><span class="n">with</span><span class="o">-</span><span class="n">http_secure_link_module</span> <span class="o">--</span><span class="n">with</span><span class="o">-</span><span class="n">http_slice_module</span> <span class="o">--</span><span class="n">with</span><span class="o">-</span><span class="n">http_ssl_module</span> <span class="o">--</span><span class="n">with</span><span class="o">-</span><span class="n">http_stub_status_module</span> <span class="o">--</span><span class="n">with</span><span class="o">-</span><span class="n">http_sub_module</span> <span class="o">--</span><span class="n">with</span><span class="o">-</span><span class="n">http_v2_module</span> <span class="o">--</span><span class="n">with</span><span class="o">-</span><span class="n">mail</span> <span class="o">--</span><span class="n">with</span><span class="o">-</span><span class="n">mail_ssl_module</span> <span class="o">--</span><span class="n">with</span><span class="o">-</span><span class="n">stream</span> <span class="o">--</span><span class="n">with</span><span class="o">-</span><span class="n">stream_realip_module</span> <span class="o">--</span><span class="n">with</span><span class="o">-</span><span class="n">stream_ssl_module</span> <span class="o">--</span><span class="n">with</span><span class="o">-</span><span class="n">stream_ssl_preread_module</span> <span class="o">--</span><span class="n">with</span><span class="o">-</span><span class="n">cc</span><span class="o">-</span><span class="n">opt</span><span class="o">=</span><span class="s1">&#39;-O2 -g -pipe -Wall -Wp,-D_FORTIFY_SOURCE=2 -fexceptions -fstack-protector-strong --param=ssp-buffer-size=4 -grecord-gcc-switches -m64 -mtune=generic -fPIC&#39;</span> <span class="o">--</span><span class="n">with</span><span class="o">-</span><span class="n">ld</span><span class="o">-</span><span class="n">opt</span><span class="o">=</span><span class="s1">&#39;-Wl,-z,relro -Wl,-z,now -pie&#39;</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="nginx管理命令">nginx管理命令
+</h2><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span><span class="lnt">43
+</span><span class="lnt">44
+</span><span class="lnt">45
+</span><span class="lnt">46
+</span><span class="lnt">47
+</span><span class="lnt">48
+</span><span class="lnt">49
+</span><span class="lnt">50
+</span><span class="lnt">51
+</span><span class="lnt">52
+</span><span class="lnt">53
+</span><span class="lnt">54
+</span><span class="lnt">55
+</span><span class="lnt">56
+</span><span class="lnt">57
+</span><span class="lnt">58
+</span><span class="lnt">59
+</span><span class="lnt">60
+</span><span class="lnt">61
+</span><span class="lnt">62
+</span><span class="lnt">63
+</span><span class="lnt">64
+</span><span class="lnt">65
+</span><span class="lnt">66
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-gdscript3" data-lang="gdscript3"><span class="line"><span class="cl"><span class="n">nginx</span> <span class="o">-</span><span class="n">t</span>  <span class="c1"># 检测nginx.conf语法</span>
+</span></span><span class="line"><span class="cl"><span class="n">nginx</span> <span class="o">-</span><span class="n">s</span>  <span class="n">reload</span>  <span class="c1"># 重新读取nginx.conf</span>
+</span></span><span class="line"><span class="cl"><span class="n">nginx</span> <span class="o">-</span><span class="n">s</span> <span class="n">stop</span>   <span class="c1"># 停止nginx  kill -15 nginx</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">nginx</span>  <span class="c1"># 默认是直接运行，前提是当前机器没运行nginx</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">#你通过yum安装的nginx请你用systemctl去管理</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># 不能多次执行nginx二进制命令</span>
+</span></span><span class="line"><span class="cl"><span class="p">[</span><span class="n">root</span><span class="err">@</span><span class="n">web</span><span class="o">-</span><span class="mi">8</span> <span class="o">~</span><span class="p">]</span><span class="c1">#</span>
+</span></span><span class="line"><span class="cl"><span class="p">[</span><span class="n">root</span><span class="err">@</span><span class="n">web</span><span class="o">-</span><span class="mi">8</span> <span class="o">~</span><span class="p">]</span><span class="c1">#nginx</span>
+</span></span><span class="line"><span class="cl"><span class="p">[</span><span class="n">root</span><span class="err">@</span><span class="n">web</span><span class="o">-</span><span class="mi">8</span> <span class="o">~</span><span class="p">]</span><span class="c1">#nginx # 会报错</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># nginx -s reload ,会发生什么</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">nginx</span> <span class="o">-</span><span class="n">s</span> <span class="n">reload是给master进程发信号</span><span class="err">，重新读取配置信息，导致</span><span class="n">worker重新生成</span><span class="err">，因此</span><span class="n">worker</span><span class="o">-</span><span class="n">pid发生了变化</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="err">但是</span><span class="n">master进程id不带变化的</span><span class="err">（包工头，一直没变，更换了手底下的干活的工人）</span>
+</span></span><span class="line"><span class="cl"><span class="o">================================</span>
+</span></span><span class="line"><span class="cl"><span class="err">配置文件变化，就好比</span> <span class="err">合同变化了（包工头还是他，但是工人更换了一批）</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="o">===========</span>
+</span></span><span class="line"><span class="cl"><span class="err">只有你</span><span class="n">restart的时候</span><span class="err">，包工头，也会被更换</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="err">你只能先停止，</span> <span class="err">再重启</span>
+</span></span><span class="line"><span class="cl"><span class="n">nginx</span> <span class="o">-</span><span class="n">s</span> <span class="n">stop</span> 
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="o">==============================</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="err">如果出现如下错误，如何解决，其实是通过</span><span class="n">pid</span><span class="err">，管理</span><span class="n">nginx的进程</span>
+</span></span><span class="line"><span class="cl"> <span class="o">~</span><span class="p">]</span><span class="c1">#nginx -s stop</span>
+</span></span><span class="line"><span class="cl"><span class="n">nginx</span><span class="p">:</span> <span class="p">[</span><span class="n">error</span><span class="p">]</span> <span class="n">invalid</span> <span class="n">PID</span> <span class="n">number</span> <span class="s2">&#34;&#34;</span> <span class="ow">in</span> <span class="s2">&#34;/var/run/nginx.pid&#34;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="p">[</span><span class="n">root</span><span class="err">@</span><span class="n">web</span><span class="o">-</span><span class="mi">8</span> <span class="o">~</span><span class="p">]</span><span class="c1">#cat /var/run/nginx.pid</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="p">[</span><span class="n">root</span><span class="err">@</span><span class="n">web</span><span class="o">-</span><span class="mi">8</span> <span class="o">~</span><span class="p">]</span><span class="c1">#ps -ef |grep nginx</span>
+</span></span><span class="line"><span class="cl"><span class="n">root</span>       <span class="mi">3599</span>      <span class="mi">1</span>  <span class="mi">0</span> <span class="mi">16</span><span class="p">:</span><span class="mi">10</span> <span class="err">?</span>        <span class="mi">00</span><span class="p">:</span><span class="mi">00</span><span class="p">:</span><span class="mi">00</span> <span class="n">nginx</span><span class="p">:</span> <span class="n">master</span> <span class="n">process</span> <span class="n">nginx</span>
+</span></span><span class="line"><span class="cl"><span class="n">nginx</span>      <span class="mi">3628</span>   <span class="mi">3599</span>  <span class="mi">0</span> <span class="mi">16</span><span class="p">:</span><span class="mi">12</span> <span class="err">?</span>        <span class="mi">00</span><span class="p">:</span><span class="mi">00</span><span class="p">:</span><span class="mi">00</span> <span class="n">nginx</span><span class="p">:</span> <span class="n">worker</span> <span class="n">process</span>
+</span></span><span class="line"><span class="cl"><span class="n">root</span>       <span class="mi">3677</span>   <span class="mi">3434</span>  <span class="mi">0</span> <span class="mi">16</span><span class="p">:</span><span class="mi">19</span> <span class="n">pts</span><span class="o">/</span><span class="mi">0</span>    <span class="mi">00</span><span class="p">:</span><span class="mi">00</span><span class="p">:</span><span class="mi">00</span> <span class="n">grep</span> <span class="o">--</span><span class="n">color</span><span class="o">=</span><span class="n">auto</span> <span class="n">nginx</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="p">[</span><span class="n">root</span><span class="err">@</span><span class="n">web</span><span class="o">-</span><span class="mi">8</span> <span class="o">~</span><span class="p">]</span><span class="c1">#echo 3599 &gt; /var/run/nginx.pid </span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="p">[</span><span class="n">root</span><span class="err">@</span><span class="n">web</span><span class="o">-</span><span class="mi">8</span> <span class="o">~</span><span class="p">]</span><span class="c1">#nginx -s stop</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="p">[</span><span class="n">root</span><span class="err">@</span><span class="n">web</span><span class="o">-</span><span class="mi">8</span> <span class="o">~</span><span class="p">]</span><span class="c1">#!ps</span>
+</span></span><span class="line"><span class="cl"><span class="n">ps</span> <span class="o">-</span><span class="n">ef</span> <span class="o">|</span><span class="n">grep</span> <span class="n">nginx</span>
+</span></span><span class="line"><span class="cl"><span class="n">root</span>       <span class="mi">3686</span>   <span class="mi">3434</span>  <span class="mi">0</span> <span class="mi">16</span><span class="p">:</span><span class="mi">19</span> <span class="n">pts</span><span class="o">/</span><span class="mi">0</span>    <span class="mi">00</span><span class="p">:</span><span class="mi">00</span><span class="p">:</span><span class="mi">00</span> <span class="n">grep</span> <span class="o">--</span><span class="n">color</span><span class="o">=</span><span class="n">auto</span> <span class="n">nginx</span>
+</span></span><span class="line"><span class="cl"><span class="p">[</span><span class="n">root</span><span class="err">@</span><span class="n">web</span><span class="o">-</span><span class="mi">8</span> <span class="o">~</span><span class="p">]</span><span class="c1">#</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># 明确，现在用systemctl去管理nginx了</span>
+</span></span><span class="line"><span class="cl"><span class="p">[</span><span class="n">root</span><span class="err">@</span><span class="n">web</span><span class="o">-</span><span class="mi">8</span> <span class="o">~</span><span class="p">]</span><span class="c1">#systemctl start nginx</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="err">查看状态，</span><span class="n">reload</span><span class="err">，</span> <span class="n">restart</span> <span class="n">nginx</span><span class="err">，查看进程</span><span class="n">id号</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="p">[</span><span class="n">root</span><span class="err">@</span><span class="n">web</span><span class="o">-</span><span class="mi">8</span> <span class="o">~</span><span class="p">]</span><span class="c1">#systemctl status nginx</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="p">[</span><span class="n">root</span><span class="err">@</span><span class="n">web</span><span class="o">-</span><span class="mi">8</span> <span class="o">~</span><span class="p">]</span><span class="c1">#systemctl reload nginx  # worker变化，master不变</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="p">[</span><span class="n">root</span><span class="err">@</span><span class="n">web</span><span class="o">-</span><span class="mi">8</span> <span class="o">~</span><span class="p">]</span><span class="c1">#systemctl restart nginx  # 整个nginx进程变化</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># 总结：用什么命令启动的，就用什么方式去管理该进程</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/xiaoshi/p/nginx%E5%9F%BA%E7%A1%80%E7%AF%87/assets/image-20220518161823329.png"
+	width="2911"
+	height="1234"
+	srcset="/xiaoshi/p/nginx%E5%9F%BA%E7%A1%80%E7%AF%87/assets/image-20220518161823329_hu17994142738672135962.png 480w, /xiaoshi/p/nginx%E5%9F%BA%E7%A1%80%E7%AF%87/assets/image-20220518161823329_hu11454231984984814497.png 1024w"
+	loading="lazy"
+	
+		alt="image-20220518161823329"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="235"
+		data-flex-basis="566px"
+	
+></p>
+<h1 id="nginx配置文件详解">nginx配置文件详解
+</h1><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">安装完了之后，后续nginx的所有功能，都是围绕着修改nginx配置文件生效了
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">看懂配置文件，运维来说，达到手写nginx配置文件，才是合格的。
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="通过官网yum仓库默认安装的nginxconf">通过官网yum仓库默认安装的nginx.conf
+</h2><p>位置在/etc/nginx/nginx.conf</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-gdscript3" data-lang="gdscript3"><span class="line"><span class="cl"><span class="n">user</span>  <span class="n">nginx</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="n">worker_processes</span>  <span class="n">auto</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">error_log</span>  <span class="o">/</span><span class="k">var</span><span class="o">/</span><span class="nb">log</span><span class="o">/</span><span class="n">nginx</span><span class="o">/</span><span class="n">error</span><span class="o">.</span><span class="n">log</span> <span class="n">notice</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="n">pid</span>        <span class="o">/</span><span class="k">var</span><span class="o">/</span><span class="n">run</span><span class="o">/</span><span class="n">nginx</span><span class="o">.</span><span class="n">pid</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">events</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="n">worker_connections</span>  <span class="mi">1024</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">http</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="n">include</span>       <span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">nginx</span><span class="o">/</span><span class="n">mime</span><span class="o">.</span><span class="n">types</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="n">default_type</span>  <span class="n">application</span><span class="o">/</span><span class="n">octet</span><span class="o">-</span><span class="n">stream</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="n">log_format</span>  <span class="n">main</span>  <span class="s1">&#39;$remote_addr - $remote_user [$time_local] &#34;$request&#34; &#39;</span>
+</span></span><span class="line"><span class="cl">                      <span class="s1">&#39;$status $body_bytes_sent &#34;$http_referer&#34; &#39;</span>
+</span></span><span class="line"><span class="cl">                      <span class="s1">&#39;&#34;$http_user_agent&#34; &#34;$http_x_forwarded_for&#34;&#39;</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="n">access_log</span>  <span class="o">/</span><span class="k">var</span><span class="o">/</span><span class="nb">log</span><span class="o">/</span><span class="n">nginx</span><span class="o">/</span><span class="n">access</span><span class="o">.</span><span class="n">log</span>  <span class="n">main</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="n">sendfile</span>        <span class="n">on</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">#tcp_nopush     on;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="n">keepalive_timeout</span>  <span class="mi">65</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="c1">#gzip  on;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="n">include</span> <span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">nginx</span><span class="o">/</span><span class="n">conf</span><span class="o">.</span><span class="n">d</span><span class="o">/*.</span><span class="n">conf</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="o">~</span>       
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/xiaoshi/p/nginx%E5%9F%BA%E7%A1%80%E7%AF%87/assets/image-20220518164803277.png"
+	width="2054"
+	height="1758"
+	srcset="/xiaoshi/p/nginx%E5%9F%BA%E7%A1%80%E7%AF%87/assets/image-20220518164803277_hu12626621317157721252.png 480w, /xiaoshi/p/nginx%E5%9F%BA%E7%A1%80%E7%AF%87/assets/image-20220518164803277_hu51265700488593272.png 1024w"
+	loading="lazy"
+	
+		alt="image-20220518164803277"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="116"
+		data-flex-basis="280px"
+	
+></p>
+<hr>
+<p><img src="/xiaoshi/p/nginx%E5%9F%BA%E7%A1%80%E7%AF%87/assets/image-20220518165215774.png"
+	width="2512"
+	height="1745"
+	srcset="/xiaoshi/p/nginx%E5%9F%BA%E7%A1%80%E7%AF%87/assets/image-20220518165215774_hu13603006112989819728.png 480w, /xiaoshi/p/nginx%E5%9F%BA%E7%A1%80%E7%AF%87/assets/image-20220518165215774_hu9475787694374116516.png 1024w"
+	loading="lazy"
+	
+		alt=" "
+	
+	
+		class="gallery-image" 
+		data-flex-grow="143"
+		data-flex-basis="345px"
+	
+></p>
+
+</section>
+
+
+    <footer class="article-footer">
+    
+
+    </footer>
+
+
+    
+</article>
+
+    
+
+    
+
+     
+    
+        
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+        2025 小诗
+    </section>
+    
+    <section class="powerby">
+        使用 <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> 构建 <br />
+        主题 <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.26.0">Stack</a></b> 由 <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a> 设计
+    </section>
+</footer>
+
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css"crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css"crossorigin="anonymous"
+            >
+
+            </main>
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.6/dist/vibrant.min.js"integrity="sha256-awcR2jno4kI5X0zL8ex0vi2z&#43;KMkF24hUW8WePSA9HM="crossorigin="anonymous"
+                
+                >
+            </script><script type="text/javascript" src="/xiaoshi/ts/main.js" defer></script>
+<script>
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+
+    </body>
+</html>

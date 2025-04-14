@@ -1,0 +1,1246 @@
+<!DOCTYPE html>
+<html lang="zh-cn" dir="ltr">
+    <head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content="nginx高级篇 在nginx最核心的功能，虚拟主机会用之后，下一步就是学习nginx的各种高级功能，用于应对工作里对网站部署的各种需求。 ng">
+<title>Nginx高级篇1</title>
+
+<link rel='canonical' href='https://ZackMoel.github.io/xiaoshi/p/nginx%E9%AB%98%E7%BA%A7%E7%AF%871/'>
+
+<link rel="stylesheet" href="/xiaoshi/scss/style.min.0304c6baf04e01a8fe70693791cb744d56a3578a3120a8796cefc66825aa39c7.css"><meta property='og:title' content="Nginx高级篇1">
+<meta property='og:description' content="nginx高级篇 在nginx最核心的功能，虚拟主机会用之后，下一步就是学习nginx的各种高级功能，用于应对工作里对网站部署的各种需求。 ng">
+<meta property='og:url' content='https://ZackMoel.github.io/xiaoshi/p/nginx%E9%AB%98%E7%BA%A7%E7%AF%871/'>
+<meta property='og:site_name' content='小诗的博客'>
+<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:published_time' content='2025-04-14T16:53:36&#43;08:00'/><meta property='article:modified_time' content='2025-04-14T16:53:36&#43;08:00'/>
+<meta name="twitter:title" content="Nginx高级篇1">
+<meta name="twitter:description" content="nginx高级篇 在nginx最核心的功能，虚拟主机会用之后，下一步就是学习nginx的各种高级功能，用于应对工作里对网站部署的各种需求。 ng">
+  
+
+
+    </head>
+    <body class="
+    article-page
+    ">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex on-phone--column extended"><aside class="sidebar left-sidebar sticky ">
+    <button class="hamburger hamburger--spin" type="button" id="toggle-menu" aria-label="切换菜单">
+        <span class="hamburger-box">
+            <span class="hamburger-inner"></span>
+        </span>
+    </button>
+
+    <header>
+        
+            
+            <figure class="site-avatar">
+                <a href="/xiaoshi/">
+                
+                    
+                    
+                    
+                        
+                        <img src="/xiaoshi/img/avatar_hu8920112365793990935.png" width="300"
+                            height="300" class="site-logo" loading="lazy" alt="Avatar">
+                    
+                
+                </a>
+                
+                    <span class="emoji">🍥</span>
+                
+            </figure>
+            
+        
+        
+        <div class="site-meta">
+            <h1 class="site-name"><a href="/xiaoshi">小诗的博客</a></h1>
+            <h2 class="site-description">欢迎来到小诗的博客</h2>
+        </div>
+    </header><ol class="menu-social">
+            
+                <li>
+                    <a 
+                        href='https://space.bilibili.com/1055981889?spm_id_from=333.1007.0.0'
+                        target="_blank"
+                        title="bilibili"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg  xmlns="http://www.w3.org/2000/svg"  width="24"  height="24"  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  stroke-width="2"  stroke-linecap="round"  stroke-linejoin="round"  class="icon icon-tabler icons-tabler-outline icon-tabler-brand-bilibili"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M3 10a4 4 0 0 1 4 -4h10a4 4 0 0 1 4 4v6a4 4 0 0 1 -4 4h-10a4 4 0 0 1 -4 -4v-6z" /><path d="M8 3l2 3" /><path d="M16 3l-2 3" /><path d="M9 13v-2" /><path d="M15 11v2" /></svg>
+                        
+                    </a>
+                </li>
+            
+                <li>
+                    <a 
+                        href='https://github.com/ZackMoel/xiaoshi.github.io'
+                        target="_blank"
+                        title="GitHub"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-github" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M9 19c-4.3 1.4 -4.3 -2.5 -6 -3m12 5v-3.5c0 -1 .1 -1.4 -.5 -2c2.8 -.3 5.5 -1.4 5.5 -6a4.6 4.6 0 0 0 -1.3 -3.2a4.2 4.2 0 0 0 -.1 -3.2s-1.1 -.3 -3.5 1.3a12.3 12.3 0 0 0 -6.2 0c-2.4 -1.6 -3.5 -1.3 -3.5 -1.3a4.2 4.2 0 0 0 -.1 3.2a4.6 4.6 0 0 0 -1.3 3.2c0 4.6 2.7 5.7 5.5 6c-.6 .6 -.6 1.2 -.5 2v3.5" />
+</svg>
+
+
+
+                        
+                    </a>
+                </li>
+            
+        </ol><ol class="menu" id="main-menu">
+        
+        
+        
+        <li >
+            <a href='/xiaoshi/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-home" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <polyline points="5 12 3 12 12 3 21 12 19 12" />
+  <path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7" />
+  <path d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6" />
+</svg>
+
+
+
+                
+                <span>主页</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/xiaoshi/%E5%85%B3%E4%BA%8E/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-user" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="7" r="4" />
+  <path d="M6 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2" />
+</svg>
+
+
+
+                
+                <span>关于</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/xiaoshi/archives/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-archive" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <rect x="3" y="4" width="18" height="4" rx="2" />
+  <path d="M5 8v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-10" />
+  <line x1="10" y1="12" x2="14" y2="12" />
+</svg>
+
+
+
+                
+                <span>归档</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/xiaoshi/search/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-search" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="10" cy="10" r="7" />
+  <line x1="21" y1="21" x2="15" y2="15" />
+</svg>
+
+
+
+                
+                <span>搜索</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/xiaoshi/%E5%8F%8B%E6%83%85%E9%93%BE%E6%8E%A5/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-link" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M10 14a3.5 3.5 0 0 0 5 0l4 -4a3.5 3.5 0 0 0 -5 -5l-.5 .5" />
+  <path d="M14 10a3.5 3.5 0 0 0 -5 0l-4 4a3.5 3.5 0 0 0 5 5l.5 -.5" />
+</svg>
+
+
+
+                
+                <span>友情链接</span>
+            </a>
+        </li>
+        
+        <li class="menu-bottom-section">
+            <ol class="menu">
+
+                
+                    <li id="dark-mode-toggle">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="8" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="16" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <span>暗色模式</span>
+                    </li>
+                
+            </ol>
+        </li>
+    </ol>
+</aside>
+
+    <aside class="sidebar right-sidebar sticky">
+        
+            
+                
+    <section class="widget archives">
+        <div class="widget-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <line x1="5" y1="9" x2="19" y2="9" />
+  <line x1="5" y1="15" x2="19" y2="15" />
+  <line x1="11" y1="4" x2="7" y2="20" />
+  <line x1="17" y1="4" x2="13" y2="20" />
+</svg>
+
+
+
+        </div>
+        <h2 class="widget-title section-title">目录</h2>
+        
+        <div class="widget--toc">
+            <nav id="TableOfContents">
+  <ol>
+    <li><a href="#切割理念先纯手动的去切割日志备份日志">切割理念（先纯手动的去切割日志，备份日志）</a></li>
+    <li><a href="#shell脚本形式">shell脚本形式</a></li>
+    <li><a href="#logrotate工具切割形式">logrotate工具切割形式</a></li>
+  </ol>
+
+  <ol>
+    <li><a href="#为什么激活数是2">为什么激活数是2</a></li>
+  </ol>
+</nav>
+        </div>
+    </section>
+
+            
+        
+    </aside>
+
+
+            <main class="main full-width">
+    <article class="main-article">
+    <header class="article-header">
+
+    <div class="article-details">
+    
+
+    <div class="article-title-wrapper">
+        <h2 class="article-title">
+            <a href="/xiaoshi/p/nginx%E9%AB%98%E7%BA%A7%E7%AF%871/">Nginx高级篇1</a>
+        </h2>
+    
+        
+    </div>
+
+    
+    
+    
+    
+    <footer class="article-time">
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
+  <circle cx="18" cy="18" r="4" />
+  <path d="M15 3v4" />
+  <path d="M7 3v4" />
+  <path d="M3 11h16" />
+  <path d="M18 16.496v1.504l1 1" />
+</svg>
+                <time class="article-time--published">2025-04-14</time>
+            </div>
+        
+
+        
+    </footer>
+    
+
+    
+</div>
+
+</header>
+
+    <section class="article-content">
+    
+    
+    <h1 id="nginx高级篇">nginx高级篇
+</h1><p>在nginx最核心的功能，虚拟主机会用之后，下一步就是学习nginx的各种高级功能，用于应对工作里对网站部署的各种需求。</p>
+<h1 id="nginx访客日志切割">nginx访客日志切割
+</h1><p>为什么要进行日志切割
+1.为了业务方便提取
+2.防止单个日志文件过大，切割后，容易做备份</p>
+<h2 id="切割理念先纯手动的去切割日志备份日志">切割理念（先纯手动的去切割日志，备份日志）
+</h2><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span><span class="lnt">43
+</span><span class="lnt">44
+</span><span class="lnt">45
+</span><span class="lnt">46
+</span><span class="lnt">47
+</span><span class="lnt">48
+</span><span class="lnt">49
+</span><span class="lnt">50
+</span><span class="lnt">51
+</span><span class="lnt">52
+</span><span class="lnt">53
+</span><span class="lnt">54
+</span><span class="lnt">55
+</span><span class="lnt">56
+</span><span class="lnt">57
+</span><span class="lnt">58
+</span><span class="lnt">59
+</span><span class="lnt">60
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-gdscript3" data-lang="gdscript3"><span class="line"><span class="cl"><span class="mf">1.</span> <span class="err">给</span><span class="n">nginx进程发送信号</span><span class="err">，让</span><span class="n">nginx重新生成一个新日志文件</span><span class="err">，这就是一个日志切割根本</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="o">/</span><span class="k">var</span><span class="o">/</span><span class="nb">log</span><span class="o">/</span><span class="n">nginx</span><span class="o">/</span><span class="n">access</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">bak</span>   <span class="c1"># 1.备份原本日志文件</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">nginx</span>  <span class="n">reload</span>  <span class="n">reopen信号</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># 配置文件中定义的日志文件名，是这个</span>
+</span></span><span class="line"><span class="cl"><span class="mf">2.</span> <span class="o">/</span><span class="k">var</span><span class="o">/</span><span class="nb">log</span><span class="o">/</span><span class="n">nginx</span><span class="o">/</span><span class="n">access</span><span class="o">.</span><span class="n">log</span>  	<span class="c1"># 重新生成新日志文件，让新日志往这里去写</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># 手动切割，修改日志</span>
+</span></span><span class="line"><span class="cl"><span class="c1">#1.准备好旧的日志文件，测试写入大量的日志记录，先用第一种办法，for循环</span>
+</span></span><span class="line"><span class="cl"><span class="p">[</span><span class="n">root</span><span class="err">@</span><span class="n">web</span><span class="o">-</span><span class="mi">8</span> <span class="o">~</span><span class="p">]</span><span class="c1">#for num in {1..10000};do curl 10.0.0.8 ; done</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">#2.使用支持多进程，并发写入的工具，如ab命令  apache提供的性能压测命令，给网站发送支持并发的大量的http请求。</span>
+</span></span><span class="line"><span class="cl"><span class="p">[</span><span class="n">root</span><span class="err">@</span><span class="n">web</span><span class="o">-</span><span class="mi">8</span> <span class="o">~</span><span class="p">]</span><span class="c1">#yum install httpd-tools -y</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># 发送10000个http请求，且招来100个人同时发请求</span>
+</span></span><span class="line"><span class="cl"><span class="n">ab</span> <span class="o">-</span><span class="n">c</span> <span class="mi">100</span> <span class="o">-</span><span class="n">n</span> <span class="mi">10000</span>  <span class="n">http</span><span class="p">:</span><span class="o">//</span><span class="mf">10.0</span><span class="o">.</span><span class="mf">0.8</span><span class="o">/</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># 3.当前日志数量</span>
+</span></span><span class="line"><span class="cl"><span class="p">[</span><span class="n">root</span><span class="err">@</span><span class="n">web</span><span class="o">-</span><span class="mi">8</span> <span class="o">/</span><span class="k">var</span><span class="o">/</span><span class="nb">log</span><span class="o">/</span><span class="n">nginx</span><span class="p">]</span><span class="c1">#cat all-server-accesss.log |wc -l</span>
+</span></span><span class="line"><span class="cl"><span class="mi">20000</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># 4.让你有一个已经记录了大量日志的文件，得进行日志切割了</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="err">切割思路就是，</span><span class="mf">1.</span><span class="err">先重命名，等于备份</span><span class="p">()</span>  <span class="mf">2.</span> <span class="err">重新记录</span><span class="n">nginx日志</span> <span class="p">(</span><span class="o">/</span><span class="k">var</span><span class="o">/</span><span class="nb">log</span><span class="o">/</span><span class="n">nginx</span><span class="o">/</span><span class="n">access</span><span class="o">.</span><span class="n">log</span><span class="p">)</span> <span class="err">按天记录日志</span> <span class="err">（每天夜里的</span> <span class="err">整点分进行日志备份，日志）</span>
+</span></span><span class="line"><span class="cl"><span class="err">按天，生成一个新的日志文件</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># 备份旧日志（模拟是前一天的旧日志）</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">cd</span> <span class="o">/</span><span class="k">var</span><span class="o">/</span><span class="nb">log</span><span class="o">/</span><span class="n">nginx</span> <span class="o">&amp;&amp;</span> <span class="n">mv</span> <span class="n">all</span><span class="o">-</span><span class="n">server</span><span class="o">-</span><span class="n">accesss</span><span class="o">.</span><span class="n">log</span> <span class="n">all</span><span class="o">-</span><span class="n">server</span><span class="o">-</span><span class="n">accesss</span><span class="o">.</span><span class="n">log</span><span class="o">.$</span><span class="p">(</span><span class="n">date</span> <span class="s1">&#39;+</span><span class="si">%F</span><span class="s1">&#39;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># 还得生成新日志，得继续记录</span>
+</span></span><span class="line"><span class="cl"><span class="err">给</span><span class="n">nginx进程发送reopen信号</span><span class="err">，重新生成新日志</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># 用这种方式，可以最精确的提取进程id号。</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">kill</span> <span class="o">-</span><span class="n">USR1</span> <span class="o">$</span><span class="p">(</span><span class="n">ps</span> <span class="o">-</span><span class="n">ef</span><span class="o">|</span><span class="n">grep</span> <span class="n">nginx</span> <span class="o">|</span><span class="n">grep</span> <span class="n">master</span> <span class="o">|</span> <span class="n">awk</span> <span class="s1">&#39;{print $2}&#39;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="err">此时会生成新的日志</span>
+</span></span><span class="line"><span class="cl"><span class="p">[</span><span class="n">root</span><span class="err">@</span><span class="n">web</span><span class="o">-</span><span class="mi">8</span> <span class="o">/</span><span class="k">var</span><span class="o">/</span><span class="nb">log</span><span class="o">/</span><span class="n">nginx</span><span class="p">]</span><span class="c1">#ll</span>
+</span></span><span class="line"><span class="cl"><span class="n">total</span> <span class="mi">6084</span>
+</span></span><span class="line"><span class="cl"><span class="o">-</span><span class="n">rw</span><span class="o">-</span><span class="n">r</span><span class="o">--</span><span class="n">r</span><span class="o">--</span> <span class="mi">1</span> <span class="n">www</span>  <span class="n">root</span>       <span class="mi">0</span> <span class="n">May</span> <span class="mi">23</span> <span class="mi">10</span><span class="p">:</span><span class="mi">10</span> <span class="n">all</span><span class="o">-</span><span class="n">server</span><span class="o">-</span><span class="n">accesss</span><span class="o">.</span><span class="n">log</span>
+</span></span><span class="line"><span class="cl"><span class="o">-</span><span class="n">rw</span><span class="o">-</span><span class="n">r</span><span class="o">--</span><span class="n">r</span><span class="o">--</span> <span class="mi">1</span> <span class="n">root</span> <span class="n">root</span> <span class="mi">4160000</span> <span class="n">May</span> <span class="mi">23</span> <span class="mi">10</span><span class="p">:</span><span class="mi">08</span> <span class="n">all</span><span class="o">-</span><span class="n">server</span><span class="o">-</span><span class="n">accesss</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="mi">2022</span><span class="o">-</span><span class="mi">05</span><span class="o">-</span><span class="mi">23</span><span class="o">---</span><span class="mi">10</span><span class="p">:</span><span class="mi">04</span><span class="p">:</span><span class="mi">17</span>
+</span></span><span class="line"><span class="cl"><span class="o">-</span><span class="n">rw</span><span class="o">-</span><span class="n">r</span><span class="o">--</span><span class="n">r</span><span class="o">--</span> <span class="mi">1</span> <span class="n">www</span>  <span class="n">root</span>     <span class="mi">700</span> <span class="n">May</span> <span class="mi">23</span> <span class="mi">10</span><span class="p">:</span><span class="mi">10</span> <span class="n">error</span><span class="o">.</span><span class="n">log</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="err">此时新日志，就会记录到这个新的日志文件中了</span>
+</span></span><span class="line"><span class="cl"><span class="o">==&gt;</span> <span class="n">all</span><span class="o">-</span><span class="n">server</span><span class="o">-</span><span class="n">accesss</span><span class="o">.</span><span class="n">log</span> <span class="o">&lt;==</span>
+</span></span><span class="line"><span class="cl"><span class="o">/</span><span class="n">index</span><span class="o">.</span><span class="n">html</span>  <span class="mf">10.0</span><span class="o">.</span><span class="mf">0.8</span> <span class="o">-</span> <span class="o">-</span> <span class="p">[</span><span class="mi">23</span><span class="o">/</span><span class="n">May</span><span class="o">/</span><span class="mi">2022</span><span class="p">:</span><span class="mi">10</span><span class="p">:</span><span class="mi">10</span><span class="p">:</span><span class="mi">56</span> <span class="o">+</span><span class="mi">0800</span><span class="p">]</span> <span class="s2">&#34;GET / HTTP/1.1&#34;</span> <span class="mi">200</span> <span class="mi">6</span> <span class="s2">&#34;-&#34;</span> <span class="s2">&#34;curl/7.29.0&#34;</span> <span class="s2">&#34;-&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="o">/</span><span class="n">index</span><span class="o">.</span><span class="n">html</span>  <span class="mf">10.0</span><span class="o">.</span><span class="mf">0.8</span> <span class="o">-</span> <span class="o">-</span> <span class="p">[</span><span class="mi">23</span><span class="o">/</span><span class="n">May</span><span class="o">/</span><span class="mi">2022</span><span class="p">:</span><span class="mi">10</span><span class="p">:</span><span class="mi">10</span><span class="p">:</span><span class="mi">57</span> <span class="o">+</span><span class="mi">0800</span><span class="p">]</span> <span class="s2">&#34;GET / HTTP/1.1&#34;</span> <span class="mi">200</span> <span class="mi">6</span> <span class="s2">&#34;-&#34;</span> <span class="s2">&#34;curl/7.29.0&#34;</span> <span class="s2">&#34;-&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="o">/</span><span class="n">index</span><span class="o">.</span><span class="n">html</span>  <span class="mf">10.0</span><span class="o">.</span><span class="mf">0.8</span> <span class="o">-</span> <span class="o">-</span> <span class="p">[</span><span class="mi">23</span><span class="o">/</span><span class="n">May</span><span class="o">/</span><span class="mi">2022</span><span class="p">:</span><span class="mi">10</span><span class="p">:</span><span class="mi">10</span><span class="p">:</span><span class="mi">58</span> <span class="o">+</span><span class="mi">0800</span><span class="p">]</span> <span class="s2">&#34;GET / HTTP/1.1&#34;</span> <span class="mi">200</span> <span class="mi">6</span> <span class="s2">&#34;-&#34;</span> <span class="s2">&#34;curl/7.29.0&#34;</span> <span class="s2">&#34;-&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="o">/</span><span class="n">index</span><span class="o">.</span><span class="n">html</span>  <span class="mf">10.0</span><span class="o">.</span><span class="mf">0.8</span> <span class="o">-</span> <span class="o">-</span> <span class="p">[</span><span class="mi">23</span><span class="o">/</span><span class="n">May</span><span class="o">/</span><span class="mi">2022</span><span class="p">:</span><span class="mi">10</span><span class="p">:</span><span class="mi">10</span><span class="p">:</span><span class="mi">58</span> <span class="o">+</span><span class="mi">0800</span><span class="p">]</span> <span class="s2">&#34;GET / HTTP/1.1&#34;</span> <span class="mi">200</span> <span class="mi">6</span> <span class="s2">&#34;-&#34;</span> <span class="s2">&#34;curl/7.29.0&#34;</span> <span class="s2">&#34;-&#34;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="err">对于旧的日志</span> <span class="err">你最好</span> <span class="err">创建文件夹去分类管理他们</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="shell脚本形式">shell脚本形式
+</h2><p>.你得先有解决问题的思路，然后将思路转变为linux命令，再优化为shell脚本</p>
+<p><img src="/xiaoshi/p/nginx%E9%AB%98%E7%BA%A7%E7%AF%871/pic/image-20220523103509460.png"
+	width="2753"
+	height="1372"
+	srcset="/xiaoshi/p/nginx%E9%AB%98%E7%BA%A7%E7%AF%871/pic/image-20220523103509460_hu16314230781348138289.png 480w, /xiaoshi/p/nginx%E9%AB%98%E7%BA%A7%E7%AF%871/pic/image-20220523103509460_hu14705490816551708966.png 1024w"
+	loading="lazy"
+	
+		alt="image-20220523103509460"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="200"
+		data-flex-basis="481px"
+	
+></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="cp">#!/bin/bash
+</span></span></span><span class="line"><span class="cl"><span class="cp"></span>
+</span></span><span class="line"><span class="cl"><span class="c1"># 源日志目录</span>
+</span></span><span class="line"><span class="cl"><span class="nv">logs_path</span><span class="o">=</span><span class="s2">&#34;/var/log/nginx&#34;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># 备份日志目录</span>
+</span></span><span class="line"><span class="cl"><span class="nv">back_logs_path</span><span class="o">=</span><span class="s2">&#34;</span><span class="si">${</span><span class="nv">logs_path</span><span class="si">}</span><span class="s2">/</span><span class="k">$(</span>date -d <span class="s1">&#39;yesterday&#39;</span> +<span class="s1">&#39;%F&#39;</span><span class="k">)</span><span class="s2">&#34;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># 创建备份目录，以日期命名，注意，每天零点整切割，开始记录新的一天的日志，备份目录应该是昨天</span>
+</span></span><span class="line"><span class="cl">mkdir -p <span class="si">${</span><span class="nv">back_logs_path</span><span class="si">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># 重命名旧日志名，注意日期</span>
+</span></span><span class="line"><span class="cl"><span class="nb">cd</span> <span class="si">${</span><span class="nv">logs_path</span><span class="si">}</span> <span class="o">&amp;&amp;</span> find . -type f <span class="p">|</span>xargs -i mv <span class="o">{}</span> <span class="o">{}</span>.<span class="k">$(</span>date -d <span class="s1">&#39;yesterday&#39;</span>  +<span class="s1">&#39;%F&#39;</span><span class="k">)</span> 
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># 移动旧日志文件到该目录下</span>
+</span></span><span class="line"><span class="cl"><span class="nb">cd</span> <span class="si">${</span><span class="nv">logs_path</span><span class="si">}</span> <span class="o">&amp;&amp;</span> find . -type f  <span class="p">|</span>xargs -i mv <span class="o">{}</span>   <span class="si">${</span><span class="nv">back_logs_path</span><span class="si">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># 重新生成新日志</span>
+</span></span><span class="line"><span class="cl"><span class="nb">kill</span> -USR1 <span class="sb">`</span>ps -ef<span class="p">|</span>grep nginx <span class="p">|</span>grep master<span class="p">|</span>awk <span class="s1">&#39;{print $2}&#39;</span><span class="sb">`</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>脚本写完了，先手动试试，脚本对不对</p>
+<p>下一步就是，将这个脚本，添加到定时任务即可</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-gdscript3" data-lang="gdscript3"><span class="line"><span class="cl"><span class="n">crontab</span> <span class="o">-</span><span class="n">e</span> 
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="mi">0</span> <span class="mi">0</span>  <span class="o">*</span> <span class="o">*</span> <span class="o">*</span> <span class="o">/</span><span class="n">bin</span><span class="o">/</span><span class="n">bash</span> <span class="o">/</span><span class="n">my_shell</span><span class="o">/</span><span class="n">back_nginx</span><span class="o">.</span><span class="n">sh</span> 
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># 测试修改日期，查看日志的备份是否正确</span>
+</span></span><span class="line"><span class="cl"><span class="p">[</span><span class="n">root</span><span class="err">@</span><span class="n">web</span><span class="o">-</span><span class="mi">8</span> <span class="o">/</span><span class="k">var</span><span class="o">/</span><span class="nb">log</span><span class="o">/</span><span class="n">nginx</span><span class="p">]</span><span class="c1">#ll /var/log/nginx/</span>
+</span></span><span class="line"><span class="cl"><span class="n">total</span> <span class="mi">0</span>
+</span></span><span class="line"><span class="cl"><span class="n">drwxr</span><span class="o">-</span><span class="n">xr</span><span class="o">-</span><span class="n">x</span> <span class="mi">2</span> <span class="n">root</span> <span class="n">root</span> <span class="mi">75</span> <span class="n">May</span> <span class="mi">24</span> <span class="mi">00</span><span class="p">:</span><span class="mi">00</span> <span class="mi">2022</span><span class="o">-</span><span class="mi">05</span><span class="o">-</span><span class="mi">23</span>
+</span></span><span class="line"><span class="cl"><span class="o">-</span><span class="n">rw</span><span class="o">-</span><span class="n">r</span><span class="o">--</span><span class="n">r</span><span class="o">--</span> <span class="mi">1</span> <span class="n">www</span>  <span class="n">root</span>  <span class="mi">0</span> <span class="n">May</span> <span class="mi">24</span> <span class="mi">00</span><span class="p">:</span><span class="mi">00</span> <span class="n">all</span><span class="o">-</span><span class="n">server</span><span class="o">-</span><span class="n">accesss</span><span class="o">.</span><span class="n">log</span>
+</span></span><span class="line"><span class="cl"><span class="o">-</span><span class="n">rw</span><span class="o">-</span><span class="n">r</span><span class="o">--</span><span class="n">r</span><span class="o">--</span> <span class="mi">1</span> <span class="n">www</span>  <span class="n">root</span>  <span class="mi">0</span> <span class="n">May</span> <span class="mi">24</span> <span class="mi">00</span><span class="p">:</span><span class="mi">00</span> <span class="n">error</span><span class="o">.</span><span class="n">log</span>
+</span></span><span class="line"><span class="cl"><span class="p">[</span><span class="n">root</span><span class="err">@</span><span class="n">web</span><span class="o">-</span><span class="mi">8</span> <span class="o">/</span><span class="k">var</span><span class="o">/</span><span class="nb">log</span><span class="o">/</span><span class="n">nginx</span><span class="p">]</span><span class="c1">#</span>
+</span></span><span class="line"><span class="cl"><span class="p">[</span><span class="n">root</span><span class="err">@</span><span class="n">web</span><span class="o">-</span><span class="mi">8</span> <span class="o">/</span><span class="k">var</span><span class="o">/</span><span class="nb">log</span><span class="o">/</span><span class="n">nginx</span><span class="p">]</span><span class="c1">#</span>
+</span></span><span class="line"><span class="cl"><span class="p">[</span><span class="n">root</span><span class="err">@</span><span class="n">web</span><span class="o">-</span><span class="mi">8</span> <span class="o">/</span><span class="k">var</span><span class="o">/</span><span class="nb">log</span><span class="o">/</span><span class="n">nginx</span><span class="p">]</span><span class="c1">#</span>
+</span></span><span class="line"><span class="cl"><span class="p">[</span><span class="n">root</span><span class="err">@</span><span class="n">web</span><span class="o">-</span><span class="mi">8</span> <span class="o">/</span><span class="k">var</span><span class="o">/</span><span class="nb">log</span><span class="o">/</span><span class="n">nginx</span><span class="p">]</span><span class="c1">#tail -5 all-server-accesss.log </span>
+</span></span><span class="line"><span class="cl"><span class="o">/</span><span class="n">index</span><span class="o">.</span><span class="n">html</span>  <span class="mf">10.0</span><span class="o">.</span><span class="mf">0.8</span> <span class="o">-</span> <span class="o">-</span> <span class="p">[</span><span class="mi">24</span><span class="o">/</span><span class="n">May</span><span class="o">/</span><span class="mi">2022</span><span class="p">:</span><span class="mi">00</span><span class="p">:</span><span class="mi">00</span><span class="p">:</span><span class="mi">28</span> <span class="o">+</span><span class="mi">0800</span><span class="p">]</span> <span class="s2">&#34;GET / HTTP/1.0&#34;</span> <span class="mi">200</span> <span class="mi">0</span> <span class="s2">&#34;-&#34;</span> <span class="s2">&#34;ApacheBench/2.3&#34;</span> <span class="s2">&#34;-&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="o">/</span><span class="n">index</span><span class="o">.</span><span class="n">html</span>  <span class="mf">10.0</span><span class="o">.</span><span class="mf">0.8</span> <span class="o">-</span> <span class="o">-</span> <span class="p">[</span><span class="mi">24</span><span class="o">/</span><span class="n">May</span><span class="o">/</span><span class="mi">2022</span><span class="p">:</span><span class="mi">00</span><span class="p">:</span><span class="mi">00</span><span class="p">:</span><span class="mi">28</span> <span class="o">+</span><span class="mi">0800</span><span class="p">]</span> <span class="s2">&#34;GET / HTTP/1.0&#34;</span> <span class="mi">200</span> <span class="mi">0</span> <span class="s2">&#34;-&#34;</span> <span class="s2">&#34;ApacheBench/2.3&#34;</span> <span class="s2">&#34;-&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="o">/</span><span class="n">index</span><span class="o">.</span><span class="n">html</span>  <span class="mf">10.0</span><span class="o">.</span><span class="mf">0.8</span> <span class="o">-</span> <span class="o">-</span> <span class="p">[</span><span class="mi">24</span><span class="o">/</span><span class="n">May</span><span class="o">/</span><span class="mi">2022</span><span class="p">:</span><span class="mi">00</span><span class="p">:</span><span class="mi">00</span><span class="p">:</span><span class="mi">28</span> <span class="o">+</span><span class="mi">0800</span><span class="p">]</span> <span class="s2">&#34;GET / HTTP/1.0&#34;</span> <span class="mi">200</span> <span class="mi">0</span> <span class="s2">&#34;-&#34;</span> <span class="s2">&#34;ApacheBench/2.3&#34;</span> <span class="s2">&#34;-&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="o">/</span><span class="n">index</span><span class="o">.</span><span class="n">html</span>  <span class="mf">10.0</span><span class="o">.</span><span class="mf">0.8</span> <span class="o">-</span> <span class="o">-</span> <span class="p">[</span><span class="mi">24</span><span class="o">/</span><span class="n">May</span><span class="o">/</span><span class="mi">2022</span><span class="p">:</span><span class="mi">00</span><span class="p">:</span><span class="mi">00</span><span class="p">:</span><span class="mi">28</span> <span class="o">+</span><span class="mi">0800</span><span class="p">]</span> <span class="s2">&#34;GET / HTTP/1.0&#34;</span> <span class="mi">200</span> <span class="mi">0</span> <span class="s2">&#34;-&#34;</span> <span class="s2">&#34;ApacheBench/2.3&#34;</span> <span class="s2">&#34;-&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="o">/</span><span class="n">index</span><span class="o">.</span><span class="n">html</span>  <span class="mf">10.0</span><span class="o">.</span><span class="mf">0.8</span> <span class="o">-</span> <span class="o">-</span> <span class="p">[</span><span class="mi">24</span><span class="o">/</span><span class="n">May</span><span class="o">/</span><span class="mi">2022</span><span class="p">:</span><span class="mi">00</span><span class="p">:</span><span class="mi">00</span><span class="p">:</span><span class="mi">28</span> <span class="o">+</span><span class="mi">0800</span><span class="p">]</span> <span class="s2">&#34;GET / HTTP/1.0&#34;</span> <span class="mi">200</span> <span class="mi">0</span> <span class="s2">&#34;-&#34;</span> <span class="s2">&#34;ApacheBench/2.3&#34;</span> <span class="s2">&#34;-&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="p">[</span><span class="n">root</span><span class="err">@</span><span class="n">web</span><span class="o">-</span><span class="mi">8</span> <span class="o">/</span><span class="k">var</span><span class="o">/</span><span class="nb">log</span><span class="o">/</span><span class="n">nginx</span><span class="p">]</span><span class="c1">#</span>
+</span></span><span class="line"><span class="cl"><span class="p">[</span><span class="n">root</span><span class="err">@</span><span class="n">web</span><span class="o">-</span><span class="mi">8</span> <span class="o">/</span><span class="k">var</span><span class="o">/</span><span class="nb">log</span><span class="o">/</span><span class="n">nginx</span><span class="p">]</span><span class="c1">#</span>
+</span></span><span class="line"><span class="cl"><span class="p">[</span><span class="n">root</span><span class="err">@</span><span class="n">web</span><span class="o">-</span><span class="mi">8</span> <span class="o">/</span><span class="k">var</span><span class="o">/</span><span class="nb">log</span><span class="o">/</span><span class="n">nginx</span><span class="p">]</span><span class="c1">#</span>
+</span></span><span class="line"><span class="cl"><span class="p">[</span><span class="n">root</span><span class="err">@</span><span class="n">web</span><span class="o">-</span><span class="mi">8</span> <span class="o">/</span><span class="k">var</span><span class="o">/</span><span class="nb">log</span><span class="o">/</span><span class="n">nginx</span><span class="p">]</span><span class="c1">#ll</span>
+</span></span><span class="line"><span class="cl"><span class="n">total</span> <span class="mi">5076</span>
+</span></span><span class="line"><span class="cl"><span class="n">drwxr</span><span class="o">-</span><span class="n">xr</span><span class="o">-</span><span class="n">x</span> <span class="mi">2</span> <span class="n">root</span> <span class="n">root</span>      <span class="mi">75</span> <span class="n">May</span> <span class="mi">24</span> <span class="mi">00</span><span class="p">:</span><span class="mi">00</span> <span class="mi">2022</span><span class="o">-</span><span class="mi">05</span><span class="o">-</span><span class="mi">23</span>
+</span></span><span class="line"><span class="cl"><span class="o">-</span><span class="n">rw</span><span class="o">-</span><span class="n">r</span><span class="o">--</span><span class="n">r</span><span class="o">--</span> <span class="mi">1</span> <span class="n">www</span>  <span class="n">root</span> <span class="mi">5193864</span> <span class="n">May</span> <span class="mi">24</span> <span class="mi">00</span><span class="p">:</span><span class="mi">00</span> <span class="n">all</span><span class="o">-</span><span class="n">server</span><span class="o">-</span><span class="n">accesss</span><span class="o">.</span><span class="n">log</span>
+</span></span><span class="line"><span class="cl"><span class="o">-</span><span class="n">rw</span><span class="o">-</span><span class="n">r</span><span class="o">--</span><span class="n">r</span><span class="o">--</span> <span class="mi">1</span> <span class="n">www</span>  <span class="n">root</span>       <span class="mi">0</span> <span class="n">May</span> <span class="mi">24</span> <span class="mi">00</span><span class="p">:</span><span class="mi">00</span> <span class="n">error</span><span class="o">.</span><span class="n">log</span>
+</span></span><span class="line"><span class="cl"><span class="p">[</span><span class="n">root</span><span class="err">@</span><span class="n">web</span><span class="o">-</span><span class="mi">8</span> <span class="o">/</span><span class="k">var</span><span class="o">/</span><span class="nb">log</span><span class="o">/</span><span class="n">nginx</span><span class="p">]</span><span class="c1">#</span>
+</span></span><span class="line"><span class="cl"><span class="p">[</span><span class="n">root</span><span class="err">@</span><span class="n">web</span><span class="o">-</span><span class="mi">8</span> <span class="o">/</span><span class="k">var</span><span class="o">/</span><span class="nb">log</span><span class="o">/</span><span class="n">nginx</span><span class="p">]</span><span class="c1">#</span>
+</span></span><span class="line"><span class="cl"><span class="p">[</span><span class="n">root</span><span class="err">@</span><span class="n">web</span><span class="o">-</span><span class="mi">8</span> <span class="o">/</span><span class="k">var</span><span class="o">/</span><span class="nb">log</span><span class="o">/</span><span class="n">nginx</span><span class="p">]</span><span class="c1">#tail -5 2022-05-23/</span>
+</span></span><span class="line"><span class="cl"><span class="n">all</span><span class="o">-</span><span class="n">server</span><span class="o">-</span><span class="n">accesss</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="mi">2022</span><span class="o">-</span><span class="mi">05</span><span class="o">-</span><span class="mi">23</span>  <span class="n">error</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="mi">2022</span><span class="o">-</span><span class="mi">05</span><span class="o">-</span><span class="mi">23</span>               
+</span></span><span class="line"><span class="cl"><span class="p">[</span><span class="n">root</span><span class="err">@</span><span class="n">web</span><span class="o">-</span><span class="mi">8</span> <span class="o">/</span><span class="k">var</span><span class="o">/</span><span class="nb">log</span><span class="o">/</span><span class="n">nginx</span><span class="p">]</span><span class="c1">#tail -5 2022-05-23/all-server-accesss.log.2022-05-23 </span>
+</span></span><span class="line"><span class="cl"><span class="o">/</span><span class="n">index</span><span class="o">.</span><span class="n">html</span>  <span class="mf">10.0</span><span class="o">.</span><span class="mf">0.8</span> <span class="o">-</span> <span class="o">-</span> <span class="p">[</span><span class="mi">23</span><span class="o">/</span><span class="n">May</span><span class="o">/</span><span class="mi">2022</span><span class="p">:</span><span class="mi">10</span><span class="p">:</span><span class="mi">44</span><span class="p">:</span><span class="mi">08</span> <span class="o">+</span><span class="mi">0800</span><span class="p">]</span> <span class="s2">&#34;GET / HTTP/1.0&#34;</span> <span class="mi">200</span> <span class="mi">6</span> <span class="s2">&#34;-&#34;</span> <span class="s2">&#34;ApacheBench/2.3&#34;</span> <span class="s2">&#34;-&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="o">/</span><span class="n">index</span><span class="o">.</span><span class="n">html</span>  <span class="mf">10.0</span><span class="o">.</span><span class="mf">0.8</span> <span class="o">-</span> <span class="o">-</span> <span class="p">[</span><span class="mi">23</span><span class="o">/</span><span class="n">May</span><span class="o">/</span><span class="mi">2022</span><span class="p">:</span><span class="mi">10</span><span class="p">:</span><span class="mi">44</span><span class="p">:</span><span class="mi">08</span> <span class="o">+</span><span class="mi">0800</span><span class="p">]</span> <span class="s2">&#34;GET / HTTP/1.0&#34;</span> <span class="mi">200</span> <span class="mi">6</span> <span class="s2">&#34;-&#34;</span> <span class="s2">&#34;ApacheBench/2.3&#34;</span> <span class="s2">&#34;-&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="o">/</span><span class="n">index</span><span class="o">.</span><span class="n">html</span>  <span class="mf">10.0</span><span class="o">.</span><span class="mf">0.8</span> <span class="o">-</span> <span class="o">-</span> <span class="p">[</span><span class="mi">23</span><span class="o">/</span><span class="n">May</span><span class="o">/</span><span class="mi">2022</span><span class="p">:</span><span class="mi">10</span><span class="p">:</span><span class="mi">44</span><span class="p">:</span><span class="mi">08</span> <span class="o">+</span><span class="mi">0800</span><span class="p">]</span> <span class="s2">&#34;GET / HTTP/1.0&#34;</span> <span class="mi">200</span> <span class="mi">6</span> <span class="s2">&#34;-&#34;</span> <span class="s2">&#34;ApacheBench/2.3&#34;</span> <span class="s2">&#34;-&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="o">/</span><span class="n">index</span><span class="o">.</span><span class="n">html</span>  <span class="mf">10.0</span><span class="o">.</span><span class="mf">0.8</span> <span class="o">-</span> <span class="o">-</span> <span class="p">[</span><span class="mi">23</span><span class="o">/</span><span class="n">May</span><span class="o">/</span><span class="mi">2022</span><span class="p">:</span><span class="mi">10</span><span class="p">:</span><span class="mi">44</span><span class="p">:</span><span class="mi">08</span> <span class="o">+</span><span class="mi">0800</span><span class="p">]</span> <span class="s2">&#34;GET / HTTP/1.0&#34;</span> <span class="mi">200</span> <span class="mi">6</span> <span class="s2">&#34;-&#34;</span> <span class="s2">&#34;ApacheBench/2.3&#34;</span> <span class="s2">&#34;-&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="o">/</span><span class="n">index</span><span class="o">.</span><span class="n">html</span>  <span class="mf">10.0</span><span class="o">.</span><span class="mf">0.8</span> <span class="o">-</span> <span class="o">-</span> <span class="p">[</span><span class="mi">23</span><span class="o">/</span><span class="n">May</span><span class="o">/</span><span class="mi">2022</span><span class="p">:</span><span class="mi">10</span><span class="p">:</span><span class="mi">44</span><span class="p">:</span><span class="mi">08</span> <span class="o">+</span><span class="mi">0800</span><span class="p">]</span> <span class="s2">&#34;GET / HTTP1.0&#34;</span> <span class="mi">200</span> <span class="mi">6</span> <span class="s2">&#34;-&#34;</span> <span class="s2">&#34;ApacheBench/2.3&#34;</span> <span class="s2">&#34;-&#34;</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="logrotate工具切割形式">logrotate工具切割形式
+</h2><p>比shell脚本手动切割日志更方便的工具</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span><span class="lnt">43
+</span><span class="lnt">44
+</span><span class="lnt">45
+</span><span class="lnt">46
+</span><span class="lnt">47
+</span><span class="lnt">48
+</span><span class="lnt">49
+</span><span class="lnt">50
+</span><span class="lnt">51
+</span><span class="lnt">52
+</span><span class="lnt">53
+</span><span class="lnt">54
+</span><span class="lnt">55
+</span><span class="lnt">56
+</span><span class="lnt">57
+</span><span class="lnt">58
+</span><span class="lnt">59
+</span><span class="lnt">60
+</span><span class="lnt">61
+</span><span class="lnt">62
+</span><span class="lnt">63
+</span><span class="lnt">64
+</span><span class="lnt">65
+</span><span class="lnt">66
+</span><span class="lnt">67
+</span><span class="lnt">68
+</span><span class="lnt">69
+</span><span class="lnt">70
+</span><span class="lnt">71
+</span><span class="lnt">72
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-gdscript3" data-lang="gdscript3"><span class="line"><span class="cl"><span class="c1"># 看看该日志切割工具，支持哪些软件</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># 默认改工具，对nginx的支持.</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># 这里的写法，是针对你的yum安装的nginx，实现日志切割</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="p">[</span><span class="n">root</span><span class="err">@</span><span class="n">web</span><span class="o">-</span><span class="mi">8</span> <span class="o">/</span><span class="k">var</span><span class="o">/</span><span class="nb">log</span><span class="o">/</span><span class="n">nginx</span><span class="p">]</span><span class="c1">#cat /etc/logrotate.d/nginx </span>
+</span></span><span class="line"><span class="cl"><span class="o">/</span><span class="k">var</span><span class="o">/</span><span class="nb">log</span><span class="o">/</span><span class="n">nginx</span><span class="o">/*.</span><span class="n">log</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="n">daily</span>                            <span class="c1"># 每天切割</span>
+</span></span><span class="line"><span class="cl">        <span class="n">missingok</span>                    <span class="c1"># 忽略错误</span>
+</span></span><span class="line"><span class="cl">        <span class="n">rotate</span> <span class="mi">52</span>                    <span class="c1"># 最多保留多少个存档    </span>
+</span></span><span class="line"><span class="cl">        <span class="n">compress</span>                    <span class="c1"># 切割后且压缩</span>
+</span></span><span class="line"><span class="cl">        <span class="n">delaycompress</span>            <span class="c1"># 延迟压缩动作在下一次切割</span>
+</span></span><span class="line"><span class="cl">        <span class="n">notifempty</span>                <span class="c1"># 日志为空就不切割</span>
+</span></span><span class="line"><span class="cl">        <span class="n">create</span> <span class="mi">640</span> <span class="n">nginx</span> <span class="n">adm</span>        <span class="c1"># 切割的文件权限</span>
+</span></span><span class="line"><span class="cl">        <span class="n">sharedscripts</span>                <span class="c1"># 共享脚本，结果为空</span>
+</span></span><span class="line"><span class="cl">        <span class="n">postrotate</span>                    <span class="c1"># 收尾动作，重新生成nginx日志</span>
+</span></span><span class="line"><span class="cl">                <span class="k">if</span> <span class="p">[</span> <span class="o">-</span><span class="n">f</span> <span class="o">/</span><span class="k">var</span><span class="o">/</span><span class="n">run</span><span class="o">/</span><span class="n">nginx</span><span class="o">.</span><span class="n">pid</span> <span class="p">];</span> <span class="n">then</span>
+</span></span><span class="line"><span class="cl">                        <span class="n">kill</span> <span class="o">-</span><span class="n">USR1</span> <span class="err">`</span><span class="n">cat</span> <span class="o">/</span><span class="k">var</span><span class="o">/</span><span class="n">run</span><span class="o">/</span><span class="n">nginx</span><span class="o">.</span><span class="n">pid</span><span class="err">`</span>
+</span></span><span class="line"><span class="cl">                <span class="n">fi</span>
+</span></span><span class="line"><span class="cl">        <span class="n">endscript</span>                        <span class="c1"># 结束动作</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="err">看具体的效果，是否理解</span>
+</span></span><span class="line"><span class="cl"><span class="err">先清理你刚才的</span><span class="n">shell的定时任务</span>
+</span></span><span class="line"><span class="cl"><span class="err">重新生成</span><span class="n">nginx日志环境</span><span class="err">，然后测试工具</span>
+</span></span><span class="line"><span class="cl"><span class="p">[</span><span class="n">root</span><span class="err">@</span><span class="n">web</span><span class="o">-</span><span class="mi">8</span> <span class="o">/</span><span class="k">var</span><span class="o">/</span><span class="nb">log</span><span class="o">/</span><span class="n">nginx</span><span class="p">]</span><span class="c1">#crontab -e</span>
+</span></span><span class="line"><span class="cl"><span class="n">crontab</span><span class="p">:</span> <span class="n">installing</span> <span class="n">new</span> <span class="n">crontab</span>
+</span></span><span class="line"><span class="cl"><span class="p">[</span><span class="n">root</span><span class="err">@</span><span class="n">web</span><span class="o">-</span><span class="mi">8</span> <span class="o">/</span><span class="k">var</span><span class="o">/</span><span class="nb">log</span><span class="o">/</span><span class="n">nginx</span><span class="p">]</span><span class="c1">#</span>
+</span></span><span class="line"><span class="cl"><span class="p">[</span><span class="n">root</span><span class="err">@</span><span class="n">web</span><span class="o">-</span><span class="mi">8</span> <span class="o">/</span><span class="k">var</span><span class="o">/</span><span class="nb">log</span><span class="o">/</span><span class="n">nginx</span><span class="p">]</span><span class="c1">#</span>
+</span></span><span class="line"><span class="cl"><span class="p">[</span><span class="n">root</span><span class="err">@</span><span class="n">web</span><span class="o">-</span><span class="mi">8</span> <span class="o">/</span><span class="k">var</span><span class="o">/</span><span class="nb">log</span><span class="o">/</span><span class="n">nginx</span><span class="p">]</span><span class="c1">#</span>
+</span></span><span class="line"><span class="cl"><span class="p">[</span><span class="n">root</span><span class="err">@</span><span class="n">web</span><span class="o">-</span><span class="mi">8</span> <span class="o">/</span><span class="k">var</span><span class="o">/</span><span class="nb">log</span><span class="o">/</span><span class="n">nginx</span><span class="p">]</span><span class="c1">#ntpdate -u ntp.aliyun.com</span>
+</span></span><span class="line"><span class="cl"><span class="mi">23</span> <span class="n">May</span> <span class="mi">10</span><span class="p">:</span><span class="mi">59</span><span class="p">:</span><span class="mi">03</span> <span class="n">ntpdate</span><span class="p">[</span><span class="mi">4346</span><span class="p">]:</span> <span class="n">step</span> <span class="n">time</span> <span class="n">server</span> <span class="mf">203.107</span><span class="o">.</span><span class="mf">6.88</span> <span class="n">offset</span> <span class="o">-</span><span class="mf">47699.063535</span> <span class="n">sec</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="p">[</span><span class="n">root</span><span class="err">@</span><span class="n">web</span><span class="o">-</span><span class="mi">8</span> <span class="o">/</span><span class="k">var</span><span class="o">/</span><span class="nb">log</span><span class="o">/</span><span class="n">nginx</span><span class="p">]</span><span class="c1">#</span>
+</span></span><span class="line"><span class="cl"><span class="p">[</span><span class="n">root</span><span class="err">@</span><span class="n">web</span><span class="o">-</span><span class="mi">8</span> <span class="o">/</span><span class="k">var</span><span class="o">/</span><span class="nb">log</span><span class="o">/</span><span class="n">nginx</span><span class="p">]</span><span class="c1">#</span>
+</span></span><span class="line"><span class="cl"><span class="p">[</span><span class="n">root</span><span class="err">@</span><span class="n">web</span><span class="o">-</span><span class="mi">8</span> <span class="o">/</span><span class="k">var</span><span class="o">/</span><span class="nb">log</span><span class="o">/</span><span class="n">nginx</span><span class="p">]</span><span class="c1">#</span>
+</span></span><span class="line"><span class="cl"><span class="p">[</span><span class="n">root</span><span class="err">@</span><span class="n">web</span><span class="o">-</span><span class="mi">8</span> <span class="o">/</span><span class="k">var</span><span class="o">/</span><span class="nb">log</span><span class="o">/</span><span class="n">nginx</span><span class="p">]</span><span class="c1">#date</span>
+</span></span><span class="line"><span class="cl"><span class="n">Mon</span> <span class="n">May</span> <span class="mi">23</span> <span class="mi">10</span><span class="p">:</span><span class="mi">59</span><span class="p">:</span><span class="mi">14</span> <span class="n">CST</span> <span class="mi">2022</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="err">应该先修改时间，作为测试</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="err">测试</span><span class="n">logrotate工具是否实现日志切割</span>
+</span></span><span class="line"><span class="cl"><span class="err">手动实现日志切割，执行该工具</span>
+</span></span><span class="line"><span class="cl"><span class="n">logrotate</span> <span class="o">-</span><span class="n">f</span> <span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">logrotate</span><span class="o">.</span><span class="n">d</span><span class="o">/</span><span class="n">nginx</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="err">被切割后的日志</span>
+</span></span><span class="line"><span class="cl"><span class="p">[</span><span class="n">root</span><span class="err">@</span><span class="n">web</span><span class="o">-</span><span class="mi">8</span> <span class="o">/</span><span class="k">var</span><span class="o">/</span><span class="nb">log</span><span class="o">/</span><span class="n">nginx</span><span class="p">]</span><span class="c1">#ll -h</span>
+</span></span><span class="line"><span class="cl"><span class="n">total</span> <span class="mi">21</span><span class="n">M</span>
+</span></span><span class="line"><span class="cl"><span class="o">-</span><span class="n">rw</span><span class="o">-</span><span class="n">r</span><span class="o">-----</span> <span class="mi">1</span> <span class="n">www</span>  <span class="n">adm</span>   <span class="mi">10</span><span class="n">M</span> <span class="n">May</span> <span class="mi">24</span> <span class="mi">00</span><span class="p">:</span><span class="mi">01</span> <span class="n">all</span><span class="o">-</span><span class="n">server</span><span class="o">-</span><span class="n">accesss</span><span class="o">.</span><span class="n">log</span>
+</span></span><span class="line"><span class="cl"><span class="o">-</span><span class="n">rw</span><span class="o">-</span><span class="n">r</span><span class="o">--</span><span class="n">r</span><span class="o">--</span> <span class="mi">1</span> <span class="n">root</span> <span class="n">root</span> <span class="mf">5.0</span><span class="n">M</span> <span class="n">May</span> <span class="mi">23</span> <span class="mi">10</span><span class="p">:</span><span class="mi">59</span> <span class="n">all</span><span class="o">-</span><span class="n">server</span><span class="o">-</span><span class="n">accesss</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="mi">1</span>
+</span></span><span class="line"><span class="cl"><span class="o">-</span><span class="n">rw</span><span class="o">-</span><span class="n">r</span><span class="o">-----</span> <span class="mi">1</span> <span class="n">www</span>  <span class="n">adm</span>     <span class="mi">0</span> <span class="n">May</span> <span class="mi">24</span> <span class="mi">00</span><span class="p">:</span><span class="mi">01</span> <span class="n">error</span><span class="o">.</span><span class="n">log</span>
+</span></span><span class="line"><span class="cl"><span class="o">-</span><span class="n">rw</span><span class="o">-</span><span class="n">r</span><span class="o">--</span><span class="n">r</span><span class="o">--</span> <span class="mi">1</span> <span class="n">root</span> <span class="n">root</span>  <span class="mi">700</span> <span class="n">May</span> <span class="mi">24</span> <span class="mi">00</span><span class="p">:</span><span class="mi">01</span> <span class="n">error</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="mi">1</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">logrotate工具</span><span class="err">，本身会压缩备份的日志文件，是因为，压缩工作，被延迟到了下一次切割</span>
+</span></span><span class="line"><span class="cl"><span class="n">logrotate</span> <span class="o">-</span><span class="n">f</span> <span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">logrotate</span><span class="o">.</span><span class="n">d</span><span class="o">/</span><span class="n">nginx</span>
+</span></span><span class="line"><span class="cl"><span class="err">等于实现了第二次切割动作，本次会进行日志压缩了</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">logrotate</span> <span class="err">的定时任务</span>
+</span></span><span class="line"><span class="cl"><span class="n">logrotate</span> <span class="err">的定时任务通常由系统的</span> <span class="n">cron</span> <span class="err">服务自动管理。具体来说，</span><span class="n">logrotate</span> <span class="err">的定时任务配置文件位于</span> <span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">cron</span><span class="o">.</span><span class="n">daily</span><span class="o">/</span> <span class="err">目录中。</span>
+</span></span><span class="line"><span class="cl"><span class="err">检查</span> <span class="n">cron</span><span class="o">.</span><span class="n">daily</span> <span class="err">目录</span>
+</span></span><span class="line"><span class="cl"><span class="err">你可以查看</span> <span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">cron</span><span class="o">.</span><span class="n">daily</span><span class="o">/</span> <span class="err">目录中的内容：</span>
+</span></span><span class="line"><span class="cl"><span class="n">ls</span> <span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">cron</span><span class="o">.</span><span class="n">daily</span><span class="o">/</span>
+</span></span><span class="line"><span class="cl"><span class="err">你应该会看到一个名为</span> <span class="n">logrotate</span> <span class="err">的脚本文件。这个脚本会每天运行一次，执行所有配置在</span> <span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">logrotate</span><span class="o">.</span><span class="n">d</span><span class="o">/</span> <span class="err">目录中的</span> <span class="n">logrotate</span> <span class="err">任务。</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="err">总结</span>
+</span></span><span class="line"><span class="cl"><span class="err">通过</span> <span class="n">yum</span> <span class="err">安装的</span> <span class="n">Nginx</span> <span class="err">的</span> <span class="n">logrotate</span> <span class="err">配置文件通常位于</span> <span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">logrotate</span><span class="o">.</span><span class="n">d</span><span class="o">/</span><span class="n">nginx</span><span class="err">。</span><span class="n">logrotate</span> <span class="err">的定时任务由系统的</span> <span class="n">cron</span> <span class="err">服务管理，通常配置在</span> <span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">cron</span><span class="o">.</span><span class="n">daily</span><span class="o">/</span> <span class="err">目录中。你可以查看和编辑这些配置文件，确保日志轮转按照你的需求进行。</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><blockquote>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl"># 如果说你要用这个logrotate工具对你的编译安装的淘宝nginx实现日志切割，你还会写吗？
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"># 区别是1.确定日志目录 /opt/ngx/logs/  ；    2.给nginx主进程发送USR1信号（tengine是生成了nginx.pid文件，还是没有）
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"># 生成切割脚本
+</span></span><span class="line"><span class="cl"># 针对你编译安装的 淘宝nginx，实现自动的日志切割
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">cat &gt; /etc/logrotate.d/tengine &lt;&lt;EOF
+</span></span><span class="line"><span class="cl">/opt/ngx/logs/*.log {
+</span></span><span class="line"><span class="cl">  daily                            # 每天切割
+</span></span><span class="line"><span class="cl">  missingok                    # 忽略错误
+</span></span><span class="line"><span class="cl">  rotate 52                    # 最多保留多少个存档    
+</span></span><span class="line"><span class="cl">  compress                    # 切割后且压缩
+</span></span><span class="line"><span class="cl">  delaycompress            # 延迟压缩动作在下一次切割
+</span></span><span class="line"><span class="cl">  notifempty                # 日志为空就不切割
+</span></span><span class="line"><span class="cl">  create 640 nginx adm        # 切割的文件权限
+</span></span><span class="line"><span class="cl">  sharedscripts                # 共享脚本，结果为空
+</span></span><span class="line"><span class="cl">  postrotate                    # 收尾动作，重新生成nginx日志
+</span></span><span class="line"><span class="cl">          if [ -f /opt/ngx/sbin/tengine.pid ]; then
+</span></span><span class="line"><span class="cl">                  kill -USR1 `cat /opt/ngx/sbin/tengine.pid`
+</span></span><span class="line"><span class="cl">          fi
+</span></span><span class="line"><span class="cl">  endscript                        # 结束动作
+</span></span><span class="line"><span class="cl">}
+</span></span></code></pre></td></tr></table>
+</div>
+</div></blockquote>
+<h1 id="目录索引下载服务">目录索引、下载服务
+</h1><p>实现一个类似于ftp工具的功能</p>
+<p>1.先准备好一个用于共享的数据目录</p>
+<p>2.部署server虚拟主机，然后去展示这些数据，完事</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-gdscript3" data-lang="gdscript3"><span class="line"><span class="cl"><span class="mf">1.</span> <span class="err">准备一个</span> <span class="n">rpm包的</span> <span class="err">目录</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="mf">2.</span> <span class="err">提供该</span><span class="n">rpm包目录的展示</span>
+</span></span><span class="line"><span class="cl"><span class="n">mkdir</span> <span class="o">/</span><span class="mi">0224</span><span class="n">rpms</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="p">[</span><span class="n">root</span><span class="err">@</span><span class="n">web</span><span class="o">-</span><span class="mi">8</span> <span class="o">/</span><span class="mi">0224</span><span class="n">rpms</span><span class="p">]</span><span class="c1">#yum install python3 python3-devel --downloadonly --downloaddir=/0224rpms</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="mf">3.</span><span class="err">创建</span><span class="n">nginx的虚拟主机</span>
+</span></span><span class="line"><span class="cl"><span class="p">[</span><span class="n">root</span><span class="err">@</span><span class="n">web</span><span class="o">-</span><span class="mi">8</span> <span class="o">/</span><span class="mi">0224</span><span class="n">rpms</span><span class="p">]</span><span class="c1">#cat /etc/nginx/conf.d/autoindex.conf</span>
+</span></span><span class="line"><span class="cl"><span class="n">server</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">listen</span> <span class="mi">11111</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="n">server_name</span> <span class="n">_</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="n">location</span> <span class="o">/</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	        <span class="n">autoindex</span> <span class="n">on</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">        <span class="n">autoindex_localtime</span> <span class="n">on</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">        <span class="n">autoindex_exact_size</span> <span class="n">off</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">	<span class="n">root</span> <span class="o">/</span><span class="mi">0224</span><span class="n">rpms</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="mf">4.</span><span class="err">重启</span><span class="n">nginx实现该目录索引功能</span>
+</span></span><span class="line"><span class="cl"><span class="p">[</span><span class="n">root</span><span class="err">@</span><span class="n">web</span><span class="o">-</span><span class="mi">8</span> <span class="o">/</span><span class="mi">0224</span><span class="n">rpms</span><span class="p">]</span><span class="c1">#systemctl reload nginx</span>
+</span></span><span class="line"><span class="cl"><span class="err">如何明确，该虚拟主机是否可用</span>
+</span></span><span class="line"><span class="cl"><span class="p">[</span><span class="n">root</span><span class="err">@</span><span class="n">web</span><span class="o">-</span><span class="mi">8</span> <span class="o">/</span><span class="mi">0224</span><span class="n">rpms</span><span class="p">]</span><span class="c1">#netstat -tunlp |grep 11111</span>
+</span></span><span class="line"><span class="cl"><span class="n">tcp</span>        <span class="mi">0</span>      <span class="mi">0</span> <span class="mf">0.0</span><span class="o">.</span><span class="mf">0.0</span><span class="p">:</span><span class="mi">11111</span>           <span class="mf">0.0</span><span class="o">.</span><span class="mf">0.0</span><span class="p">:</span><span class="o">*</span>               <span class="n">LISTEN</span>      <span class="mi">4361</span><span class="o">/</span><span class="n">nginx</span><span class="p">:</span> <span class="n">master</span>  
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="mf">5.</span><span class="err">测试访问即可</span>
+</span></span><span class="line"><span class="cl"><span class="err">此时这个虚拟主机就提供了基于</span><span class="n">http请求的文件下载功能</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="mf">6.</span><span class="err">利用</span><span class="n">wget下载</span>
+</span></span><span class="line"><span class="cl"><span class="n">wget</span> <span class="n">http</span><span class="p">:</span><span class="o">//</span><span class="mf">10.0</span><span class="o">.</span><span class="mf">0.8</span><span class="p">:</span><span class="mi">11111</span><span class="o">/</span><span class="n">python3</span><span class="o">-</span><span class="mf">3.6</span><span class="o">.</span><span class="mi">8</span><span class="o">-</span><span class="mf">18.</span><span class="n">el7</span><span class="o">.</span><span class="n">x86_64</span><span class="o">.</span><span class="n">rpm</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h1 id="连接数监控">连接数监控
+</h1><p>web协议篇</p>
+<p>tcp/ip</p>
+<p>http 请求，与响应</p>
+<p>nginx服务器，   client浏览器，curl，等都是封装了，以http协议规范发出的请求</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-gdscript3" data-lang="gdscript3"><span class="line"><span class="cl"><span class="n">http</span><span class="p">:</span><span class="o">//</span><span class="n">www</span><span class="o">.</span><span class="n">linux0224</span><span class="o">.</span><span class="n">com</span><span class="o">/</span><span class="err">奥力给</span><span class="o">.</span><span class="n">jpg</span>
+</span></span><span class="line"><span class="cl"><span class="err">这是一个完整的</span><span class="n">url</span><span class="err">，你要能看懂每一个符号的含义</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="err">默认</span><span class="n">nginx不支持这个功能</span><span class="err">，你要看一看你装的</span><span class="n">nginx是否有这个模块</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="err">创建</span><span class="n">nginx的虚拟主机文件</span><span class="err">，单独的去测试这个</span><span class="n">statsu状态功能即可</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="err">如果你的</span><span class="n">nginx默认不支持这个status功能</span><span class="err">，</span>
+</span></span><span class="line"><span class="cl"><span class="err">重新编译</span><span class="n">nginx二进制命令</span><span class="err">，把这个模块添加进去</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># 创建虚拟主机文件，查看status功能</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="p">[</span><span class="n">root</span><span class="err">@</span><span class="n">web</span><span class="o">-</span><span class="mi">8</span> <span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">nginx</span><span class="o">/</span><span class="n">conf</span><span class="o">.</span><span class="n">d</span><span class="p">]</span><span class="c1">#cat  status.conf</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># 作用就是让你访问 ip:9999可以精确定位到这个虚拟主机</span>
+</span></span><span class="line"><span class="cl"><span class="n">server</span><span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="n">listen</span> <span class="mi">9999</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="n">server_name</span> <span class="n">_</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">  	<span class="n">stub_status</span> <span class="n">on</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">  	<span class="n">access_log</span> <span class="n">off</span><span class="p">;</span> <span class="c1"># 因为它不是一个基于http请求响应的网站，仅仅是展示连接的信息，都不需要写location。</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="err">重新读取</span>
+</span></span><span class="line"><span class="cl"><span class="p">[</span><span class="n">root</span><span class="err">@</span><span class="n">web</span><span class="o">-</span><span class="mi">8</span> <span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">nginx</span><span class="o">/</span><span class="n">conf</span><span class="o">.</span><span class="n">d</span><span class="p">]</span><span class="c1">#cat  status.conf</span>
+</span></span><span class="line"><span class="cl"><span class="n">server</span><span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="n">listen</span> <span class="mi">9999</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="n">server_name</span> <span class="n">localhost</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">  <span class="n">stub_status</span> <span class="n">on</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">  <span class="n">access_log</span> <span class="n">off</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">[</span><span class="n">root</span><span class="err">@</span><span class="n">web</span><span class="o">-</span><span class="mi">8</span> <span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">nginx</span><span class="o">/</span><span class="n">conf</span><span class="o">.</span><span class="n">d</span><span class="p">]</span><span class="c1">#</span>
+</span></span><span class="line"><span class="cl"><span class="p">[</span><span class="n">root</span><span class="err">@</span><span class="n">web</span><span class="o">-</span><span class="mi">8</span> <span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">nginx</span><span class="o">/</span><span class="n">conf</span><span class="o">.</span><span class="n">d</span><span class="p">]</span><span class="c1">#nginx -t</span>
+</span></span><span class="line"><span class="cl"><span class="n">nginx</span><span class="p">:</span> <span class="n">the</span> <span class="n">configuration</span> <span class="n">file</span> <span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">nginx</span><span class="o">/</span><span class="n">nginx</span><span class="o">.</span><span class="n">conf</span> <span class="n">syntax</span> <span class="n">is</span> <span class="n">ok</span>
+</span></span><span class="line"><span class="cl"><span class="n">nginx</span><span class="p">:</span> <span class="n">configuration</span> <span class="n">file</span> <span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">nginx</span><span class="o">/</span><span class="n">nginx</span><span class="o">.</span><span class="n">conf</span> <span class="n">test</span> <span class="n">is</span> <span class="n">successful</span>
+</span></span><span class="line"><span class="cl"><span class="p">[</span><span class="n">root</span><span class="err">@</span><span class="n">web</span><span class="o">-</span><span class="mi">8</span> <span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">nginx</span><span class="o">/</span><span class="n">conf</span><span class="o">.</span><span class="n">d</span><span class="p">]</span><span class="c1">#</span>
+</span></span><span class="line"><span class="cl"><span class="p">[</span><span class="n">root</span><span class="err">@</span><span class="n">web</span><span class="o">-</span><span class="mi">8</span> <span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">nginx</span><span class="o">/</span><span class="n">conf</span><span class="o">.</span><span class="n">d</span><span class="p">]</span><span class="c1">#</span>
+</span></span><span class="line"><span class="cl"><span class="p">[</span><span class="n">root</span><span class="err">@</span><span class="n">web</span><span class="o">-</span><span class="mi">8</span> <span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">nginx</span><span class="o">/</span><span class="n">conf</span><span class="o">.</span><span class="n">d</span><span class="p">]</span><span class="c1">#systemctl reload nginx</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="err">测试访问</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">参数解释：
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">Active connections
+</span></span><span class="line"><span class="cl">当前活动客户编连按数,包括wating连按数。
+</span></span><span class="line"><span class="cl">accepts
+</span></span><span class="line"><span class="cl">接受的客户端连接总数。
+</span></span><span class="line"><span class="cl">handled
+</span></span><span class="line"><span class="cl">处理的连接总数。
+</span></span><span class="line"><span class="cl">accepts通常,险非己达到某些资源限制(例如,worker_connections限制),否则该参数值相同
+</span></span><span class="line"><span class="cl">reguests
+</span></span><span class="line"><span class="cl">客户端请求的总数,
+</span></span><span class="line"><span class="cl">Reading
+</span></span><span class="line"><span class="cl">nginx正在读取请求标头的当前选按数
+</span></span><span class="line"><span class="cl">writing
+</span></span><span class="line"><span class="cl">nginx 将响应写回客户编的当前连接数。
+</span></span><span class="line"><span class="cl">waiting
+</span></span><span class="line"><span class="cl">当前等待请求的空闲客户端连接数。
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">#注意
+</span></span><span class="line"><span class="cl">一个tcp连接,可以发起多个http请求
+</span></span><span class="line"><span class="cl">可以通过修改保持连接参数修改
+</span></span><span class="line"><span class="cl">keepalive_timeout 0;表示关闭长连接
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/xiaoshi/p/nginx%E9%AB%98%E7%BA%A7%E7%AF%871/pic/image-20220523120425633.png"
+	width="3498"
+	height="1540"
+	srcset="/xiaoshi/p/nginx%E9%AB%98%E7%BA%A7%E7%AF%871/pic/image-20220523120425633_hu1033651767154801462.png 480w, /xiaoshi/p/nginx%E9%AB%98%E7%BA%A7%E7%AF%871/pic/image-20220523120425633_hu5748131705666144465.png 1024w"
+	loading="lazy"
+	
+		alt="image-20220523120425633"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="227"
+		data-flex-basis="545px"
+	
+></p>
+<hr>
+<p><img src="/xiaoshi/p/nginx%E9%AB%98%E7%BA%A7%E7%AF%871/pic/image-20220523120645804.png"
+	width="2995"
+	height="1183"
+	srcset="/xiaoshi/p/nginx%E9%AB%98%E7%BA%A7%E7%AF%871/pic/image-20220523120645804_hu16711013679505789635.png 480w, /xiaoshi/p/nginx%E9%AB%98%E7%BA%A7%E7%AF%871/pic/image-20220523120645804_hu8841162998620251973.png 1024w"
+	loading="lazy"
+	
+		alt="image-20220523120645804"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="253"
+		data-flex-basis="607px"
+	
+></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">因为你restart nginx
+</span></span><span class="line"><span class="cl">等于重新生成master进程，这些数据就没了，重新计算了。
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">关于nginx连接信息的，动态玩法
+</span></span><span class="line"><span class="cl">ab命令测试
+</span></span><span class="line"><span class="cl">这里的关于连接的详细信息，需要从web协议篇去理解，从tcp，http的理解
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>利用ab命令测试</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">ab -c 100 -n 100000 http://10.0.0.8/
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="为什么激活数是2">为什么激活数是2
+</h2><p><img src="/xiaoshi/p/nginx%E9%AB%98%E7%BA%A7%E7%AF%871/pic/image-20220523122512420.png"
+	width="3527"
+	height="1650"
+	srcset="/xiaoshi/p/nginx%E9%AB%98%E7%BA%A7%E7%AF%871/pic/image-20220523122512420_hu9887110797811562537.png 480w, /xiaoshi/p/nginx%E9%AB%98%E7%BA%A7%E7%AF%871/pic/image-20220523122512420_hu4653286545922572090.png 1024w"
+	loading="lazy"
+	
+		alt="image-20220523122512420"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="213"
+		data-flex-basis="513px"
+	
+></p>
+
+</section>
+
+
+    <footer class="article-footer">
+    
+
+    </footer>
+
+
+    
+</article>
+
+    
+
+    
+
+     
+    
+        
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+        2025 小诗
+    </section>
+    
+    <section class="powerby">
+        使用 <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> 构建 <br />
+        主题 <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.26.0">Stack</a></b> 由 <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a> 设计
+    </section>
+</footer>
+
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css"crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css"crossorigin="anonymous"
+            >
+
+            </main>
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.6/dist/vibrant.min.js"integrity="sha256-awcR2jno4kI5X0zL8ex0vi2z&#43;KMkF24hUW8WePSA9HM="crossorigin="anonymous"
+                
+                >
+            </script><script type="text/javascript" src="/xiaoshi/ts/main.js" defer></script>
+<script>
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+
+    </body>
+</html>

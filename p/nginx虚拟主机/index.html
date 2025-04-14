@@ -1,0 +1,1281 @@
+<!DOCTYPE html>
+<html lang="zh-cn" dir="ltr">
+    <head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content="nginx虚拟主机，部署网站 为什么配置虚拟主机 一些草根流量站长,常会搭建个人站点进行资源分享交流,并且可能有多个不同业务的站点,如果每台服务">
+<title>Nginx虚拟主机</title>
+
+<link rel='canonical' href='https://ZackMoel.github.io/xiaoshi/p/nginx%E8%99%9A%E6%8B%9F%E4%B8%BB%E6%9C%BA/'>
+
+<link rel="stylesheet" href="/xiaoshi/scss/style.min.0304c6baf04e01a8fe70693791cb744d56a3578a3120a8796cefc66825aa39c7.css"><meta property='og:title' content="Nginx虚拟主机">
+<meta property='og:description' content="nginx虚拟主机，部署网站 为什么配置虚拟主机 一些草根流量站长,常会搭建个人站点进行资源分享交流,并且可能有多个不同业务的站点,如果每台服务">
+<meta property='og:url' content='https://ZackMoel.github.io/xiaoshi/p/nginx%E8%99%9A%E6%8B%9F%E4%B8%BB%E6%9C%BA/'>
+<meta property='og:site_name' content='小诗的博客'>
+<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:published_time' content='2025-04-14T16:48:59&#43;08:00'/><meta property='article:modified_time' content='2025-04-14T16:48:59&#43;08:00'/>
+<meta name="twitter:title" content="Nginx虚拟主机">
+<meta name="twitter:description" content="nginx虚拟主机，部署网站 为什么配置虚拟主机 一些草根流量站长,常会搭建个人站点进行资源分享交流,并且可能有多个不同业务的站点,如果每台服务">
+  
+
+
+    </head>
+    <body class="
+    article-page
+    ">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex on-phone--column extended"><aside class="sidebar left-sidebar sticky ">
+    <button class="hamburger hamburger--spin" type="button" id="toggle-menu" aria-label="切换菜单">
+        <span class="hamburger-box">
+            <span class="hamburger-inner"></span>
+        </span>
+    </button>
+
+    <header>
+        
+            
+            <figure class="site-avatar">
+                <a href="/xiaoshi/">
+                
+                    
+                    
+                    
+                        
+                        <img src="/xiaoshi/img/avatar_hu8920112365793990935.png" width="300"
+                            height="300" class="site-logo" loading="lazy" alt="Avatar">
+                    
+                
+                </a>
+                
+                    <span class="emoji">🍥</span>
+                
+            </figure>
+            
+        
+        
+        <div class="site-meta">
+            <h1 class="site-name"><a href="/xiaoshi">小诗的博客</a></h1>
+            <h2 class="site-description">欢迎来到小诗的博客</h2>
+        </div>
+    </header><ol class="menu-social">
+            
+                <li>
+                    <a 
+                        href='https://space.bilibili.com/1055981889?spm_id_from=333.1007.0.0'
+                        target="_blank"
+                        title="bilibili"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg  xmlns="http://www.w3.org/2000/svg"  width="24"  height="24"  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  stroke-width="2"  stroke-linecap="round"  stroke-linejoin="round"  class="icon icon-tabler icons-tabler-outline icon-tabler-brand-bilibili"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M3 10a4 4 0 0 1 4 -4h10a4 4 0 0 1 4 4v6a4 4 0 0 1 -4 4h-10a4 4 0 0 1 -4 -4v-6z" /><path d="M8 3l2 3" /><path d="M16 3l-2 3" /><path d="M9 13v-2" /><path d="M15 11v2" /></svg>
+                        
+                    </a>
+                </li>
+            
+                <li>
+                    <a 
+                        href='https://github.com/ZackMoel/xiaoshi.github.io'
+                        target="_blank"
+                        title="GitHub"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-github" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M9 19c-4.3 1.4 -4.3 -2.5 -6 -3m12 5v-3.5c0 -1 .1 -1.4 -.5 -2c2.8 -.3 5.5 -1.4 5.5 -6a4.6 4.6 0 0 0 -1.3 -3.2a4.2 4.2 0 0 0 -.1 -3.2s-1.1 -.3 -3.5 1.3a12.3 12.3 0 0 0 -6.2 0c-2.4 -1.6 -3.5 -1.3 -3.5 -1.3a4.2 4.2 0 0 0 -.1 3.2a4.6 4.6 0 0 0 -1.3 3.2c0 4.6 2.7 5.7 5.5 6c-.6 .6 -.6 1.2 -.5 2v3.5" />
+</svg>
+
+
+
+                        
+                    </a>
+                </li>
+            
+        </ol><ol class="menu" id="main-menu">
+        
+        
+        
+        <li >
+            <a href='/xiaoshi/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-home" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <polyline points="5 12 3 12 12 3 21 12 19 12" />
+  <path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7" />
+  <path d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6" />
+</svg>
+
+
+
+                
+                <span>主页</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/xiaoshi/%E5%85%B3%E4%BA%8E/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-user" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="7" r="4" />
+  <path d="M6 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2" />
+</svg>
+
+
+
+                
+                <span>关于</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/xiaoshi/archives/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-archive" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <rect x="3" y="4" width="18" height="4" rx="2" />
+  <path d="M5 8v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-10" />
+  <line x1="10" y1="12" x2="14" y2="12" />
+</svg>
+
+
+
+                
+                <span>归档</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/xiaoshi/search/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-search" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="10" cy="10" r="7" />
+  <line x1="21" y1="21" x2="15" y2="15" />
+</svg>
+
+
+
+                
+                <span>搜索</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/xiaoshi/%E5%8F%8B%E6%83%85%E9%93%BE%E6%8E%A5/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-link" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M10 14a3.5 3.5 0 0 0 5 0l4 -4a3.5 3.5 0 0 0 -5 -5l-.5 .5" />
+  <path d="M14 10a3.5 3.5 0 0 0 -5 0l-4 4a3.5 3.5 0 0 0 5 5l.5 -.5" />
+</svg>
+
+
+
+                
+                <span>友情链接</span>
+            </a>
+        </li>
+        
+        <li class="menu-bottom-section">
+            <ol class="menu">
+
+                
+                    <li id="dark-mode-toggle">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="8" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="16" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <span>暗色模式</span>
+                    </li>
+                
+            </ol>
+        </li>
+    </ol>
+</aside>
+
+    <aside class="sidebar right-sidebar sticky">
+        
+            
+                
+    <section class="widget archives">
+        <div class="widget-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <line x1="5" y1="9" x2="19" y2="9" />
+  <line x1="5" y1="15" x2="19" y2="15" />
+  <line x1="11" y1="4" x2="7" y2="20" />
+  <line x1="17" y1="4" x2="13" y2="20" />
+</svg>
+
+
+
+        </div>
+        <h2 class="widget-title section-title">目录</h2>
+        
+        <div class="widget--toc">
+            <nav id="TableOfContents">
+  <ol>
+    <li><a href="#nginxconf入口配置文件">nginx.conf入口配置文件</a></li>
+    <li><a href="#创建虚拟主机子配置文件">创建虚拟主机子配置文件</a></li>
+    <li><a href="#测试nginx配置文件语法然后启动">测试nginx配置文件语法，然后启动</a></li>
+    <li><a href="#根据域名访问该虚拟主机">根据域名访问该虚拟主机</a></li>
+    <li><a href="#html文件资源">html文件资源</a></li>
+    <li><a href="#图片资源">图片资源</a></li>
+    <li><a href="#普通txt文件资源">普通txt文件资源</a></li>
+    <li><a href="#如果是其他类型的文件nginx默认不解析直接下载">如果是其他类型的文件，nginx默认不解析，直接下载</a></li>
+    <li><a href="#nginx识别的文件类型都在这个文件里定义好了">nginx识别的文件类型都在这个文件里定义好了</a></li>
+    <li><a href="#nginx多个server同时监听同一端口号">nginx多个server同时监听同一端口号</a></li>
+  </ol>
+
+  <ol>
+    <li><a href="#修改虚拟主机绑定多个ip">修改虚拟主机，绑定多个ip</a></li>
+    <li><a href="#测试基于ip的虚拟主机">测试基于ip的虚拟主机</a></li>
+    <li><a href="#给这个指定的ip绑定一个测试域名">给这个指定的IP，绑定一个测试域名</a></li>
+  </ol>
+
+  <ol>
+    <li><a href="#创建各自的配置文件">创建各自的配置文件</a></li>
+    <li><a href="#重启nginx查看各自的网站">重启nginx，查看各自的网站</a></li>
+  </ol>
+
+  <ol>
+    <li><a href="#测试访问81和82页面">测试访问81和82页面</a></li>
+  </ol>
+</nav>
+        </div>
+    </section>
+
+            
+        
+    </aside>
+
+
+            <main class="main full-width">
+    <article class="main-article">
+    <header class="article-header">
+
+    <div class="article-details">
+    
+
+    <div class="article-title-wrapper">
+        <h2 class="article-title">
+            <a href="/xiaoshi/p/nginx%E8%99%9A%E6%8B%9F%E4%B8%BB%E6%9C%BA/">Nginx虚拟主机</a>
+        </h2>
+    
+        
+    </div>
+
+    
+    
+    
+    
+    <footer class="article-time">
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
+  <circle cx="18" cy="18" r="4" />
+  <path d="M15 3v4" />
+  <path d="M7 3v4" />
+  <path d="M3 11h16" />
+  <path d="M18 16.496v1.504l1 1" />
+</svg>
+                <time class="article-time--published">2025-04-14</time>
+            </div>
+        
+
+        
+    </footer>
+    
+
+    
+</div>
+
+</header>
+
+    <section class="article-content">
+    
+    
+    <h1 id="nginx虚拟主机部署网站">nginx虚拟主机，部署网站
+</h1><h1 id="为什么配置虚拟主机">为什么配置虚拟主机
+</h1><p>一些草根流量站长,常会搭建个人站点进行资源分享交流,并且可能有多个不同业务的站点,如果每台服务器只运行一个网站,那么将造成资源浪费,成本浪费。</p>
+<p>利用虚拟主机的功能,就不用为了运行一个网站而单独配置一个Nginx服务器,或是单独再运行一组Nginx进程。</p>
+<p>虚拟主机可以在一台服务器,同一个Nginx进程上运行多个网站。
+nginx.conf住配置文件中,最简单的一段虚拟主机配置如下</p>
+<h1 id="单虚拟主机">单虚拟主机
+</h1><p>只需要在http{}区域中，设置一个 server{}标签即可。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">部署一个 huoying.linux0224.cc   看到 /www/huoying/index.html
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">降低运行权限
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">[root@web-8 ~]#groupadd www -g 666
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">[root@web-8 ~]#useradd www -u 666 -g 666 -M -s /sbin/nologin 
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">[root@web-8 ~]#id www
+</span></span><span class="line"><span class="cl">uid=666(www) gid=666(www) groups=666(www)
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">修改nginx.conf
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="nginxconf入口配置文件">nginx.conf入口配置文件
+</h2><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-gdscript3" data-lang="gdscript3"><span class="line"><span class="cl"><span class="n">user</span>  <span class="n">www</span><span class="p">;</span>		<span class="c1"># 设置运行用户 </span>
+</span></span><span class="line"><span class="cl"><span class="n">worker_processes</span>  <span class="n">auto</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">error_log</span>  <span class="o">/</span><span class="k">var</span><span class="o">/</span><span class="nb">log</span><span class="o">/</span><span class="n">nginx</span><span class="o">/</span><span class="n">error</span><span class="o">.</span><span class="n">log</span> <span class="n">notice</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="n">pid</span>        <span class="o">/</span><span class="k">var</span><span class="o">/</span><span class="n">run</span><span class="o">/</span><span class="n">nginx</span><span class="o">.</span><span class="n">pid</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">events</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="n">worker_connections</span>  <span class="mi">1024</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">http</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="n">include</span>       <span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">nginx</span><span class="o">/</span><span class="n">mime</span><span class="o">.</span><span class="n">types</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="n">default_type</span>  <span class="n">application</span><span class="o">/</span><span class="n">octet</span><span class="o">-</span><span class="n">stream</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="n">log_format</span>  <span class="n">main</span>  <span class="s1">&#39;$remote_addr - $remote_user [$time_local] &#34;$request&#34; &#39;</span>
+</span></span><span class="line"><span class="cl">                      <span class="s1">&#39;$status $body_bytes_sent &#34;$http_referer&#34; &#39;</span>
+</span></span><span class="line"><span class="cl">                      <span class="s1">&#39;&#34;$http_user_agent&#34; &#34;$http_x_forwarded_for&#34;&#39;</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="n">access_log</span>  <span class="o">/</span><span class="k">var</span><span class="o">/</span><span class="nb">log</span><span class="o">/</span><span class="n">nginx</span><span class="o">/</span><span class="n">access</span><span class="o">.</span><span class="n">log</span>  <span class="n">main</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="n">sendfile</span>        <span class="n">on</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">#tcp_nopush     on;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="n">keepalive_timeout</span>  <span class="mi">65</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="c1">#gzip  on;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="n">include</span> <span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">nginx</span><span class="o">/</span><span class="n">conf</span><span class="o">.</span><span class="n">d</span><span class="o">/*.</span><span class="n">conf</span><span class="p">;</span>   <span class="c1"># include导入该目录下的*.conf配置文件</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="创建虚拟主机子配置文件">创建虚拟主机子配置文件
+</h2><p>只需要写server{}标签即可。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span><span class="lnt">43
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl"># huoying.linux0224.cc
+</span></span><span class="line"><span class="cl"># 吧数据放在 /www/huoying/index.html
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">vim /etc/nginx/conf.d/huoying.linux0224.conf 
+</span></span><span class="line"><span class="cl"># 写入如下信息
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">server { 
+</span></span><span class="line"><span class="cl">	
+</span></span><span class="line"><span class="cl">	listen 80;
+</span></span><span class="line"><span class="cl">	# nginx会匹配 http://huoying.linux0224.cc:80
+</span></span><span class="line"><span class="cl">	server_name huoying.linux0224.cc;
+</span></span><span class="line"><span class="cl">	# 支持中文的参数
+</span></span><span class="line"><span class="cl">	charset utf-8;
+</span></span><span class="line"><span class="cl">	location  /  {
+</span></span><span class="line"><span class="cl">		# 根据root参数，填写网页根目录信息
+</span></span><span class="line"><span class="cl">		# 表示当你访问 http://huoying.linux0224.cc:80 ，自动来这个目录下找数据
+</span></span><span class="line"><span class="cl">		root  /www/huoying/;
+</span></span><span class="line"><span class="cl">		# 默认找 /www/huoying/ 的名字叫做index.html的文件
+</span></span><span class="line"><span class="cl">		index  index.html;
+</span></span><span class="line"><span class="cl">	}
+</span></span><span class="line"><span class="cl">	
+</span></span><span class="line"><span class="cl">}
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"># 创建网页静态文件，index.html 鸣人.jpg  鸣人与佐助的秘密.txt
+</span></span><span class="line"><span class="cl"># 你部署一个静态网站，最基本的提供，html，jpg，txt等静态数据
+</span></span><span class="line"><span class="cl"># nginx都可以帮你去返回，解析请求
+</span></span><span class="line"><span class="cl"># 
+</span></span><span class="line"><span class="cl">mkdir -p /www/huoying
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">cat &gt; /www/huoying/index.html &lt;&lt;EOF
+</span></span><span class="line"><span class="cl">&lt;meta charset=utf-8&gt;
+</span></span><span class="line"><span class="cl">我是火影页面，老六你好。
+</span></span><span class="line"><span class="cl">EOF
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">cd /www/huoying ; wget -O 鸣人.jpg https://pics0.baidu.com/feed/d62a6059252dd42a57f830e3671230b2c8eab8b1.jpeg?token=df950341a2fc3467a01012e87e868f08
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">cd /www/huoying ; echo &#39;佐助其实打不过鸣人&#39; &gt; 鸣人与佐助的秘密.txt
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"># 修改静态文件的属主，属组
+</span></span><span class="line"><span class="cl">[root@web-8 /www/huoying]#chown -R www.www /www/
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="测试nginx配置文件语法然后启动">测试nginx配置文件语法，然后启动
+</h2><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">[root@web-8 /www/huoying]#nginx -t
+</span></span><span class="line"><span class="cl">nginx: the configuration file /etc/nginx/nginx.conf syntax is ok
+</span></span><span class="line"><span class="cl">nginx: configuration file /etc/nginx/nginx.conf test is successful
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">[root@web-8 /www/huoying]#systemctl restart nginx
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="根据域名访问该虚拟主机">根据域名访问该虚拟主机
+</h2><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">你的本地添加好dns域名解析
+</span></span><span class="line"><span class="cl">分别添加二级域名，三级域名，hosts解析
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">10.0.0.8  huoying.linux0224.cc linux0224.cc   
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">你可以先访问ip试试，通不通
+</span></span><span class="line"><span class="cl">[C:\~]$ ping huoying.linux0224.cc 
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">正在 Ping huoying.linux0224.cc [10.0.0.8] 具有 32 字节的数据:
+</span></span><span class="line"><span class="cl">来自 10.0.0.8 的回复: 字节=32 时间&lt;1ms TTL=64
+</span></span><span class="line"><span class="cl">来自 10.0.0.8 的回复: 字节=32 时间&lt;1ms TTL=64
+</span></span><span class="line"><span class="cl">来自 10.0.0.8 的回复: 字节=32 时间&lt;1ms TTL=64
+</span></span><span class="line"><span class="cl">来自 10.0.0.8 的回复: 字节=32 时间&lt;1ms TTL=64
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">10.0.0.8 的 Ping 统计信息:
+</span></span><span class="line"><span class="cl">    数据包: 已发送 = 4，已接收 = 4，丢失 = 0 (0% 丢失)，
+</span></span><span class="line"><span class="cl">往返行程的估计时间(以毫秒为单位):
+</span></span><span class="line"><span class="cl">    最短 = 0ms，最长 = 0ms，平均 = 0ms
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">该测试域名是没问题，浏览器直接访问即可，
+</span></span><span class="line"><span class="cl">有时候如果出现故障，检查你本地是否设置了代理。关闭即可。。、
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="html文件资源">html文件资源
+</h2><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"></code></pre></td></tr></table>
+</div>
+</div><p><img src="/nginx%e5%9f%ba%e7%a1%80%e7%af%87/pic/image-20220518171757318.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="image-20220518171757318"
+	
+	
+></p>
+<h2 id="图片资源">图片资源
+</h2><p><img src="/nginx%e5%9f%ba%e7%a1%80%e7%af%87/pic/image-20220518171813537.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="image-20220518171813537"
+	
+	
+></p>
+<h2 id="普通txt文件资源">普通txt文件资源
+</h2><p><img src="/nginx%e5%9f%ba%e7%a1%80%e7%af%87/pic/image-20220518171847704.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="image-20220518171847704"
+	
+	
+></p>
+<h2 id="如果是其他类型的文件nginx默认不解析直接下载">如果是其他类型的文件，nginx默认不解析，直接下载
+</h2><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">直接生成静态数据，不用重启nginx，这就是磁盘上的一些静态数据
+</span></span><span class="line"><span class="cl">nginx的server{}虚拟主机，以及设置了，去这个目录下搜索资料
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">nginx默认不识别这个test.ttt格式的文件，因此直接下载了
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="nginx识别的文件类型都在这个文件里定义好了">nginx识别的文件类型都在这个文件里定义好了
+</h2><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">[root@web-8 /www/huoying]#cat /etc/nginx/mime.types 
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">只有这个文件中定义的文件类型，nginx默认可以识别处理
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="nginx多个server同时监听同一端口号">nginx多个server同时监听同一端口号
+</h2><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">当出现这种情况时，nginx首先会按照server_name来选择对应的server，然后会按照nginx.conf中http{}中server{}的定义先后顺序来决定哪个server，
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h1 id="ip多虚拟主机">IP多虚拟主机
+</h1><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">给指定的网卡，绑定多个ip地址
+</span></span><span class="line"><span class="cl"># 这个命令是临时添加一个ip
+</span></span><span class="line"><span class="cl">ip addr add 10.0.0.88/24 dev eth0
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="修改虚拟主机绑定多个ip">修改虚拟主机，绑定多个ip
+</h2><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">vim /etc/nginx/conf.d/88.conf
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"># 指定绑定ip地址的配置文件
+</span></span><span class="line"><span class="cl">[root@web-8 /etc/nginx/conf.d]#nginx -t
+</span></span><span class="line"><span class="cl">nginx: the configuration file /etc/nginx/nginx.conf syntax is ok
+</span></span><span class="line"><span class="cl">nginx: configuration fil e /etc/nginx/nginx.conf test is successful
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">[root@web-8 /etc/nginx/conf.d]#ls
+</span></span><span class="line"><span class="cl">88.conf  huoying.linux0224.conf
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">[root@web-8 /etc/nginx/conf.d]#cat 88.conf 
+</span></span><span class="line"><span class="cl">server {
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">listen 10.0.0.88:80;
+</span></span><span class="line"><span class="cl">server_name _;
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">location /  {
+</span></span><span class="line"><span class="cl">	root  /www/80/;
+</span></span><span class="line"><span class="cl">	index  index.html;
+</span></span><span class="line"><span class="cl">}
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">}
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"># 创建测试数据
+</span></span><span class="line"><span class="cl">[root@web-8 /etc/nginx/conf.d]#mkdir -p /www/80/
+</span></span><span class="line"><span class="cl">[root@web-8 /etc/nginx/conf.d]#
+</span></span><span class="line"><span class="cl">[root@web-8 /etc/nginx/conf.d]#echo &#39;I am 10.0.0.88 server. welcome my linux&#39;  &gt; /www/80/index.html
+</span></span><span class="line"><span class="cl">[root@web-8 /etc/nginx/conf.d]#
+</span></span><span class="line"><span class="cl">[root@web-8 /etc/nginx/conf.d]#
+</span></span><span class="line"><span class="cl">[root@web-8 /etc/nginx/conf.d]#systemctl restart nginx
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="测试基于ip的虚拟主机">测试基于ip的虚拟主机
+</h2><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">1. 当你访问 10.0.0.8 或者 huoying.linux2004.cc
+</span></span><span class="line"><span class="cl">看到的是/etc/nginx/conf.d/huoying.linux0224.conf这个虚拟主机的内容
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">2. 当你访问，基于指定ip访问，看到的/etc/nginx/conf.d/88.conf的内容
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="给这个指定的ip绑定一个测试域名">给这个指定的IP，绑定一个测试域名
+</h2><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">修改本地hosts
+</span></span><span class="line"><span class="cl">10.0.0.88  88.linux0224.cc
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">访问该域名也是可以通的，因为依然是基于绑定的socket地址匹配的该虚拟主机文件
+</span></span><span class="line"><span class="cl">http://88.linux0224.cc/
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/nginx%e5%9f%ba%e7%a1%80%e7%af%87/pic/image-20220518180150078.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="image-20220518180150078"
+	
+	
+></p>
+<h1 id="多域名虚拟主机">多域名虚拟主机
+</h1><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">dnf.linux0224.cc   /www/lol/index.html
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">lol.linux0224.cc   /www/lol/index.html
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">俩域名，就得分俩配置文件更合适些，表示是2个站点
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="创建各自的配置文件">创建各自的配置文件
+</h2><p>dnf.linux0224.conf</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">[root@web-8 /etc/nginx/conf.d]#touch dnf.linux0224.conf
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">分别写入配置 ，基于域名的虚拟主机，这样写
+</span></span><span class="line"><span class="cl">server {
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    listen 80;
+</span></span><span class="line"><span class="cl">    server_name dnf.linux0224.cc; # 这里写的是域名
+</span></span><span class="line"><span class="cl">	charset utf-8;
+</span></span><span class="line"><span class="cl">    location /  {
+</span></span><span class="line"><span class="cl">        root  /www/dnf/;
+</span></span><span class="line"><span class="cl">        index  index.html;
+</span></span><span class="line"><span class="cl">    }
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">}
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>lol.linux0224.conf</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">server {
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    listen 80;
+</span></span><span class="line"><span class="cl">    server_name lol.linux0224.cc;
+</span></span><span class="line"><span class="cl">	charset utf-8;
+</span></span><span class="line"><span class="cl">    location /  {
+</span></span><span class="line"><span class="cl">        root  /www/lol/;
+</span></span><span class="line"><span class="cl">        index  index.html;
+</span></span><span class="line"><span class="cl">    }
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">}
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>创建两个数据目录即可</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span><span class="lnt">9
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">mkdir -p /www/{lol,dnf}
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"># 分别创建测试数据
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">echo &#39;人在塔在，人在linux在&#39;  &gt;  /www/lol/index.html 
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">echo &#39;勇士，好好学习linux，你就是最帅的&#39;  &gt;  /www/dnf/index.html 
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">[root@web-8 /etc/nginx/conf.d]#systemctl restart nginx
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="重启nginx查看各自的网站">重启nginx，查看各自的网站
+</h2><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">还差什么步骤吗？
+</span></span><span class="line"><span class="cl">还差客户端机器上的 域名解析
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">10.0.0.8  huoying.linux0224.cc linux0224.cc     lol.linux0224.cc       dnf.linux0224.cc        
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">http://lol.linux0224.cc/
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">http://dnf.linux0224.cc/
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/nginx%e5%9f%ba%e7%a1%80%e7%af%87/pic/image-20220518182335413.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="image-20220518182335413"
+	
+	
+></p>
+<h1 id="多端口虚拟主机">多端口虚拟主机
+</h1><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">除了支持 
+</span></span><span class="line"><span class="cl">- 绑定域名
+</span></span><span class="line"><span class="cl">- 绑定ip
+</span></span><span class="line"><span class="cl">- 绑定多个端口，的虚拟主机
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>配置文件如下</p>
+<p>在一个配置文件中，定义多个虚拟主机</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">vim /etc/nginx/conf.d/port.conf
+</span></span><span class="line"><span class="cl"># 平级
+</span></span><span class="line"><span class="cl">server {
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    listen 10.0.0.8:81;
+</span></span><span class="line"><span class="cl">    server_name _;
+</span></span><span class="line"><span class="cl">	charset utf-8;
+</span></span><span class="line"><span class="cl">    location /  {
+</span></span><span class="line"><span class="cl">        root  /www/data81/;
+</span></span><span class="line"><span class="cl">        index  index.html;
+</span></span><span class="line"><span class="cl">    }
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">}
+</span></span><span class="line"><span class="cl"> # 平级
+</span></span><span class="line"><span class="cl">server {
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    listen 10.0.0.8:82;
+</span></span><span class="line"><span class="cl">    server_name _;
+</span></span><span class="line"><span class="cl">	charset utf-8;
+</span></span><span class="line"><span class="cl">    location /  {
+</span></span><span class="line"><span class="cl">        root  /www/data82/;
+</span></span><span class="line"><span class="cl">        index  index.html;
+</span></span><span class="line"><span class="cl">    }
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">}
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"># 创建测试数据， 
+</span></span><span class="line"><span class="cl">mkdir -p /www/{data81,data82}
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">cd /www/data81 ;  echo &#34;我是81，你是老六&#34; &gt; /www/data81/index.html
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">cd /www/data82 ;  echo &#34;我是82，你是秘制小汉堡&#34; &gt; /www/data82/index.html
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>验证整个配置文件，和数据目录</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">[root@web-8 /www/data82]#tree -N /www/
+</span></span><span class="line"><span class="cl">/www/
+</span></span><span class="line"><span class="cl">├── 80
+</span></span><span class="line"><span class="cl">│   └── index.html
+</span></span><span class="line"><span class="cl">├── data81
+</span></span><span class="line"><span class="cl">│   └── index.html
+</span></span><span class="line"><span class="cl">├── data82
+</span></span><span class="line"><span class="cl">│   └── index.html
+</span></span><span class="line"><span class="cl">└── huoying
+</span></span><span class="line"><span class="cl">    ├── index.html
+</span></span><span class="line"><span class="cl">    ├── test.ttt
+</span></span><span class="line"><span class="cl">    ├── 鸣人.jpg
+</span></span><span class="line"><span class="cl">    └── 鸣人与佐助的秘密.txt
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">配置文件
+</span></span><span class="line"><span class="cl">[root@web-8 /www/data82]#tree -NF /etc/nginx/conf.d/
+</span></span><span class="line"><span class="cl">/etc/nginx/conf.d/
+</span></span><span class="line"><span class="cl">├── 88.conf
+</span></span><span class="line"><span class="cl">├── huoying.linux0224.conf
+</span></span><span class="line"><span class="cl">└── port.conf
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>重启服务，查看是否生效</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">[root@web-8 /www/data82]#systemctl restart nginx
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">[root@web-8 /www/data82]#netstat -tunlp |grep nginx
+</span></span><span class="line"><span class="cl">tcp        0      0 0.0.0.0:80              0.0.0.0:*               LISTEN      4563/nginx: master  
+</span></span><span class="line"><span class="cl">tcp        0      0 10.0.0.8:81             0.0.0.0:*               LISTEN      4563/nginx: master  
+</span></span><span class="line"><span class="cl">tcp        0      0 10.0.0.8:82             0.0.0.0:*               LISTEN      4563/nginx: master  
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="测试访问81和82页面">测试访问81和82页面
+</h2><p>反向代理，负载均衡，就有用了，可以基于虚拟主机，实现多台服务器运行的多个网站</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">指定端口号才行
+</span></span><span class="line"><span class="cl">http://10.0.0.8:82/
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">http://10.0.0.8:81/
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/nginx%e5%9f%ba%e7%a1%80%e7%af%87/pic/image-20220518181311708.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="image-20220518181311708"
+	
+	
+></p>
+
+</section>
+
+
+    <footer class="article-footer">
+    
+
+    </footer>
+
+
+    
+</article>
+
+    
+
+    
+
+     
+    
+        
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+        2025 小诗
+    </section>
+    
+    <section class="powerby">
+        使用 <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> 构建 <br />
+        主题 <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.26.0">Stack</a></b> 由 <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a> 设计
+    </section>
+</footer>
+
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css"crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css"crossorigin="anonymous"
+            >
+
+            </main>
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.6/dist/vibrant.min.js"integrity="sha256-awcR2jno4kI5X0zL8ex0vi2z&#43;KMkF24hUW8WePSA9HM="crossorigin="anonymous"
+                
+                >
+            </script><script type="text/javascript" src="/xiaoshi/ts/main.js" defer></script>
+<script>
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+
+    </body>
+</html>

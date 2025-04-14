@@ -1,0 +1,1716 @@
+<!DOCTYPE html>
+<html lang="zh-cn" dir="ltr">
+    <head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content="nginx的日志 nginx的功能都是基于插件（模块）来的 nginx的所有核心功能 1 2 3 4 5 6 https://nginx.org/en/docs/ 例如老板让你在windows下部署nginx网">
+<title>Nginx虚拟主机综合实战</title>
+
+<link rel='canonical' href='https://ZackMoel.github.io/xiaoshi/p/nginx%E8%99%9A%E6%8B%9F%E4%B8%BB%E6%9C%BA%E7%BB%BC%E5%90%88%E5%AE%9E%E6%88%98/'>
+
+<link rel="stylesheet" href="/xiaoshi/scss/style.min.0304c6baf04e01a8fe70693791cb744d56a3578a3120a8796cefc66825aa39c7.css"><meta property='og:title' content="Nginx虚拟主机综合实战">
+<meta property='og:description' content="nginx的日志 nginx的功能都是基于插件（模块）来的 nginx的所有核心功能 1 2 3 4 5 6 https://nginx.org/en/docs/ 例如老板让你在windows下部署nginx网">
+<meta property='og:url' content='https://ZackMoel.github.io/xiaoshi/p/nginx%E8%99%9A%E6%8B%9F%E4%B8%BB%E6%9C%BA%E7%BB%BC%E5%90%88%E5%AE%9E%E6%88%98/'>
+<meta property='og:site_name' content='小诗的博客'>
+<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:published_time' content='2025-04-14T16:49:05&#43;08:00'/><meta property='article:modified_time' content='2025-04-14T16:49:05&#43;08:00'/>
+<meta name="twitter:title" content="Nginx虚拟主机综合实战">
+<meta name="twitter:description" content="nginx的日志 nginx的功能都是基于插件（模块）来的 nginx的所有核心功能 1 2 3 4 5 6 https://nginx.org/en/docs/ 例如老板让你在windows下部署nginx网">
+  
+
+
+    </head>
+    <body class="
+    article-page
+    ">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex on-phone--column extended"><aside class="sidebar left-sidebar sticky ">
+    <button class="hamburger hamburger--spin" type="button" id="toggle-menu" aria-label="切换菜单">
+        <span class="hamburger-box">
+            <span class="hamburger-inner"></span>
+        </span>
+    </button>
+
+    <header>
+        
+            
+            <figure class="site-avatar">
+                <a href="/xiaoshi/">
+                
+                    
+                    
+                    
+                        
+                        <img src="/xiaoshi/img/avatar_hu8920112365793990935.png" width="300"
+                            height="300" class="site-logo" loading="lazy" alt="Avatar">
+                    
+                
+                </a>
+                
+                    <span class="emoji">🍥</span>
+                
+            </figure>
+            
+        
+        
+        <div class="site-meta">
+            <h1 class="site-name"><a href="/xiaoshi">小诗的博客</a></h1>
+            <h2 class="site-description">欢迎来到小诗的博客</h2>
+        </div>
+    </header><ol class="menu-social">
+            
+                <li>
+                    <a 
+                        href='https://space.bilibili.com/1055981889?spm_id_from=333.1007.0.0'
+                        target="_blank"
+                        title="bilibili"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg  xmlns="http://www.w3.org/2000/svg"  width="24"  height="24"  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  stroke-width="2"  stroke-linecap="round"  stroke-linejoin="round"  class="icon icon-tabler icons-tabler-outline icon-tabler-brand-bilibili"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M3 10a4 4 0 0 1 4 -4h10a4 4 0 0 1 4 4v6a4 4 0 0 1 -4 4h-10a4 4 0 0 1 -4 -4v-6z" /><path d="M8 3l2 3" /><path d="M16 3l-2 3" /><path d="M9 13v-2" /><path d="M15 11v2" /></svg>
+                        
+                    </a>
+                </li>
+            
+                <li>
+                    <a 
+                        href='https://github.com/ZackMoel/xiaoshi.github.io'
+                        target="_blank"
+                        title="GitHub"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-github" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M9 19c-4.3 1.4 -4.3 -2.5 -6 -3m12 5v-3.5c0 -1 .1 -1.4 -.5 -2c2.8 -.3 5.5 -1.4 5.5 -6a4.6 4.6 0 0 0 -1.3 -3.2a4.2 4.2 0 0 0 -.1 -3.2s-1.1 -.3 -3.5 1.3a12.3 12.3 0 0 0 -6.2 0c-2.4 -1.6 -3.5 -1.3 -3.5 -1.3a4.2 4.2 0 0 0 -.1 3.2a4.6 4.6 0 0 0 -1.3 3.2c0 4.6 2.7 5.7 5.5 6c-.6 .6 -.6 1.2 -.5 2v3.5" />
+</svg>
+
+
+
+                        
+                    </a>
+                </li>
+            
+        </ol><ol class="menu" id="main-menu">
+        
+        
+        
+        <li >
+            <a href='/xiaoshi/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-home" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <polyline points="5 12 3 12 12 3 21 12 19 12" />
+  <path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7" />
+  <path d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6" />
+</svg>
+
+
+
+                
+                <span>主页</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/xiaoshi/%E5%85%B3%E4%BA%8E/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-user" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="7" r="4" />
+  <path d="M6 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2" />
+</svg>
+
+
+
+                
+                <span>关于</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/xiaoshi/archives/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-archive" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <rect x="3" y="4" width="18" height="4" rx="2" />
+  <path d="M5 8v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-10" />
+  <line x1="10" y1="12" x2="14" y2="12" />
+</svg>
+
+
+
+                
+                <span>归档</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/xiaoshi/search/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-search" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="10" cy="10" r="7" />
+  <line x1="21" y1="21" x2="15" y2="15" />
+</svg>
+
+
+
+                
+                <span>搜索</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/xiaoshi/%E5%8F%8B%E6%83%85%E9%93%BE%E6%8E%A5/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-link" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M10 14a3.5 3.5 0 0 0 5 0l4 -4a3.5 3.5 0 0 0 -5 -5l-.5 .5" />
+  <path d="M14 10a3.5 3.5 0 0 0 -5 0l-4 4a3.5 3.5 0 0 0 5 5l.5 -.5" />
+</svg>
+
+
+
+                
+                <span>友情链接</span>
+            </a>
+        </li>
+        
+        <li class="menu-bottom-section">
+            <ol class="menu">
+
+                
+                    <li id="dark-mode-toggle">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="8" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="16" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <span>暗色模式</span>
+                    </li>
+                
+            </ol>
+        </li>
+    </ol>
+</aside>
+
+    <aside class="sidebar right-sidebar sticky">
+        
+            
+                
+    <section class="widget archives">
+        <div class="widget-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <line x1="5" y1="9" x2="19" y2="9" />
+  <line x1="5" y1="15" x2="19" y2="15" />
+  <line x1="11" y1="4" x2="7" y2="20" />
+  <line x1="17" y1="4" x2="13" y2="20" />
+</svg>
+
+
+
+        </div>
+        <h2 class="widget-title section-title">目录</h2>
+        
+        <div class="widget--toc">
+            <nav id="TableOfContents">
+  <ol>
+    <li><a href="#nginx日志变量的格式作用">nginx日志变量的格式，作用</a></li>
+    <li><a href="#访客日志">访客日志</a></li>
+    <li><a href="#生产环境下的日志实践经验">生产环境下的日志实践经验</a></li>
+    <li><a href="#开启关闭日志功能先看默认的日志功能怎么用">开启，关闭日志功能（先看默认的日志功能怎么用）</a>
+      <ol>
+        <li><a href="#检测日志">检测日志</a></li>
+        <li><a href="#关闭日志功能">关闭日志功能</a></li>
+      </ol>
+    </li>
+    <li><a href="#修改nginx访客日志的格式">修改nginx访客日志的格式</a>
+      <ol>
+        <li><a href="#单个虚拟主机记录日志">单个虚拟主机，记录日志</a></li>
+        <li><a href="#测试不同虚拟主机的日志记录">测试不同虚拟主机的日志记录</a>
+          <ol>
+            <li><a href="#dnf页面的访问情况与日志记录">dnf页面的访问情况，与日志记录</a></li>
+          </ol>
+        </li>
+      </ol>
+    </li>
+    <li><a href="#其他虚拟主机的日志记录情况">其他虚拟主机的日志记录情况</a></li>
+    <li><a href="#nginx提供的日志">nginx提供的日志</a></li>
+    <li><a href="#错误日志">错误日志</a></li>
+  </ol>
+
+  <ol>
+    <li><a href="#error_page模块">error_page模块</a></li>
+    <li><a href="#淘宝的错误页面">淘宝的错误页面</a></li>
+    <li><a href="#语法">语法</a>
+      <ol>
+        <li><a href="#优化错误页面指向本地的html文件">优化错误页面，指向本地的html文件</a></li>
+      </ol>
+    </li>
+    <li><a href="#再次测试错误页面针对lol这个虚拟主机">再次测试错误页面，针对lol这个虚拟主机</a>
+      <ol>
+        <li><a href="#404错误页面">404错误页面</a></li>
+      </ol>
+    </li>
+    <li><a href="#403错误的设置">403错误的设置</a></li>
+    <li><a href="#403指定跳转到当前机器的一个文件">403指定跳转到当前机器的一个文件</a></li>
+    <li><a href="#最后的测试403和404页面优化">最后的测试。403，和404页面优化</a></li>
+  </ol>
+
+  <ol>
+    <li><a href="#基于web协议通信的软件实践nginx技术">基于web协议通信的软件实践（nginx技术）</a></li>
+    <li><a href="#nginx的核心功能">nginx的核心功能</a></li>
+  </ol>
+</nav>
+        </div>
+    </section>
+
+            
+        
+    </aside>
+
+
+            <main class="main full-width">
+    <article class="main-article">
+    <header class="article-header">
+
+    <div class="article-details">
+    
+
+    <div class="article-title-wrapper">
+        <h2 class="article-title">
+            <a href="/xiaoshi/p/nginx%E8%99%9A%E6%8B%9F%E4%B8%BB%E6%9C%BA%E7%BB%BC%E5%90%88%E5%AE%9E%E6%88%98/">Nginx虚拟主机综合实战</a>
+        </h2>
+    
+        
+    </div>
+
+    
+    
+    
+    
+    <footer class="article-time">
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
+  <circle cx="18" cy="18" r="4" />
+  <path d="M15 3v4" />
+  <path d="M7 3v4" />
+  <path d="M3 11h16" />
+  <path d="M18 16.496v1.504l1 1" />
+</svg>
+                <time class="article-time--published">2025-04-14</time>
+            </div>
+        
+
+        
+    </footer>
+    
+
+    
+</div>
+
+</header>
+
+    <section class="article-content">
+    
+    
+    <h1 id="nginx的日志">nginx的日志
+</h1><p>nginx的功能都是基于插件（模块）来的</p>
+<p>nginx的所有核心功能</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">https://nginx.org/en/docs/
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">例如老板让你在windows下部署nginx网站，
+</span></span><span class="line"><span class="cl">https://nginx.org/en/docs/windows.html
+</span></span><span class="line"><span class="cl">找到windows配置教程
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="nginx日志变量的格式作用">nginx日志变量的格式，作用
+</h2><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-gdscript3" data-lang="gdscript3"><span class="line"><span class="cl"><span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">nginx</span><span class="o">.</span><span class="n">org</span><span class="o">/</span><span class="n">en</span><span class="o">/</span><span class="n">docs</span><span class="o">/</span>
+</span></span><span class="line"><span class="cl"><span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">nginx</span><span class="o">.</span><span class="n">org</span><span class="o">/</span><span class="n">en</span><span class="o">/</span><span class="n">docs</span><span class="o">/</span><span class="n">http</span><span class="o">/</span><span class="n">ngx_http_core_module</span><span class="o">.</span><span class="n">html</span><span class="c1">#var_remote_addr</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="err">当你的</span><span class="n">nginx访客日志</span><span class="err">，需要记录更多的</span><span class="n">client请求信息</span><span class="err">，你可以来这里找，添加更多的变量，加入到如下的日志格式化参数中</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="访客日志">访客日志
+</h2><p>处理日志模块的官网教程</p>
+<p><a class="link" href="https://nginx.org/en/docs/http/ngx_http_log_module.html"  target="_blank" rel="noopener"
+    >https://nginx.org/en/docs/http/ngx_http_log_module.html</a></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">nginx.conf中有关访客日志定义如下
+</span></span><span class="line"><span class="cl"> #a
+</span></span><span class="line"><span class="cl">log_format  main  &#39;$remote_addr - $remote_user [$time_local] &#34;$request&#34; &#39;
+</span></span><span class="line"><span class="cl">                      &#39;$status $body_bytes_sent &#34;$http_referer&#34; &#39;
+</span></span><span class="line"><span class="cl">                    &#39;&#34;$http_user_agent&#34; &#34;$http_x_forwarded_for&#34;&#39;;
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"> access_log  logs/access.log  main;
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">参数解释 
+</span></span><span class="line"><span class="cl"># 看到这个请求是从什么IP发来的。 remote_addr
+</span></span><span class="line"><span class="cl">$remote_addr ：记录访问网站的客户端IP地址
+</span></span><span class="line"><span class="cl">$remote_user ：记录远程客户端用户名称
+</span></span><span class="line"><span class="cl">$time_local ：记录访问时间与时区
+</span></span><span class="line"><span class="cl">$request ：记录用户的 http 请求起始行信息（请求方法，http协议）
+</span></span><span class="line"><span class="cl">$status ：记录 http 状态码，即请求返回的状态，例如 200 、404 、502 等
+</span></span><span class="line"><span class="cl">$body_bytes_sent ：记录服务器发送给客户端的响应 body 字节数
+</span></span><span class="line"><span class="cl">$http_referer ：记录此次请求是从哪个链接访问过来的，可以根据 referer 进行防盗链设置
+</span></span><span class="line"><span class="cl">$http_user_agent ：记录客户端访问信息，如浏览器、手机客户端等
+</span></span><span class="line"><span class="cl">$http_x_forwarded_for ：当前端有代理服务器时，设置 Web 节点记录客户端地址的配置，此参数生效的前提是代理服务器上也进行了相关的 x_forwarded_for 设置
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">备注
+</span></span><span class="line"><span class="cl">$remote_addr 可能拿到的是反向代理IP地址
+</span></span><span class="line"><span class="cl">$http_x_forwarded_for 可以获取客户端真实IP地址
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="生产环境下的日志实践经验">生产环境下的日志实践经验
+</h2><p><img src="/nginx%e5%9f%ba%e7%a1%80%e7%af%87/assets/image-20220519115842509.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="image-20220519115842509"
+	
+	
+></p>
+<h2 id="开启关闭日志功能先看默认的日志功能怎么用">开启，关闭日志功能（先看默认的日志功能怎么用）
+</h2><p>逐步分析，主配置文件nginx.con</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-gdscript3" data-lang="gdscript3"><span class="line"><span class="cl"><span class="p">[</span><span class="n">root</span><span class="err">@</span><span class="n">web</span><span class="o">-</span><span class="mi">8</span> <span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">nginx</span><span class="p">]</span><span class="c1">#cat /etc/nginx/nginx.conf </span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">user</span>  <span class="n">www</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="n">worker_processes</span>  <span class="n">auto</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">error_log</span>  <span class="o">/</span><span class="k">var</span><span class="o">/</span><span class="nb">log</span><span class="o">/</span><span class="n">nginx</span><span class="o">/</span><span class="n">error</span><span class="o">.</span><span class="n">log</span> <span class="n">notice</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="n">pid</span>        <span class="o">/</span><span class="k">var</span><span class="o">/</span><span class="n">run</span><span class="o">/</span><span class="n">nginx</span><span class="o">.</span><span class="n">pid</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">events</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="n">worker_connections</span>  <span class="mi">1024</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">http</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="n">include</span>       <span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">nginx</span><span class="o">/</span><span class="n">mime</span><span class="o">.</span><span class="n">types</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="n">default_type</span>  <span class="n">application</span><span class="o">/</span><span class="n">octet</span><span class="o">-</span><span class="n">stream</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="n">log_format</span>  <span class="n">main</span>  <span class="s1">&#39;$remote_addr - $remote_user [$time_local] &#34;$request&#34; &#39;</span>
+</span></span><span class="line"><span class="cl">                      <span class="s1">&#39;$status $body_bytes_sent &#34;$http_referer&#34; &#39;</span>
+</span></span><span class="line"><span class="cl">                      <span class="s1">&#39;&#34;$http_user_agent&#34; &#34;$http_x_forwarded_for&#34;&#39;</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="n">access_log</span>  <span class="o">/</span><span class="k">var</span><span class="o">/</span><span class="nb">log</span><span class="o">/</span><span class="n">nginx</span><span class="o">/</span><span class="n">access</span><span class="o">.</span><span class="n">log</span>  <span class="n">main</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="n">sendfile</span>        <span class="n">on</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">#tcp_nopush     on;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="n">keepalive_timeout</span>  <span class="mi">65</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="c1">#gzip  on;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="n">include</span> <span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">nginx</span><span class="o">/</span><span class="n">conf</span><span class="o">.</span><span class="n">d</span><span class="o">/*.</span><span class="n">conf</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="err">重启</span><span class="n">nginx服务</span><span class="err">，查看默认的日志功能</span>
+</span></span><span class="line"><span class="cl"><span class="n">systemctl</span> <span class="n">restart</span> <span class="n">nginx</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="检测日志">检测日志
+</h3><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-gdscript3" data-lang="gdscript3"><span class="line"><span class="cl"><span class="n">tail</span> <span class="o">-</span><span class="n">f</span> <span class="o">/</span><span class="k">var</span><span class="o">/</span><span class="nb">log</span><span class="o">/</span><span class="n">nginx</span><span class="o">/</span><span class="n">access</span><span class="o">.</span><span class="n">log</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">所有的子域名的日志都被统一记录到了一个文件中
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">http://dnf.linux0224.cc/
+</span></span><span class="line"><span class="cl">http://huoying.linux0224.cc/
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="关闭日志功能">关闭日志功能
+</h3><p>有时候在代理服务器上，转发服务器上，nginx日志可能不用记录，节省磁盘IO的资源。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-gdscript3" data-lang="gdscript3"><span class="line"><span class="cl"><span class="n">http</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="n">include</span>       <span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">nginx</span><span class="o">/</span><span class="n">mime</span><span class="o">.</span><span class="n">types</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="n">default_type</span>  <span class="n">application</span><span class="o">/</span><span class="n">octet</span><span class="o">-</span><span class="n">stream</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="n">log_format</span>  <span class="n">main</span>  <span class="s1">&#39;$remote_addr - $remote_user [$time_local] &#34;$request&#34; &#39;</span>
+</span></span><span class="line"><span class="cl">                      <span class="s1">&#39;$status $body_bytes_sent &#34;$http_referer&#34; &#39;</span>
+</span></span><span class="line"><span class="cl">                      <span class="s1">&#39;&#34;$http_user_agent&#34; &#34;$http_x_forwarded_for&#34;&#39;</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="c1">#access_log  /var/log/nginx/access.log  main;</span>
+</span></span><span class="line"><span class="cl">    <span class="n">access_log</span> <span class="n">off</span><span class="p">;</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="修改nginx访客日志的格式">修改nginx访客日志的格式
+</h2><p>自己添加，可以捕获更多的客户端的信息</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span><span class="lnt">9
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-gdscript3" data-lang="gdscript3"><span class="line"><span class="cl"><span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">nginx</span><span class="o">.</span><span class="n">org</span><span class="o">/</span><span class="n">en</span><span class="o">/</span><span class="n">docs</span><span class="o">/</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">nginx</span><span class="o">.</span><span class="n">org</span><span class="o">/</span><span class="n">en</span><span class="o">/</span><span class="n">docs</span><span class="o">/</span><span class="n">http</span><span class="o">/</span><span class="n">ngx_http_core_module</span><span class="o">.</span><span class="n">html</span><span class="c1">#var_remote_addr</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="err">当你的</span><span class="n">nginx访客日志</span><span class="err">，需要记录更多的</span><span class="n">client请求信息</span><span class="err">，你可以来这里找，添加更多的变量，加入到如下的日志格式化参数中</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">log_format</span>  <span class="n">main</span>  <span class="s1">&#39;$document_uri  $remote_addr - $remote_user [$time_local] &#34;$request&#34; &#39;</span>
+</span></span><span class="line"><span class="cl">                      <span class="s1">&#39;$status $body_bytes_sent &#34;$http_referer&#34; &#39;</span>
+</span></span><span class="line"><span class="cl">                      <span class="s1">&#39;&#34;$http_user_agent&#34; &#34;$http_x_forwarded_for&#34;&#39;</span><span class="p">;</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="单个虚拟主机记录日志">单个虚拟主机，记录日志
+</h3><p>针对每一个网站，单独的记录日志文件，便于分类管理。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">此时的各个虚拟主机配置文件，并未使用日志功能
+</span></span><span class="line"><span class="cl">[root@web-8 /etc/nginx]#cd conf.d/
+</span></span><span class="line"><span class="cl">[root@web-8 /etc/nginx/conf.d]#ls
+</span></span><span class="line"><span class="cl">88.conf  dnf.linux0224.conf  huoying.linux0224.conf  lol.linux0224.conf  port.conf
+</span></span><span class="line"><span class="cl">[root@web-8 /etc/nginx/conf.d]#
+</span></span><span class="line"><span class="cl">[root@web-8 /etc/nginx/conf.d]#grep &#39;access_log&#39;  ./*
+</span></span></code></pre></td></tr></table>
+</div>
+</div><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span><span class="lnt">43
+</span><span class="lnt">44
+</span><span class="lnt">45
+</span><span class="lnt">46
+</span><span class="lnt">47
+</span><span class="lnt">48
+</span><span class="lnt">49
+</span><span class="lnt">50
+</span><span class="lnt">51
+</span><span class="lnt">52
+</span><span class="lnt">53
+</span><span class="lnt">54
+</span><span class="lnt">55
+</span><span class="lnt">56
+</span><span class="lnt">57
+</span><span class="lnt">58
+</span><span class="lnt">59
+</span><span class="lnt">60
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-gdscript3" data-lang="gdscript3"><span class="line"><span class="cl"><span class="err">语法就是，将日志格式的配置参数，别写在</span><span class="n">http</span><span class="p">{}</span><span class="err">花括号中，而是写在各自的</span><span class="n">server</span><span class="p">{}</span><span class="err">虚拟主机中即可。：</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># 语法要求，log_format 格式化的日志的名字，还不得重复</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="mf">1.</span><span class="err">去掉</span><span class="n">nginx</span><span class="o">.</span><span class="n">conf中的日志配置</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># http{}区域中 nginx.conf中关闭日志</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># log_format参数依然得写在http{}区域中 ，可以利用include语法实现</span>
+</span></span><span class="line"><span class="cl"><span class="n">http</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="n">access_log</span> <span class="n">off</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">    <span class="n">include</span>       <span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">nginx</span><span class="o">/</span><span class="n">mime</span><span class="o">.</span><span class="n">types</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="n">default_type</span>  <span class="n">application</span><span class="o">/</span><span class="n">octet</span><span class="o">-</span><span class="n">stream</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="n">sendfile</span>        <span class="n">on</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">#tcp_nopush     on;</span>
+</span></span><span class="line"><span class="cl">    <span class="n">keepalive_timeout</span>  <span class="mi">65</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">#gzip  on;</span>
+</span></span><span class="line"><span class="cl">    <span class="n">include</span> <span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">nginx</span><span class="o">/</span><span class="n">conf</span><span class="o">.</span><span class="n">d</span><span class="o">/*.</span><span class="n">conf</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="mf">2.</span><span class="err">针对每一个虚拟主机，添加日志格式参数，主要的是，分别写入到不同的日志文件中</span>
+</span></span><span class="line"><span class="cl"><span class="p">[</span><span class="n">root</span><span class="err">@</span><span class="n">web</span><span class="o">-</span><span class="mi">8</span> <span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">nginx</span><span class="o">/</span><span class="n">conf</span><span class="o">.</span><span class="n">d</span><span class="p">]</span><span class="c1">#cat dnf.linux0224.conf </span>
+</span></span><span class="line"><span class="cl"><span class="c1"># 这个参数和server{}平级</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"> <span class="n">log_format</span>  <span class="n">main</span>  <span class="s1">&#39;$document_uri  $remote_addr - $remote_user [$time_local] &#34;$request&#34; &#39;</span>
+</span></span><span class="line"><span class="cl">                      <span class="s1">&#39;$status $body_bytes_sent &#34;$http_referer&#34; &#39;</span>
+</span></span><span class="line"><span class="cl">                      <span class="s1">&#39;&#34;$http_user_agent&#34; &#34;$http_x_forwarded_for&#34;&#39;</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="n">server</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="c1"># 开启日志功能，以及存放路径，参数写在server{}内</span>
+</span></span><span class="line"><span class="cl">    <span class="n">access_log</span>  <span class="o">/</span><span class="k">var</span><span class="o">/</span><span class="nb">log</span><span class="o">/</span><span class="n">nginx</span><span class="o">/</span><span class="n">dnf</span><span class="o">.</span><span class="n">linux0224</span><span class="o">.</span><span class="n">cc</span><span class="o">.</span><span class="n">access</span><span class="o">.</span><span class="n">log</span>  <span class="n">main</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="n">listen</span> <span class="mi">80</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="n">server_name</span> <span class="n">dnf</span><span class="o">.</span><span class="n">linux0224</span><span class="o">.</span><span class="n">cc</span><span class="p">;</span> <span class="c1"># 这里写的是域名</span>
+</span></span><span class="line"><span class="cl">	<span class="n">charset</span> <span class="n">utf</span><span class="o">-</span><span class="mi">8</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="n">location</span> <span class="o">/</span>  <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="n">root</span>  <span class="o">/</span><span class="n">www</span><span class="o">/</span><span class="n">dnf</span><span class="o">/</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">        <span class="n">index</span>  <span class="n">index</span><span class="o">.</span><span class="n">html</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="mf">3.</span> <span class="err">单独记录</span><span class="n">lol域名业务的访客日志</span>
+</span></span><span class="line"><span class="cl"><span class="p">[</span><span class="n">root</span><span class="err">@</span><span class="n">web</span><span class="o">-</span><span class="mi">8</span> <span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">nginx</span><span class="o">/</span><span class="n">conf</span><span class="o">.</span><span class="n">d</span><span class="p">]</span><span class="c1">#cat lol.linux0224.conf </span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">log_format</span>  <span class="n">main2</span>  <span class="s1">&#39;$remote_addr - $remote_user [$time_local] &#34;$request&#34; &#39;</span>
+</span></span><span class="line"><span class="cl">                      <span class="s1">&#39;$status $body_bytes_sent &#34;$http_referer&#34; &#39;</span>
+</span></span><span class="line"><span class="cl">                      <span class="s1">&#39;&#34;$http_user_agent&#34; &#34;$http_x_forwarded_for&#34;&#39;</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">server</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="n">access_log</span>  <span class="o">/</span><span class="k">var</span><span class="o">/</span><span class="nb">log</span><span class="o">/</span><span class="n">nginx</span><span class="o">/</span><span class="n">lol</span><span class="o">.</span><span class="n">linux0224</span><span class="o">.</span><span class="n">cc</span><span class="o">.</span><span class="n">access</span><span class="o">.</span><span class="n">log</span>  <span class="n">main2</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="n">listen</span> <span class="mi">80</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="n">server_name</span> <span class="n">lol</span><span class="o">.</span><span class="n">linux0224</span><span class="o">.</span><span class="n">cc</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">	<span class="n">charset</span> <span class="n">utf</span><span class="o">-</span><span class="mi">8</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="n">location</span> <span class="o">/</span>  <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="n">root</span>  <span class="o">/</span><span class="n">www</span><span class="o">/</span><span class="n">lol</span><span class="o">/</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">        <span class="n">index</span>  <span class="n">index</span><span class="o">.</span><span class="n">html</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="mf">4.</span><span class="err">注意，开启</span><span class="n">access_log日志的参数</span><span class="err">，可以写在</span><span class="n">server</span><span class="p">{}</span><span class="err">区域里，但是日志格式化的参数，只能写在</span><span class="n">http</span><span class="p">{}</span><span class="err">区域中</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="测试不同虚拟主机的日志记录">测试不同虚拟主机的日志记录
+</h3><p>现在有2个虚拟主机，单独记录了日志</p>
+<h4 id="dnf页面的访问情况与日志记录">dnf页面的访问情况，与日志记录
+</h4><p><img src="/nginx%e5%9f%ba%e7%a1%80%e7%af%87/assets/image-20220519144008892.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="image-20220519144008892"
+	
+	
+></p>
+<h2 id="其他虚拟主机的日志记录情况">其他虚拟主机的日志记录情况
+</h2><p>解读日志的写入顺序</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span><span class="lnt">43
+</span><span class="lnt">44
+</span><span class="lnt">45
+</span><span class="lnt">46
+</span><span class="lnt">47
+</span><span class="lnt">48
+</span><span class="lnt">49
+</span><span class="lnt">50
+</span><span class="lnt">51
+</span><span class="lnt">52
+</span><span class="lnt">53
+</span><span class="lnt">54
+</span><span class="lnt">55
+</span><span class="lnt">56
+</span><span class="lnt">57
+</span><span class="lnt">58
+</span><span class="lnt">59
+</span><span class="lnt">60
+</span><span class="lnt">61
+</span><span class="lnt">62
+</span><span class="lnt">63
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-gdscript3" data-lang="gdscript3"><span class="line"><span class="cl"><span class="err">看你如何设计了，你是继续针对每一个虚拟主机，添加日志</span>
+</span></span><span class="line"><span class="cl"><span class="err">遵循上述讲解的语法</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="mf">1.</span> <span class="err">给</span><span class="n">dnf和lol这两个三级域名</span><span class="err">，子业务的网站，单独记录访客日志</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="o">-</span><span class="n">rw</span><span class="o">-</span><span class="n">r</span><span class="o">--</span><span class="n">r</span><span class="o">--</span> <span class="mi">1</span> <span class="n">root</span> <span class="n">root</span> <span class="mi">3310</span> <span class="n">May</span> <span class="mi">19</span> <span class="mi">14</span><span class="p">:</span><span class="mi">55</span> <span class="n">dnf</span><span class="o">.</span><span class="n">linux0224</span><span class="o">.</span><span class="n">cc</span><span class="o">.</span><span class="n">access</span><span class="o">.</span><span class="n">log</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="o">-</span><span class="n">rw</span><span class="o">-</span><span class="n">r</span><span class="o">--</span><span class="n">r</span><span class="o">--</span> <span class="mi">1</span> <span class="n">root</span> <span class="n">root</span> <span class="mi">2341</span> <span class="n">May</span> <span class="mi">19</span> <span class="mi">14</span><span class="p">:</span><span class="mi">55</span> <span class="n">lol</span><span class="o">.</span><span class="n">linux0224</span><span class="o">.</span><span class="n">cc</span><span class="o">.</span><span class="n">access</span><span class="o">.</span><span class="n">log</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="mf">2.</span> <span class="err">剩余其他的虚拟主机日志，全部统一记录到</span> <span class="o">/</span><span class="k">var</span><span class="o">/</span><span class="nb">log</span><span class="o">/</span><span class="n">nginx</span><span class="o">/</span><span class="n">all</span><span class="o">-</span><span class="n">server</span><span class="o">-</span><span class="n">accesss</span><span class="o">.</span><span class="n">log</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="err">如下写法，就会去记录，除了你单独指定的虚拟主机的日志，剩下的日志，都会写入到这个</span><span class="n">all</span><span class="o">-</span><span class="n">server</span><span class="o">-</span><span class="n">accesss</span><span class="o">.</span><span class="n">log</span> <span class="err">文件中</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">nginx</span><span class="o">.</span><span class="n">conf</span> <span class="err">主配置如下</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># 定义一个全局的设置</span>
+</span></span><span class="line"><span class="cl"><span class="n">http</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="n">include</span>       <span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">nginx</span><span class="o">/</span><span class="n">mime</span><span class="o">.</span><span class="n">types</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="n">default_type</span>  <span class="n">application</span><span class="o">/</span><span class="n">octet</span><span class="o">-</span><span class="n">stream</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="n">log_format</span>  <span class="n">main3</span>  <span class="s1">&#39;$document_uri  $remote_addr - $remote_user [$time_local] &#34;$request&#34; &#39;</span>
+</span></span><span class="line"><span class="cl">                      <span class="s1">&#39;$status $body_bytes_sent &#34;$http_referer&#34; &#39;</span>
+</span></span><span class="line"><span class="cl">                      <span class="s1">&#39;&#34;$http_user_agent&#34; &#34;$http_x_forwarded_for&#34;&#39;</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="n">access_log</span>  <span class="o">/</span><span class="k">var</span><span class="o">/</span><span class="nb">log</span><span class="o">/</span><span class="n">nginx</span><span class="o">/</span><span class="n">all</span><span class="o">-</span><span class="n">server</span><span class="o">-</span><span class="n">accesss</span><span class="o">.</span><span class="n">log</span>  <span class="n">main3</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="n">sendfile</span>        <span class="n">on</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">#tcp_nopush     on;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="n">keepalive_timeout</span>  <span class="mi">65</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="c1">#gzip  on;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="n">include</span> <span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">nginx</span><span class="o">/</span><span class="n">conf</span><span class="o">.</span><span class="n">d</span><span class="o">/*.</span><span class="n">conf</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># 单独的虚拟主机，单独设置即可。。</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># 检测所有的日志</span>
+</span></span><span class="line"><span class="cl"><span class="p">[</span><span class="n">root</span><span class="err">@</span><span class="n">web</span><span class="o">-</span><span class="mi">8</span> <span class="o">/</span><span class="k">var</span><span class="o">/</span><span class="nb">log</span><span class="o">/</span><span class="n">nginx</span><span class="p">]</span><span class="c1">#tail -f /var/log/nginx/*</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># nginx的配置，存在虚拟主机的匹配，匹配到谁，就读取谁的配置。</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># 只要是ip符合，port符合，并且有优先级加载顺序，就能匹配上</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="mf">10.0</span><span class="o">.</span><span class="mf">0.8</span><span class="p">:</span><span class="mi">80</span>   <span class="err">这个</span><span class="n">ip</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="err">你只要构造符合条件的</span> <span class="err">请求即可。</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="err">第一种虚拟主机，符合</span> <span class="mf">10.0</span><span class="o">.</span><span class="mf">0.8</span><span class="p">:</span><span class="mi">80</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="err">第二种虚拟主机。符合，修改了端口的</span>  <span class="mf">10.0</span><span class="o">.</span><span class="mf">0.8</span><span class="p">:</span><span class="mi">81</span>  <span class="mf">10.0</span><span class="o">.</span><span class="mf">0.8</span><span class="p">:</span><span class="mi">82</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="err">第三种虚拟主机，符合修改了</span><span class="n">ip的</span>  <span class="mf">10.0</span><span class="o">.</span><span class="mf">0.88</span><span class="p">:</span><span class="mi">80</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="err">练习的目的，在于搞懂，你有几个虚拟主机，以及你的请求，与哪一个虚拟主机匹配上了。</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># 单独给 lol.linux0224.cc 设置了日志</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># 单独给 dnf.linux0224.cc 设置了日志</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># 其他的虚拟主机，就会默认匹配 http{ 设置的全局 日志参数了}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><blockquote>
+<p>只有针对单个的网站业务，记录的日志，才有提取，分析的意义。</p>
+</blockquote>
+<h2 id="nginx提供的日志">nginx提供的日志
+</h2><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">记录用户访问记录的 ，access_log
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">记录nginx运行错误的日志  error_log
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">关于该参数的官网文档，以及具体的用法
+</span></span><span class="line"><span class="cl">https://nginx.org/en/docs/ngx_core_module.html#error_log
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">和access_log用法一样去以及
+</span></span><span class="line"><span class="cl">http{}
+</span></span><span class="line"><span class="cl">server{} 区域里面
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">Syntax:	error_log file [level];
+</span></span><span class="line"><span class="cl">Default:	
+</span></span><span class="line"><span class="cl">error_log logs/error.log error;
+</span></span><span class="line"><span class="cl">Context:	main, http, mail, stream, server, location
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">具体的level是指，日志记录的详细程度
+</span></span><span class="line"><span class="cl">有这些值让你填写
+</span></span><span class="line"><span class="cl">debug, info, notice, warn, error, crit, alert
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">从左到右，详细程度分别是 从 大  &gt;&gt;&gt; 小
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">debug 会记录超级详细的信息，没必要，占用大量的磁盘空间
+</span></span><span class="line"><span class="cl">crit 表示nginx以及出现严重错误，以及崩溃了，才记录日志。。记录的内容太少
+</span></span><span class="line"><span class="cl">一般用的，以及默认的就是error日志级别，能够记录基本的，常见错误。
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="错误日志">错误日志
+</h2><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-gdscript3" data-lang="gdscript3"><span class="line"><span class="cl"><span class="mf">1.</span> <span class="err">如何开启</span><span class="n">error级别的错误日志</span><span class="err">。</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># 单独给的lol虚拟主机网址，设置错误日志，eroor级别 ，配置如下</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># 支持写入http{}  server{}</span>
+</span></span><span class="line"><span class="cl"><span class="p">[</span><span class="n">root</span><span class="err">@</span><span class="n">web</span><span class="o">-</span><span class="mi">8</span> <span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">nginx</span><span class="o">/</span><span class="n">conf</span><span class="o">.</span><span class="n">d</span><span class="p">]</span><span class="c1">#cat  lol.linux0224.conf </span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">log_format</span>  <span class="n">main2</span>  <span class="s1">&#39;$remote_addr - $remote_user [$time_local] &#34;$request&#34; &#39;</span>
+</span></span><span class="line"><span class="cl">                      <span class="s1">&#39;$status $body_bytes_sent &#34;$http_referer&#34; &#39;</span>
+</span></span><span class="line"><span class="cl">                      <span class="s1">&#39;&#34;$http_user_agent&#34; &#34;$http_x_forwarded_for&#34;&#39;</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">server</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="n">access_log</span>  <span class="o">/</span><span class="k">var</span><span class="o">/</span><span class="nb">log</span><span class="o">/</span><span class="n">nginx</span><span class="o">/</span><span class="n">lol</span><span class="o">.</span><span class="n">linux0224</span><span class="o">.</span><span class="n">cc</span><span class="o">.</span><span class="n">access</span><span class="o">.</span><span class="n">log</span>  <span class="n">main2</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="n">error_log</span> <span class="o">/</span><span class="k">var</span><span class="o">/</span><span class="nb">log</span><span class="o">/</span><span class="n">nginx</span><span class="o">/</span><span class="n">lol</span><span class="o">-</span><span class="n">error</span><span class="o">.</span><span class="n">log</span> <span class="n">error</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="n">listen</span> <span class="mi">80</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="n">server_name</span> <span class="n">lol</span><span class="o">.</span><span class="n">linux0224</span><span class="o">.</span><span class="n">cc</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">	<span class="n">charset</span> <span class="n">utf</span><span class="o">-</span><span class="mi">8</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="n">location</span> <span class="o">/</span>  <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="n">root</span>  <span class="o">/</span><span class="n">www</span><span class="o">/</span><span class="n">lol</span><span class="o">/</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">        <span class="n">index</span>  <span class="n">index</span><span class="o">.</span><span class="n">html</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="err">重启服务</span>
+</span></span><span class="line"><span class="cl"><span class="p">[</span><span class="n">root</span><span class="err">@</span><span class="n">web</span><span class="o">-</span><span class="mi">8</span> <span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">nginx</span><span class="o">/</span><span class="n">conf</span><span class="o">.</span><span class="n">d</span><span class="p">]</span><span class="c1">#systemctl restart nginx</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="err">检查日志</span>
+</span></span><span class="line"><span class="cl"><span class="p">[</span><span class="n">root</span><span class="err">@</span><span class="n">web</span><span class="o">-</span><span class="mi">8</span> <span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">nginx</span><span class="o">/</span><span class="n">conf</span><span class="o">.</span><span class="n">d</span><span class="p">]</span><span class="c1">#tail -f /var/log/nginx/lol-error.log </span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="err">错误日志的，特点是记录，访问时的出错信息</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h1 id="404页面优化">404页面优化
+</h1><h2 id="error_page模块">error_page模块
+</h2><p>错误页面优化，nginx，默认访问出错后，会返回不同的错误页面</p>
+<p>如 -</p>
+<ul>
+<li>40x系列的页面
+<ul>
+<li>404 not found 服务器上找不到该资源</li>
+<li>403 Forbidden 禁止访问（权限不够，找权限的问题）</li>
+</ul>
+</li>
+<li>如50x系列的页面
+<ul>
+<li>学nginx反向代理</li>
+</ul>
+</li>
+<li>但是默认的都太丑，对其优化</li>
+</ul>
+<p><a class="link" href="http://nginx.org/cn/docs/http/ngx_http_core_module.html"  target="_blank" rel="noopener"
+    >http://nginx.org/cn/docs/http/ngx_http_core_module.html</a></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">给全局设置、给虚拟主机设置。
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">1. 如何单独设置40x错误的页面优化
+</span></span><span class="line"><span class="cl">2. 如何设置50x系列的错误页面
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="淘宝的错误页面">淘宝的错误页面
+</h2><p><img src="/nginx%e5%9f%ba%e7%a1%80%e7%af%87/pic/image-20220519154315579.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="image-20220519154315579"
+	
+	
+></p>
+<hr>
+<p><img src="/nginx%e5%9f%ba%e7%a1%80%e7%af%87/pic/image-20220519154428506.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="image-20220519154428506"
+	
+	
+></p>
+<h2 id="语法">语法
+</h2><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl"># error_page  响应状态码    相对路径的html文件/ 填入url ; 
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">error_page 404             /404.html;
+</span></span><span class="line"><span class="cl">error_page 500 502 503 504 /50x.html;
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="优化错误页面指向本地的html文件">优化错误页面，指向本地的html文件
+</h3><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-gdscript3" data-lang="gdscript3"><span class="line"><span class="cl"><span class="err">针对</span><span class="n">lol的虚拟主机设置</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="p">[</span><span class="n">root</span><span class="err">@</span><span class="n">web</span><span class="o">-</span><span class="mi">8</span> <span class="o">~</span><span class="p">]</span><span class="c1">#cat /etc/nginx/conf.d/lol.linux0224.conf </span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">log_format</span>  <span class="n">main2</span>  <span class="s1">&#39;$remote_addr - $remote_user [$time_local] &#34;$request&#34; &#39;</span>
+</span></span><span class="line"><span class="cl">                      <span class="s1">&#39;$status $body_bytes_sent &#34;$http_referer&#34; &#39;</span>
+</span></span><span class="line"><span class="cl">                      <span class="s1">&#39;&#34;$http_user_agent&#34; &#34;$http_x_forwarded_for&#34;&#39;</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># 当404错误时，返回当前机器上的my404.html</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># 当403错误时，跳转到淘宝这个错误页面上</span>
+</span></span><span class="line"><span class="cl"><span class="n">server</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="n">access_log</span>  <span class="o">/</span><span class="k">var</span><span class="o">/</span><span class="nb">log</span><span class="o">/</span><span class="n">nginx</span><span class="o">/</span><span class="n">lol</span><span class="o">.</span><span class="n">linux0224</span><span class="o">.</span><span class="n">cc</span><span class="o">.</span><span class="n">access</span><span class="o">.</span><span class="n">log</span>  <span class="n">main2</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="n">error_log</span> <span class="o">/</span><span class="k">var</span><span class="o">/</span><span class="nb">log</span><span class="o">/</span><span class="n">nginx</span><span class="o">/</span><span class="n">lol</span><span class="o">-</span><span class="n">error</span><span class="o">.</span><span class="n">log</span> <span class="n">error</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="n">error_page</span>  <span class="mi">404</span>  <span class="o">/</span><span class="n">my404</span><span class="o">.</span><span class="n">html</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="n">error_page</span>   <span class="mi">403</span>   <span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">error</span><span class="o">.</span><span class="n">taobao</span><span class="o">.</span><span class="n">com</span><span class="o">/</span><span class="n">app</span><span class="o">/</span><span class="n">tbhome</span><span class="o">/</span><span class="n">common</span><span class="o">/</span><span class="n">error</span><span class="o">.</span><span class="n">html</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="n">listen</span> <span class="mi">80</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="n">server_name</span> <span class="n">lol</span><span class="o">.</span><span class="n">linux0224</span><span class="o">.</span><span class="n">cc</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">	<span class="n">charset</span> <span class="n">utf</span><span class="o">-</span><span class="mi">8</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="n">location</span> <span class="o">/</span>  <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="n">root</span>  <span class="o">/</span><span class="n">www</span><span class="o">/</span><span class="n">lol</span><span class="o">/</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">        <span class="n">index</span>  <span class="n">index</span><span class="o">.</span><span class="n">html</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># 创建404错误页面 </span>
+</span></span><span class="line"><span class="cl"><span class="n">echo</span> <span class="s2">&#34;我是美丽的404错误页面，你访问的资源不存在该服务器上！！！请检查你的URL&#34;</span>  <span class="o">&gt;</span> <span class="o">/</span><span class="n">www</span><span class="o">/</span><span class="n">lol</span><span class="o">/</span><span class="n">my404</span><span class="o">.</span><span class="n">html</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="p">[</span><span class="n">root</span><span class="err">@</span><span class="n">web</span><span class="o">-</span><span class="mi">8</span> <span class="o">~</span><span class="p">]</span><span class="c1">#nginx -t</span>
+</span></span><span class="line"><span class="cl"><span class="n">nginx</span><span class="p">:</span> <span class="n">the</span> <span class="n">configuration</span> <span class="n">file</span> <span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">nginx</span><span class="o">/</span><span class="n">nginx</span><span class="o">.</span><span class="n">conf</span> <span class="n">syntax</span> <span class="n">is</span> <span class="n">ok</span>
+</span></span><span class="line"><span class="cl"><span class="n">nginx</span><span class="p">:</span> <span class="n">configuration</span> <span class="n">file</span> <span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">nginx</span><span class="o">/</span><span class="n">nginx</span><span class="o">.</span><span class="n">conf</span> <span class="n">test</span> <span class="n">is</span> <span class="n">successful</span>
+</span></span><span class="line"><span class="cl"><span class="p">[</span><span class="n">root</span><span class="err">@</span><span class="n">web</span><span class="o">-</span><span class="mi">8</span> <span class="o">~</span><span class="p">]</span><span class="c1">#</span>
+</span></span><span class="line"><span class="cl"><span class="p">[</span><span class="n">root</span><span class="err">@</span><span class="n">web</span><span class="o">-</span><span class="mi">8</span> <span class="o">~</span><span class="p">]</span><span class="c1">#</span>
+</span></span><span class="line"><span class="cl"><span class="p">[</span><span class="n">root</span><span class="err">@</span><span class="n">web</span><span class="o">-</span><span class="mi">8</span> <span class="o">~</span><span class="p">]</span><span class="c1">#systemctl restart nginx</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="再次测试错误页面针对lol这个虚拟主机">再次测试错误页面，针对lol这个虚拟主机
+</h2><h3 id="404错误页面">404错误页面
+</h3><p>从网站优化，用户体验角度设置的功能</p>
+<p><img src="/nginx%e5%9f%ba%e7%a1%80%e7%af%87/pic/image-20220519155624599.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="image-20220519155624599"
+	
+	
+></p>
+<h2 id="403错误的设置">403错误的设置
+</h2><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">指定跳转到另一个url，
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/nginx%e5%9f%ba%e7%a1%80%e7%af%87/pic/image-20220519160052970.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="image-20220519160052970"
+	
+	
+></p>
+<h2 id="403指定跳转到当前机器的一个文件">403指定跳转到当前机器的一个文件
+</h2><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-gdscript3" data-lang="gdscript3"><span class="line"><span class="cl"><span class="p">[</span><span class="n">root</span><span class="err">@</span><span class="n">web</span><span class="o">-</span><span class="mi">8</span> <span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">nginx</span><span class="o">/</span><span class="n">conf</span><span class="o">.</span><span class="n">d</span><span class="p">]</span><span class="c1">#cat lol.linux0224.conf </span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">log_format</span>  <span class="n">main2</span>  <span class="s1">&#39;$remote_addr - $remote_user [$time_local] &#34;$request&#34; &#39;</span>
+</span></span><span class="line"><span class="cl">                      <span class="s1">&#39;$status $body_bytes_sent &#34;$http_referer&#34; &#39;</span>
+</span></span><span class="line"><span class="cl">                      <span class="s1">&#39;&#34;$http_user_agent&#34; &#34;$http_x_forwarded_for&#34;&#39;</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">server</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="n">access_log</span>  <span class="o">/</span><span class="k">var</span><span class="o">/</span><span class="nb">log</span><span class="o">/</span><span class="n">nginx</span><span class="o">/</span><span class="n">lol</span><span class="o">.</span><span class="n">linux0224</span><span class="o">.</span><span class="n">cc</span><span class="o">.</span><span class="n">access</span><span class="o">.</span><span class="n">log</span>  <span class="n">main2</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="n">error_log</span> <span class="o">/</span><span class="k">var</span><span class="o">/</span><span class="nb">log</span><span class="o">/</span><span class="n">nginx</span><span class="o">/</span><span class="n">lol</span><span class="o">-</span><span class="n">error</span><span class="o">.</span><span class="n">log</span> <span class="n">error</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="n">error_page</span>  <span class="mi">404</span>  <span class="o">/</span><span class="n">my404</span><span class="o">.</span><span class="n">html</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="n">error_page</span>  <span class="mi">403</span>  <span class="o">/</span><span class="n">my403</span><span class="o">.</span><span class="n">html</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="n">listen</span> <span class="mi">80</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="n">server_name</span> <span class="n">lol</span><span class="o">.</span><span class="n">linux0224</span><span class="o">.</span><span class="n">cc</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">	<span class="n">charset</span> <span class="n">utf</span><span class="o">-</span><span class="mi">8</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="n">location</span> <span class="o">/</span>  <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="n">root</span>  <span class="o">/</span><span class="n">www</span><span class="o">/</span><span class="n">lol</span><span class="o">/</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">        <span class="n">index</span>  <span class="n">index</span><span class="o">.</span><span class="n">html</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="最后的测试403和404页面优化">最后的测试。403，和404页面优化
+</h2><p><img src="/nginx%e5%9f%ba%e7%a1%80%e7%af%87/pic/image-20220519160251412.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="image-20220519160251412"
+	
+	
+></p>
+<p>.</p>
+<p><img src="/nginx%e5%9f%ba%e7%a1%80%e7%af%87/pic/image-20220519160319630.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="image-20220519160319630"
+	
+	
+></p>
+<h1 id="内容回顾">内容回顾
+</h1><ul>
+<li>
+<p>web协议篇</p>
+<ul>
+<li>
+<p>tcp/ip协议的，三次握手，四次挥手</p>
+<ul>
+<li>client和server、之间会收发的数据包，wireshare去抓包看实际效果</li>
+<li>发送的数据包的次数</li>
+<li>以及数据包它的格式（tcp中对数据包设置的flag标志位）</li>
+<li>SYN建立连接的标志（对数据包的标记flag，表示本次数据包的作用）</li>
+<li>ACK 对上一次请求的确认回复。</li>
+<li>FIN，发出一个终止tcp连接的请求的数据包</li>
+</ul>
+</li>
+<li>
+<p>OSI七层模型，背诵出来（这个网络知识，前期你不会用到太多，基本的ip地址概念有就行，机器之间的网络通信概念，你需要找时间，课外时间，找点书看看。。）</p>
+</li>
+<li>
+<p>网络中的数据传递，是端对端的传递，机器A要基于OSI模型的数据发出，机器B也要基于OSI模型的数据接收</p>
+<ul>
+<li>
+<p>从最底层的硬件，到mac地址，网线，到传输，应用层</p>
+<ul>
+<li>
+<p>1.物理层</p>
+<ul>
+<li>硬件网卡，对电信号的字节流，进行接收，传递的。。</li>
+</ul>
+</li>
+<li>
+<p>2.链路层，二层交换机，网桥（端对端的数据传递）</p>
+<ul>
+<li>网卡物理地址，mac地址，是全球唯一的网卡的唯一标号</li>
+</ul>
+</li>
+<li>
+<p>3.网络层，IP地址就在这定义的，路由的指定（数据从A点传到B点的路线，路由，路由有下一跳的关键字）</p>
+<ul>
+<li>关键字，IP地址（局域网，私有网段，192.168.0.xx）
+<ul>
+<li>路由器（自动的寻找，设定路线，数据源从哪发，要发到那里去，中间这个路线怎么定义）</li>
+</ul>
+</li>
+<li>淮安的快递，寄到苏州
+<ul>
+<li>路由，淮安到苏州的路线（高德地图去看看）</li>
+<li>淮安 &gt; 扬州 &gt; 南京 &gt; 南通 &gt; 昆山  &gt; 苏州 （下一跳，下一跳的理念）</li>
+<li>数据包的传输，从数据源发出，到下一跳（路由器），再到下一跳（路由器） 。。。（N个路由器），到达目的地</li>
+</ul>
+</li>
+</ul>
+<p>前三层，定义了网络的物理环境，网络硬件+网络地址环境</p>
+<p>从3.网络层建立连接后，后续的就是基于网络协议的数据传输了（协议就是控制数据包的传递格式，抓包工具可以看到这个数据包，被添加了很多字段，还都是有意义的）</p>
+<p>（简单理解就是你发的那个快递， 上面贴了一堆标签，严格定义，只能往哪个城市发，往哪个快递点发，发给那个小区，的谁。。数据包的封装）</p>
+</li>
+<li>
+<ol start="4">
+<li>数据可以基于协议发送了，（传输层，用于建立tcp/ip的连接，并且是socket形式的连接，ip:port的端对端的数据交互），</li>
+<li>会话层（数据包的传递，本身是没有身份验证的，cookie技术，记录会话身份的）</li>
+<li>表示层（基于复杂的逻辑处理， 图片的二进制数据的编码）</li>
+<li>应用层（丰富的各种软件，工作在这一层，以HTTP为代表）</li>
+</ol>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h2 id="基于web协议通信的软件实践nginx技术">基于web协议通信的软件实践（nginx技术）
+</h2><p>server和client的web数据交互</p>
+</li>
+</ul>
+<h2 id="nginx的核心功能">nginx的核心功能
+</h2><p>nginx.conf最核心的几大块</p>
+<ul>
+<li>
+<p>每一条语句结尾必须是分号结束</p>
+</li>
+<li>
+<p>以区段形式的配置参数，需要有闭合的花括号 {}</p>
+</li>
+<li>
+<p>不同作用域的配置参数，不能瞎嵌套</p>
+<ul>
+<li>server{}是用于定义nginx的 http核心模块功能的子配置，必须防止在http{}括号中</li>
+<li>写在http{}外层，与其同级，语法报错</li>
+</ul>
+</li>
+<li>
+<p>include配置参数</p>
+<ul>
+<li>导入外部的配置文件，优化，简化主配置文件的格式</li>
+<li><code>http{}利用include导入外部的 server{}配置</code>
+<ul>
+<li>include得写在http{}花括号内，才表示给这个区域导入外部的配置文件</li>
+<li>只针对http{}区域生效。</li>
+</ul>
+</li>
+</ul>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span><span class="lnt">43
+</span><span class="lnt">44
+</span><span class="lnt">45
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl"># /etc/nginx/nginx.conf 
+</span></span><span class="line"><span class="cl"># 导入外部的虚拟主机
+</span></span><span class="line"><span class="cl">http{
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	xxxxx;
+</span></span><span class="line"><span class="cl">	xxxxx;
+</span></span><span class="line"><span class="cl">	include /etc/nginx/extra/*.conf;
+</span></span><span class="line"><span class="cl">}
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"># 后续你就可以去创建单独的虚拟主机文件了
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">vim /etc/nginx/extra/my_blog.conf
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">#写入虚拟主机配置
+</span></span><span class="line"><span class="cl">server {
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	# 端口号
+</span></span><span class="line"><span class="cl">	listen 80;
+</span></span><span class="line"><span class="cl">	# 域名匹配
+</span></span><span class="line"><span class="cl">	server_name _; #不做域名匹配，只根据虚拟主机内的port去匹配
+</span></span><span class="line"><span class="cl">	# 基于URL的匹配，在定位到具体的虚拟主机后，去哪找数据
+</span></span><span class="line"><span class="cl">	# nginx强大的基于url处理用户请求吗，就是基于location来的
+</span></span><span class="line"><span class="cl">	location / {
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">		# 定义网站根目录
+</span></span><span class="line"><span class="cl">		root  /www/myblog/;
+</span></span><span class="line"><span class="cl">		# 定义首页文件
+</span></span><span class="line"><span class="cl">		index   index.html;
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	}
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">}
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"># 我们会有多个虚拟主机配置文件
+</span></span><span class="line"><span class="cl">vim /etc/nginx/extra/crm.conf
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">server {
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	# 端口号，端口一般不变，浏览器默认是80，用户都得主动添加这个端口
+</span></span><span class="line"><span class="cl">	listen 80;
+</span></span><span class="line"><span class="cl">	# 域名匹配
+</span></span><span class="line"><span class="cl">	server_name crm.linux0224.com;
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">}
+</span></span></code></pre></td></tr></table>
+</div>
+</div></li>
+</ul>
+<p>nginx.conf</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">user  www;
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">http{
+</span></span><span class="line"><span class="cl">	数据传输性能相关的参数;
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">        server{}  区域中主要定义 单个的网站的处理
+</span></span><span class="line"><span class="cl">            网站的根目录，静态数据存放的地方
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">        server{
+</span></span><span class="line"><span class="cl">            端口
+</span></span><span class="line"><span class="cl">            域名匹配
+</span></span><span class="line"><span class="cl">            URL处理
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">        } 网站1
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">        server{} 网站2
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">        server{} 网站3
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">} 定义全局的一些关于http请求响应处理的参数
+</span></span></code></pre></td></tr></table>
+</div>
+</div><ul>
+<li>
+<p>nginx支持多种日志</p>
+<ul>
+<li>
+<p>访客日志</p>
+<ul>
+<li>client给server发出请求，基于访问某一个URL来的</li>
+<li>client请求报文发来了，包含了client的具体信息，服务端如何提取这些信息，以及后续的处理
+<ul>
+<li>nginx支持了大量的内置变量，提取这些请求报文中的数据。然后后续的处理。</li>
+<li></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<ul>
+<li>错误日志</li>
+</ul>
+
+</section>
+
+
+    <footer class="article-footer">
+    
+
+    </footer>
+
+
+    
+</article>
+
+    
+
+    
+
+     
+    
+        
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+        2025 小诗
+    </section>
+    
+    <section class="powerby">
+        使用 <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> 构建 <br />
+        主题 <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.26.0">Stack</a></b> 由 <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a> 设计
+    </section>
+</footer>
+
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css"crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css"crossorigin="anonymous"
+            >
+
+            </main>
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.6/dist/vibrant.min.js"integrity="sha256-awcR2jno4kI5X0zL8ex0vi2z&#43;KMkF24hUW8WePSA9HM="crossorigin="anonymous"
+                
+                >
+            </script><script type="text/javascript" src="/xiaoshi/ts/main.js" defer></script>
+<script>
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+
+    </body>
+</html>
