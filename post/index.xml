@@ -11908,10 +11908,10 @@ MariaDB基于事务的Maria存储引擎,替换了MySQL的MyiSAM存储引擎,使�
 &lt;/li&gt;
 &lt;/ul&gt;
 &lt;h2 id=&#34;综合架构图&#34;&gt;综合架构图
-&lt;/h2&gt;&lt;p&gt;![屏幕截图 2024-09-04 090012](D:/desktop/myblog/myblog/content/post/Linux综合架构/assets/屏幕截图 2024-09-04 090012.png)&lt;/p&gt;
+&lt;/h2&gt;&lt;p&gt;![屏幕截图 2024-09-04 090012](assets/屏幕截图 2024-09-04 090012.png)&lt;/p&gt;
 &lt;hr&gt;
-&lt;p&gt;![屏幕截图 2024-09-04 090215](D:/desktop/myblog/myblog/content/post/Linux综合架构/assets/屏幕截图 2024-09-04 090215.png)&lt;/p&gt;
-&lt;p&gt;![](D:/desktop/myblog/myblog/content/post/Linux综合架构/assets/屏幕截图 2024-09-04 150442.png)&lt;/p&gt;
+&lt;p&gt;![屏幕截图 2024-09-04 090215](assets/屏幕截图 2024-09-04 090215.png)&lt;/p&gt;
+&lt;p&gt;![](assets/屏幕截图 2024-09-04 150442.png)&lt;/p&gt;
 &lt;h1 id=&#34;今日任务&#34;&gt;今日任务
 &lt;/h1&gt;&lt;p&gt;创建虚拟机，为实验环境做准备&lt;/p&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
@@ -12055,14 +12055,18 @@ MariaDB基于事务的Maria存储引擎,替换了MySQL的MyiSAM存储引擎,使�
 &lt;p&gt;1.关闭你之前旧的所有虚拟机，甚至删除也行，别开机，因为你之前修改过网络设置&lt;/p&gt;
 &lt;p&gt;2.你这里要修改新的网络设置，需要修改vmware的虚拟网络编辑器（实测要关闭dhcp功能，反正我们都是用静态ip）&lt;/p&gt;
 &lt;/blockquote&gt;
-&lt;p&gt;&lt;img src=&#34;D:/desktop/myblog/myblog/content/post/Linux%e7%bb%bc%e5%90%88%e6%9e%b6%e6%9e%84/assets/image-20220417200406832.png&#34;
-	
-	
-	
+&lt;p&gt;&lt;img src=&#34;https://ZackMoel.github.io/xiaoshi/xiaoshi/p/linux%E7%BB%BC%E5%90%88%E6%9E%B6%E6%9E%84/assets/image-20220417200406832.png&#34;
+	width=&#34;2094&#34;
+	height=&#34;1628&#34;
+	srcset=&#34;https://ZackMoel.github.io/xiaoshi/xiaoshi/p/linux%E7%BB%BC%E5%90%88%E6%9E%B6%E6%9E%84/assets/image-20220417200406832_hu13966880979544075558.png 480w, https://ZackMoel.github.io/xiaoshi/xiaoshi/p/linux%E7%BB%BC%E5%90%88%E6%9E%B6%E6%9E%84/assets/image-20220417200406832_hu788799190663661875.png 1024w&#34;
 	loading=&#34;lazy&#34;
 	
 		alt=&#34;image-20220417200406832&#34;
 	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;128&#34;
+		data-flex-basis=&#34;308px&#34;
 	
 &gt;&lt;/p&gt;
 &lt;h2 id=&#34;1创建新虚拟机模板机&#34;&gt;1.创建新虚拟机（模板机）
@@ -12085,14 +12089,18 @@ MariaDB基于事务的Maria存储引擎,替换了MySQL的MyiSAM存储引擎,使�
 &lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
 &lt;/div&gt;
 &lt;/div&gt;&lt;p&gt;再添加另一块网卡（充当内网环境的网卡）&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;D:/desktop/myblog/myblog/content/post/Linux%e7%bb%bc%e5%90%88%e6%9e%b6%e6%9e%84/assets/image-20220417173157770.png&#34;
-	
-	
-	
+&lt;p&gt;&lt;img src=&#34;https://ZackMoel.github.io/xiaoshi/xiaoshi/p/linux%E7%BB%BC%E5%90%88%E6%9E%B6%E6%9E%84/assets/image-20220417173157770.png&#34;
+	width=&#34;3976&#34;
+	height=&#34;2352&#34;
+	srcset=&#34;https://ZackMoel.github.io/xiaoshi/xiaoshi/p/linux%E7%BB%BC%E5%90%88%E6%9E%B6%E6%9E%84/assets/image-20220417173157770_hu10111090024213843345.png 480w, https://ZackMoel.github.io/xiaoshi/xiaoshi/p/linux%E7%BB%BC%E5%90%88%E6%9E%B6%E6%9E%84/assets/image-20220417173157770_hu10084134810245649152.png 1024w&#34;
 	loading=&#34;lazy&#34;
 	
 		alt=&#34;image-20220417173157770&#34;
 	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;169&#34;
+		data-flex-basis=&#34;405px&#34;
 	
 &gt;&lt;/p&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
@@ -12112,14 +12120,18 @@ MariaDB基于事务的Maria存储引擎,替换了MySQL的MyiSAM存储引擎,使�
 &lt;/div&gt;&lt;blockquote&gt;
 &lt;p&gt;图解双网卡的配置&lt;/p&gt;
 &lt;/blockquote&gt;
-&lt;p&gt;&lt;img src=&#34;D:/desktop/myblog/myblog/content/post/Linux%e7%bb%bc%e5%90%88%e6%9e%b6%e6%9e%84/assets/image-20220417174954548.png&#34;
-	
-	
-	
+&lt;p&gt;&lt;img src=&#34;https://ZackMoel.github.io/xiaoshi/xiaoshi/p/linux%E7%BB%BC%E5%90%88%E6%9E%B6%E6%9E%84/assets/image-20220417174954548.png&#34;
+	width=&#34;3040&#34;
+	height=&#34;2224&#34;
+	srcset=&#34;https://ZackMoel.github.io/xiaoshi/xiaoshi/p/linux%E7%BB%BC%E5%90%88%E6%9E%B6%E6%9E%84/assets/image-20220417174954548_hu10572546600669867382.png 480w, https://ZackMoel.github.io/xiaoshi/xiaoshi/p/linux%E7%BB%BC%E5%90%88%E6%9E%B6%E6%9E%84/assets/image-20220417174954548_hu2366516048140913096.png 1024w&#34;
 	loading=&#34;lazy&#34;
 	
 		alt=&#34;image-20220417174954548&#34;
 	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;136&#34;
+		data-flex-basis=&#34;328px&#34;
 	
 &gt;&lt;/p&gt;
 &lt;h2 id=&#34;2安装centos7&#34;&gt;2.安装centos7
@@ -12159,56 +12171,76 @@ MariaDB基于事务的Maria存储引擎,替换了MySQL的MyiSAM存储引擎,使�
 &lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;网关，10.0.0.254
 &lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
 &lt;/div&gt;
-&lt;/div&gt;&lt;p&gt;&lt;img src=&#34;D:/desktop/myblog/myblog/content/post/Linux%e7%bb%bc%e5%90%88%e6%9e%b6%e6%9e%84/assets/image-20220417165329264.png&#34;
-	
-	
-	
+&lt;/div&gt;&lt;p&gt;&lt;img src=&#34;https://ZackMoel.github.io/xiaoshi/xiaoshi/p/linux%E7%BB%BC%E5%90%88%E6%9E%B6%E6%9E%84/assets/image-20220417165329264.png&#34;
+	width=&#34;2854&#34;
+	height=&#34;1608&#34;
+	srcset=&#34;https://ZackMoel.github.io/xiaoshi/xiaoshi/p/linux%E7%BB%BC%E5%90%88%E6%9E%B6%E6%9E%84/assets/image-20220417165329264_hu6836688238560449142.png 480w, https://ZackMoel.github.io/xiaoshi/xiaoshi/p/linux%E7%BB%BC%E5%90%88%E6%9E%B6%E6%9E%84/assets/image-20220417165329264_hu5410928006981527316.png 1024w&#34;
 	loading=&#34;lazy&#34;
 	
 		alt=&#34;image-20220417165329264&#34;
 	
 	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;177&#34;
+		data-flex-basis=&#34;425px&#34;
+	
 &gt;&lt;/p&gt;
 &lt;hr&gt;
 &lt;p&gt;网络配置&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;D:/desktop/myblog/myblog/content/post/Linux%e7%bb%bc%e5%90%88%e6%9e%b6%e6%9e%84/assets/image-20240904084601289.png&#34;
-	
-	
-	
+&lt;p&gt;&lt;img src=&#34;https://ZackMoel.github.io/xiaoshi/xiaoshi/p/linux%E7%BB%BC%E5%90%88%E6%9E%B6%E6%9E%84/assets/image-20240904084601289.png&#34;
+	width=&#34;416&#34;
+	height=&#34;314&#34;
+	srcset=&#34;https://ZackMoel.github.io/xiaoshi/xiaoshi/p/linux%E7%BB%BC%E5%90%88%E6%9E%B6%E6%9E%84/assets/image-20240904084601289_hu15574099941246035481.png 480w, https://ZackMoel.github.io/xiaoshi/xiaoshi/p/linux%E7%BB%BC%E5%90%88%E6%9E%B6%E6%9E%84/assets/image-20240904084601289_hu15801085317079304608.png 1024w&#34;
 	loading=&#34;lazy&#34;
 	
 		alt=&#34;image-20240904084601289&#34;
 	
 	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;132&#34;
+		data-flex-basis=&#34;317px&#34;
+	
 &gt;&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;D:/desktop/myblog/myblog/content/post/Linux%e7%bb%bc%e5%90%88%e6%9e%b6%e6%9e%84/assets/image-20240904084506120.png&#34;
-	
-	
-	
+&lt;p&gt;&lt;img src=&#34;https://ZackMoel.github.io/xiaoshi/xiaoshi/p/linux%E7%BB%BC%E5%90%88%E6%9E%B6%E6%9E%84/assets/image-20240904084506120.png&#34;
+	width=&#34;423&#34;
+	height=&#34;324&#34;
+	srcset=&#34;https://ZackMoel.github.io/xiaoshi/xiaoshi/p/linux%E7%BB%BC%E5%90%88%E6%9E%B6%E6%9E%84/assets/image-20240904084506120_hu5976317981309077104.png 480w, https://ZackMoel.github.io/xiaoshi/xiaoshi/p/linux%E7%BB%BC%E5%90%88%E6%9E%B6%E6%9E%84/assets/image-20240904084506120_hu11203885831190113729.png 1024w&#34;
 	loading=&#34;lazy&#34;
 	
 		alt=&#34;image-20240904084506120&#34;
 	
 	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;130&#34;
+		data-flex-basis=&#34;313px&#34;
+	
 &gt;&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;D:/desktop/myblog/myblog/content/post/Linux%e7%bb%bc%e5%90%88%e6%9e%b6%e6%9e%84/assets/image-20240904084823026.png&#34;
-	
-	
-	
+&lt;p&gt;&lt;img src=&#34;https://ZackMoel.github.io/xiaoshi/xiaoshi/p/linux%E7%BB%BC%E5%90%88%E6%9E%B6%E6%9E%84/assets/image-20240904084823026.png&#34;
+	width=&#34;413&#34;
+	height=&#34;315&#34;
+	srcset=&#34;https://ZackMoel.github.io/xiaoshi/xiaoshi/p/linux%E7%BB%BC%E5%90%88%E6%9E%B6%E6%9E%84/assets/image-20240904084823026_hu7548900329403461512.png 480w, https://ZackMoel.github.io/xiaoshi/xiaoshi/p/linux%E7%BB%BC%E5%90%88%E6%9E%B6%E6%9E%84/assets/image-20240904084823026_hu14021755094445517535.png 1024w&#34;
 	loading=&#34;lazy&#34;
 	
 		alt=&#34;image-20240904084823026&#34;
 	
 	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;131&#34;
+		data-flex-basis=&#34;314px&#34;
+	
 &gt;&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;D:/desktop/myblog/myblog/content/post/Linux%e7%bb%bc%e5%90%88%e6%9e%b6%e6%9e%84/assets/image-20220417170201372.png&#34;
-	
-	
-	
+&lt;p&gt;&lt;img src=&#34;https://ZackMoel.github.io/xiaoshi/xiaoshi/p/linux%E7%BB%BC%E5%90%88%E6%9E%B6%E6%9E%84/assets/image-20220417170201372.png&#34;
+	width=&#34;2500&#34;
+	height=&#34;1596&#34;
+	srcset=&#34;https://ZackMoel.github.io/xiaoshi/xiaoshi/p/linux%E7%BB%BC%E5%90%88%E6%9E%B6%E6%9E%84/assets/image-20220417170201372_hu16264257641962211827.png 480w, https://ZackMoel.github.io/xiaoshi/xiaoshi/p/linux%E7%BB%BC%E5%90%88%E6%9E%B6%E6%9E%84/assets/image-20220417170201372_hu17013482159639907015.png 1024w&#34;
 	loading=&#34;lazy&#34;
 	
 		alt=&#34;image-20220417170201372&#34;
 	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;156&#34;
+		data-flex-basis=&#34;375px&#34;
 	
 &gt;&lt;/p&gt;
 &lt;p&gt;3.登录该机器&lt;/p&gt;
@@ -12220,14 +12252,18 @@ MariaDB基于事务的Maria存储引擎,替换了MySQL的MyiSAM存储引擎,使�
 &lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-fallback&#34; data-lang=&#34;fallback&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;ssh root@10.0.0.100
 &lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
 &lt;/div&gt;
-&lt;/div&gt;&lt;p&gt;&lt;img src=&#34;D:/desktop/myblog/myblog/content/post/Linux%e7%bb%bc%e5%90%88%e6%9e%b6%e6%9e%84/assets/image-20220417172327140.png&#34;
-	
-	
-	
+&lt;/div&gt;&lt;p&gt;&lt;img src=&#34;https://ZackMoel.github.io/xiaoshi/xiaoshi/p/linux%E7%BB%BC%E5%90%88%E6%9E%B6%E6%9E%84/assets/image-20220417172327140.png&#34;
+	width=&#34;1888&#34;
+	height=&#34;578&#34;
+	srcset=&#34;https://ZackMoel.github.io/xiaoshi/xiaoshi/p/linux%E7%BB%BC%E5%90%88%E6%9E%B6%E6%9E%84/assets/image-20220417172327140_hu8271890567399652759.png 480w, https://ZackMoel.github.io/xiaoshi/xiaoshi/p/linux%E7%BB%BC%E5%90%88%E6%9E%B6%E6%9E%84/assets/image-20220417172327140_hu4280484273154657262.png 1024w&#34;
 	loading=&#34;lazy&#34;
 	
 		alt=&#34;image-20220417172327140&#34;
 	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;326&#34;
+		data-flex-basis=&#34;783px&#34;
 	
 &gt;&lt;/p&gt;
 &lt;h2 id=&#34;3简化网卡配置文件&#34;&gt;3.简化网卡配置文件
@@ -12356,14 +12392,18 @@ MariaDB基于事务的Maria存储引擎,替换了MySQL的MyiSAM存储引擎,使�
 &lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
 &lt;/div&gt;
 &lt;/div&gt;&lt;p&gt;最后用你的windows、验证这两块网卡&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;D:/desktop/myblog/myblog/content/post/Linux%e7%bb%bc%e5%90%88%e6%9e%b6%e6%9e%84/assets/image-20220417182158958.png&#34;
-	
-	
-	
+&lt;p&gt;&lt;img src=&#34;https://ZackMoel.github.io/xiaoshi/xiaoshi/p/linux%E7%BB%BC%E5%90%88%E6%9E%B6%E6%9E%84/assets/image-20220417182158958.png&#34;
+	width=&#34;1268&#34;
+	height=&#34;662&#34;
+	srcset=&#34;https://ZackMoel.github.io/xiaoshi/xiaoshi/p/linux%E7%BB%BC%E5%90%88%E6%9E%B6%E6%9E%84/assets/image-20220417182158958_hu2918806404429785610.png 480w, https://ZackMoel.github.io/xiaoshi/xiaoshi/p/linux%E7%BB%BC%E5%90%88%E6%9E%B6%E6%9E%84/assets/image-20220417182158958_hu5365250601843166537.png 1024w&#34;
 	loading=&#34;lazy&#34;
 	
 		alt=&#34;image-20220417182158958&#34;
 	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;191&#34;
+		data-flex-basis=&#34;459px&#34;
 	
 &gt;&lt;/p&gt;
 &lt;h2 id=&#34;5系统初始化优化&#34;&gt;5.系统初始化优化
@@ -12661,25 +12701,33 @@ MariaDB基于事务的Maria存储引擎,替换了MySQL的MyiSAM存储引擎,使�
 &lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;systemctl restart network
 &lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
 &lt;/div&gt;
-&lt;/div&gt;&lt;p&gt;&lt;img src=&#34;D:/desktop/myblog/myblog/content/post/Linux%e7%bb%bc%e5%90%88%e6%9e%b6%e6%9e%84/assets/image-20220417210343097.png&#34;
-	
-	
-	
+&lt;/div&gt;&lt;p&gt;&lt;img src=&#34;https://ZackMoel.github.io/xiaoshi/xiaoshi/p/linux%E7%BB%BC%E5%90%88%E6%9E%B6%E6%9E%84/assets/image-20220417210343097.png&#34;
+	width=&#34;1858&#34;
+	height=&#34;1584&#34;
+	srcset=&#34;https://ZackMoel.github.io/xiaoshi/xiaoshi/p/linux%E7%BB%BC%E5%90%88%E6%9E%B6%E6%9E%84/assets/image-20220417210343097_hu661311765970036659.png 480w, https://ZackMoel.github.io/xiaoshi/xiaoshi/p/linux%E7%BB%BC%E5%90%88%E6%9E%B6%E6%9E%84/assets/image-20220417210343097_hu5827284340965805253.png 1024w&#34;
 	loading=&#34;lazy&#34;
 	
 		alt=&#34;image-20220417210343097&#34;
 	
 	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;117&#34;
+		data-flex-basis=&#34;281px&#34;
+	
 &gt;&lt;/p&gt;
 &lt;h2 id=&#34;7拍摄快照&#34;&gt;7.拍摄快照
-&lt;/h2&gt;&lt;p&gt;&lt;img src=&#34;D:/desktop/myblog/myblog/content/post/Linux%e7%bb%bc%e5%90%88%e6%9e%b6%e6%9e%84/assets/image-20220417210549324.png&#34;
-	
-	
-	
+&lt;/h2&gt;&lt;p&gt;&lt;img src=&#34;https://ZackMoel.github.io/xiaoshi/xiaoshi/p/linux%E7%BB%BC%E5%90%88%E6%9E%B6%E6%9E%84/assets/image-20220417210549324.png&#34;
+	width=&#34;1444&#34;
+	height=&#34;746&#34;
+	srcset=&#34;https://ZackMoel.github.io/xiaoshi/xiaoshi/p/linux%E7%BB%BC%E5%90%88%E6%9E%B6%E6%9E%84/assets/image-20220417210549324_hu17937734831069654652.png 480w, https://ZackMoel.github.io/xiaoshi/xiaoshi/p/linux%E7%BB%BC%E5%90%88%E6%9E%B6%E6%9E%84/assets/image-20220417210549324_hu3334819330638299346.png 1024w&#34;
 	loading=&#34;lazy&#34;
 	
 		alt=&#34;image-20220417210549324&#34;
 	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;193&#34;
+		data-flex-basis=&#34;464px&#34;
 	
 &gt;&lt;/p&gt;
 &lt;h2 id=&#34;8克隆新的虚拟机&#34;&gt;8.克隆新的虚拟机
