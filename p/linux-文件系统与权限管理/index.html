@@ -1,0 +1,1549 @@
+<!DOCTYPE html>
+<html lang="zh-cn" dir="ltr">
+    <head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content="Linux-文件系统与权限管理 一、文件系统 1、文件系统概述 💡文件系统是操作系统用于明确存储设备或分区上的文件的方法和数据结构；即在存储设备上">
+<title>Linux 文件系统与权限管理</title>
+
+<link rel='canonical' href='https://ZackMoel.github.io/xiaoshi/p/linux-%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F%E4%B8%8E%E6%9D%83%E9%99%90%E7%AE%A1%E7%90%86/'>
+
+<link rel="stylesheet" href="/xiaoshi/scss/style.min.0304c6baf04e01a8fe70693791cb744d56a3578a3120a8796cefc66825aa39c7.css"><meta property='og:title' content="Linux 文件系统与权限管理">
+<meta property='og:description' content="Linux-文件系统与权限管理 一、文件系统 1、文件系统概述 💡文件系统是操作系统用于明确存储设备或分区上的文件的方法和数据结构；即在存储设备上">
+<meta property='og:url' content='https://ZackMoel.github.io/xiaoshi/p/linux-%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F%E4%B8%8E%E6%9D%83%E9%99%90%E7%AE%A1%E7%90%86/'>
+<meta property='og:site_name' content='小诗的博客'>
+<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:published_time' content='2025-04-14T14:27:42&#43;08:00'/><meta property='article:modified_time' content='2025-04-14T14:27:42&#43;08:00'/>
+<meta name="twitter:title" content="Linux 文件系统与权限管理">
+<meta name="twitter:description" content="Linux-文件系统与权限管理 一、文件系统 1、文件系统概述 💡文件系统是操作系统用于明确存储设备或分区上的文件的方法和数据结构；即在存储设备上">
+  
+
+
+    </head>
+    <body class="
+    article-page
+    ">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex on-phone--column extended"><aside class="sidebar left-sidebar sticky ">
+    <button class="hamburger hamburger--spin" type="button" id="toggle-menu" aria-label="切换菜单">
+        <span class="hamburger-box">
+            <span class="hamburger-inner"></span>
+        </span>
+    </button>
+
+    <header>
+        
+            
+            <figure class="site-avatar">
+                <a href="/xiaoshi/">
+                
+                    
+                    
+                    
+                        
+                        <img src="/xiaoshi/img/avatar_hu8920112365793990935.png" width="300"
+                            height="300" class="site-logo" loading="lazy" alt="Avatar">
+                    
+                
+                </a>
+                
+                    <span class="emoji">🍥</span>
+                
+            </figure>
+            
+        
+        
+        <div class="site-meta">
+            <h1 class="site-name"><a href="/xiaoshi">小诗的博客</a></h1>
+            <h2 class="site-description">欢迎来到小诗的博客</h2>
+        </div>
+    </header><ol class="menu-social">
+            
+                <li>
+                    <a 
+                        href='https://space.bilibili.com/1055981889?spm_id_from=333.1007.0.0'
+                        target="_blank"
+                        title="bilibili"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg  xmlns="http://www.w3.org/2000/svg"  width="24"  height="24"  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  stroke-width="2"  stroke-linecap="round"  stroke-linejoin="round"  class="icon icon-tabler icons-tabler-outline icon-tabler-brand-bilibili"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M3 10a4 4 0 0 1 4 -4h10a4 4 0 0 1 4 4v6a4 4 0 0 1 -4 4h-10a4 4 0 0 1 -4 -4v-6z" /><path d="M8 3l2 3" /><path d="M16 3l-2 3" /><path d="M9 13v-2" /><path d="M15 11v2" /></svg>
+                        
+                    </a>
+                </li>
+            
+                <li>
+                    <a 
+                        href='https://github.com/ZackMoel/xiaoshi.github.io'
+                        target="_blank"
+                        title="GitHub"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-github" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M9 19c-4.3 1.4 -4.3 -2.5 -6 -3m12 5v-3.5c0 -1 .1 -1.4 -.5 -2c2.8 -.3 5.5 -1.4 5.5 -6a4.6 4.6 0 0 0 -1.3 -3.2a4.2 4.2 0 0 0 -.1 -3.2s-1.1 -.3 -3.5 1.3a12.3 12.3 0 0 0 -6.2 0c-2.4 -1.6 -3.5 -1.3 -3.5 -1.3a4.2 4.2 0 0 0 -.1 3.2a4.6 4.6 0 0 0 -1.3 3.2c0 4.6 2.7 5.7 5.5 6c-.6 .6 -.6 1.2 -.5 2v3.5" />
+</svg>
+
+
+
+                        
+                    </a>
+                </li>
+            
+        </ol><ol class="menu" id="main-menu">
+        
+        
+        
+        <li >
+            <a href='/xiaoshi/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-home" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <polyline points="5 12 3 12 12 3 21 12 19 12" />
+  <path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7" />
+  <path d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6" />
+</svg>
+
+
+
+                
+                <span>主页</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/xiaoshi/%E5%85%B3%E4%BA%8E/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-user" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="7" r="4" />
+  <path d="M6 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2" />
+</svg>
+
+
+
+                
+                <span>关于</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/xiaoshi/archives/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-archive" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <rect x="3" y="4" width="18" height="4" rx="2" />
+  <path d="M5 8v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-10" />
+  <line x1="10" y1="12" x2="14" y2="12" />
+</svg>
+
+
+
+                
+                <span>归档</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/xiaoshi/search/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-search" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="10" cy="10" r="7" />
+  <line x1="21" y1="21" x2="15" y2="15" />
+</svg>
+
+
+
+                
+                <span>搜索</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/xiaoshi/%E5%8F%8B%E6%83%85%E9%93%BE%E6%8E%A5/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-link" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M10 14a3.5 3.5 0 0 0 5 0l4 -4a3.5 3.5 0 0 0 -5 -5l-.5 .5" />
+  <path d="M14 10a3.5 3.5 0 0 0 -5 0l-4 4a3.5 3.5 0 0 0 5 5l.5 -.5" />
+</svg>
+
+
+
+                
+                <span>友情链接</span>
+            </a>
+        </li>
+        
+        <li class="menu-bottom-section">
+            <ol class="menu">
+
+                
+                    <li id="dark-mode-toggle">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="8" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="16" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <span>暗色模式</span>
+                    </li>
+                
+            </ol>
+        </li>
+    </ol>
+</aside>
+
+    <aside class="sidebar right-sidebar sticky">
+        
+            
+                
+    <section class="widget archives">
+        <div class="widget-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <line x1="5" y1="9" x2="19" y2="9" />
+  <line x1="5" y1="15" x2="19" y2="15" />
+  <line x1="11" y1="4" x2="7" y2="20" />
+  <line x1="17" y1="4" x2="13" y2="20" />
+</svg>
+
+
+
+        </div>
+        <h2 class="widget-title section-title">目录</h2>
+        
+        <div class="widget--toc">
+            <nav id="TableOfContents">
+  <ol>
+    <li><a href="#一文件系统">一、文件系统</a>
+      <ol>
+        <li><a href="#1文件系统概述">1、文件系统概述</a></li>
+        <li><a href="#2文件系统类型及使用场景">2、文件系统类型及使用场景</a></li>
+        <li><a href="#3系统交换分区">3、系统交换分区</a></li>
+      </ol>
+    </li>
+    <li><a href="#二权限管理">二、权限管理</a>
+      <ol>
+        <li>
+          <ol>
+            <li><a href="#基本权限">基本权限</a></li>
+            <li><a href="#对于文本文件">对于文本文件</a></li>
+            <li><a href="#归属关系">归属关系</a></li>
+            <li><a href="#执行-ls--l或ls---ld命令查看文件目录权限">执行 ls -l或ls  -ld命令查看文件/目录权限</a></li>
+          </ol>
+        </li>
+        <li><a href="#修改权限">修改权限</a>
+          <ol>
+            <li><a href="#chmod命令"><strong>chmod命令</strong></a></li>
+            <li><a href="#linux-判断用户具备的权限"><strong>Linux 判断用户具备的权限</strong></a></li>
+            <li><a href="#案例1设置基本权限"><strong>案例1：设置基本权限</strong></a></li>
+            <li><a href="#权限位的8进制数表示"><strong>权限位的8进制数表示</strong></a></li>
+            <li><a href="#新建文件目录的默认权限">新建文件/目录的默认权限</a></li>
+          </ol>
+        </li>
+        <li><a href="#修改归属关系"><strong>修改归属关系</strong></a>
+          <ol>
+            <li><a href="#linux-判断用户具备的权限--匹配即停止原则">Linux 判断用户具备的权限  匹配即停止原则</a></li>
+            <li><a href="#案例2归属关系练习"><strong>案例2：归属关系练习</strong></a></li>
+            <li><a href="#案例3---实现lisi用户可以读取etcshadow文件内容您有几种办法">案例3：   实现lisi用户可以读取/etc/shadow文件内容，您有几种办法？</a></li>
+          </ol>
+        </li>
+        <li><a href="#附加权限特殊权限">附加权限（特殊权限）</a>
+          <ol>
+            <li><a href="#粘滞位sticky-bit-权限"><strong>粘滞位，Sticky Bit 权限</strong></a></li>
+            <li><a href="#sgid-权限"><strong>SGID 权限</strong></a></li>
+          </ol>
+        </li>
+        <li><a href="#acl策略管理acl权限">ACL策略管理（ACL权限）</a>
+          <ol>
+            <li><a href="#acl-访问策略"><strong>acl 访问策略</strong></a></li>
+            <li><a href="#将某个用户拉黑制作黑名单"><strong>将某个用户拉黑（制作黑名单）</strong></a></li>
+            <li><a href="#setfacl-命令练习"><strong>setfacl 命令练习</strong></a></li>
+            <li><a href="#-r--递归设置-acl-策略"><strong>-R : 递归设置 ACL 策略</strong></a></li>
+          </ol>
+        </li>
+        <li><a href="#课后习题"><strong>课后习题</strong></a>
+          <ol>
+            <li><a href="#案例1chmod权限设置">案例1：chmod权限设置</a></li>
+            <li><a href="#案例2chown归属设置">案例2：chown归属设置</a></li>
+            <li><a href="#案例3权限设置">案例3:权限设置</a></li>
+            <li><a href="#案例4虚拟机-上操作">案例4:虚拟机 上操作</a></li>
+            <li><a href="#案例5虚拟机上操作">案例5:虚拟机上操作</a></li>
+          </ol>
+        </li>
+      </ol>
+    </li>
+  </ol>
+</nav>
+        </div>
+    </section>
+
+            
+        
+    </aside>
+
+
+            <main class="main full-width">
+    <article class="main-article">
+    <header class="article-header">
+
+    <div class="article-details">
+    
+
+    <div class="article-title-wrapper">
+        <h2 class="article-title">
+            <a href="/xiaoshi/p/linux-%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F%E4%B8%8E%E6%9D%83%E9%99%90%E7%AE%A1%E7%90%86/">Linux 文件系统与权限管理</a>
+        </h2>
+    
+        
+    </div>
+
+    
+    
+    
+    
+    <footer class="article-time">
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
+  <circle cx="18" cy="18" r="4" />
+  <path d="M15 3v4" />
+  <path d="M7 3v4" />
+  <path d="M3 11h16" />
+  <path d="M18 16.496v1.504l1 1" />
+</svg>
+                <time class="article-time--published">2025-04-14</time>
+            </div>
+        
+
+        
+    </footer>
+    
+
+    
+</div>
+
+</header>
+
+    <section class="article-content">
+    
+    
+    <h1 id="linux-文件系统与权限管理">Linux-文件系统与权限管理
+</h1><h2 id="一文件系统">一、文件系统
+</h2><h3 id="1文件系统概述">1、文件系统概述
+</h3><blockquote>
+<p>💡文件系统是操作系统用于明确存储设备或分区上的文件的方法和数据结构；即在存储设备上组织文件的方法。操作系统中负责管理和存储文件信息的软件机构称为文件管理系统，简称文件系统。</p>
+</blockquote>
+<p><img src="D:/desktop/seekwork/%e7%9b%b8%e5%85%b3%e7%9f%a5%e8%af%86/baizhi/5.Linux-%e6%96%87%e4%bb%b6%e7%b3%bb%e7%bb%9f%e4%b8%8e%e6%9d%83%e9%99%90%e7%ae%a1%e7%90%86.md/Linux&#43;Shell&#43;%e7%bd%91%e7%bb%9c/assets/image-20250211153233-o9ek189.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="https://p.sda1.dev/23/67393ce70ea5b9c6fda2ad567639d70a/image_wDCgCQ3Sg9-20240424161452-9fq64zi.png"
+	
+	
+></p>
+<h3 id="2文件系统类型及使用场景">2、文件系统类型及使用场景
+</h3><div class="table-wrapper"><table>
+<thead>
+<tr>
+<th>常见文件类型</th>
+<th>使用场景</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>FAT</td>
+<td>windows9X系统使用的文件系统，包括FAT16，FAT32</td>
+</tr>
+<tr>
+<td>NTFS</td>
+<td>NTFS文件系统是一个基于安全性的文件系统，是Windows NT所采用的独特的文件系统结构，Win 2000采用了更新版本的NTFS文件系统NTFS 5.0</td>
+</tr>
+<tr>
+<td>NFS</td>
+<td>网络文件系统，用于在UNIX系统间通过网络进行文件共享</td>
+</tr>
+<tr>
+<td>RAW</td>
+<td>RAW文件系统是一种磁盘未经处理或者未经格式化产生的文件系统</td>
+</tr>
+<tr>
+<td>Ext</td>
+<td>GNU/Linux系统中标准的文件系统，其特点为存取文件的性能极好，对于中小型的文件更显示出优势，包括Ext2，Ext3，Ext4</td>
+</tr>
+<tr>
+<td>XFS</td>
+<td>一种高性能的日志文件系统，最早于1993年，由Silicon Graphics为他们的IRIX操作系统而开发，之后被移植到Linux内核上，特别擅长处理大文件，同时提供平滑的数据传输。</td>
+</tr>
+<tr>
+<td>ISO 9600</td>
+<td>该文件系统中光盘所使用的标准文件系统，Linux对该文件系统也有很好的支持，不仅能读取光盘和光盘ISO映像文件，而且还支持在Linux环境中刻录光</td>
+</tr>
+</tbody>
+</table></div>
+<h3 id="3系统交换分区">3、系统交换分区
+</h3><blockquote>
+<p>💡Linux系统交换空间（swap）就是磁盘上的一块区域，可以是一个分区，也可以是一个文件，简单的说就是当物理内存资源紧张时，将内存中不常访问的资源保存到预先设定的硬盘上的交换空间，来释放该资源占用的内存，这样系统就有更多的物理内存为各个进程服务，而当系统需要访问swap上存储的内容时，再将swap上的数据加载到内存中。</p>
+</blockquote>
+<div class="table-wrapper"><table>
+<thead>
+<tr>
+<th style="text-align:center">RAM大小</th>
+<th style="text-align:center">推荐的交换空间</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">≤ 2GB</td>
+<td style="text-align:center">2X RAM</td>
+</tr>
+<tr>
+<td style="text-align:center">2GB – 8GB</td>
+<td style="text-align:center">= RAM</td>
+</tr>
+<tr>
+<td style="text-align:center">&gt;8GB</td>
+<td style="text-align:center">8GB</td>
+</tr>
+</tbody>
+</table></div>
+<h2 id="二权限管理">二、权限管理
+</h2><ul>
+<li>
+<h4 id="基本权限">基本权限
+</h4><blockquote>
+<p><strong>–  读取：允许查看内容-read 利用r表示</strong></p>
+<p><strong>–  写入：允许修改内容-write 利用w表示</strong></p>
+<p><strong>–  可执行：允许运行和切换-excute 利用x表示</strong></p>
+</blockquote>
+</li>
+<li>
+<h4 id="对于文本文件">对于文本文件
+</h4><blockquote>
+<p><strong>读取权限(r)：cat、head、tail、less、grep</strong></p>
+<p><strong>写入权限(w)：vi（保存退出）、&gt;、&gt;&gt;</strong></p>
+<p><strong>可执行权限(x)：Shell脚本、Python脚本</strong></p>
+</blockquote>
+</li>
+<li>
+<h4 id="归属关系">归属关系
+</h4><blockquote>
+<p><strong>–  所有者：拥有此文件/目录的用户-user 利用u表示</strong></p>
+<p><strong>–  所属组：拥有此文件/目录的组-group 利用g表示</strong></p>
+<p><strong>–  其他用户：除所有者、所属组以外的用户-other 利用o表示</strong></p>
+</blockquote>
+</li>
+<li>
+<h4 id="执行-ls--l或ls---ld命令查看文件目录权限">执行 ls -l或ls  -ld命令查看文件/目录权限
+</h4><blockquote>
+<p><strong>以-开头：表示文本文件</strong></p>
+<p><strong>以d开头：表示目录</strong></p>
+<p><strong>以l开头:快捷方式或者链接文件</strong></p>
+</blockquote>
+</li>
+</ul>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">[root@A ~]# ls  -l   /etc/shadow
+</span></span><span class="line"><span class="cl">[root@A ~]# ls  -l   /etc/passwd
+</span></span><span class="line"><span class="cl">[root@A ~]# ls  -ld   /etc/
+</span></span><span class="line"><span class="cl">[root@A ~]# ls  -ld   /root
+</span></span><span class="line"><span class="cl">[root@A ~]# ls  -ld   /home/zhangsan
+</span></span><span class="line"><span class="cl">[root@A ~]# ls  -ld   /tmp     #默认具备附加权限的目录
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="修改权限">修改权限
+</h3><h4 id="chmod命令"><strong>chmod命令</strong>
+</h4><blockquote>
+<p><strong>–</strong>   <strong>格式：chmod [ugoa] [+-=] [rwx]   文件&hellip;</strong></p>
+</blockquote>
+<ul>
+<li>常用命令选项</li>
+</ul>
+<blockquote>
+<p><strong>–  -R：递归修改权限</strong></p>
+</blockquote>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl"><span class="o">[</span>root@A /<span class="o">]</span><span class="c1"># mkdir /nsd01</span>
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@A /<span class="o">]</span><span class="c1"># ls -ld /nsd01</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@A /<span class="o">]</span><span class="c1"># chmod u-w /nsd01        #修改所有者权限</span>
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@A /<span class="o">]</span><span class="c1"># ls -ld /nsd01</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@A /<span class="o">]</span><span class="c1"># chmod   u+w   /nsd01       #修改所有者权限</span>
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@A /<span class="o">]</span><span class="c1"># ls -ld  /nsd01</span>
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@A /<span class="o">]</span><span class="c1"># chmod   g=rwx   /nsd01    #修改所属组权限</span>
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@A /<span class="o">]</span><span class="c1"># ls -ld  /nsd01</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@A /<span class="o">]</span><span class="c1"># chmod u=rwx,g=rx,o=---   /nsd01</span>
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@A /<span class="o">]</span><span class="c1"># ls -ld /nsd01</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@A /<span class="o">]</span><span class="c1"># chmod  a=rwx    /nsd01     #赋予所有人rwx权限</span>
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@A /<span class="o">]</span><span class="c1"># ls -ld /nsd01</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@A /<span class="o">]</span><span class="c1"># mkdir  -p    /opt/aaa/bbb/ccc</span>
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@A /<span class="o">]</span><span class="c1"># ls -R   /opt/aaa</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@A /<span class="o">]</span><span class="c1"># chmod  -R   o=---   /opt/aaa    #递归设置权限</span>
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@A /<span class="o">]</span><span class="c1"># ls  -ld   /opt/aaa</span>
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@A /<span class="o">]</span><span class="c1"># ls  -ld   /opt/aaa/bbb/</span>
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@A /<span class="o">]</span><span class="c1"># ls  -ld   /opt/aaa/bbb/ccc/</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h4 id="linux-判断用户具备的权限"><strong>Linux 判断用户具备的权限</strong>
+</h4><blockquote>
+<p><strong>1.首先判断，用户对于该数据，处于的身份(角色)</strong></p>
+<p><strong>2.查看数据，相应身份的权限位置，权限内容</strong></p>
+</blockquote>
+<p>•    <strong>用户对于目录具备权限</strong></p>
+<p><strong>读取权限(r)：可以查看目录内容</strong></p>
+<p><strong>写入权限(w)：可以新建、删除、改名,目录的内容，对目录本身没有修改权限</strong></p>
+<p><strong>可执行权限(x)：可以进入切换到该目录下(一位用户能否切换到一个目录只和x执行权限有</strong>关)</p>
+<h4 id="案例1设置基本权限"><strong>案例1：设置基本权限</strong>
+</h4><h5 id="1以root身份新建nsddir1目录在此目录下新建readmetxt文件">1）以root身份新建/nsddir1/目录，在此目录下新建readme.txt文件
+</h5><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">[root@localhost ~]# mkdir /nsddir1
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">[root@localhost ~]# echo 123456 &gt; /nsddir1/readme.txt
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">[root@localhost ~]# cat /nsddir1/readme.txt
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h5 id="2使用户zhangsan能够修改readmetxt文件内容">2）使用户zhangsan能够修改readme.txt文件内容
+</h5><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">[root@localhost ~]# chmod  o+w  /nsddir1/readme.txt
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h5 id="3使用户zhangsan不可以修改readmetxt文件内容">3）使用户zhangsan不可以修改readme.txt文件内容
+</h5><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">[root@localhost ~]# chmod  o-w  /nsddir1/readme.txt
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h5 id="4使用户zhangsan能够在此目录下创建删除子目录">4）使用户zhangsan能够在此目录下创建/删除子目录
+</h5><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">[root@localhost ~]# chmod  o+w  /nsddir1/
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">[root@localhost ~]# ls  -ld  /nsddir1/
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h5 id="5调整此目录的权限使任何用户都不能进入然后测试用户zhangsan是否还能修改readmetxt测试结果不能对父目录没有权限">5）调整此目录的权限，使任何用户都不能进入，然后测试用户zhangsan是否还能修改readme.txt（测试结果不能，对父目录没有权限）
+</h5><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">[root@localhost ~]# chmod  a-x  /nsddir1/
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h5 id="6为此目录及其下所有文档设置权限-rwxr-x---">6）为此目录及其下所有文档设置权限 rwxr-x&mdash;
+</h5><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">[root@localhost ~]# chmod -R u=rwx,g=rx,o=--- /nsddir1/
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h4 id="权限位的8进制数表示"><strong>权限位的8进制数表示</strong>
+</h4><blockquote>
+<p><strong>r、w、x分别对应4、2、1，后3组分别求和</strong></p>
+</blockquote>
+<div class="table-wrapper"><table>
+<thead>
+<tr>
+<th style="text-align:center"><strong>分组</strong></th>
+<th style="text-align:center">User权限</th>
+<th style="text-align:center">Group权限</th>
+<th style="text-align:center">Other权限</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center"><strong>字符</strong></td>
+<td style="text-align:center"><strong>r   w   x</strong></td>
+<td style="text-align:center"><strong>r  -  x</strong></td>
+<td style="text-align:center"><strong>r  -  x</strong></td>
+</tr>
+<tr>
+<td style="text-align:center"><strong>数字</strong></td>
+<td style="text-align:center"><strong>4  2  1</strong></td>
+<td style="text-align:center"><strong>4  0  1</strong></td>
+<td style="text-align:center"><strong>4  0  1</strong></td>
+</tr>
+<tr>
+<td style="text-align:center"><strong>求和</strong></td>
+<td style="text-align:center"><strong>7</strong></td>
+<td style="text-align:center"><strong>5</strong></td>
+<td style="text-align:center"><strong>5</strong></td>
+</tr>
+</tbody>
+</table></div>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl"><span class="o">[</span>root@A /<span class="o">]</span><span class="c1"># mkdir /nsd03</span>
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@A /<span class="o">]</span><span class="c1"># ls -ld  /nsd03</span>
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@A /<span class="o">]</span><span class="c1"># chmod  700  /nsd03</span>
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@A /<span class="o">]</span><span class="c1"># ls  -ld   /nsd03</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@A /<span class="o">]</span><span class="c1"># chmod  007  /nsd03</span>
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@A /<span class="o">]</span><span class="c1"># ls  -ld   /nsd03</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@A /<span class="o">]</span><span class="c1"># chmod  750  /nsd03</span>
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@A /<span class="o">]</span><span class="c1"># ls  -ld   /nsd03</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h4 id="新建文件目录的默认权限">新建文件/目录的默认权限
+</h4><blockquote>
+<p><strong>–  一般文件默认均不给 x 执行权限</strong></p>
+<p><strong>–  其他取决于</strong> <strong>​<code>umask</code>​</strong>​ <strong>设置</strong></p>
+<p><strong>–  目录默认的权限为755，文件的默认权限为644</strong></p>
+</blockquote>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span><span class="lnt">9
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">[root@A /]# umask 
+</span></span><span class="line"><span class="cl">0022
+</span></span><span class="line"><span class="cl">[root@A /]# umask 077      #修改umask值
+</span></span><span class="line"><span class="cl">[root@A /]# umask 
+</span></span><span class="line"><span class="cl">0077
+</span></span><span class="line"><span class="cl">[root@A /]# mkdir /nsd05
+</span></span><span class="line"><span class="cl">[root@A /]# ls -ld /nsd05
+</span></span><span class="line"><span class="cl">drwx------. 2 root root 6 9月   8 14:17 /nsd05
+</span></span><span class="line"><span class="cl">[root@A /]# umask 022
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="修改归属关系"><strong>修改归属关系</strong>
+</h3><ul>
+<li><strong>chown命令</strong></li>
+</ul>
+<blockquote>
+<p><strong>–  chown 属主 文件&hellip;</strong></p>
+<p><strong>–  chown 属主:属组 文件&hellip;</strong></p>
+<p><strong>–  chown :属组 文件&hellip;</strong></p>
+</blockquote>
+<ul>
+<li><strong>常用命令选项</strong></li>
+</ul>
+<blockquote>
+<p><strong>–  -R：递归修改归属关系</strong></p>
+</blockquote>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">[root@A /]# mkdir   /nsd07
+</span></span><span class="line"><span class="cl">[root@A /]# ls -ld   /nsd07
+</span></span><span class="line"><span class="cl">[root@A /]# groupadd    tmooc    #创建tmooc组
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">[root@A /]# chown    zhangsan:tmooc      /nsd07
+</span></span><span class="line"><span class="cl">[root@A /]# ls -ld /nsd07
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">[root@A /]# chown   lisi     /nsd07     #单独修改所有者
+</span></span><span class="line"><span class="cl">[root@A /]# ls   -ld   /nsd07 
+</span></span><span class="line"><span class="cl">[root@A /]# chown   :root   /nsd07     #单独修改所属组
+</span></span><span class="line"><span class="cl">[root@A /]# ls -ld    /nsd07
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h4 id="linux-判断用户具备的权限--匹配即停止原则">Linux 判断用户具备的权限  匹配即停止原则
+</h4><blockquote>
+<p><strong>1.用户对于该数据处于的身份(角色)   所有者 &gt; 所属组 &gt;其他人</strong></p>
+<p><strong>2.查看数据，相应身份的权限位置，权限内容</strong></p>
+</blockquote>
+<h4 id="案例2归属关系练习"><strong>案例2：归属关系练习</strong>
+</h4><h5 id="1利用root的身份新建tarena目录并进一步完成下列操作">1）利用root的身份新建/tarena目录，并进一步完成下列操作
+</h5><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">[root@localhost ~]# mkdir /tarena
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h5 id="2将tarena属主设为gelin01属组设为tmooc组">2）将/tarena属主设为gelin01，属组设为tmooc组
+</h5><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">[root@localhost ~]# useradd  gelin01
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">[root@localhost ~]# groupadd  tmooc
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">[root@localhost ~]# chown  gelin01:tmooc   /tarena
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h5 id="3使用户gelin01对此目录具有rwx权限除去所有者与所属组之外的用户对此目录无任何权限">3）使用户gelin01对此目录具有rwx权限，除去所有者与所属组之外的用户对此目录无任何权限
+</h5><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">[root@localhost ~]# chmod o=--- /tarena
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h5 id="4使用户gelin02能进入查看此目录">4）使用户gelin02能进入、查看此目录
+</h5><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">[root@localhost ~]# useradd gelin02
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">[root@localhost ~]# gpasswd -a gelin02 tmooc 
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h5 id="5将gelin01加入tmooc组将tarena目录的权限设为450测试gelin01用户能否进入此目录">5）将gelin01加入tmooc组，将tarena目录的权限设为450，测试gelin01用户能否进入此目录
+</h5><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">[root@localhost ~]# gpasswd -a gelin01 tmooc 
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">[root@localhost ~]# chmod 450 /tarena
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h4 id="案例3---实现lisi用户可以读取etcshadow文件内容您有几种办法">案例3：   实现lisi用户可以读取/etc/shadow文件内容，您有几种办法？
+</h4><ol>
+<li>利用其他人</li>
+</ol>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">[root@A /]# chmod o+r  /etc/shadow 
+</span></span></code></pre></td></tr></table>
+</div>
+</div><ol start="2">
+<li>利用所属组</li>
+</ol>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">[root@A /]# chown  :lisi  /etc/shadow 
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">[root@A /]# chmod  g+r  /etc/shadow
+</span></span></code></pre></td></tr></table>
+</div>
+</div><ol start="3">
+<li>利用所有者</li>
+</ol>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">[root@A /]# chown lisi  /etc/shadow
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">[root@A /]# chmod  u+r  /etc/shadow
+</span></span></code></pre></td></tr></table>
+</div>
+</div><ol start="4">
+<li>利用ACL策略</li>
+</ol>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">[root@A /]# setfacl -m u:lisi:r  /etc/shadow 
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="附加权限特殊权限">附加权限（特殊权限）
+</h3><h4 id="粘滞位sticky-bit-权限"><strong>粘滞位，Sticky Bit 权限</strong>
+</h4><blockquote>
+<p>–  占用其他人（Other）的 x 位</p>
+<p>–  显示为 t 或 T，取决于其他人是否有 x 权限</p>
+<p>–  适用于目录，用来限制用户滥用写入权</p>
+<p>–  在设置了粘滞位的文件夹下，即使用户有写入权限，也不能删除或改名其他用户文档</p>
+</blockquote>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">[root@A /]# mkdir   /home/public
+</span></span><span class="line"><span class="cl">[root@A /]# chmod   777   /home/public
+</span></span><span class="line"><span class="cl">[root@A /]# ls -ld   /home/public
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">[root@A /]# chmod  o+t   /home/public
+</span></span><span class="line"><span class="cl">[root@A /]# ls  -ld   /home/public
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h4 id="sgid-权限"><strong>SGID 权限</strong>
+</h4><blockquote>
+<p>–  占用属组（Group）的 x 位</p>
+<p>–  显示为 s 或 S，取决于属组是否有 x 权限</p>
+<p>–  对目录有效</p>
+<p>–  在一个具有SGID权限的目录下，<em><strong>新建</strong></em></u>  的文档会<em><strong>自动继承</strong></em></u>此目录的属组身份</p>
+</blockquote>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">[root@A /]# mkdir /nsd10
+</span></span><span class="line"><span class="cl">[root@A /]# ls -ld /nsd10
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">[root@A /]# chown   :tmooc    /nsd10
+</span></span><span class="line"><span class="cl">[root@A /]# ls   -ld   /nsd10
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">[root@A /]# mkdir  /nsd10/abc01
+</span></span><span class="line"><span class="cl">[root@A /]# ls -ld  /nsd10/abc01
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">[root@A /]# chmod  g+s    /nsd10       #赋予SetGID权限
+</span></span><span class="line"><span class="cl">[root@A /]# ls    -ld    /nsd10
+</span></span><span class="line"><span class="cl">[root@A /]# mkdir   /nsd10/abc02
+</span></span><span class="line"><span class="cl">[root@A /]# ls   -ld    /nsd10/abc02
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">[root@A /]# touch    /nsd10/1.txt
+</span></span><span class="line"><span class="cl">[root@A /]# ls   -l   /nsd10/1.txt
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="acl策略管理acl权限">ACL策略管理（ACL权限）
+</h3><h4 id="acl-访问策略"><strong>acl 访问策略</strong>
+</h4><blockquote>
+<p>–   <em><em>&lt;u&gt;<strong>​</strong></em>能够对个别用户、个别组设置独立的权限</em>**​ <strong>&lt;/u&gt;</strong></p>
+<p>–  大多数挂载的EXT3/4、XFS文件系统默认已支持</p>
+</blockquote>
+<p><strong>•   setfacl命令</strong></p>
+<blockquote>
+<p>–  格式：setfacl [选项] u:用户名:权限 文件&hellip;</p>
+<p>setfacl [选项] g:组名:权限 文件&hellip;</p>
+</blockquote>
+<p>•   <strong>常用命令选项</strong></p>
+<blockquote>
+<p>–  -m：定义一条ACL策略</p>
+<p>–  -x：清除指定的ACL策略</p>
+<p>–  -b：清除所有已设置的ACL策略</p>
+<p>–  -R：递归设置ACL策略</p>
+</blockquote>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl"><span class="o">[</span>root@A /<span class="o">]</span><span class="c1"># mkdir /nsd11</span>
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@A /<span class="o">]</span><span class="c1"># chmod 770 /nsd11</span>
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@A /<span class="o">]</span><span class="c1"># ls -ld /nsd11</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@A /<span class="o">]</span><span class="c1"># su - lisi</span>
+</span></span><span class="line"><span class="cl"><span class="o">[</span>lisi@A ~<span class="o">]</span>$ <span class="nb">cd</span> /nsd11
+</span></span><span class="line"><span class="cl">-bash: cd: /nsd11: 权限不够
+</span></span><span class="line"><span class="cl"><span class="o">[</span>lisi@A ~<span class="o">]</span>$ <span class="nb">exit</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@A /<span class="o">]</span><span class="c1"># setfacl   -m   u:lisi:rx     /nsd11   #设置ACL策略</span>
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@A /<span class="o">]</span><span class="c1"># getfacl   /nsd11                        #查看ACL策略</span>
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@A /<span class="o">]</span><span class="c1"># su  -  lisi</span>
+</span></span><span class="line"><span class="cl"><span class="o">[</span>lisi@A ~<span class="o">]</span>$ <span class="nb">cd</span>     /nsd11
+</span></span><span class="line"><span class="cl"><span class="o">[</span>lisi@A nsd11<span class="o">]</span>$  <span class="nb">pwd</span>
+</span></span><span class="line"><span class="cl"><span class="o">[</span>lisi@A nsd11<span class="o">]</span>$   <span class="nb">exit</span>
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@A /<span class="o">]</span><span class="c1">#</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h4 id="将某个用户拉黑制作黑名单"><strong>将某个用户拉黑（制作黑名单）</strong>
+</h4><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl"><span class="o">[</span>root@A /<span class="o">]</span><span class="c1"># ls -ld  /home/public/</span>
+</span></span><span class="line"><span class="cl">drwxrwxrwt. <span class="m">2</span> root root <span class="m">41</span> 9月   <span class="m">8</span> 15:53 /home/public/
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@A /<span class="o">]</span><span class="c1"># setfacl  -m   u:lisi:---   /home/public</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h4 id="setfacl-命令练习"><strong>setfacl 命令练习</strong>
+</h4><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl"><span class="o">[</span>root@A /<span class="o">]</span><span class="c1"># mkdir /nsd12</span>
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@A /<span class="o">]</span><span class="c1"># setfacl -m  u:dc:rwx    /nsd12</span>
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@A /<span class="o">]</span><span class="c1"># setfacl -m  u:zhangsan:rx   /nsd12</span>
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@A /<span class="o">]</span><span class="c1"># setfacl -m  u:lisi:rwx   /nsd12</span>
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@A /<span class="o">]</span><span class="c1"># setfacl -m  u:tom:rwx   /nsd12</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@A /<span class="o">]</span><span class="c1"># getfacl  /nsd12           #查看ACL策略</span>
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@A /<span class="o">]</span><span class="c1"># setfacl -x  u:zhangsan  /nsd12  #删除指定ACL</span>
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@A /<span class="o">]</span><span class="c1"># getfacl  /nsd12</span>
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@A /<span class="o">]</span><span class="c1"># setfacl -b  /nsd12         #清除所有ACL策略</span>
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@A /<span class="o">]</span><span class="c1"># getfacl  /nsd12</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h4 id="-r--递归设置-acl-策略"><strong>-R : 递归设置 ACL 策略</strong>
+</h4><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl"><span class="o">[</span>root@A /<span class="o">]</span><span class="c1"># ls  -R   /opt/aaa</span>
+</span></span><span class="line"><span class="cl">/opt/aaa:
+</span></span><span class="line"><span class="cl">bbb
+</span></span><span class="line"><span class="cl">/opt/aaa/bbb:
+</span></span><span class="line"><span class="cl">ccc
+</span></span><span class="line"><span class="cl">/opt/aaa/bbb/ccc:
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@A /<span class="o">]</span><span class="c1"># setfacl  -Rm   u:lisi:rx   /opt/aaa</span>
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@A /<span class="o">]</span><span class="c1"># getfacl   /opt/aaa</span>
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@A /<span class="o">]</span><span class="c1"># getfacl   /opt/aaa/bbb</span>
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@A /<span class="o">]</span><span class="c1"># getfacl   /opt/aaa/bbb/ccc</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="课后习题"><strong>课后习题</strong>
+</h3><h4 id="案例1chmod权限设置">案例1：chmod权限设置
+</h4><p>1）以root用户新建/nsddir/目录，在该目录下新建文件readme.txt</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl"><span class="o">[</span>root@Localhost ~<span class="o">]</span><span class="c1"># mkdir /nsddir/</span>
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@Localhost ~<span class="o">]</span><span class="c1"># touch /nsddir/readme.txt</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>2）使用户zhangsan能够在/nsddir/目录下创建/删除子目录</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl"><span class="o">[</span>root@Localhost ~<span class="o">]</span><span class="c1"># useradd zhangsan </span>
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@Localhost ~<span class="o">]</span><span class="c1"># chmod o+w /nsddir/</span>
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@localhost ~<span class="o">]</span><span class="c1"># su -zhangsan</span>
+</span></span><span class="line"><span class="cl"><span class="o">[</span>zhangsan@localhost ~<span class="o">]</span>$ mkdir /nsddir/zhangsan
+</span></span><span class="line"><span class="cl"><span class="o">[</span>zhangsan@localhost ~<span class="o">]</span>$ ls /nsddir
+</span></span><span class="line"><span class="cl"><span class="o">[</span>zhangsan@localhost ~<span class="o">]</span>$ <span class="nb">exit</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>3）使用户zhangsan能够修改/nsddir/readme.txt文件的容</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl"><span class="o">[</span>root@Localhost ~<span class="o">]</span><span class="c1"># chmod o+w /nsddir/readme.txt</span>
+</span></span><span class="line"><span class="cl"><span class="o">[</span>zhangsan@localhost ~<span class="o">]</span>$ <span class="nb">echo</span> xixi &gt;&gt; /nsddir/readme.txt
+</span></span><span class="line"><span class="cl"><span class="o">[</span>zhangsan@localhost ~<span class="o">]</span>$ cat /nsddir/readme.txt
+</span></span><span class="line"><span class="cl"><span class="o">[</span>zhangsan@localhost ~<span class="o">]</span>$ <span class="nb">exit</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h4 id="案例2chown归属设置">案例2：chown归属设置
+</h4><p>1）新建/tarena1目录</p>
+<pre><code> a）将属主设为gelin01，属组设为tarena组
+</code></pre>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl"><span class="o">[</span>root@Localhost ~<span class="o">]</span><span class="c1"># mkdir /tarena1</span>
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@Localhost ~<span class="o">]</span><span class="c1"># useradd gelin01</span>
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@Localhost ~<span class="o">]</span><span class="c1"># groupadd tarena</span>
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@Localhost ~<span class="o">]</span><span class="c1"># chown gelin01:tarena /tarena1 </span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><pre><code> b）使用户gelin01对此目录具有rwx权限，其他人对此目录无任何权限
+</code></pre>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl"><span class="o">[</span>root@Localhost ~<span class="o">]</span><span class="c1"># ls -ld /tarena1</span>
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@Localhost ~<span class="o">]</span><span class="c1"># chmod o=--- /tarena1</span>
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@Localhost ~<span class="o">]</span><span class="c1"># ls -ld /tarena1</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>2）使用户gelin02能进入、查看/tarena1文件夹（提示：将gelin02加入所属组）</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl"><span class="o">[</span>root@Localhost ~<span class="o">]</span><span class="c1"># useradd gelin02</span>
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@Localhost ~<span class="o">]</span><span class="c1"># gpasswd -a gelin02 tarena</span>
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@Localhost ~<span class="o">]</span><span class="c1"># id gelin02</span>
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@Localhost ~<span class="o">]</span><span class="c1"># su-gelin02</span>
+</span></span><span class="line"><span class="cl"><span class="o">[</span>gelin02@Localhost ~<span class="o">]</span><span class="c1"># cd /tarena1</span>
+</span></span><span class="line"><span class="cl"><span class="o">[</span>gelin02@Localhost ~<span class="o">]</span><span class="c1"># ls</span>
+</span></span><span class="line"><span class="cl"><span class="o">[</span>gelin02@Localhost ~<span class="o">]</span><span class="c1"># exit</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>3）新建/tarena2目录</p>
+<pre><code> a）将属组设为tarena
+</code></pre>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl"><span class="o">[</span>root@Localhost ~<span class="o">]</span><span class="c1"># mkdir /tarena2</span>
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@Localhost ~<span class="o">]</span><span class="c1"># chown :tarena /tarena2</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><pre><code> b）使tarena组的任何用户都能在此目录下创建、删除文件
+</code></pre>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl"><span class="o">[</span>root@Localhost ~<span class="o">]</span><span class="c1"># chmod g+w /tarena2</span>
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@Localhost ~<span class="o">]</span><span class="c1"># useradd ceshi</span>
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@Localhost ~<span class="o">]</span><span class="c1"># gpasswd -a ceshi tarena</span>
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@Localhost ~<span class="o">]</span><span class="c1"># id ceshi</span>
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@Localhost ~<span class="o">]</span><span class="c1"># su -ceshi</span>
+</span></span><span class="line"><span class="cl"><span class="o">[</span>ceshi@Localhost ~<span class="o">]</span><span class="c1"># mkdir /tarena2/ceshi</span>
+</span></span><span class="line"><span class="cl"><span class="o">[</span>ceshi@Localhost ~<span class="o">]</span><span class="c1"># ls /tarena2</span>
+</span></span><span class="line"><span class="cl"><span class="o">[</span>ceshi@Localhost ~<span class="o">]</span><span class="c1"># exit</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>4）新建/tarena/public目录</p>
+<pre><code> a）使任何用户对此目录都有rwx权限
+</code></pre>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl"><span class="o">[</span>root@Localhost ~<span class="o">]</span><span class="c1"># mkdir -p /tarena/public</span>
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@Localhost ~<span class="o">]</span><span class="c1"># chmod 777 /tarena/public</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><pre><code> b）拒绝zhangsan进入此目录，对此目录无任何权限（提示ACL黑名单）
+</code></pre>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl"><span class="o">[</span>root@Localhost ~<span class="o">]</span><span class="c1"># ls -ld /tarena/public</span>
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@Localhost ~<span class="o">]</span><span class="c1"># setfacl -m u:zhangsan:--- /tarena/public</span>
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@Localhost ~<span class="o">]</span><span class="c1"># useradd zhangsan</span>
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@Localhost ~<span class="o">]</span><span class="c1"># su -zhangsan </span>
+</span></span><span class="line"><span class="cl"><span class="o">[</span>zhangsan@Localhost ~<span class="o">]</span><span class="c1"># ls /tarena/public</span>
+</span></span><span class="line"><span class="cl"><span class="o">[</span>zhangsan@Localhost ~<span class="o">]</span><span class="c1"># cd /tarena/public</span>
+</span></span><span class="line"><span class="cl"><span class="o">[</span>zhangsan@Localhost ~<span class="o">]</span><span class="c1"># exit</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h4 id="案例3权限设置">案例3:权限设置
+</h4><p>1、创建文件夹/data/test,设置目录的访问权限，使所有者和所属组具备读写执行的权限；其他人无任何权限。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl"><span class="o">[</span>root@Localhost ~<span class="o">]</span><span class="c1"># mkdir -p /data/test</span>
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@Localhost ~<span class="o">]</span><span class="c1"># chmod u=rwx,g=rwx,o=--- /data/test 或者  chmod 770 /data/test</span>
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@Localhost ~<span class="o">]</span><span class="c1"># ls -ld /data/test</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>2、递归修改文件夹/data/test的归属使所有者为zhangsan，所属组为tarena。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl"><span class="o">[</span>root@Localhost ~<span class="o">]</span><span class="c1"># chown -R zhangsan:tarena /data/test</span>
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@Localhost ~<span class="o">]</span><span class="c1"># ls -ld /data/test</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>3、请实现在test目录下，新建的所有子文件或目录的所属组都会是tarena。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl"><span class="o">[</span>root@Localhost ~<span class="o">]</span><span class="c1"># chmod g+s /data/test</span>
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@Localhost ~<span class="o">]</span><span class="c1"># mkdir /data/test/abc</span>
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@Localhost ~<span class="o">]</span><span class="c1"># ls -ld /data/test/abc</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>4、为lisi创建ACL访问权限，使得lisi可以查看/etc/shadow文件</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl"><span class="o">[</span>root@Localhost ~<span class="o">]</span><span class="c1"># useradd lisi</span>
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@Localhost ~<span class="o">]</span><span class="c1"># setfacl -m u:liai:r /etc/shadow</span>
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@Localhost ~<span class="o">]</span><span class="c1"># getfacl /etc/shadow</span>
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@Localhost ~<span class="o">]</span><span class="c1"># su-lisi</span>
+</span></span><span class="line"><span class="cl"><span class="o">[</span>lisi@Localhost ~<span class="o">]</span><span class="c1"># cat /etc</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h4 id="案例4虚拟机-上操作">案例4:虚拟机 上操作
+</h4><p>将文件 /etc/fstab 拷贝为 /var/tmp/fstab，并调整文件 /var/tmp/fstab权限</p>
+<p>满足以下要求：</p>
+<p>– 此文件的拥有者是 root</p>
+<p>– 此文件对任何人都不可执行</p>
+<p>– 用户 natasha 能够对此文件执行读和写操作</p>
+<p>– 用户 harry 对此文件既不能读，也不能写</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl"><span class="o">[</span>root@Localhost ~<span class="o">]</span><span class="c1"># mkdir -p /var/tmp/fstab</span>
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@Localhost ~<span class="o">]</span><span class="c1"># cp  /etc/fstab /var/tmp/fstab</span>
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@Localhost ~<span class="o">]</span><span class="c1"># ls -l /var/tmp/fstab</span>
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@Localhost ~<span class="o">]</span><span class="c1"># chmod a-x /var/tmp/fstab</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@Localhost ~<span class="o">]</span><span class="c1"># setfacl -m u:natasha:rw /var/tmp/fstab</span>
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@Localhost ~<span class="o">]</span><span class="c1"># getfacl /var/tmp/fstab</span>
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@Localhost ~<span class="o">]</span><span class="c1"># su -natasha</span>
+</span></span><span class="line"><span class="cl"><span class="o">[</span>natasha@Localhost ~<span class="o">]</span><span class="c1"># cat /var/tmp/fstab</span>
+</span></span><span class="line"><span class="cl"><span class="o">[</span>natasha@Localhost ~<span class="o">]</span><span class="c1"># echo ceshi &gt;&gt; /var/tmp/fstab</span>
+</span></span><span class="line"><span class="cl"><span class="o">[</span>natasha@Localhost ~<span class="o">]</span><span class="c1"># cat /var/tmp/fstab</span>
+</span></span><span class="line"><span class="cl"><span class="o">[</span>natasha@Localhost ~<span class="o">]</span><span class="c1"># exit</span>
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@Localhost ~<span class="o">]</span><span class="c1"># setfacl -m u:harry:--- /var/tmp/fstab</span>
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@Localhost ~<span class="o">]</span><span class="c1"># getfacl /var/tmp/fstab</span>
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@Localhost ~<span class="o">]</span><span class="c1"># su-harry</span>
+</span></span><span class="line"><span class="cl"><span class="o">[</span>harry@Localhost ~<span class="o">]</span><span class="c1"># cat /var/tmp/fstab</span>
+</span></span><span class="line"><span class="cl"><span class="o">[</span>harry@Localhost ~<span class="o">]</span><span class="c1"># echo ceshi &gt;&gt; /var/tmp/fstab</span>
+</span></span><span class="line"><span class="cl"><span class="o">[</span>harry@Localhost ~<span class="o">]</span><span class="c1"># exit</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h4 id="案例5虚拟机上操作">案例5:虚拟机上操作
+</h4><p>创建一个共用目录 /home/admins，要求如下：</p>
+<pre><code>– 此目录的所属组是 adminuser
+
+– adminuser 组的成员对此目录有读写和执行的权限，并且其他用户没有任何权限
+
+– 在此目录中创建的文件，其所属组会自动设置为 属于 adminuser 组
+</code></pre>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl"><span class="o">[</span>root@Localhost ~<span class="o">]</span><span class="c1"># mkdir /home/admins</span>
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@Localhost ~<span class="o">]</span><span class="c1"># groupadd adminuser</span>
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@Localhost ~<span class="o">]</span><span class="c1"># chown :adminuser /home/admins</span>
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@Localhost ~<span class="o">]</span><span class="c1"># ls -ld /home/admins</span>
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@Localhost ~<span class="o">]</span><span class="c1"># chmod g:rwx,o:--- /home/admins</span>
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@Localhost ~<span class="o">]</span><span class="c1"># chown g+s  /home/admins</span>
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@Localhost ~<span class="o">]</span><span class="c1"># ls -ld /home/admins</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@Localhost ~<span class="o">]</span><span class="c1"># mkdir /home/admins/ceshi</span>
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@Localhost ~<span class="o">]</span><span class="c1"># ls -ld/home/admins/ceshi</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>‍</p>
+
+</section>
+
+
+    <footer class="article-footer">
+    
+
+    </footer>
+
+
+    
+</article>
+
+    
+
+    
+
+     
+    
+        
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+        2025 小诗
+    </section>
+    
+    <section class="powerby">
+        使用 <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> 构建 <br />
+        主题 <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.26.0">Stack</a></b> 由 <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a> 设计
+    </section>
+</footer>
+
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css"crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css"crossorigin="anonymous"
+            >
+
+            </main>
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.6/dist/vibrant.min.js"integrity="sha256-awcR2jno4kI5X0zL8ex0vi2z&#43;KMkF24hUW8WePSA9HM="crossorigin="anonymous"
+                
+                >
+            </script><script type="text/javascript" src="/xiaoshi/ts/main.js" defer></script>
+<script>
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+
+    </body>
+</html>
