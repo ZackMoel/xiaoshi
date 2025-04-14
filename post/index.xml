@@ -13512,28 +13512,36 @@ MariaDB基于事务的Maria存储引擎,替换了MySQL的MyiSAM存储引擎,使�
 &lt;li&gt;阿里云等公有云平台的NAS就是云版的NFS服务应用。&lt;/li&gt;
 &lt;li&gt;这个奔驰官网，需要展示大量的图片，动态图，html网页文件，这些都是存储在服务器上的。&lt;/li&gt;
 &lt;/ul&gt;
-&lt;p&gt;&lt;img src=&#34;D:/desktop/myblog/myblog/content/post/NFS%e5%ad%a6%e4%b9%a0%e7%ac%94%e8%ae%b0/assets/image-20240910135313464.png&#34;
-	
-	
-	
+&lt;p&gt;&lt;img src=&#34;https://ZackMoel.github.io/xiaoshi/xiaoshi/p/nfs%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/assets/image-20240910135313464.png&#34;
+	width=&#34;1919&#34;
+	height=&#34;885&#34;
+	srcset=&#34;https://ZackMoel.github.io/xiaoshi/xiaoshi/p/nfs%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/assets/image-20240910135313464_hu9523626119763377689.png 480w, https://ZackMoel.github.io/xiaoshi/xiaoshi/p/nfs%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/assets/image-20240910135313464_hu13000209979504289297.png 1024w&#34;
 	loading=&#34;lazy&#34;
 	
 		alt=&#34;image-20240910135313464&#34;
 	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;216&#34;
+		data-flex-basis=&#34;520px&#34;
 	
 &gt;&lt;/p&gt;
 &lt;h1 id=&#34;企业生产集群为什么需要共享存储&#34;&gt;企业生产集群为什么需要共享存储
 &lt;/h1&gt;&lt;ul&gt;
 &lt;li&gt;
 &lt;p&gt;先看一下如果没有共享存储的问题&lt;/p&gt;
-&lt;p&gt;A用户上传图片到web01服务器，然后用户B访该图片，结果B的请求被负载均衡分发到了Web02,但是由于 没有配置共享存储，web02没有该图片，导致用户B看不到该资源，用户心理很不爽呀。&lt;img src=&#34;D:/desktop/myblog/myblog/content/post/NFS%e5%ad%a6%e4%b9%a0%e7%ac%94%e8%ae%b0/assets/clipImg.png&#34;
-	
-	
-	
+&lt;p&gt;A用户上传图片到web01服务器，然后用户B访该图片，结果B的请求被负载均衡分发到了Web02,但是由于 没有配置共享存储，web02没有该图片，导致用户B看不到该资源，用户心理很不爽呀。&lt;img src=&#34;https://ZackMoel.github.io/xiaoshi/xiaoshi/p/nfs%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/assets/clipImg.png&#34;
+	width=&#34;1065&#34;
+	height=&#34;507&#34;
+	srcset=&#34;https://ZackMoel.github.io/xiaoshi/xiaoshi/p/nfs%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/assets/clipImg_hu12739872708278169004.png 480w, https://ZackMoel.github.io/xiaoshi/xiaoshi/p/nfs%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/assets/clipImg_hu15060612466081588545.png 1024w&#34;
 	loading=&#34;lazy&#34;
 	
 		alt=&#34;clipImg&#34;
 	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;210&#34;
+		data-flex-basis=&#34;504px&#34;
 	
 &gt;&lt;/p&gt;
 &lt;/li&gt;
@@ -13544,25 +13552,33 @@ MariaDB基于事务的Maria存储引擎,替换了MySQL的MyiSAM存储引擎,使�
 &lt;p&gt;这个共享存储对于中小企业，也就是使用服务器配置NFS网络文件共享系统实现。&lt;/p&gt;
 &lt;/li&gt;
 &lt;/ul&gt;
-&lt;p&gt;&lt;img src=&#34;D:/desktop/myblog/myblog/content/post/NFS%e5%ad%a6%e4%b9%a0%e7%ac%94%e8%ae%b0/assets/clipImg-1725951215084-5.png&#34;
-	
-	
-	
+&lt;p&gt;&lt;img src=&#34;https://ZackMoel.github.io/xiaoshi/xiaoshi/p/nfs%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/assets/clipImg-1725951215084-5.png&#34;
+	width=&#34;1071&#34;
+	height=&#34;388&#34;
+	srcset=&#34;https://ZackMoel.github.io/xiaoshi/xiaoshi/p/nfs%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/assets/clipImg-1725951215084-5_hu16933355886917120992.png 480w, https://ZackMoel.github.io/xiaoshi/xiaoshi/p/nfs%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/assets/clipImg-1725951215084-5_hu13513582461203667102.png 1024w&#34;
 	loading=&#34;lazy&#34;
 	
 		alt=&#34;clipImg&#34;
 	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;276&#34;
+		data-flex-basis=&#34;662px&#34;
 	
 &gt;&lt;/p&gt;
 &lt;h1 id=&#34;任务用nfs完成网站共享存储&#34;&gt;任务：用NFS完成网站共享存储
-&lt;/h1&gt;&lt;p&gt;&lt;img src=&#34;D:/desktop/myblog/myblog/content/post/NFS%e5%ad%a6%e4%b9%a0%e7%ac%94%e8%ae%b0/assets/clipImg-1725951438041-7.png&#34;
-	
-	
-	
+&lt;/h1&gt;&lt;p&gt;&lt;img src=&#34;https://ZackMoel.github.io/xiaoshi/xiaoshi/p/nfs%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/assets/clipImg-1725951438041-7.png&#34;
+	width=&#34;1051&#34;
+	height=&#34;581&#34;
+	srcset=&#34;https://ZackMoel.github.io/xiaoshi/xiaoshi/p/nfs%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/assets/clipImg-1725951438041-7_hu9842315156185688818.png 480w, https://ZackMoel.github.io/xiaoshi/xiaoshi/p/nfs%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/assets/clipImg-1725951438041-7_hu8394523404955696778.png 1024w&#34;
 	loading=&#34;lazy&#34;
 	
 		alt=&#34;clipImg&#34;
 	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;180&#34;
+		data-flex-basis=&#34;434px&#34;
 	
 &gt;&lt;/p&gt;
 &lt;h1 id=&#34;什么是nfs共享存储&#34;&gt;什么是NFS共享存储
@@ -13626,14 +13642,18 @@ MariaDB基于事务的Maria存储引擎,替换了MySQL的MyiSAM存储引擎,使�
 &lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;将代码文件放在远程服务器上，在自己笔记本上，远程调用、执行该代码文件，执行结果会通过网络把数据发回来，这就是远程过程调用
 &lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
 &lt;/div&gt;
-&lt;/div&gt;&lt;p&gt;&lt;img src=&#34;D:/desktop/myblog/myblog/content/post/NFS%e5%ad%a6%e4%b9%a0%e7%ac%94%e8%ae%b0/assets/clipImg-1725957679466-9.png&#34;
-	
-	
-	
+&lt;/div&gt;&lt;p&gt;&lt;img src=&#34;https://ZackMoel.github.io/xiaoshi/xiaoshi/p/nfs%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/assets/clipImg-1725957679466-9.png&#34;
+	width=&#34;876&#34;
+	height=&#34;535&#34;
+	srcset=&#34;https://ZackMoel.github.io/xiaoshi/xiaoshi/p/nfs%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/assets/clipImg-1725957679466-9_hu935839141518060397.png 480w, https://ZackMoel.github.io/xiaoshi/xiaoshi/p/nfs%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/assets/clipImg-1725957679466-9_hu9482184912535672248.png 1024w&#34;
 	loading=&#34;lazy&#34;
 	
 		alt=&#34;clipImg&#34;
 	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;163&#34;
+		data-flex-basis=&#34;392px&#34;
 	
 &gt;&lt;/p&gt;
 &lt;h1 id=&#34;nfs和rpc关系&#34;&gt;NFS和RPC关系
@@ -13673,25 +13693,33 @@ MariaDB基于事务的Maria存储引擎,替换了MySQL的MyiSAM存储引擎,使�
 &lt;/div&gt;&lt;h1 id=&#34;rpcbind服务&#34;&gt;rpcbind服务
 &lt;/h1&gt;&lt;p&gt;该服务是用于，nfs启动后，将端口号，注册到这个rpcbind服务中&lt;/p&gt;
 &lt;h1 id=&#34;图解nfs工作原理&#34;&gt;图解NFS工作原理
-&lt;/h1&gt;&lt;p&gt;&lt;img src=&#34;D:/desktop/myblog/myblog/content/post/NFS%e5%ad%a6%e4%b9%a0%e7%ac%94%e8%ae%b0/assets/clipImg-1726014480849-1.png&#34;
-	
-	
-	
+&lt;/h1&gt;&lt;p&gt;&lt;img src=&#34;https://ZackMoel.github.io/xiaoshi/xiaoshi/p/nfs%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/assets/clipImg-1726014480849-1.png&#34;
+	width=&#34;945&#34;
+	height=&#34;585&#34;
+	srcset=&#34;https://ZackMoel.github.io/xiaoshi/xiaoshi/p/nfs%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/assets/clipImg-1726014480849-1_hu670310219458109416.png 480w, https://ZackMoel.github.io/xiaoshi/xiaoshi/p/nfs%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/assets/clipImg-1726014480849-1_hu11759459745990280516.png 1024w&#34;
 	loading=&#34;lazy&#34;
 	
 		alt=&#34;clipImg&#34;
 	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;161&#34;
+		data-flex-basis=&#34;387px&#34;
 	
 &gt;&lt;/p&gt;
 &lt;h1 id=&#34;nfs工作流程图原理&#34;&gt;nfs工作流程图原理
-&lt;/h1&gt;&lt;p&gt;&lt;img src=&#34;D:/desktop/myblog/myblog/content/post/NFS%e5%ad%a6%e4%b9%a0%e7%ac%94%e8%ae%b0/assets/clipImg-1726014752245-3.png&#34;
-	
-	
-	
+&lt;/h1&gt;&lt;p&gt;&lt;img src=&#34;https://ZackMoel.github.io/xiaoshi/xiaoshi/p/nfs%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/assets/clipImg-1726014752245-3.png&#34;
+	width=&#34;1034&#34;
+	height=&#34;485&#34;
+	srcset=&#34;https://ZackMoel.github.io/xiaoshi/xiaoshi/p/nfs%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/assets/clipImg-1726014752245-3_hu15218669799539864323.png 480w, https://ZackMoel.github.io/xiaoshi/xiaoshi/p/nfs%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/assets/clipImg-1726014752245-3_hu7480069601105713369.png 1024w&#34;
 	loading=&#34;lazy&#34;
 	
 		alt=&#34;clipImg&#34;
 	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;213&#34;
+		data-flex-basis=&#34;511px&#34;
 	
 &gt;&lt;/p&gt;
 &lt;h1 id=&#34;nfs服务端部署&#34;&gt;NFS服务端部署
