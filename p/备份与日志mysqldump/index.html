@@ -1,0 +1,2720 @@
+<!DOCTYPE html>
+<html lang="zh-cn" dir="ltr">
+    <head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content="1.为什么要备份 运维是干什么的？ 保护服务器数据安全 维护公司运维资产7*24小时运转 企业真实案件： https://www.leiphone.com/category/sponsor/Isb7Smi17CHBTxVF.html 企业丢了数据，就等于失去了商机、客户、产品">
+<title>备份与日志（Mysqldump）</title>
+
+<link rel='canonical' href='https://ZackMoel.github.io/xiaoshi/p/%E5%A4%87%E4%BB%BD%E4%B8%8E%E6%97%A5%E5%BF%97mysqldump/'>
+
+<link rel="stylesheet" href="/xiaoshi/scss/style.min.0304c6baf04e01a8fe70693791cb744d56a3578a3120a8796cefc66825aa39c7.css"><meta property='og:title' content="备份与日志（Mysqldump）">
+<meta property='og:description' content="1.为什么要备份 运维是干什么的？ 保护服务器数据安全 维护公司运维资产7*24小时运转 企业真实案件： https://www.leiphone.com/category/sponsor/Isb7Smi17CHBTxVF.html 企业丢了数据，就等于失去了商机、客户、产品">
+<meta property='og:url' content='https://ZackMoel.github.io/xiaoshi/p/%E5%A4%87%E4%BB%BD%E4%B8%8E%E6%97%A5%E5%BF%97mysqldump/'>
+<meta property='og:site_name' content='小诗的博客'>
+<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:published_time' content='2025-04-14T16:07:24&#43;08:00'/><meta property='article:modified_time' content='2025-04-14T16:07:24&#43;08:00'/>
+<meta name="twitter:title" content="备份与日志（Mysqldump）">
+<meta name="twitter:description" content="1.为什么要备份 运维是干什么的？ 保护服务器数据安全 维护公司运维资产7*24小时运转 企业真实案件： https://www.leiphone.com/category/sponsor/Isb7Smi17CHBTxVF.html 企业丢了数据，就等于失去了商机、客户、产品">
+  
+
+
+    </head>
+    <body class="
+    article-page
+    ">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex on-phone--column extended"><aside class="sidebar left-sidebar sticky ">
+    <button class="hamburger hamburger--spin" type="button" id="toggle-menu" aria-label="切换菜单">
+        <span class="hamburger-box">
+            <span class="hamburger-inner"></span>
+        </span>
+    </button>
+
+    <header>
+        
+            
+            <figure class="site-avatar">
+                <a href="/xiaoshi/">
+                
+                    
+                    
+                    
+                        
+                        <img src="/xiaoshi/img/avatar_hu8920112365793990935.png" width="300"
+                            height="300" class="site-logo" loading="lazy" alt="Avatar">
+                    
+                
+                </a>
+                
+                    <span class="emoji">🍥</span>
+                
+            </figure>
+            
+        
+        
+        <div class="site-meta">
+            <h1 class="site-name"><a href="/xiaoshi">小诗的博客</a></h1>
+            <h2 class="site-description">欢迎来到小诗的博客</h2>
+        </div>
+    </header><ol class="menu-social">
+            
+                <li>
+                    <a 
+                        href='https://space.bilibili.com/1055981889?spm_id_from=333.1007.0.0'
+                        target="_blank"
+                        title="bilibili"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg  xmlns="http://www.w3.org/2000/svg"  width="24"  height="24"  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  stroke-width="2"  stroke-linecap="round"  stroke-linejoin="round"  class="icon icon-tabler icons-tabler-outline icon-tabler-brand-bilibili"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M3 10a4 4 0 0 1 4 -4h10a4 4 0 0 1 4 4v6a4 4 0 0 1 -4 4h-10a4 4 0 0 1 -4 -4v-6z" /><path d="M8 3l2 3" /><path d="M16 3l-2 3" /><path d="M9 13v-2" /><path d="M15 11v2" /></svg>
+                        
+                    </a>
+                </li>
+            
+                <li>
+                    <a 
+                        href='https://github.com/ZackMoel/xiaoshi.github.io'
+                        target="_blank"
+                        title="GitHub"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-github" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M9 19c-4.3 1.4 -4.3 -2.5 -6 -3m12 5v-3.5c0 -1 .1 -1.4 -.5 -2c2.8 -.3 5.5 -1.4 5.5 -6a4.6 4.6 0 0 0 -1.3 -3.2a4.2 4.2 0 0 0 -.1 -3.2s-1.1 -.3 -3.5 1.3a12.3 12.3 0 0 0 -6.2 0c-2.4 -1.6 -3.5 -1.3 -3.5 -1.3a4.2 4.2 0 0 0 -.1 3.2a4.6 4.6 0 0 0 -1.3 3.2c0 4.6 2.7 5.7 5.5 6c-.6 .6 -.6 1.2 -.5 2v3.5" />
+</svg>
+
+
+
+                        
+                    </a>
+                </li>
+            
+        </ol><ol class="menu" id="main-menu">
+        
+        
+        
+        <li >
+            <a href='/xiaoshi/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-home" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <polyline points="5 12 3 12 12 3 21 12 19 12" />
+  <path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7" />
+  <path d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6" />
+</svg>
+
+
+
+                
+                <span>主页</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/xiaoshi/%E5%85%B3%E4%BA%8E/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-user" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="7" r="4" />
+  <path d="M6 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2" />
+</svg>
+
+
+
+                
+                <span>关于</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/xiaoshi/archives/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-archive" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <rect x="3" y="4" width="18" height="4" rx="2" />
+  <path d="M5 8v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-10" />
+  <line x1="10" y1="12" x2="14" y2="12" />
+</svg>
+
+
+
+                
+                <span>归档</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/xiaoshi/search/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-search" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="10" cy="10" r="7" />
+  <line x1="21" y1="21" x2="15" y2="15" />
+</svg>
+
+
+
+                
+                <span>搜索</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/xiaoshi/%E5%8F%8B%E6%83%85%E9%93%BE%E6%8E%A5/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-link" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M10 14a3.5 3.5 0 0 0 5 0l4 -4a3.5 3.5 0 0 0 -5 -5l-.5 .5" />
+  <path d="M14 10a3.5 3.5 0 0 0 -5 0l-4 4a3.5 3.5 0 0 0 5 5l.5 -.5" />
+</svg>
+
+
+
+                
+                <span>友情链接</span>
+            </a>
+        </li>
+        
+        <li class="menu-bottom-section">
+            <ol class="menu">
+
+                
+                    <li id="dark-mode-toggle">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="8" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="16" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <span>暗色模式</span>
+                    </li>
+                
+            </ol>
+        </li>
+    </ol>
+</aside>
+
+    <aside class="sidebar right-sidebar sticky">
+        
+            
+                
+    <section class="widget archives">
+        <div class="widget-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <line x1="5" y1="9" x2="19" y2="9" />
+  <line x1="5" y1="15" x2="19" y2="15" />
+  <line x1="11" y1="4" x2="7" y2="20" />
+  <line x1="17" y1="4" x2="13" y2="20" />
+</svg>
+
+
+
+        </div>
+        <h2 class="widget-title section-title">目录</h2>
+        
+        <div class="widget--toc">
+            <nav id="TableOfContents">
+  <ol>
+    <li><a href="#逻辑备份">逻辑备份</a></li>
+    <li><a href="#物理备份">物理备份</a></li>
+    <li><a href="#如何选">如何选</a></li>
+  </ol>
+
+  <ol>
+    <li><a href="#41-mysqldump连接参数">4.1 mysqldump连接参数</a></li>
+    <li><a href="#42-mysqldump备份参数">4.2 mysqldump备份参数</a>
+      <ol>
+        <li><a href="#全量备份">全量备份</a></li>
+        <li><a href="#准备一个新的数据库实例模拟数据恢复查看不同备份命令的数据恢复结果">准备一个新的数据库实例，模拟数据恢复，查看不同备份命令的数据恢复结果</a></li>
+        <li><a href="#指定3306备份某个库下的某个表">指定3306备份某个库下的某个表</a></li>
+        <li><a href="#指定备份库下的多个表">指定备份库下的多个表</a></li>
+        <li><a href="#指定你要哪些数据库进行备份">指定你要哪些数据库，进行备份</a></li>
+        <li><a href="#只要表结构不要数据">只要表结构，不要数据</a></li>
+        <li><a href="#只要表数据不要结构">只要表数据，不要结构</a></li>
+        <li><a href="#备份且压缩数据">备份且压缩数据</a></li>
+      </ol>
+    </li>
+    <li><a href="#什么是lock-tables">什么是lock tables</a></li>
+  </ol>
+
+  <ol>
+    <li><a href="#普通日志">普通日志</a></li>
+    <li><a href="#二进制日志binlog">二进制日志binlog</a>
+      <ol>
+        <li><a href="#作用">作用</a></li>
+        <li><a href="#二进制binlog索引文件">二进制binlog索引文件</a></li>
+      </ol>
+    </li>
+  </ol>
+
+  <ol>
+    <li><a href="#binlog的作用">binlog的作用</a></li>
+    <li><a href="#配置log_bin">配置log_bin</a></li>
+    <li><a href="#开启binlog">开启binlog</a></li>
+    <li><a href="#binlog内容的格式">binlog内容的格式</a>
+      <ol>
+        <li><a href="#事件event记录方式">事件event记录方式</a></li>
+        <li><a href="#二进制日志事件内容格式查看">二进制日志事件内容格式查看</a></li>
+      </ol>
+    </li>
+    <li><a href="#查看binlog日志文件情况">查看binlog日志文件情况</a>
+      <ol>
+        <li><a href="#刷新新日志文件">刷新新日志文件</a></li>
+        <li><a href="#查看当前mysql用哪个日志文件">查看当前mysql用哪个日志文件</a></li>
+        <li><a href="#模拟binlog记录">模拟binlog记录</a></li>
+      </ol>
+    </li>
+    <li><a href="#简单理解什么是mysql的事务">简单理解什么是mysql的事务</a>
+      <ol>
+        <li><a href="#查看日志事件">查看日志事件</a></li>
+        <li><a href="#体验binlog流程图解">体验binlog流程图解</a></li>
+        <li><a href="#解密查看binlog日志">解密查看binlog日志</a></li>
+      </ol>
+    </li>
+  </ol>
+
+  <ol>
+    <li><a href="#误删除数据的恢复思路">误删除数据的恢复思路</a></li>
+    <li><a href="#模拟练习">模拟练习</a></li>
+  </ol>
+</nav>
+        </div>
+    </section>
+
+            
+        
+    </aside>
+
+
+            <main class="main full-width">
+    <article class="main-article">
+    <header class="article-header">
+
+    <div class="article-details">
+    
+
+    <div class="article-title-wrapper">
+        <h2 class="article-title">
+            <a href="/xiaoshi/p/%E5%A4%87%E4%BB%BD%E4%B8%8E%E6%97%A5%E5%BF%97mysqldump/">备份与日志（Mysqldump）</a>
+        </h2>
+    
+        
+    </div>
+
+    
+    
+    
+    
+    <footer class="article-time">
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
+  <circle cx="18" cy="18" r="4" />
+  <path d="M15 3v4" />
+  <path d="M7 3v4" />
+  <path d="M3 11h16" />
+  <path d="M18 16.496v1.504l1 1" />
+</svg>
+                <time class="article-time--published">2025-04-14</time>
+            </div>
+        
+
+        
+    </footer>
+    
+
+    
+</div>
+
+</header>
+
+    <section class="article-content">
+    
+    
+    <h1 id="1为什么要备份">1.为什么要备份
+</h1><p>运维是干什么的？</p>
+<ul>
+<li>保护服务器数据安全</li>
+<li>维护公司运维资产7*24小时运转</li>
+</ul>
+<blockquote>
+<p>企业真实案件：</p>
+<p><a class="link" href="https://www.leiphone.com/category/sponsor/Isb7Smi17CHBTxVF.html"  target="_blank" rel="noopener"
+    >https://www.leiphone.com/category/sponsor/Isb7Smi17CHBTxVF.html</a></p>
+</blockquote>
+<p>企业丢了数据，就等于失去了商机、客户、产品、甚至倒闭。</p>
+<p>在各式各样的数据中，数据库的数据更是核心之核心，当然其他各式各样的如静态文件数据，也很重要，也会通过其他的备份方式来保证安全。</p>
+<h1 id="2备份恢复的职责">2.备份恢复的职责
+</h1><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">1. 备份、恢复的策略
+</span></span><span class="line"><span class="cl">备份周期、备份工具、备份方式、数据恢复方式
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">2.日常备份检查
+</span></span><span class="line"><span class="cl">日志、备份数据
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">3.定期恢复数据演练
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">4.数据故障时，利用现有的资源，快速恢复
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">5.数据迁移，数据库升级。
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h1 id="3备份工具">3.备份工具
+</h1><p>物理备份: 直接备份数据库所对应的数据文件基至是整个磁盘。</p>
+<p>逻辑备份: 将数据从数据库中导出, 并将导出的数据进行存档备份。</p>
+<div class="table-wrapper"><table>
+<thead>
+<tr>
+<th>类别</th>
+<th>物理备份</th>
+<th>逻辑备份</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>备份对象</td>
+<td>数据库的物理文件(如数据文件,控制文件,归档日志文件等)</td>
+<td>数据库对象(如用户,表,存储过程等)</td>
+</tr>
+<tr>
+<td>可移植性</td>
+<td>较弱,甚至不可移植</td>
+<td>数据库对象级备份,可移植性较强</td>
+</tr>
+<tr>
+<td>占用空间</td>
+<td>占用空间大</td>
+<td>占用空间相对较小</td>
+</tr>
+<tr>
+<td>恢复效率</td>
+<td>效率高</td>
+<td>效率较低</td>
+</tr>
+<tr>
+<td>适用场景</td>
+<td>大型业务系统或者整系统的容灾恢复、系统级全量备份</td>
+<td>主备数据库间的增量数据备份、不同业务系统之间的数据同步、业务不中断升级过程中在线数据迁移</td>
+</tr>
+</tbody>
+</table></div>
+<h2 id="逻辑备份">逻辑备份
+</h2><p>把数据库、表，以SQL语句的形式，输出为文件的备份过程，这种方式称之为逻辑备份。</p>
+<p>但是这种方式效率并不高，以SQL导出，在海量数据下，例如几十G的场景，备份、恢复的时间都会过长。</p>
+<p>因此还会有其他备份方案。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">mysqldump 
+</span></span><span class="line"><span class="cl">mysqlbinlog
+</span></span><span class="line"><span class="cl">mydumper
+</span></span><span class="line"><span class="cl">binlog2sql
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="物理备份">物理备份
+</h2><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">1. 工具使用，https://www.percona.com/software/mysql-database/percona-xtrabackup
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">2.直接shell+crontab备份整个mysql数据目录
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="如何选">如何选
+</h2><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">100G数据以内，逻辑备份没问题，服务器配置要跟上
+</span></span><span class="line"><span class="cl">100G 以上，建议物理备份
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h1 id="4mysqldump备份">4.mysqldump备份
+</h1><p>开始逻辑备份的学习</p>
+<ul>
+<li>只备份某些库</li>
+<li>只备份某些表</li>
+<li>以及只要表结构，不要表数据</li>
+<li>结构，数据都要，全量备份等</li>
+</ul>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">mysqldump备份语法
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">Mysqldump -u用户名 -p密码 参数 数据库名 &gt; 数据备份文件
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">mysql自带的备份工具，可以实现本地备份，远程备份
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">mysqldump命令备份过程，实际上是把数据库、表，以SQL语句的形式，输出为文件的备份过程，这种方式称之为逻辑备份。
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">但是这种方式效率并不高，以SQL导出，在海量数据下，例如几十G的场景，备份、恢复的时间都会过长。
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">因此还会有其他备份方案。
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="41-mysqldump连接参数">4.1 mysqldump连接参数
+</h2><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">-u mysql用户名
+</span></span><span class="line"><span class="cl">-p mysql用户密码
+</span></span><span class="line"><span class="cl">-S mysql本地socket文件
+</span></span><span class="line"><span class="cl">-h 指定主机地址
+</span></span><span class="line"><span class="cl">-P 指定mysql端口
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="42-mysqldump备份参数">4.2 mysqldump备份参数
+</h2><blockquote>
+<p>可以利用如下语句，实现数据库的数据、结构、很实用的技巧。</p>
+</blockquote>
+<h3 id="全量备份">全量备份
+</h3><p>对当前数据库实例，导出，所有的库，表，以及数据，转储为SQL文件</p>
+<p>对这个文件进行导入执行。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">--all-databases，-A   转储所有数据库中的所有表。
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">mysqldump -uroot -plinux3306 --all-databases  &gt;  /opt/all-3306.sql 
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">[root@tech-db-51 ~]#wc -l /opt/all-3306.sql 
+</span></span><span class="line"><span class="cl">2030 /opt/all-3306.sql
+</span></span><span class="line"><span class="cl">[root@tech-db-51 ~]#
+</span></span><span class="line"><span class="cl">[root@tech-db-51 ~]#file /opt/all-3306.sql 
+</span></span><span class="line"><span class="cl">/opt/all-3306.sql: UTF-8 Unicode text, with very long lines
+</span></span><span class="line"><span class="cl">[root@tech-db-51 ~]#
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"># 这个备份的文件，具体步骤就是
+</span></span><span class="line"><span class="cl"># 有几张表示空表，没数据， lock, unlock之间是空的
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">1. 当前操作某个库，   先基于 if条件 判断，然后create 库
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">2. 删除库下的某个表，然后create 重建表结构
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">3. 先 lock 锁住表的数据写入，为了防止恢复出现问题；
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">恢复数据，insert 插入数据
+</span></span><span class="line"><span class="cl">unlock 解锁表，允许再次写入
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">mysqldump 逻辑备份，导出的SQL，解读 ，3个流程
+</span></span></code></pre></td></tr></table>
+</div>
+</div><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">每学一个备份的玩法，就进行数据导入，查看具体备份，恢复的情况。
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="准备一个新的数据库实例模拟数据恢复查看不同备份命令的数据恢复结果">准备一个新的数据库实例，模拟数据恢复，查看不同备份命令的数据恢复结果
+</h3><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">准备一个 3307 实例
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">1. 清空3307的数据
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">2. 重新初始化3307的数据
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">[root@tech-db-51 /linux0224/mysql_3307]#mysqld --initialize-insecure --user=mysql --basedir=/opt/mysql --datadir=/linux0224/mysql_3307/
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">3.导入3306的数据即可覆盖
+</span></span><span class="line"><span class="cl"># 恢复数据的命令
+</span></span><span class="line"><span class="cl">[root@tech-db-51 /linux0224/mysql_3307]#mysql -S /linux0224/mysql_3307/mysql.sock 
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">3307  &gt; 3306数据  （自建的库表，以及mysql默认得库表）
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">mysql&gt; source /opt/all-3306.sql 
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">重启3307后，会读取所有3306 的数据了
+</span></span><span class="line"><span class="cl">[root@tech-db-51 /linux0224/mysql_3307]#bash /linux0224/3307.sh restart
+</span></span><span class="line"><span class="cl">Restarting MySQL...
+</span></span><span class="line"><span class="cl">Stoping MySQL...
+</span></span><span class="line"><span class="cl">Starting MySQL...
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">此时3307的数据，完全以3306来了，用的3306的账密认证了。
+</span></span><span class="line"><span class="cl">[root@tech-db-51 /linux0224/mysql_3307]#mysql -uroot -plinux3306 -S /linux0224/mysql_3307/mysql.sock 
+</span></span><span class="line"><span class="cl">mysql: [Warning] Using a password on the command line interface can be insecure.
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="指定3306备份某个库下的某个表">指定3306备份某个库下的某个表
+</h3><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">mysqldump -uroot -plinux3306 world  city   &gt;  /opt/world_city.sql
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">1. 删除city表
+</span></span><span class="line"><span class="cl">2. 创建city表结构 ，定义好字段
+</span></span><span class="line"><span class="cl">3. insert插入数据，city ，一条insert语句写入了所有数据
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">3307实例单独导入某个表数据
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"># 方式1，导入数据
+</span></span><span class="line"><span class="cl">mysql&gt; create database test_world;
+</span></span><span class="line"><span class="cl">Query OK, 1 row affected (0.00 sec)
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">mysql&gt; 
+</span></span><span class="line"><span class="cl">mysql&gt; use test_world;
+</span></span><span class="line"><span class="cl">Database changed
+</span></span><span class="line"><span class="cl">mysql&gt; source /opt/world_city.sql
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"># 方式2，命令行，指定库，导入
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">[root@tech-db-51 /linux0224/mysql_3307]#mysql -S /linux0224/mysql_3307/mysql.sock test_world  &lt; /opt/world_city.sql 
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">mysql&gt; select * from city where id &lt;5;
+</span></span><span class="line"><span class="cl">+----+----------------+-------------+----------+------------+
+</span></span><span class="line"><span class="cl">| ID | Name           | CountryCode | District | Population |
+</span></span><span class="line"><span class="cl">+----+----------------+-------------+----------+------------+
+</span></span><span class="line"><span class="cl">|  1 | Kabul          | AFG         | Kabol    |    1780000 |
+</span></span><span class="line"><span class="cl">|  2 | Qandahar       | AFG         | Qandahar |     237500 |
+</span></span><span class="line"><span class="cl">|  3 | Herat          | AFG         | Herat    |     186800 |
+</span></span><span class="line"><span class="cl">|  4 | Mazar-e-Sharif | AFG         | Balkh    |     127800 |
+</span></span><span class="line"><span class="cl">+----+----------------+-------------+----------+------------+
+</span></span><span class="line"><span class="cl">4 rows in set (0.00 sec)
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="指定备份库下的多个表">指定备份库下的多个表
+</h3><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">#将3306 world库下的  country  countrylanguage  导出为SQL，发给3307导入
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">[root@tech-db-51 ~]#mysqldump -uroot -plinux3306 world  city country  countrylanguage  &gt;  /opt/world_all_tb.sql
+</span></span><span class="line"><span class="cl">mysqldump: [Warning] Using a password on the command line interface can be insecure.
+</span></span><span class="line"><span class="cl">[root@tech-db-51 ~]#
+</span></span><span class="line"><span class="cl">[root@tech-db-51 ~]#
+</span></span><span class="line"><span class="cl">[root@tech-db-51 ~]#vim /opt/world_all_tb.sql 
+</span></span><span class="line"><span class="cl">[root@tech-db-51 ~]#
+</span></span><span class="line"><span class="cl">[root@tech-db-51 ~]## 该文件，就是对3张表的 结构，数据，导出
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"># 恢复数据，到3307实例
+</span></span><span class="line"><span class="cl">[root@tech-db-51 /linux0224/mysql_3307]#mysql -S /linux0224/mysql_3307/mysql.sock test_world  &lt;  /opt/world_all_tb.sql
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">Database changed
+</span></span><span class="line"><span class="cl">mysql&gt; show tables;
+</span></span><span class="line"><span class="cl">+----------------------+
+</span></span><span class="line"><span class="cl">| Tables_in_test_world |
+</span></span><span class="line"><span class="cl">+----------------------+
+</span></span><span class="line"><span class="cl">| city                 |
+</span></span><span class="line"><span class="cl">| country              |
+</span></span><span class="line"><span class="cl">| countrylanguage      |
+</span></span><span class="line"><span class="cl">+----------------------+
+</span></span><span class="line"><span class="cl">3 rows in set (0.00 sec)
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"># 小结
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">导出3306 world库下的多个表
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">恢复导入到了3307实例中
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"># 3307本身就有 city 表，数据会重复吗？
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">#不会，/opt/world_all_tb.sql  ，先drop删表，create 建表，insert写入数据
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="指定你要哪些数据库进行备份">指定你要哪些数据库，进行备份
+</h3><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">--databases，-B
+</span></span><span class="line"><span class="cl">转储几个数据库。
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">通常情况，mysqldump将命令行中的第1个名字参量看作数据库名，后面的名看作表名。
+</span></span><span class="line"><span class="cl">使用该选项，它将所有名字参量看作数据库名。
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">-B可以跟上多个数据库名，同时备份多个库
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">尽量结合gzip命令压缩
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># 导出3306的 dev01 库   school_db库</span>
+</span></span><span class="line"><span class="cl">mysqldump -uroot -plinux3306  -B school_db dev01 &gt; /opt/school_db-dev01.sql
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># 查看sql文件</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># 导入到3307实例</span>
+</span></span><span class="line"><span class="cl">mysql&gt; ^DBye
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@tech-db-51 /linux0224/mysql_3307<span class="o">]</span><span class="c1">#mysql -S /linux0224/mysql_3307/mysql.sock &lt;  /opt/school_db-dev01.sql</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/MySQL%e5%9f%ba%e7%a1%80%e8%af%ad%e6%b3%95/pic/1659927888081.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="1659927888081"
+	
+	
+></p>
+<h3 id="只要表结构不要数据">只要表结构，不要数据
+</h3><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-mysql" data-lang="mysql"><span class="line"><span class="cl"><span class="err">有一些服务器，你想拿到这些服务器上的数据库</span><span class="w"> </span><span class="err">，表的结构，字段即可。</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="err">框架</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="err">拿到这些框架，导入测试服务器，</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">--</span><span class="n">no</span><span class="o">-</span><span class="n">data参数</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="c1"># 语法
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">mysqldump</span><span class="w"> </span><span class="o">-</span><span class="n">uroot</span><span class="w"> </span><span class="o">-</span><span class="n">p</span><span class="w">   </span><span class="err">库</span><span class="w">   </span><span class="err">该库下的表</span><span class="mi">1</span><span class="w">  </span><span class="err">该库下的表</span><span class="mi">2</span><span class="w">   </span><span class="o">--</span><span class="n">no</span><span class="o">-</span><span class="n">data</span><span class="w"> 
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="c1"># 导出生产服务器 3306实例的  员工库 下，职称表的结构
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">mysqldump</span><span class="w"> </span><span class="o">-</span><span class="n">uroot</span><span class="w"> </span><span class="o">-</span><span class="n">plinux3306</span><span class="w">  </span><span class="o">--</span><span class="n">no</span><span class="o">-</span><span class="n">data</span><span class="w">  </span><span class="n">employees</span><span class="w"> </span><span class="n">titles</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">/</span><span class="n">opt</span><span class="o">/</span><span class="n">emp_titles_no_data</span><span class="p">.</span><span class="k">sql</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="c1"># 看看 sql文件
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="err">少一个</span><span class="n">insert插入数据</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="c1"># 备份的SQL文件，很简单
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="mi">1</span><span class="p">.</span><span class="w"> </span><span class="err">删表</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="mi">2</span><span class="p">.</span><span class="w"> </span><span class="k">create</span><span class="w"> </span><span class="err">创建表结构</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">[</span><span class="n">root</span><span class="o">@</span><span class="n">tech</span><span class="o">-</span><span class="n">db</span><span class="o">-</span><span class="mi">51</span><span class="w"> </span><span class="o">~</span><span class="p">]</span><span class="c1">#grep -Ev &#39;#|\*|--|^$&#39;  /opt/emp_titles_no_data.sql 
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="k">DROP</span><span class="w"> </span><span class="k">TABLE</span><span class="w"> </span><span class="k">IF</span><span class="w"> </span><span class="k">EXISTS</span><span class="w"> </span><span class="o">`</span><span class="n">titles</span><span class="o">`</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">CREATE</span><span class="w"> </span><span class="k">TABLE</span><span class="w"> </span><span class="o">`</span><span class="n">titles</span><span class="o">`</span><span class="w"> </span><span class="p">(</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="o">`</span><span class="n">emp_no</span><span class="o">`</span><span class="w"> </span><span class="kt">int</span><span class="p">(</span><span class="mi">11</span><span class="p">)</span><span class="w"> </span><span class="k">NOT</span><span class="w"> </span><span class="no">NULL</span><span class="p">,</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="o">`</span><span class="n">title</span><span class="o">`</span><span class="w"> </span><span class="kt">varchar</span><span class="p">(</span><span class="mi">50</span><span class="p">)</span><span class="w"> </span><span class="k">NOT</span><span class="w"> </span><span class="no">NULL</span><span class="p">,</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="o">`</span><span class="n">from_date</span><span class="o">`</span><span class="w"> </span><span class="kt">date</span><span class="w"> </span><span class="k">NOT</span><span class="w"> </span><span class="no">NULL</span><span class="p">,</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="o">`</span><span class="n">to_date</span><span class="o">`</span><span class="w"> </span><span class="kt">date</span><span class="w"> </span><span class="k">DEFAULT</span><span class="w"> </span><span class="no">NULL</span><span class="p">,</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="k">PRIMARY</span><span class="w"> </span><span class="k">KEY</span><span class="w"> </span><span class="p">(</span><span class="o">`</span><span class="n">emp_no</span><span class="o">`</span><span class="p">,</span><span class="o">`</span><span class="n">title</span><span class="o">`</span><span class="p">,</span><span class="o">`</span><span class="n">from_date</span><span class="o">`</span><span class="p">),</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="k">CONSTRAINT</span><span class="w"> </span><span class="o">`</span><span class="n">titles_ibfk_1</span><span class="o">`</span><span class="w"> </span><span class="k">FOREIGN</span><span class="w"> </span><span class="k">KEY</span><span class="w"> </span><span class="p">(</span><span class="o">`</span><span class="n">emp_no</span><span class="o">`</span><span class="p">)</span><span class="w"> </span><span class="k">REFERENCES</span><span class="w"> </span><span class="o">`</span><span class="n">employees</span><span class="o">`</span><span class="w"> </span><span class="p">(</span><span class="o">`</span><span class="n">emp_no</span><span class="o">`</span><span class="p">)</span><span class="w"> </span><span class="k">ON</span><span class="w"> </span><span class="k">DELETE</span><span class="w"> </span><span class="k">CASCADE</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">)</span><span class="w"> </span><span class="kp">ENGINE</span><span class="o">=</span><span class="n">InnoDB</span><span class="w"> </span><span class="k">DEFAULT</span><span class="w"> </span><span class="kp">CHARSET</span><span class="o">=</span><span class="n">utf8mb4</span><span class="p">;</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="只要表数据不要结构">只要表数据，不要结构
+</h3><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span><span class="lnt">43
+</span><span class="lnt">44
+</span><span class="lnt">45
+</span><span class="lnt">46
+</span><span class="lnt">47
+</span><span class="lnt">48
+</span><span class="lnt">49
+</span><span class="lnt">50
+</span><span class="lnt">51
+</span><span class="lnt">52
+</span><span class="lnt">53
+</span><span class="lnt">54
+</span><span class="lnt">55
+</span><span class="lnt">56
+</span><span class="lnt">57
+</span><span class="lnt">58
+</span><span class="lnt">59
+</span><span class="lnt">60
+</span><span class="lnt">61
+</span><span class="lnt">62
+</span><span class="lnt">63
+</span><span class="lnt">64
+</span><span class="lnt">65
+</span><span class="lnt">66
+</span><span class="lnt">67
+</span><span class="lnt">68
+</span><span class="lnt">69
+</span><span class="lnt">70
+</span><span class="lnt">71
+</span><span class="lnt">72
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-mysql" data-lang="mysql"><span class="line"><span class="cl"><span class="c1"># 有一个现成的测试服务器，数据表都有了，但是就没数据
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="c1"># 只要insert语句，不要 create table语句
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">--</span><span class="n">no</span><span class="o">-</span><span class="k">create</span><span class="o">-</span><span class="n">info</span><span class="err">，</span><span class="o">-</span><span class="n">t</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="err">还是遵循</span><span class="n">mysqldump的</span><span class="w"> </span><span class="err">默认语法</span><span class="w">  </span><span class="err">库</span><span class="w">  </span><span class="err">表</span><span class="mi">1</span><span class="w">  </span><span class="err">表</span><span class="mi">2</span><span class="w"> </span><span class="err">表</span><span class="mi">3</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="err">数据导入，文件，可能比较大，建议压缩</span><span class="w"> 
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="c1"># 导出3306 的 title表数据，以及 salaries 
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">mysqldump</span><span class="w"> </span><span class="o">-</span><span class="n">uroot</span><span class="w"> </span><span class="o">-</span><span class="n">plinux3306</span><span class="w">  </span><span class="o">--</span><span class="n">no</span><span class="o">-</span><span class="k">create</span><span class="o">-</span><span class="n">info</span><span class="w"> </span><span class="n">employees</span><span class="w">   </span><span class="n">titles</span><span class="w">  </span><span class="n">salaries</span><span class="w">  </span><span class="o">|</span><span class="n">gzip</span><span class="w">  </span><span class="o">&gt;</span><span class="w"> </span><span class="o">/</span><span class="n">opt</span><span class="o">/</span><span class="n">data_employees_title_salaries</span><span class="p">.</span><span class="k">sql</span><span class="p">.</span><span class="n">gz</span><span class="w"> 
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="c1">#  恢复该数据，导入到 3307实例
+</span></span></span><span class="line"><span class="cl"><span class="c1"># 创建表，导入sql文件
+</span></span></span><span class="line"><span class="cl"><span class="c1"># 创建该2个对应的表结构即可
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">CREATE</span><span class="w"> </span><span class="k">TABLE</span><span class="w"> </span><span class="o">`</span><span class="n">titles</span><span class="o">`</span><span class="w"> </span><span class="p">(</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="o">`</span><span class="n">emp_no</span><span class="o">`</span><span class="w"> </span><span class="kt">int</span><span class="p">(</span><span class="mi">11</span><span class="p">)</span><span class="w"> </span><span class="k">NOT</span><span class="w"> </span><span class="no">NULL</span><span class="p">,</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="o">`</span><span class="n">title</span><span class="o">`</span><span class="w"> </span><span class="kt">varchar</span><span class="p">(</span><span class="mi">50</span><span class="p">)</span><span class="w"> </span><span class="k">NOT</span><span class="w"> </span><span class="no">NULL</span><span class="p">,</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="o">`</span><span class="n">from_date</span><span class="o">`</span><span class="w"> </span><span class="kt">date</span><span class="w"> </span><span class="k">NOT</span><span class="w"> </span><span class="no">NULL</span><span class="p">,</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="o">`</span><span class="n">to_date</span><span class="o">`</span><span class="w"> </span><span class="kt">date</span><span class="w"> </span><span class="k">DEFAULT</span><span class="w"> </span><span class="no">NULL</span><span class="p">,</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="k">PRIMARY</span><span class="w"> </span><span class="k">KEY</span><span class="w"> </span><span class="p">(</span><span class="o">`</span><span class="n">emp_no</span><span class="o">`</span><span class="p">,</span><span class="o">`</span><span class="n">title</span><span class="o">`</span><span class="p">,</span><span class="o">`</span><span class="n">from_date</span><span class="o">`</span><span class="p">),</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="k">CONSTRAINT</span><span class="w"> </span><span class="o">`</span><span class="n">titles_ibfk_1</span><span class="o">`</span><span class="w"> </span><span class="k">FOREIGN</span><span class="w"> </span><span class="k">KEY</span><span class="w"> </span><span class="p">(</span><span class="o">`</span><span class="n">emp_no</span><span class="o">`</span><span class="p">)</span><span class="w"> </span><span class="k">REFERENCES</span><span class="w"> </span><span class="o">`</span><span class="n">employees</span><span class="o">`</span><span class="w"> </span><span class="p">(</span><span class="o">`</span><span class="n">emp_no</span><span class="o">`</span><span class="p">)</span><span class="w"> </span><span class="k">ON</span><span class="w"> </span><span class="k">DELETE</span><span class="w"> </span><span class="k">CASCADE</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">)</span><span class="w"> </span><span class="kp">ENGINE</span><span class="o">=</span><span class="n">InnoDB</span><span class="w"> </span><span class="k">DEFAULT</span><span class="w"> </span><span class="kp">CHARSET</span><span class="o">=</span><span class="n">utf8mb4</span><span class="w"> </span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">CREATE</span><span class="w"> </span><span class="k">TABLE</span><span class="w"> </span><span class="o">`</span><span class="n">salaries</span><span class="o">`</span><span class="w"> </span><span class="p">(</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="o">`</span><span class="n">emp_no</span><span class="o">`</span><span class="w"> </span><span class="kt">int</span><span class="p">(</span><span class="mi">11</span><span class="p">)</span><span class="w"> </span><span class="k">NOT</span><span class="w"> </span><span class="no">NULL</span><span class="p">,</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="o">`</span><span class="n">salary</span><span class="o">`</span><span class="w"> </span><span class="kt">int</span><span class="p">(</span><span class="mi">11</span><span class="p">)</span><span class="w"> </span><span class="k">NOT</span><span class="w"> </span><span class="no">NULL</span><span class="p">,</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="o">`</span><span class="n">from_date</span><span class="o">`</span><span class="w"> </span><span class="kt">date</span><span class="w"> </span><span class="k">NOT</span><span class="w"> </span><span class="no">NULL</span><span class="p">,</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="o">`</span><span class="n">to_date</span><span class="o">`</span><span class="w"> </span><span class="kt">date</span><span class="w"> </span><span class="k">NOT</span><span class="w"> </span><span class="no">NULL</span><span class="p">,</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="k">PRIMARY</span><span class="w"> </span><span class="k">KEY</span><span class="w"> </span><span class="p">(</span><span class="o">`</span><span class="n">emp_no</span><span class="o">`</span><span class="p">,</span><span class="o">`</span><span class="n">from_date</span><span class="o">`</span><span class="p">),</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="k">CONSTRAINT</span><span class="w"> </span><span class="o">`</span><span class="n">salaries_ibfk_1</span><span class="o">`</span><span class="w"> </span><span class="k">FOREIGN</span><span class="w"> </span><span class="k">KEY</span><span class="w"> </span><span class="p">(</span><span class="o">`</span><span class="n">emp_no</span><span class="o">`</span><span class="p">)</span><span class="w"> </span><span class="k">REFERENCES</span><span class="w"> </span><span class="o">`</span><span class="n">employees</span><span class="o">`</span><span class="w"> </span><span class="p">(</span><span class="o">`</span><span class="n">emp_no</span><span class="o">`</span><span class="p">)</span><span class="w"> </span><span class="k">ON</span><span class="w"> </span><span class="k">DELETE</span><span class="w"> </span><span class="k">CASCADE</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">)</span><span class="w"> </span><span class="kp">ENGINE</span><span class="o">=</span><span class="n">InnoDB</span><span class="w"> </span><span class="k">DEFAULT</span><span class="w"> </span><span class="kp">CHARSET</span><span class="o">=</span><span class="n">utf8mb4</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="err">导入</span><span class="n">sql数据</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="err">方式</span><span class="mi">1</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="mi">1</span><span class="p">.</span><span class="w"> </span><span class="err">先解压为普通的</span><span class="n">sql文件</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="mi">2</span><span class="p">.</span><span class="w"> </span><span class="err">再学过命令导入</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="err">方法</span><span class="mi">2</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">zcat</span><span class="w"> </span><span class="n">data_employees_title_salaries</span><span class="p">.</span><span class="k">sql</span><span class="p">.</span><span class="n">gz</span><span class="w">  </span><span class="o">|</span><span class="w"> </span><span class="n">mysql</span><span class="w"> </span><span class="o">-</span><span class="n">S</span><span class="w"> </span><span class="o">/</span><span class="n">linux0224</span><span class="o">/</span><span class="n">mysql_3307</span><span class="o">/</span><span class="n">mysql</span><span class="p">.</span><span class="n">sock</span><span class="w"> </span><span class="n">d1</span><span class="w"> 
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="c1"># 验证数据的恢复titles
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="n">mysql</span><span class="o">&gt;</span><span class="w"> </span><span class="k">select</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="k">from</span><span class="w"> </span><span class="n">titles</span><span class="w"> </span><span class="k">order</span><span class="w"> </span><span class="k">by</span><span class="w"> </span><span class="n">emp_no</span><span class="w"> </span><span class="k">limit</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="mi">5</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">+--------+-----------------+------------+------------+</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">|</span><span class="w"> </span><span class="n">emp_no</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">title</span><span class="w">           </span><span class="o">|</span><span class="w"> </span><span class="n">from_date</span><span class="w">  </span><span class="o">|</span><span class="w"> </span><span class="n">to_date</span><span class="w">    </span><span class="o">|</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">+--------+-----------------+------------+------------+</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">|</span><span class="w">  </span><span class="mi">10001</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">Senior</span><span class="w"> </span><span class="n">Engineer</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="mi">1986</span><span class="o">-</span><span class="mi">06</span><span class="o">-</span><span class="mi">26</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="mi">9999</span><span class="o">-</span><span class="mi">01</span><span class="o">-</span><span class="mi">01</span><span class="w"> </span><span class="o">|</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">|</span><span class="w">  </span><span class="mi">10002</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">Staff</span><span class="w">           </span><span class="o">|</span><span class="w"> </span><span class="mi">1996</span><span class="o">-</span><span class="mi">08</span><span class="o">-</span><span class="mi">03</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="mi">9999</span><span class="o">-</span><span class="mi">01</span><span class="o">-</span><span class="mi">01</span><span class="w"> </span><span class="o">|</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">|</span><span class="w">  </span><span class="mi">10003</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">Senior</span><span class="w"> </span><span class="n">Engineer</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="mi">1995</span><span class="o">-</span><span class="mi">12</span><span class="o">-</span><span class="mi">03</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="mi">9999</span><span class="o">-</span><span class="mi">01</span><span class="o">-</span><span class="mi">01</span><span class="w"> </span><span class="o">|</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">|</span><span class="w">  </span><span class="mi">10004</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">Engineer</span><span class="w">        </span><span class="o">|</span><span class="w"> </span><span class="mi">1986</span><span class="o">-</span><span class="mi">12</span><span class="o">-</span><span class="mi">01</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="mi">1995</span><span class="o">-</span><span class="mi">12</span><span class="o">-</span><span class="mi">01</span><span class="w"> </span><span class="o">|</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">|</span><span class="w">  </span><span class="mi">10004</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">Senior</span><span class="w"> </span><span class="n">Engineer</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="mi">1995</span><span class="o">-</span><span class="mi">12</span><span class="o">-</span><span class="mi">01</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="mi">9999</span><span class="o">-</span><span class="mi">01</span><span class="o">-</span><span class="mi">01</span><span class="w"> </span><span class="o">|</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">+--------+-----------------+------------+------------+</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="mi">5</span><span class="w"> </span><span class="n">rows</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="kt">set</span><span class="w"> </span><span class="p">(</span><span class="mi">0</span><span class="p">.</span><span class="mi">00</span><span class="w"> </span><span class="n">sec</span><span class="p">)</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="c1"># 工资表
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="n">mysql</span><span class="o">&gt;</span><span class="w"> </span><span class="k">select</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="k">from</span><span class="w"> </span><span class="n">salaries</span><span class="w"> </span><span class="k">order</span><span class="w"> </span><span class="k">by</span><span class="w"> </span><span class="n">emp_no</span><span class="w"> </span><span class="k">limit</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="mi">5</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">+--------+--------+------------+------------+</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">|</span><span class="w"> </span><span class="n">emp_no</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">salary</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">from_date</span><span class="w">  </span><span class="o">|</span><span class="w"> </span><span class="n">to_date</span><span class="w">    </span><span class="o">|</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">+--------+--------+------------+------------+</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">|</span><span class="w">  </span><span class="mi">10001</span><span class="w"> </span><span class="o">|</span><span class="w">  </span><span class="mi">60117</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="mi">1986</span><span class="o">-</span><span class="mi">06</span><span class="o">-</span><span class="mi">26</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="mi">1987</span><span class="o">-</span><span class="mi">06</span><span class="o">-</span><span class="mi">26</span><span class="w"> </span><span class="o">|</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">|</span><span class="w">  </span><span class="mi">10001</span><span class="w"> </span><span class="o">|</span><span class="w">  </span><span class="mi">62102</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="mi">1987</span><span class="o">-</span><span class="mi">06</span><span class="o">-</span><span class="mi">26</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="mi">1988</span><span class="o">-</span><span class="mi">06</span><span class="o">-</span><span class="mi">25</span><span class="w"> </span><span class="o">|</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">|</span><span class="w">  </span><span class="mi">10001</span><span class="w"> </span><span class="o">|</span><span class="w">  </span><span class="mi">66074</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="mi">1988</span><span class="o">-</span><span class="mi">06</span><span class="o">-</span><span class="mi">25</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="mi">1989</span><span class="o">-</span><span class="mi">06</span><span class="o">-</span><span class="mi">25</span><span class="w"> </span><span class="o">|</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">|</span><span class="w">  </span><span class="mi">10001</span><span class="w"> </span><span class="o">|</span><span class="w">  </span><span class="mi">66596</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="mi">1989</span><span class="o">-</span><span class="mi">06</span><span class="o">-</span><span class="mi">25</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="mi">1990</span><span class="o">-</span><span class="mi">06</span><span class="o">-</span><span class="mi">25</span><span class="w"> </span><span class="o">|</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">|</span><span class="w">  </span><span class="mi">10001</span><span class="w"> </span><span class="o">|</span><span class="w">  </span><span class="mi">66961</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="mi">1990</span><span class="o">-</span><span class="mi">06</span><span class="o">-</span><span class="mi">25</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="mi">1991</span><span class="o">-</span><span class="mi">06</span><span class="o">-</span><span class="mi">25</span><span class="w"> </span><span class="o">|</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">+--------+--------+------------+------------+</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="mi">5</span><span class="w"> </span><span class="n">rows</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="kt">set</span><span class="w"> </span><span class="p">(</span><span class="mi">0</span><span class="p">.</span><span class="mi">00</span><span class="w"> </span><span class="n">sec</span><span class="p">)</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="备份且压缩数据">备份且压缩数据
+</h3><p>对于数据库有大量数据表，以及信息，导出的备份文件，最好是压缩后的，节省磁盘。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl"># 压缩数据备份，
+</span></span><span class="line"><span class="cl">[root@tech-db-51 ~]#du -h /opt/data_employees_title_salaries.sql.gz
+</span></span><span class="line"><span class="cl">27M	/opt/data_employees_title_salaries.sql.gz
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="什么是lock-tables">什么是lock tables
+</h2><p>禁止DML相关SQL执行</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">mysql提供的，基于会话的 锁表，防止他人冲突写入数据。
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">语法1，单独锁某个表
+</span></span><span class="line"><span class="cl">基于会话的，锁某个表
+</span></span><span class="line"><span class="cl"># 针对其他mysql链接会话的写入动作，锁住。
+</span></span><span class="line"><span class="cl">mysql&gt; lock table  world.city write;
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">mysql&gt; unlock tables;
+</span></span><span class="line"><span class="cl">Query OK, 0 rows affected (0.00 sec)
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">mysql&gt; select * from city order by id desc limit 0,5;
+</span></span><span class="line"><span class="cl">+------+------+-------------+----------+------------+
+</span></span><span class="line"><span class="cl">| ID   | Name | CountryCode | District | Population |
+</span></span><span class="line"><span class="cl">+------+------+-------------+----------+------------+
+</span></span><span class="line"><span class="cl">| 4084 |      |             |          |          0 |
+</span></span><span class="line"><span class="cl">| 4083 |      |             |          |          0 |
+</span></span><span class="line"><span class="cl">| 4082 |      |             |          |          0 |
+</span></span><span class="line"><span class="cl">| 4081 |      |             |          |          0 |
+</span></span><span class="line"><span class="cl">| 4080 |      |             |          |          0 |
+</span></span><span class="line"><span class="cl">+------+------+-------------+----------+------------+
+</span></span><span class="line"><span class="cl">5 rows in set (0.00 sec)
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">语法2，全局读锁，针对普通账号的写入权限。
+</span></span><span class="line"><span class="cl">set global read_only=1;
+</span></span><span class="line"><span class="cl">set global read_only=0;
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h1 id="5日志篇">5.日志篇
+</h1><blockquote>
+<p>日志的作用，不说大家应该都知道，可以收集、检测我们程序的健康状况</p>
+</blockquote>
+<p>默认这些日志，大部分是未开启的，运维小于可以通过命令、配置文件，开启这些日志，以及定义存储路径。</p>
+<blockquote>
+<p>mysql日志文件的作用：</p>
+</blockquote>
+<p>1、能记录物理数据页面的修改的信息；</p>
+<p>2、能将数据从逻辑上恢复至事务之前的状态；</p>
+<p>3、能以二进制文件的形式记录了数据库中的操作；</p>
+<p>4、能记录错误的相关信息；</p>
+<p>5、能从主服务器中二进制文件取的事件等等。</p>
+<h2 id="普通日志">普通日志
+</h2><p>记录了服务器接收到的每一个查询或是命令，无论这些查询或是命令是否正确甚至是否包含语法错误，general log 都会将其记录下来 ，记录的格式为 {Time ，Id ，Command，Argument }。</p>
+<p>也正因为mysql服务器需要不断地记录日志，开启General log会产生不小的系统开销。 因此，Mysql默认是把General log关闭的。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">产生大量的磁盘IO，导致数据库服务器的磁盘压力，CPU压力。
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">mysql数据库的特点是
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">底层的逻辑是
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">1.先写入数据到磁盘中
+</span></span><span class="line"><span class="cl">2. 记录本次写入动作，记录到日志中
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">增删改查语句，全部记录下来。
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">用在银行，证券等公司，需要对每一个SQL语句，做严格的记录，审核，后期的检查。恢复等。
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">采购高价的SSD超强的CPU，超大的存储磁盘。
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="二进制日志binlog">二进制日志binlog
+</h2><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">mysql将你执行的DML相关的SQL操作
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">insert 插入数据
+</span></span><span class="line"><span class="cl">create 建库，建表
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">默认会做的事
+</span></span><span class="line"><span class="cl">1. 实质性的创建库表数据，写入磁盘中。
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">做2件事，维护数据的安全
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">1. 定时备份
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">2. binlog二进制日志
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">将你每次的DML操作，额外开启一个binlog日志功能，记录本次修改数据的操作，写入到日志中
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>binlog是记录数据库被修改的SQL语句，对数据造成影响了。</p>
+<p>一般是DDL和DML语句，包含</p>
+<ul>
+<li>insert</li>
+<li>update</li>
+<li>delete</li>
+<li>create</li>
+<li>drop</li>
+<li>alter</li>
+<li>等关键字</li>
+</ul>
+<h3 id="作用">作用
+</h3><ul>
+<li>
+<p>记录mysql数据的增量数据，且用来做增量数据恢复，前面老师已经完整的讲过、全量备份、增量备份的区别，如果不开启binlog，将无法恢复完整的数据。</p>
+</li>
+<li>
+<p>以及用在主从数据复制</p>
+</li>
+</ul>
+<h3 id="二进制binlog索引文件">二进制binlog索引文件
+</h3><p>该文件用于记录binlog的索引号</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">[root@db-51 ~]#cat /linux0224/mysql_3306/logs/mysql-bin.index 
+</span></span><span class="line"><span class="cl">/linux0224/mysql_3306/logs/mysql-bin.000001
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h1 id="6binlog日志重点">6.binlog日志（重点）
+</h1><p>binlog是mysql一大重点，Binlog是一个二进制格式的文件，用于<code>记录用户对数据库更新的SQL语句信息</code></p>
+<p>例如<code>更改数据库库表</code>和<code>更改表内容的SQL语句</code>都会记录到binlog里，但是对库表等内容的查询则不会记录到日志中。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">记录
+</span></span><span class="line"><span class="cl">DML，insert update，delete
+</span></span><span class="line"><span class="cl">DDL，create drop，alter，truncate
+</span></span><span class="line"><span class="cl">DCL，grant revoke
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="binlog的作用">binlog的作用
+</h2><p>当有数据写入到数据库时，还会同时把<code>更新的SQL语句</code>写入到对应的binlog文件里，这个文件就是上文所说的binlog文件。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">备注：mysql是先写日志，再写入数据的过程。
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">insert into  city values();
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">先后的mysql底层会
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">1. 先记录到binlog中，这个insert语句
+</span></span><span class="line"><span class="cl">2. 执行该语句，写入磁盘数据
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="配置log_bin">配置log_bin
+</h2><p>默认是没开启binlog功能的</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-gdscript3" data-lang="gdscript3"><span class="line"><span class="cl"><span class="err">查看</span><span class="n">mysql关于log_bin的变量参数</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="err">查看</span><span class="n">log_bin的配置信息</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">mysql</span><span class="o">&gt;</span> <span class="n">show</span> <span class="n">variables</span> <span class="n">like</span> <span class="s1">&#39;</span><span class="si">%lo</span><span class="s1">g_bin%&#39;</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="o">+---------------------------------+-------+</span>
+</span></span><span class="line"><span class="cl"><span class="o">|</span> <span class="n">Variable_name</span>                   <span class="o">|</span> <span class="n">Value</span> <span class="o">|</span>
+</span></span><span class="line"><span class="cl"><span class="o">+---------------------------------+-------+</span>
+</span></span><span class="line"><span class="cl"><span class="o">|</span> <span class="n">log_bin</span>                         <span class="o">|</span> <span class="n">OFF</span>   <span class="o">|</span>
+</span></span><span class="line"><span class="cl"><span class="o">|</span> <span class="n">log_bin_basename</span>                <span class="o">|</span>       <span class="o">|</span>
+</span></span><span class="line"><span class="cl"><span class="o">|</span> <span class="n">log_bin_index</span>                   <span class="o">|</span>       <span class="o">|</span>
+</span></span><span class="line"><span class="cl"><span class="o">|</span> <span class="n">log_bin_trust_function_creators</span> <span class="o">|</span> <span class="n">OFF</span>   <span class="o">|</span>
+</span></span><span class="line"><span class="cl"><span class="o">|</span> <span class="n">log_bin_use_v1_row_events</span>       <span class="o">|</span> <span class="n">OFF</span>   <span class="o">|</span>
+</span></span><span class="line"><span class="cl"><span class="o">|</span> <span class="n">sql_log_bin</span>                     <span class="o">|</span> <span class="n">ON</span>    <span class="o">|</span>
+</span></span><span class="line"><span class="cl"><span class="o">+---------------------------------+-------+</span>
+</span></span><span class="line"><span class="cl"><span class="mi">6</span> <span class="n">rows</span> <span class="ow">in</span> <span class="n">set</span> <span class="p">(</span><span class="mf">0.01</span> <span class="n">sec</span><span class="p">)</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="开启binlog">开启binlog
+</h2><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span><span class="lnt">43
+</span><span class="lnt">44
+</span><span class="lnt">45
+</span><span class="lnt">46
+</span><span class="lnt">47
+</span><span class="lnt">48
+</span><span class="lnt">49
+</span><span class="lnt">50
+</span><span class="lnt">51
+</span><span class="lnt">52
+</span><span class="lnt">53
+</span><span class="lnt">54
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-gdscript3" data-lang="gdscript3"><span class="line"><span class="cl"><span class="err">只需要修改配置文件，加入开启</span> <span class="n">log_bin的参数即可</span><span class="err">，就是永久生效的了</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">server_id</span><span class="o">=</span><span class="mi">100</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># 是指二进制日志，具体存储到哪，建议做法是，和mysql数据目录分开</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">mkdir</span> <span class="o">-</span><span class="n">p</span> <span class="o">/</span><span class="n">mysql_log</span><span class="o">/</span><span class="n">log_bin_3306</span><span class="o">/</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">log_bin</span><span class="o">=/</span><span class="n">mysql_log</span><span class="o">/</span><span class="n">log_bin_3306</span><span class="o">/</span><span class="n">mysql</span><span class="o">-</span><span class="nb">log</span><span class="o">-</span><span class="n">bin</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># 最终配置</span>
+</span></span><span class="line"><span class="cl"><span class="p">[</span><span class="n">root</span><span class="err">@</span><span class="n">tech</span><span class="o">-</span><span class="n">db</span><span class="o">-</span><span class="mi">51</span> <span class="o">~</span><span class="p">]</span><span class="c1">#cat /etc/my.cnf </span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="p">[</span><span class="n">mysqld</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl"><span class="n">server_id</span><span class="o">=</span><span class="mi">100</span>
+</span></span><span class="line"><span class="cl"><span class="n">log_bin</span><span class="o">=/</span><span class="n">mysql_log</span><span class="o">/</span><span class="n">log_bin_3306</span><span class="o">/</span><span class="n">mysql</span><span class="o">-</span><span class="nb">log</span><span class="o">-</span><span class="n">bin</span>
+</span></span><span class="line"><span class="cl"><span class="n">character_set_server</span><span class="o">=</span><span class="n">utf8mb4</span>
+</span></span><span class="line"><span class="cl"><span class="nb">log</span><span class="o">-</span><span class="n">error</span><span class="o">=/</span><span class="n">linux0224</span><span class="o">/</span><span class="n">mysql_3306</span><span class="o">/</span><span class="n">logs</span><span class="o">/</span><span class="mi">3306</span><span class="o">-</span><span class="n">err</span><span class="o">.</span><span class="n">log</span>
+</span></span><span class="line"><span class="cl"><span class="n">port</span><span class="o">=</span><span class="mi">3306</span>
+</span></span><span class="line"><span class="cl"><span class="n">user</span><span class="o">=</span><span class="n">mysql</span>
+</span></span><span class="line"><span class="cl"><span class="n">basedir</span><span class="o">=/</span><span class="n">opt</span><span class="o">/</span><span class="n">mysql</span>
+</span></span><span class="line"><span class="cl"><span class="n">datadir</span><span class="o">=/</span><span class="n">linux0224</span><span class="o">/</span><span class="n">mysql_3306</span><span class="o">/</span>
+</span></span><span class="line"><span class="cl"><span class="n">socket</span><span class="o">=/</span><span class="n">tmp</span><span class="o">/</span><span class="n">mysql</span><span class="o">.</span><span class="n">sock</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="p">[</span><span class="n">mysql</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl"><span class="n">socket</span><span class="o">=/</span><span class="n">tmp</span><span class="o">/</span><span class="n">mysql</span><span class="o">.</span><span class="n">sock</span>
+</span></span><span class="line"><span class="cl"><span class="p">[</span><span class="n">root</span><span class="err">@</span><span class="n">tech</span><span class="o">-</span><span class="n">db</span><span class="o">-</span><span class="mi">51</span> <span class="o">~</span><span class="p">]</span><span class="c1">#</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># 重启mysqld</span>
+</span></span><span class="line"><span class="cl"><span class="n">mkdir</span> <span class="o">-</span><span class="n">p</span> <span class="o">/</span><span class="n">mysql_log</span><span class="o">/</span><span class="n">log_bin_3306</span><span class="o">/</span>
+</span></span><span class="line"><span class="cl"><span class="n">chown</span> <span class="o">-</span><span class="n">R</span> <span class="n">mysql</span><span class="o">.</span><span class="n">mysql</span> <span class="o">/</span><span class="n">mysql_log</span><span class="o">/</span>
+</span></span><span class="line"><span class="cl"><span class="n">systemctl</span> <span class="n">restart</span> <span class="n">mysqld</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># 目前是没有二进制日志文件的，只有发生DML操作后，自动生成</span>
+</span></span><span class="line"><span class="cl"><span class="p">[</span><span class="n">root</span><span class="err">@</span><span class="n">tech</span><span class="o">-</span><span class="n">db</span><span class="o">-</span><span class="mi">51</span> <span class="o">~</span><span class="p">]</span><span class="c1">#cd /mysql_log/log_bin_3306/</span>
+</span></span><span class="line"><span class="cl"><span class="p">[</span><span class="n">root</span><span class="err">@</span><span class="n">tech</span><span class="o">-</span><span class="n">db</span><span class="o">-</span><span class="mi">51</span> <span class="o">/</span><span class="n">mysql_log</span><span class="o">/</span><span class="n">log_bin_3306</span><span class="p">]</span><span class="c1">#ll</span>
+</span></span><span class="line"><span class="cl"><span class="n">total</span> <span class="mi">0</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># 检查mysql，二进制日志的变量配置信息</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">mysql</span><span class="o">&gt;</span> <span class="n">show</span> <span class="n">variables</span> <span class="n">like</span> <span class="s1">&#39;</span><span class="si">%lo</span><span class="s1">g_bin%&#39;</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="o">+---------------------------------+---------------------------------------------+</span>
+</span></span><span class="line"><span class="cl"><span class="o">|</span> <span class="n">Variable_name</span>                   <span class="o">|</span> <span class="n">Value</span>                                       <span class="o">|</span>
+</span></span><span class="line"><span class="cl"><span class="o">+---------------------------------+---------------------------------------------+</span>
+</span></span><span class="line"><span class="cl"><span class="o">|</span> <span class="n">log_bin</span>                         <span class="o">|</span> <span class="n">ON</span>                                          <span class="o">|</span>
+</span></span><span class="line"><span class="cl"><span class="o">|</span> <span class="n">log_bin_basename</span>                <span class="o">|</span> <span class="o">/</span><span class="n">mysql_log</span><span class="o">/</span><span class="n">log_bin_3306</span><span class="o">/</span><span class="n">mysql</span><span class="o">-</span><span class="nb">log</span><span class="o">-</span><span class="n">bin</span>       <span class="o">|</span>
+</span></span><span class="line"><span class="cl"><span class="o">|</span> <span class="n">log_bin_index</span>                   <span class="o">|</span> <span class="o">/</span><span class="n">mysql_log</span><span class="o">/</span><span class="n">log_bin_3306</span><span class="o">/</span><span class="n">mysql</span><span class="o">-</span><span class="nb">log</span><span class="o">-</span><span class="n">bin</span><span class="o">.</span><span class="n">index</span> <span class="o">|</span>
+</span></span><span class="line"><span class="cl"><span class="o">|</span> <span class="n">log_bin_trust_function_creators</span> <span class="o">|</span> <span class="n">OFF</span>                                         <span class="o">|</span>
+</span></span><span class="line"><span class="cl"><span class="o">|</span> <span class="n">log_bin_use_v1_row_events</span>       <span class="o">|</span> <span class="n">OFF</span>                                         <span class="o">|</span>
+</span></span><span class="line"><span class="cl"><span class="o">|</span> <span class="n">sql_log_bin</span>                     <span class="o">|</span> <span class="n">ON</span>                                          <span class="o">|</span>
+</span></span><span class="line"><span class="cl"><span class="o">+---------------------------------+---------------------------------------------+</span>
+</span></span><span class="line"><span class="cl"><span class="mi">6</span> <span class="n">rows</span> <span class="ow">in</span> <span class="n">set</span> <span class="p">(</span><span class="mf">0.01</span> <span class="n">sec</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">mysql</span><span class="o">&gt;</span> 
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/MySQL%e5%9f%ba%e7%a1%80%e8%af%ad%e6%b3%95/pic/1659942326155.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="1659942326155"
+	
+	
+></p>
+<p>查看具体的日志信息</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">[root@tech-db-51 /mysql_log/log_bin_3306]#ll
+</span></span><span class="line"><span class="cl">total 8
+</span></span><span class="line"><span class="cl">-rw-r----- 1 mysql mysql 154 Aug  8 15:04 mysql-log-bin.000001
+</span></span><span class="line"><span class="cl">-rw-r----- 1 mysql mysql  45 Aug  8 15:04 mysql-log-bin.index
+</span></span><span class="line"><span class="cl">[root@tech-db-51 /mysql_log/log_bin_3306]#
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="binlog内容的格式">binlog内容的格式
+</h2><h3 id="事件event记录方式">事件event记录方式
+</h3><p>也就是binlog日志记录了如下内容，解密后可看。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">1. 事件描述
+</span></span><span class="line"><span class="cl">时间戳
+</span></span><span class="line"><span class="cl">server_id
+</span></span><span class="line"><span class="cl">加密方式
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">开始位置 start_pos
+</span></span><span class="line"><span class="cl">结束位置 end_pos
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">mysql里面的数据操作，都是事务性，被mysql以 开始-结尾 做了一个记录
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">create database  d1; 从开始 到结束，都被mysql  数字号，记录位置
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">2.事件内容
+</span></span><span class="line"><span class="cl">修改类的操作，SQL语句，数据行的变化
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">重点，使用binlog主要关注
+</span></span><span class="line"><span class="cl">start_pos
+</span></span><span class="line"><span class="cl">end_pos
+</span></span><span class="line"><span class="cl">事件内容
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="二进制日志事件内容格式查看">二进制日志事件内容格式查看
+</h3><p><img src="/MySQL%e5%9f%ba%e7%a1%80%e8%af%ad%e6%b3%95/pic/1659943003317.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="1659943003317"
+	
+	
+></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-gdscript3" data-lang="gdscript3"><span class="line"><span class="cl"><span class="c1"># 查看binlog日志的详细信息</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">mysql</span><span class="o">&gt;</span> <span class="n">show</span> <span class="n">variables</span> <span class="n">like</span> <span class="s1">&#39;%binlog%&#39;</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="err">这里看到</span><span class="o">|</span> <span class="n">binlog_format</span> <span class="err">是</span><span class="n">ROW</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="err">对于</span><span class="n">DDL</span><span class="err">、</span><span class="n">DCL语句</span><span class="err">，直接将</span><span class="n">SQL本身记录到binlog中</span>
+</span></span><span class="line"><span class="cl"><span class="err">对于</span><span class="n">DML</span> <span class="p">:</span> <span class="n">insert</span><span class="err">、</span><span class="n">update</span><span class="err">、</span><span class="n">delete</span> <span class="err">受到</span><span class="n">binlog_format参数控制</span><span class="err">。</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">SBR</span> <span class="p">:</span> <span class="n">Statement</span> <span class="p">:</span> <span class="err">语句模式。之前版本，默认模式</span>
+</span></span><span class="line"><span class="cl"><span class="n">RBR</span> <span class="p">:</span> <span class="n">ROW</span> <span class="p">:</span> <span class="err">行记录模式。</span><span class="mf">5.7</span><span class="err">以后，默认模式</span>
+</span></span><span class="line"><span class="cl"><span class="n">MBR</span> <span class="p">:</span> <span class="n">mixed</span> <span class="p">:</span> <span class="err">混合模式。</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># 一句话，5.7版本中</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">binlog日志</span><span class="err">，基于行去记录</span> <span class="err">用户的</span><span class="n">DML操作</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="err">简单说就是，一个</span><span class="n">insert</span> <span class="err">语句，记录为一行日志，更新一个</span><span class="n">pos值</span>
+</span></span><span class="line"><span class="cl"><span class="err">一个</span><span class="n">delete语句</span><span class="err">，也事一行日志，更新一个</span><span class="n">pos值</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="查看binlog日志文件情况">查看binlog日志文件情况
+</h2><p>查看所有日志文件的信息，二进制日志</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">[root@tech-db-51 /linux0224/mysql_3306]#ls /mysql_log/log_bin_3306/
+</span></span><span class="line"><span class="cl">mysql-log-bin.000001  mysql-log-bin.index
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"># 查看当前数据库实例，用哪个日志文件记录 SQL中。
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">show binary logs;
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">mysql&gt; show binary logs;
+</span></span><span class="line"><span class="cl">+----------------------+-----------+
+</span></span><span class="line"><span class="cl">| Log_name             | File_size |
+</span></span><span class="line"><span class="cl">+----------------------+-----------+
+</span></span><span class="line"><span class="cl">| mysql-log-bin.000001 |       154 |
+</span></span><span class="line"><span class="cl">+----------------------+-----------+
+</span></span><span class="line"><span class="cl">1 row in set (0.00 sec)
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">查看当前日志，记录的事件，最新截止点在哪
+</span></span><span class="line"><span class="cl">mysql&gt; show master status;
+</span></span><span class="line"><span class="cl">+----------------------+----------+--------------+------------------+-------------------+
+</span></span><span class="line"><span class="cl">| File                 | Position | Binlog_Do_DB | Binlog_Ignore_DB | Executed_Gtid_Set |
+</span></span><span class="line"><span class="cl">+----------------------+----------+--------------+------------------+-------------------+
+</span></span><span class="line"><span class="cl">| mysql-log-bin.000001 |      154 |              |                  |                   |
+</span></span><span class="line"><span class="cl">+----------------------+----------+--------------+------------------+-------------------+
+</span></span><span class="line"><span class="cl">1 row in set (0.00 sec)
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"># 只要数据变化
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="刷新新日志文件">刷新新日志文件
+</h3><p>了解该命令即可，不能随便执行。。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">一般用于数据库恢复，数据库重置时，才会用到。
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">除非你已经做好了全量备份，次日新增数据时，重新记录新的binlog也行。
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">flush logs; 不能随便敲
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="查看当前mysql用哪个日志文件">查看当前mysql用哪个日志文件
+</h3><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">查看当前mysql，正在用的哪个binlog日志文件
+</span></span><span class="line"><span class="cl">show master status;
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">显示mysql所有的binlog记录
+</span></span><span class="line"><span class="cl">你当前数据库实例，所有的数据变化，分散记录再了这些日志文件中
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">mysql&gt; show binary logs;
+</span></span><span class="line"><span class="cl">+----------------------+-----------+
+</span></span><span class="line"><span class="cl">| Log_name             | File_size |
+</span></span><span class="line"><span class="cl">+----------------------+-----------+
+</span></span><span class="line"><span class="cl">| mysql-log-bin.000001 |       557 |
+</span></span><span class="line"><span class="cl">| mysql-log-bin.000002 |       328 |
+</span></span><span class="line"><span class="cl">+----------------------+-----------+
+</span></span><span class="line"><span class="cl">2 rows in set (0.00 sec)
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="模拟binlog记录">模拟binlog记录
+</h3><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">1.写入数据，库，表
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">2.分别查看binlog记录pos值的变化，确认binlog会记录哪些SQL。
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">3.确认上述的所有数据创建操作，属于mysql的一个完整事务，到执行commit命令。
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">4. 当前用的数据库引擎，叫做innodb，默认就是DML操作都是事务性操作。
+</span></span><span class="line"><span class="cl">SQL执行完毕后，默认执行了一个commit提交指令。
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">mysql&gt; show master status;
+</span></span><span class="line"><span class="cl">+----------------------+----------+--------------+------------------+-------------------+
+</span></span><span class="line"><span class="cl">| File                 | Position | Binlog_Do_DB | Binlog_Ignore_DB | Executed_Gtid_Set |
+</span></span><span class="line"><span class="cl">+----------------------+----------+--------------+------------------+-------------------+
+</span></span><span class="line"><span class="cl">| mysql-log-bin.000002 |      508 |              |                  |                   |
+</span></span><span class="line"><span class="cl">+----------------------+----------+--------------+------------------+-------------------+
+</span></span><span class="line"><span class="cl">1 row in set (0.00 sec)
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">mysql&gt; 
+</span></span><span class="line"><span class="cl">mysql&gt; 
+</span></span><span class="line"><span class="cl">mysql&gt; insert into hei values(&#34;11&#34;);
+</span></span><span class="line"><span class="cl">Query OK, 1 row affected (0.00 sec)
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">mysql&gt; 
+</span></span><span class="line"><span class="cl">mysql&gt; show master status;
+</span></span><span class="line"><span class="cl">+----------------------+----------+--------------+------------------+-------------------+
+</span></span><span class="line"><span class="cl">| File                 | Position | Binlog_Do_DB | Binlog_Ignore_DB | Executed_Gtid_Set |
+</span></span><span class="line"><span class="cl">+----------------------+----------+--------------+------------------+-------------------+
+</span></span><span class="line"><span class="cl">| mysql-log-bin.000002 |      783 |              |                  |                   |
+</span></span><span class="line"><span class="cl">+----------------------+----------+--------------+------------------+-------------------+
+</span></span><span class="line"><span class="cl">1 row in set (0.00 sec)
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">mysql&gt; 
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/MySQL%e5%9f%ba%e7%a1%80%e8%af%ad%e6%b3%95/pic/1659943574218.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="1659943574218"
+	
+	
+></p>
+<h2 id="简单理解什么是mysql的事务">简单理解什么是mysql的事务
+</h2><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">可以理解为
+</span></span><span class="line"><span class="cl">你去存钱
+</span></span><span class="line"><span class="cl">1.第一次存500，第二次存800，然后退出银行卡时，本次存钱的动作，永久写入数据库，你的余额永久变化了
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">2. 你去转账给好兄弟，第一次转了5块，第二次转了10块，这个过程都得你好兄弟的卡里，多了5块，10块，才是正确的，如果哪一方的账号出了问题，导致转账动作异常，数据库都能回退本次操作。
+</span></span><span class="line"><span class="cl">也就是，你不会少5块，对方也不会多5块，数据一致性完全正确。
+</span></span><span class="line"><span class="cl">这是mysql数据库提供的事务性特征。
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="查看日志事件">查看日志事件
+</h3><p>具体来看 二进制日志事件截图，看看，日志到底记录了个啥。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">1. binlog是二进制，人类看不懂的
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">2. 基于mysqlbinlog命令，解读为普通的SQL文件即可
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="体验binlog流程图解">体验binlog流程图解
+</h3><p><img src="/MySQL%e5%9f%ba%e7%a1%80%e8%af%ad%e6%b3%95/assets/1659946113540.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="1659946113540"
+	
+	
+></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">导出binlog
+</span></span><span class="line"><span class="cl">[root@tech-db-51 /mysql_log/log_bin_3306]#mysqlbinlog mysql-log-bin.000003 &gt; /tmp/mysql-log.txt
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">154		
+</span></span><span class="line"><span class="cl">		建库  明文
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">325
+</span></span><span class="line"><span class="cl">		建表 ,明文
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">501
+</span></span><span class="line"><span class="cl">		插入表数据 	
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">at  768 从这开始
+</span></span><span class="line"><span class="cl">	插入多条数据
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">1055
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"># 解密当前binlog，查看具体的SQL
+</span></span><span class="line"><span class="cl"># 基于base64算法，按行解密binlog
+</span></span><span class="line"><span class="cl">#  -vv 显示日志的详细程度
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">[root@tech-db-51 /mysql_log/log_bin_3306]#mysqlbinlog --base64-output=decode-rows -vv    mysql-log-bin.000003 &gt; /tmp/decode-mysql-log.txt
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"># 再次插入多条数据，pos值变化
+</span></span><span class="line"><span class="cl">mysql&gt; insert into biekun77 values(2),(3),(4),(5),(6);
+</span></span><span class="line"><span class="cl">Query OK, 5 rows affected (0.00 sec)
+</span></span><span class="line"><span class="cl">Records: 5  Duplicates: 0  Warnings: 0
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"># 再次解密日志，查看 插入的数据
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/MySQL%e5%9f%ba%e7%a1%80%e8%af%ad%e6%b3%95/pic/1659946456439.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="1659946456439"
+	
+	
+></p>
+<h3 id="解密查看binlog日志">解密查看binlog日志
+</h3><p>解密binlog，其实就是解密出具体的SQL语句，也就看到了具体的数值。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">[root@db-51 /mysql_backup]#mysqlbinlog /linux0224/mysql_3306/logs/mysql-bin.000003
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">[root@db-51 /mysql_backup]#mysqlbinlog --base64-output=decode-rows -vv /linux0224/mysql_3306/logs/mysql-bin.000003
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h1 id="7binlog日志截取与恢复实践">7.binlog日志截取与恢复实践
+</h1><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span><span class="lnt">43
+</span><span class="lnt">44
+</span><span class="lnt">45
+</span><span class="lnt">46
+</span><span class="lnt">47
+</span><span class="lnt">48
+</span><span class="lnt">49
+</span><span class="lnt">50
+</span><span class="lnt">51
+</span><span class="lnt">52
+</span><span class="lnt">53
+</span><span class="lnt">54
+</span><span class="lnt">55
+</span><span class="lnt">56
+</span><span class="lnt">57
+</span><span class="lnt">58
+</span><span class="lnt">59
+</span><span class="lnt">60
+</span><span class="lnt">61
+</span><span class="lnt">62
+</span><span class="lnt">63
+</span><span class="lnt">64
+</span><span class="lnt">65
+</span><span class="lnt">66
+</span><span class="lnt">67
+</span><span class="lnt">68
+</span><span class="lnt">69
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">1. 查看当前数据库，都用了哪些binlog
+</span></span><span class="line"><span class="cl">mysql&gt; show binary logs;
+</span></span><span class="line"><span class="cl">+----------------------+-----------+
+</span></span><span class="line"><span class="cl">| Log_name             | File_size |
+</span></span><span class="line"><span class="cl">+----------------------+-----------+
+</span></span><span class="line"><span class="cl">| mysql-log-bin.000001 |       557 |
+</span></span><span class="line"><span class="cl">| mysql-log-bin.000002 |      1109 |
+</span></span><span class="line"><span class="cl">| mysql-log-bin.000003 |      1055 |
+</span></span><span class="line"><span class="cl">+----------------------+-----------+
+</span></span><span class="line"><span class="cl">3 rows in set (0.00 sec)
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">2. 当前正在用哪个binlog
+</span></span><span class="line"><span class="cl">mysql&gt; show master status;
+</span></span><span class="line"><span class="cl">+----------------------+----------+--------------+------------------+-------------------+
+</span></span><span class="line"><span class="cl">| File                 | Position | Binlog_Do_DB | Binlog_Ignore_DB | Executed_Gtid_Set |
+</span></span><span class="line"><span class="cl">+----------------------+----------+--------------+------------------+-------------------+
+</span></span><span class="line"><span class="cl">| mysql-log-bin.000003 |     1055 |              |                  |                   |
+</span></span><span class="line"><span class="cl">+----------------------+----------+--------------+------------------+-------------------+
+</span></span><span class="line"><span class="cl">1 row in set (0.00 sec)
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">3. 查看binlog的玩法
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">mysql&gt; show master status;
+</span></span><span class="line"><span class="cl">+----------------------+----------+--------------+------------------+-------------------+
+</span></span><span class="line"><span class="cl">| File                 | Position | Binlog_Do_DB | Binlog_Ignore_DB | Executed_Gtid_Set |
+</span></span><span class="line"><span class="cl">+----------------------+----------+--------------+------------------+-------------------+
+</span></span><span class="line"><span class="cl">| mysql-log-bin.000003 |     1055 |              |                  |                   |
+</span></span><span class="line"><span class="cl">+----------------------+----------+--------------+------------------+-------------------+
+</span></span><span class="line"><span class="cl">1 row in set (0.00 sec)
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">删除数据5
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">删除动作也是修改，也会提交事务，也会生成新的pos值
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">mysql&gt; delete from biekun77 where id=5;
+</span></span><span class="line"><span class="cl">Query OK, 1 row affected (0.00 sec)
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">mysql&gt; show master status;
+</span></span><span class="line"><span class="cl">+----------------------+----------+--------------+------------------+-------------------+
+</span></span><span class="line"><span class="cl">| File                 | Position | Binlog_Do_DB | Binlog_Ignore_DB | Executed_Gtid_Set |
+</span></span><span class="line"><span class="cl">+----------------------+----------+--------------+------------------+-------------------+
+</span></span><span class="line"><span class="cl">| mysql-log-bin.000003 |     1322 |              |                  |                   |
+</span></span><span class="line"><span class="cl">+----------------------+----------+--------------+------------------+-------------------+
+</span></span><span class="line"><span class="cl">1 row in set (0.00 sec)
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"># 解密binlog日志
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"># 更精确的确认pos值的玩法
+</span></span><span class="line"><span class="cl">起点截止点
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">show binlog events in &#39;mysql-log-bin.000003&#39;
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"># 恢复数据的命令
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">#  --start-position  从哪个pos值开始
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">#  --stop-positio 到哪个pos值结束 （delete语句之前截止）
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"># 这个命令是，解密binlog，截取日志，只截取写入数据的 部分SQL，丢弃delete语句的部分
+</span></span><span class="line"><span class="cl"># delete删除数据
+</span></span><span class="line"><span class="cl"># 重新insert写入不就得了么
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">mysqlbinlog --start-position=381 --stop-position=752 mysql-log-bin.000004 &gt; /tmp/restore-lol.sql
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="误删除数据的恢复思路">误删除数据的恢复思路
+</h2><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span><span class="lnt">43
+</span><span class="lnt">44
+</span><span class="lnt">45
+</span><span class="lnt">46
+</span><span class="lnt">47
+</span><span class="lnt">48
+</span><span class="lnt">49
+</span><span class="lnt">50
+</span><span class="lnt">51
+</span><span class="lnt">52
+</span><span class="lnt">53
+</span><span class="lnt">54
+</span><span class="lnt">55
+</span><span class="lnt">56
+</span><span class="lnt">57
+</span><span class="lnt">58
+</span><span class="lnt">59
+</span><span class="lnt">60
+</span><span class="lnt">61
+</span><span class="lnt">62
+</span><span class="lnt">63
+</span><span class="lnt">64
+</span><span class="lnt">65
+</span><span class="lnt">66
+</span><span class="lnt">67
+</span><span class="lnt">68
+</span><span class="lnt">69
+</span><span class="lnt">70
+</span><span class="lnt">71
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">1. 使用mysql的GTID日志模式
+</span></span><span class="line"><span class="cl">用这个方式，就可以不用考虑POS值的选择麻烦了，目前生产玩法都是它，学习手工pos值的玩法，是为了更好理解GTID的优点。
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">2. 基于mysqlbinlog的日志提取
+</span></span><span class="line"><span class="cl">3.目前的思路是
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">- 如果是单行数据的delete
+</span></span><span class="line"><span class="cl">提取日志，解密SQL，然后手工insert插入数据即可
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">1. 当前的 日志状态
+</span></span><span class="line"><span class="cl">mysql&gt; show master status;
+</span></span><span class="line"><span class="cl">+----------------------+----------+--------------+------------------+-------------------+
+</span></span><span class="line"><span class="cl">| File                 | Position | Binlog_Do_DB | Binlog_Ignore_DB | Executed_Gtid_Set |
+</span></span><span class="line"><span class="cl">+----------------------+----------+--------------+------------------+-------------------+
+</span></span><span class="line"><span class="cl">| mysql-log-bin.000004 |     1793 |              |                  |                   |
+</span></span><span class="line"><span class="cl">+----------------------+----------+--------------+------------------+-------------------+
+</span></span><span class="line"><span class="cl">1 row in set (0.00 sec)
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">2. 手工删除数据，基于日志恢复
+</span></span><span class="line"><span class="cl"># 
+</span></span><span class="line"><span class="cl">mysql&gt; delete from tb1 where id =2;
+</span></span><span class="line"><span class="cl">Query OK, 1 row affected (0.00 sec)
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">mysql&gt; 
+</span></span><span class="line"><span class="cl">mysql&gt; show master status;
+</span></span><span class="line"><span class="cl">+----------------------+----------+--------------+------------------+-------------------+
+</span></span><span class="line"><span class="cl">| File                 | Position | Binlog_Do_DB | Binlog_Ignore_DB | Executed_Gtid_Set |
+</span></span><span class="line"><span class="cl">+----------------------+----------+--------------+------------------+-------------------+
+</span></span><span class="line"><span class="cl">| mysql-log-bin.000004 |     2049 |              |                  |                   |
+</span></span><span class="line"><span class="cl">+----------------------+----------+--------------+------------------+-------------------+
+</span></span><span class="line"><span class="cl">1 row in set (0.00 sec)
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"># 当前状态 是 1793  2049截止，是数据删除
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"># 误删除了一个数据
+</span></span><span class="line"><span class="cl"># 删除的动作，被记录到了 binlog日志了
+</span></span><span class="line"><span class="cl">分析binlog日志，能知道你到底删除了什么
+</span></span><span class="line"><span class="cl"># delete也是被加密的数据
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"># 误误删除数据，你是不知道，到底删除了什么的 
+</span></span><span class="line"><span class="cl"># 这个删除动作，由于开启binlog日志，所以delete动作也被记录下来AI
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"># 提取binlog日志部分信息，解密出了，到底删了什么
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">mysqlbinlog   --start-position=1793 --stop-position=2049 mysql-log-bin.000004 &gt; /tmp/delete-test.sql
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"> 
+</span></span><span class="line"><span class="cl"># 单行恢复，删除了什么
+</span></span><span class="line"><span class="cl"># insert 写入
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">mysql&gt; select * from data1.tb1;
+</span></span><span class="line"><span class="cl">+------+
+</span></span><span class="line"><span class="cl">| id   |
+</span></span><span class="line"><span class="cl">+------+
+</span></span><span class="line"><span class="cl">|    1 |
+</span></span><span class="line"><span class="cl">|    3 |
+</span></span><span class="line"><span class="cl">|    4 |
+</span></span><span class="line"><span class="cl">+------+
+</span></span><span class="line"><span class="cl">3 rows in set (0.00 sec)
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">mysql&gt; 
+</span></span><span class="line"><span class="cl">mysql&gt; insert into data1.tb1 values(2);
+</span></span><span class="line"><span class="cl">Query OK, 1 row affected (0.00 sec)
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">- 如果是删库，删表级别的操作。
+</span></span><span class="line"><span class="cl">提取，从建库，到插入数据的部分
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="模拟练习">模拟练习
+</h2><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">  1
+</span><span class="lnt">  2
+</span><span class="lnt">  3
+</span><span class="lnt">  4
+</span><span class="lnt">  5
+</span><span class="lnt">  6
+</span><span class="lnt">  7
+</span><span class="lnt">  8
+</span><span class="lnt">  9
+</span><span class="lnt"> 10
+</span><span class="lnt"> 11
+</span><span class="lnt"> 12
+</span><span class="lnt"> 13
+</span><span class="lnt"> 14
+</span><span class="lnt"> 15
+</span><span class="lnt"> 16
+</span><span class="lnt"> 17
+</span><span class="lnt"> 18
+</span><span class="lnt"> 19
+</span><span class="lnt"> 20
+</span><span class="lnt"> 21
+</span><span class="lnt"> 22
+</span><span class="lnt"> 23
+</span><span class="lnt"> 24
+</span><span class="lnt"> 25
+</span><span class="lnt"> 26
+</span><span class="lnt"> 27
+</span><span class="lnt"> 28
+</span><span class="lnt"> 29
+</span><span class="lnt"> 30
+</span><span class="lnt"> 31
+</span><span class="lnt"> 32
+</span><span class="lnt"> 33
+</span><span class="lnt"> 34
+</span><span class="lnt"> 35
+</span><span class="lnt"> 36
+</span><span class="lnt"> 37
+</span><span class="lnt"> 38
+</span><span class="lnt"> 39
+</span><span class="lnt"> 40
+</span><span class="lnt"> 41
+</span><span class="lnt"> 42
+</span><span class="lnt"> 43
+</span><span class="lnt"> 44
+</span><span class="lnt"> 45
+</span><span class="lnt"> 46
+</span><span class="lnt"> 47
+</span><span class="lnt"> 48
+</span><span class="lnt"> 49
+</span><span class="lnt"> 50
+</span><span class="lnt"> 51
+</span><span class="lnt"> 52
+</span><span class="lnt"> 53
+</span><span class="lnt"> 54
+</span><span class="lnt"> 55
+</span><span class="lnt"> 56
+</span><span class="lnt"> 57
+</span><span class="lnt"> 58
+</span><span class="lnt"> 59
+</span><span class="lnt"> 60
+</span><span class="lnt"> 61
+</span><span class="lnt"> 62
+</span><span class="lnt"> 63
+</span><span class="lnt"> 64
+</span><span class="lnt"> 65
+</span><span class="lnt"> 66
+</span><span class="lnt"> 67
+</span><span class="lnt"> 68
+</span><span class="lnt"> 69
+</span><span class="lnt"> 70
+</span><span class="lnt"> 71
+</span><span class="lnt"> 72
+</span><span class="lnt"> 73
+</span><span class="lnt"> 74
+</span><span class="lnt"> 75
+</span><span class="lnt"> 76
+</span><span class="lnt"> 77
+</span><span class="lnt"> 78
+</span><span class="lnt"> 79
+</span><span class="lnt"> 80
+</span><span class="lnt"> 81
+</span><span class="lnt"> 82
+</span><span class="lnt"> 83
+</span><span class="lnt"> 84
+</span><span class="lnt"> 85
+</span><span class="lnt"> 86
+</span><span class="lnt"> 87
+</span><span class="lnt"> 88
+</span><span class="lnt"> 89
+</span><span class="lnt"> 90
+</span><span class="lnt"> 91
+</span><span class="lnt"> 92
+</span><span class="lnt"> 93
+</span><span class="lnt"> 94
+</span><span class="lnt"> 95
+</span><span class="lnt"> 96
+</span><span class="lnt"> 97
+</span><span class="lnt"> 98
+</span><span class="lnt"> 99
+</span><span class="lnt">100
+</span><span class="lnt">101
+</span><span class="lnt">102
+</span><span class="lnt">103
+</span><span class="lnt">104
+</span><span class="lnt">105
+</span><span class="lnt">106
+</span><span class="lnt">107
+</span><span class="lnt">108
+</span><span class="lnt">109
+</span><span class="lnt">110
+</span><span class="lnt">111
+</span><span class="lnt">112
+</span><span class="lnt">113
+</span><span class="lnt">114
+</span><span class="lnt">115
+</span><span class="lnt">116
+</span><span class="lnt">117
+</span><span class="lnt">118
+</span><span class="lnt">119
+</span><span class="lnt">120
+</span><span class="lnt">121
+</span><span class="lnt">122
+</span><span class="lnt">123
+</span><span class="lnt">124
+</span><span class="lnt">125
+</span><span class="lnt">126
+</span><span class="lnt">127
+</span><span class="lnt">128
+</span><span class="lnt">129
+</span><span class="lnt">130
+</span><span class="lnt">131
+</span><span class="lnt">132
+</span><span class="lnt">133
+</span><span class="lnt">134
+</span><span class="lnt">135
+</span><span class="lnt">136
+</span><span class="lnt">137
+</span><span class="lnt">138
+</span><span class="lnt">139
+</span><span class="lnt">140
+</span><span class="lnt">141
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-gdscript3" data-lang="gdscript3"><span class="line"><span class="cl"><span class="err">再来一次，建库，建表，删表，恢复数据</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="mf">1.</span><span class="err">刷新日志，从头来</span>
+</span></span><span class="line"><span class="cl"><span class="n">mysql</span><span class="o">&gt;</span> <span class="n">show</span> <span class="n">master</span> <span class="n">status</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="o">+----------------------+----------+--------------+------------------+-------------------+</span>
+</span></span><span class="line"><span class="cl"><span class="o">|</span> <span class="ne">File</span>                 <span class="o">|</span> <span class="n">Position</span> <span class="o">|</span> <span class="n">Binlog_Do_DB</span> <span class="o">|</span> <span class="n">Binlog_Ignore_DB</span> <span class="o">|</span> <span class="n">Executed_Gtid_Set</span> <span class="o">|</span>
+</span></span><span class="line"><span class="cl"><span class="o">+----------------------+----------+--------------+------------------+-------------------+</span>
+</span></span><span class="line"><span class="cl"><span class="o">|</span> <span class="n">mysql</span><span class="o">-</span><span class="nb">log</span><span class="o">-</span><span class="n">bin</span><span class="o">.</span><span class="mi">000006</span> <span class="o">|</span>      <span class="mi">154</span> <span class="o">|</span>              <span class="o">|</span>                  <span class="o">|</span>                   <span class="o">|</span>
+</span></span><span class="line"><span class="cl"><span class="o">+----------------------+----------+--------------+------------------+-------------------+</span>
+</span></span><span class="line"><span class="cl"><span class="mi">1</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">set</span> <span class="p">(</span><span class="mf">0.00</span> <span class="n">sec</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">mysql</span><span class="o">&gt;</span> 
+</span></span><span class="line"><span class="cl"><span class="n">mysql</span><span class="o">&gt;</span> <span class="n">create</span> <span class="n">database</span> <span class="n">db06</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="n">Query</span> <span class="n">OK</span><span class="p">,</span> <span class="mi">1</span> <span class="n">row</span> <span class="n">affected</span> <span class="p">(</span><span class="mf">0.00</span> <span class="n">sec</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">mysql</span><span class="o">&gt;</span> <span class="n">use</span> <span class="n">db06</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="n">Database</span> <span class="n">changed</span>
+</span></span><span class="line"><span class="cl"><span class="n">mysql</span><span class="o">&gt;</span> <span class="n">show</span> <span class="n">master</span> <span class="n">status</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="o">+----------------------+----------+--------------+------------------+-------------------+</span>
+</span></span><span class="line"><span class="cl"><span class="o">|</span> <span class="ne">File</span>                 <span class="o">|</span> <span class="n">Position</span> <span class="o">|</span> <span class="n">Binlog_Do_DB</span> <span class="o">|</span> <span class="n">Binlog_Ignore_DB</span> <span class="o">|</span> <span class="n">Executed_Gtid_Set</span> <span class="o">|</span>
+</span></span><span class="line"><span class="cl"><span class="o">+----------------------+----------+--------------+------------------+-------------------+</span>
+</span></span><span class="line"><span class="cl"><span class="o">|</span> <span class="n">mysql</span><span class="o">-</span><span class="nb">log</span><span class="o">-</span><span class="n">bin</span><span class="o">.</span><span class="mi">000006</span> <span class="o">|</span>      <span class="mi">313</span> <span class="o">|</span>              <span class="o">|</span>                  <span class="o">|</span>                   <span class="o">|</span>
+</span></span><span class="line"><span class="cl"><span class="o">+----------------------+----------+--------------+------------------+-------------------+</span>
+</span></span><span class="line"><span class="cl"><span class="mi">1</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">set</span> <span class="p">(</span><span class="mf">0.00</span> <span class="n">sec</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">mysql</span><span class="o">&gt;</span> <span class="n">create</span> <span class="n">table</span> <span class="n">tb06</span><span class="p">(</span><span class="n">id</span> <span class="ne">int</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl"><span class="n">Query</span> <span class="n">OK</span><span class="p">,</span> <span class="mi">0</span> <span class="n">rows</span> <span class="n">affected</span> <span class="p">(</span><span class="mf">0.00</span> <span class="n">sec</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">mysql</span><span class="o">&gt;</span> <span class="n">show</span> <span class="n">master</span> <span class="n">status</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="o">+----------------------+----------+--------------+------------------+-------------------+</span>
+</span></span><span class="line"><span class="cl"><span class="o">|</span> <span class="ne">File</span>                 <span class="o">|</span> <span class="n">Position</span> <span class="o">|</span> <span class="n">Binlog_Do_DB</span> <span class="o">|</span> <span class="n">Binlog_Ignore_DB</span> <span class="o">|</span> <span class="n">Executed_Gtid_Set</span> <span class="o">|</span>
+</span></span><span class="line"><span class="cl"><span class="o">+----------------------+----------+--------------+------------------+-------------------+</span>
+</span></span><span class="line"><span class="cl"><span class="o">|</span> <span class="n">mysql</span><span class="o">-</span><span class="nb">log</span><span class="o">-</span><span class="n">bin</span><span class="o">.</span><span class="mi">000006</span> <span class="o">|</span>      <span class="mi">477</span> <span class="o">|</span>              <span class="o">|</span>                  <span class="o">|</span>                   <span class="o">|</span>
+</span></span><span class="line"><span class="cl"><span class="o">+----------------------+----------+--------------+------------------+-------------------+</span>
+</span></span><span class="line"><span class="cl"><span class="mi">1</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">set</span> <span class="p">(</span><span class="mf">0.00</span> <span class="n">sec</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">mysql</span><span class="o">&gt;</span> <span class="n">insert</span> <span class="n">into</span> <span class="n">tb06</span> <span class="n">values</span><span class="p">(</span><span class="mi">66</span><span class="p">),(</span><span class="mi">77</span><span class="p">),(</span><span class="mi">88</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl"><span class="n">Query</span> <span class="n">OK</span><span class="p">,</span> <span class="mi">3</span> <span class="n">rows</span> <span class="n">affected</span> <span class="p">(</span><span class="mf">0.01</span> <span class="n">sec</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">Records</span><span class="p">:</span> <span class="mi">3</span>  <span class="n">Duplicates</span><span class="p">:</span> <span class="mi">0</span>  <span class="n">Warnings</span><span class="p">:</span> <span class="mi">0</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">mysql</span><span class="o">&gt;</span> 
+</span></span><span class="line"><span class="cl"><span class="n">mysql</span><span class="o">&gt;</span> <span class="n">show</span> <span class="n">master</span> <span class="n">status</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="o">+----------------------+----------+--------------+------------------+-------------------+</span>
+</span></span><span class="line"><span class="cl"><span class="o">|</span> <span class="ne">File</span>                 <span class="o">|</span> <span class="n">Position</span> <span class="o">|</span> <span class="n">Binlog_Do_DB</span> <span class="o">|</span> <span class="n">Binlog_Ignore_DB</span> <span class="o">|</span> <span class="n">Executed_Gtid_Set</span> <span class="o">|</span>
+</span></span><span class="line"><span class="cl"><span class="o">+----------------------+----------+--------------+------------------+-------------------+</span>
+</span></span><span class="line"><span class="cl"><span class="o">|</span> <span class="n">mysql</span><span class="o">-</span><span class="nb">log</span><span class="o">-</span><span class="n">bin</span><span class="o">.</span><span class="mi">000006</span> <span class="o">|</span>      <span class="mi">742</span> <span class="o">|</span>              <span class="o">|</span>                  <span class="o">|</span>                   <span class="o">|</span>
+</span></span><span class="line"><span class="cl"><span class="o">+----------------------+----------+--------------+------------------+-------------------+</span>
+</span></span><span class="line"><span class="cl"><span class="mi">1</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">set</span> <span class="p">(</span><span class="mf">0.00</span> <span class="n">sec</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># 查看binlog的事件</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="mf">1.</span> <span class="err">建库</span>    <span class="mi">154</span> <span class="o">&gt;</span> <span class="mi">313</span>  
+</span></span><span class="line"><span class="cl"><span class="mf">2.</span> <span class="err">建表</span>    <span class="mi">313</span>  <span class="o">&gt;</span> <span class="mi">477</span>
+</span></span><span class="line"><span class="cl"><span class="mf">3.</span> <span class="err">写入数据</span>  <span class="mi">477</span> <span class="o">&gt;</span> <span class="mi">742</span>  
+</span></span><span class="line"><span class="cl"><span class="mf">4.</span> <span class="err">删库</span>  <span class="mi">742</span>  <span class="o">&gt;</span>  <span class="mi">899</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="mf">4.</span>  <span class="err">直接干掉这个库</span> <span class="err">，</span><span class="n">db06</span>
+</span></span><span class="line"><span class="cl"><span class="n">drop</span> <span class="n">database</span> <span class="n">db06</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="err">查看</span> <span class="err">日志状态</span>
+</span></span><span class="line"><span class="cl"><span class="n">show</span> <span class="n">master</span> <span class="n">status</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">mysql</span><span class="o">&gt;</span> <span class="n">show</span> <span class="n">master</span> <span class="n">status</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="o">+----------------------+----------+--------------+------------------+-------------------+</span>
+</span></span><span class="line"><span class="cl"><span class="o">|</span> <span class="ne">File</span>                 <span class="o">|</span> <span class="n">Position</span> <span class="o">|</span> <span class="n">Binlog_Do_DB</span> <span class="o">|</span> <span class="n">Binlog_Ignore_DB</span> <span class="o">|</span> <span class="n">Executed_Gtid_Set</span> <span class="o">|</span>
+</span></span><span class="line"><span class="cl"><span class="o">+----------------------+----------+--------------+------------------+-------------------+</span>
+</span></span><span class="line"><span class="cl"><span class="o">|</span> <span class="n">mysql</span><span class="o">-</span><span class="nb">log</span><span class="o">-</span><span class="n">bin</span><span class="o">.</span><span class="mi">000006</span> <span class="o">|</span>      <span class="mi">899</span> <span class="o">|</span>              <span class="o">|</span>                  <span class="o">|</span>                   <span class="o">|</span>
+</span></span><span class="line"><span class="cl"><span class="o">+----------------------+----------+--------------+------------------+-------------------+</span>
+</span></span><span class="line"><span class="cl"><span class="mi">1</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">set</span> <span class="p">(</span><span class="mf">0.00</span> <span class="n">sec</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="err">日志事件</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="mf">2.</span> <span class="err">恢复数据</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="err">你目前所有的操作，都被记录再了日志</span>
+</span></span><span class="line"><span class="cl"> <span class="n">mysql</span><span class="o">-</span><span class="nb">log</span><span class="o">-</span><span class="n">bin</span><span class="o">.</span><span class="mi">000006</span>
+</span></span><span class="line"><span class="cl"> 
+</span></span><span class="line"><span class="cl"> <span class="o">-</span> <span class="err">先看啊看这个日志，完整的</span><span class="n">SQL记录</span>
+</span></span><span class="line"><span class="cl"> 
+</span></span><span class="line"><span class="cl"> <span class="n">mysqlbinlog</span>    <span class="n">mysql</span><span class="o">-</span><span class="nb">log</span><span class="o">-</span><span class="n">bin</span><span class="o">.</span><span class="mi">000006</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># 再次查看日志事件，截取，你要的 SQL范围</span>
+</span></span><span class="line"><span class="cl"><span class="n">mysql</span><span class="o">&gt;</span> <span class="n">show</span> <span class="n">binlog</span> <span class="n">events</span> <span class="ow">in</span> <span class="s1">&#39;mysql-log-bin.000006&#39;</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="o">--</span><span class="n">start</span><span class="o">-</span><span class="n">position</span>
+</span></span><span class="line"><span class="cl"> <span class="o">--</span><span class="n">stop</span><span class="o">-</span><span class="n">position</span> 
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">mysqlbinlog</span>  <span class="o">--</span><span class="n">start</span><span class="o">-</span><span class="n">position</span><span class="o">=</span><span class="mi">154</span> <span class="o">--</span><span class="n">stop</span><span class="o">-</span><span class="n">position</span><span class="o">=</span><span class="mi">419</span> <span class="n">mysql</span><span class="o">-</span><span class="nb">log</span><span class="o">-</span><span class="n">bin</span><span class="o">.</span><span class="mi">000007</span> <span class="o">&gt;</span> <span class="o">/</span><span class="n">tmp</span><span class="o">/</span><span class="n">huifu</span><span class="o">-</span><span class="n">tb06</span><span class="o">.</span><span class="n">sql</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># 恢复操作</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="mf">1.</span> <span class="err">先停止</span><span class="n">binlog的记录</span>
+</span></span><span class="line"><span class="cl"><span class="n">mysql</span><span class="o">&gt;</span> <span class="n">set</span> <span class="n">sql_log_bin</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="n">Query</span> <span class="n">OK</span><span class="p">,</span> <span class="mi">0</span> <span class="n">rows</span> <span class="n">affected</span> <span class="p">(</span><span class="mf">0.00</span> <span class="n">sec</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">mysql</span><span class="o">&gt;</span> <span class="n">show</span> <span class="n">variables</span> <span class="n">like</span> <span class="s1">&#39;</span><span class="si">%lo</span><span class="s1">g_bin%&#39;</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="o">+---------------------------------+---------------------------------------------+</span>
+</span></span><span class="line"><span class="cl"><span class="o">|</span> <span class="n">Variable_name</span>                   <span class="o">|</span> <span class="n">Value</span>                                       <span class="o">|</span>
+</span></span><span class="line"><span class="cl"><span class="o">+---------------------------------+---------------------------------------------+</span>
+</span></span><span class="line"><span class="cl"><span class="o">|</span> <span class="n">log_bin</span>                         <span class="o">|</span> <span class="n">ON</span>                                          <span class="o">|</span>
+</span></span><span class="line"><span class="cl"><span class="o">|</span> <span class="n">log_bin_basename</span>                <span class="o">|</span> <span class="o">/</span><span class="n">mysql_log</span><span class="o">/</span><span class="n">log_bin_3306</span><span class="o">/</span><span class="n">mysql</span><span class="o">-</span><span class="nb">log</span><span class="o">-</span><span class="n">bin</span>       <span class="o">|</span>
+</span></span><span class="line"><span class="cl"><span class="o">|</span> <span class="n">log_bin_index</span>                   <span class="o">|</span> <span class="o">/</span><span class="n">mysql_log</span><span class="o">/</span><span class="n">log_bin_3306</span><span class="o">/</span><span class="n">mysql</span><span class="o">-</span><span class="nb">log</span><span class="o">-</span><span class="n">bin</span><span class="o">.</span><span class="n">index</span> <span class="o">|</span>
+</span></span><span class="line"><span class="cl"><span class="o">|</span> <span class="n">log_bin_trust_function_creators</span> <span class="o">|</span> <span class="n">OFF</span>                                         <span class="o">|</span>
+</span></span><span class="line"><span class="cl"><span class="o">|</span> <span class="n">log_bin_use_v1_row_events</span>       <span class="o">|</span> <span class="n">OFF</span>                                         <span class="o">|</span>
+</span></span><span class="line"><span class="cl"><span class="o">|</span> <span class="n">sql_log_bin</span>                     <span class="o">|</span> <span class="n">OFF</span>                                         <span class="o">|</span>
+</span></span><span class="line"><span class="cl"><span class="o">+---------------------------------+---------------------------------------------+</span>
+</span></span><span class="line"><span class="cl"><span class="mi">6</span> <span class="n">rows</span> <span class="ow">in</span> <span class="n">set</span> <span class="p">(</span><span class="mf">0.00</span> <span class="n">sec</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="mi">2</span><span class="err">数据导入</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">mysql</span><span class="o">&gt;</span> <span class="n">set</span> <span class="n">sql_log_bin</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="n">Query</span> <span class="n">OK</span><span class="p">,</span> <span class="mi">0</span> <span class="n">rows</span> <span class="n">affected</span> <span class="p">(</span><span class="mf">0.00</span> <span class="n">sec</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">mysql</span><span class="o">&gt;</span> <span class="n">show</span> <span class="n">variables</span> <span class="n">like</span> <span class="s1">&#39;</span><span class="si">%lo</span><span class="s1">g_bin%&#39;</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="o">+---------------------------------+---------------------------------------------+</span>
+</span></span><span class="line"><span class="cl"><span class="o">|</span> <span class="n">Variable_name</span>                   <span class="o">|</span> <span class="n">Value</span>                                       <span class="o">|</span>
+</span></span><span class="line"><span class="cl"><span class="o">+---------------------------------+---------------------------------------------+</span>
+</span></span><span class="line"><span class="cl"><span class="o">|</span> <span class="n">log_bin</span>                         <span class="o">|</span> <span class="n">ON</span>                                          <span class="o">|</span>
+</span></span><span class="line"><span class="cl"><span class="o">|</span> <span class="n">log_bin_basename</span>                <span class="o">|</span> <span class="o">/</span><span class="n">mysql_log</span><span class="o">/</span><span class="n">log_bin_3306</span><span class="o">/</span><span class="n">mysql</span><span class="o">-</span><span class="nb">log</span><span class="o">-</span><span class="n">bin</span>       <span class="o">|</span>
+</span></span><span class="line"><span class="cl"><span class="o">|</span> <span class="n">log_bin_index</span>                   <span class="o">|</span> <span class="o">/</span><span class="n">mysql_log</span><span class="o">/</span><span class="n">log_bin_3306</span><span class="o">/</span><span class="n">mysql</span><span class="o">-</span><span class="nb">log</span><span class="o">-</span><span class="n">bin</span><span class="o">.</span><span class="n">index</span> <span class="o">|</span>
+</span></span><span class="line"><span class="cl"><span class="o">|</span> <span class="n">log_bin_trust_function_creators</span> <span class="o">|</span> <span class="n">OFF</span>                                         <span class="o">|</span>
+</span></span><span class="line"><span class="cl"><span class="o">|</span> <span class="n">log_bin_use_v1_row_events</span>       <span class="o">|</span> <span class="n">OFF</span>                                         <span class="o">|</span>
+</span></span><span class="line"><span class="cl"><span class="o">|</span> <span class="n">sql_log_bin</span>                     <span class="o">|</span> <span class="n">OFF</span>                                         <span class="o">|</span>
+</span></span><span class="line"><span class="cl"><span class="o">+---------------------------------+---------------------------------------------+</span>
+</span></span><span class="line"><span class="cl"><span class="mi">6</span> <span class="n">rows</span> <span class="ow">in</span> <span class="n">set</span> <span class="p">(</span><span class="mf">0.00</span> <span class="n">sec</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">source</span> <span class="o">/</span><span class="n">opt</span><span class="o">/</span><span class="n">huifu</span><span class="o">-</span><span class="n">tb06</span><span class="o">.</span><span class="n">sql</span> 
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="err">恢复</span><span class="n">binlog</span>
+</span></span><span class="line"><span class="cl"><span class="n">set</span> <span class="n">sql_log_bin</span><span class="o">=</span><span class="mi">1</span><span class="p">;</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h1 id="今日作业">今日作业
+</h1><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">1.完成mysqldump逻辑备份命令练习
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">2. 完成binlog日志作用整理，以及数据恢复实践
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">基于pos值的玩法，恢复数据通过了。
+</span></span></code></pre></td></tr></table>
+</div>
+</div>
+</section>
+
+
+    <footer class="article-footer">
+    
+
+    </footer>
+
+
+    
+</article>
+
+    
+
+    
+
+     
+    
+        
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+        2025 小诗
+    </section>
+    
+    <section class="powerby">
+        使用 <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> 构建 <br />
+        主题 <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.26.0">Stack</a></b> 由 <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a> 设计
+    </section>
+</footer>
+
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css"crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css"crossorigin="anonymous"
+            >
+
+            </main>
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.6/dist/vibrant.min.js"integrity="sha256-awcR2jno4kI5X0zL8ex0vi2z&#43;KMkF24hUW8WePSA9HM="crossorigin="anonymous"
+                
+                >
+            </script><script type="text/javascript" src="/xiaoshi/ts/main.js" defer></script>
+<script>
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+
+    </body>
+</html>

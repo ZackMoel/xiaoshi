@@ -1,0 +1,3305 @@
+<!DOCTYPE html>
+<html lang="zh-cn" dir="ltr">
+    <head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content="03-MySQL基础 一、入门 Navicat图形化 ① 安装：略。 ② 连接MySQL服务器 二、MySQL命令 SQL命令 概念：MySQL客户端远程操作">
+<title>MySQL基础语法</title>
+
+<link rel='canonical' href='https://ZackMoel.github.io/xiaoshi/p/mysql%E5%9F%BA%E7%A1%80%E8%AF%AD%E6%B3%95/'>
+
+<link rel="stylesheet" href="/xiaoshi/scss/style.min.0304c6baf04e01a8fe70693791cb744d56a3578a3120a8796cefc66825aa39c7.css"><meta property='og:title' content="MySQL基础语法">
+<meta property='og:description' content="03-MySQL基础 一、入门 Navicat图形化 ① 安装：略。 ② 连接MySQL服务器 二、MySQL命令 SQL命令 概念：MySQL客户端远程操作">
+<meta property='og:url' content='https://ZackMoel.github.io/xiaoshi/p/mysql%E5%9F%BA%E7%A1%80%E8%AF%AD%E6%B3%95/'>
+<meta property='og:site_name' content='小诗的博客'>
+<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:published_time' content='2025-04-14T15:49:32&#43;08:00'/><meta property='article:modified_time' content='2025-04-14T15:49:32&#43;08:00'/>
+<meta name="twitter:title" content="MySQL基础语法">
+<meta name="twitter:description" content="03-MySQL基础 一、入门 Navicat图形化 ① 安装：略。 ② 连接MySQL服务器 二、MySQL命令 SQL命令 概念：MySQL客户端远程操作">
+  
+
+
+    </head>
+    <body class="
+    article-page
+    ">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex on-phone--column extended"><aside class="sidebar left-sidebar sticky ">
+    <button class="hamburger hamburger--spin" type="button" id="toggle-menu" aria-label="切换菜单">
+        <span class="hamburger-box">
+            <span class="hamburger-inner"></span>
+        </span>
+    </button>
+
+    <header>
+        
+            
+            <figure class="site-avatar">
+                <a href="/xiaoshi/">
+                
+                    
+                    
+                    
+                        
+                        <img src="/xiaoshi/img/avatar_hu8920112365793990935.png" width="300"
+                            height="300" class="site-logo" loading="lazy" alt="Avatar">
+                    
+                
+                </a>
+                
+                    <span class="emoji">🍥</span>
+                
+            </figure>
+            
+        
+        
+        <div class="site-meta">
+            <h1 class="site-name"><a href="/xiaoshi">小诗的博客</a></h1>
+            <h2 class="site-description">欢迎来到小诗的博客</h2>
+        </div>
+    </header><ol class="menu-social">
+            
+                <li>
+                    <a 
+                        href='https://space.bilibili.com/1055981889?spm_id_from=333.1007.0.0'
+                        target="_blank"
+                        title="bilibili"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg  xmlns="http://www.w3.org/2000/svg"  width="24"  height="24"  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  stroke-width="2"  stroke-linecap="round"  stroke-linejoin="round"  class="icon icon-tabler icons-tabler-outline icon-tabler-brand-bilibili"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M3 10a4 4 0 0 1 4 -4h10a4 4 0 0 1 4 4v6a4 4 0 0 1 -4 4h-10a4 4 0 0 1 -4 -4v-6z" /><path d="M8 3l2 3" /><path d="M16 3l-2 3" /><path d="M9 13v-2" /><path d="M15 11v2" /></svg>
+                        
+                    </a>
+                </li>
+            
+                <li>
+                    <a 
+                        href='https://github.com/ZackMoel/xiaoshi.github.io'
+                        target="_blank"
+                        title="GitHub"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-github" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M9 19c-4.3 1.4 -4.3 -2.5 -6 -3m12 5v-3.5c0 -1 .1 -1.4 -.5 -2c2.8 -.3 5.5 -1.4 5.5 -6a4.6 4.6 0 0 0 -1.3 -3.2a4.2 4.2 0 0 0 -.1 -3.2s-1.1 -.3 -3.5 1.3a12.3 12.3 0 0 0 -6.2 0c-2.4 -1.6 -3.5 -1.3 -3.5 -1.3a4.2 4.2 0 0 0 -.1 3.2a4.6 4.6 0 0 0 -1.3 3.2c0 4.6 2.7 5.7 5.5 6c-.6 .6 -.6 1.2 -.5 2v3.5" />
+</svg>
+
+
+
+                        
+                    </a>
+                </li>
+            
+        </ol><ol class="menu" id="main-menu">
+        
+        
+        
+        <li >
+            <a href='/xiaoshi/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-home" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <polyline points="5 12 3 12 12 3 21 12 19 12" />
+  <path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7" />
+  <path d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6" />
+</svg>
+
+
+
+                
+                <span>主页</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/xiaoshi/%E5%85%B3%E4%BA%8E/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-user" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="7" r="4" />
+  <path d="M6 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2" />
+</svg>
+
+
+
+                
+                <span>关于</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/xiaoshi/archives/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-archive" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <rect x="3" y="4" width="18" height="4" rx="2" />
+  <path d="M5 8v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-10" />
+  <line x1="10" y1="12" x2="14" y2="12" />
+</svg>
+
+
+
+                
+                <span>归档</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/xiaoshi/search/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-search" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="10" cy="10" r="7" />
+  <line x1="21" y1="21" x2="15" y2="15" />
+</svg>
+
+
+
+                
+                <span>搜索</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/xiaoshi/%E5%8F%8B%E6%83%85%E9%93%BE%E6%8E%A5/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-link" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M10 14a3.5 3.5 0 0 0 5 0l4 -4a3.5 3.5 0 0 0 -5 -5l-.5 .5" />
+  <path d="M14 10a3.5 3.5 0 0 0 -5 0l-4 4a3.5 3.5 0 0 0 5 5l.5 -.5" />
+</svg>
+
+
+
+                
+                <span>友情链接</span>
+            </a>
+        </li>
+        
+        <li class="menu-bottom-section">
+            <ol class="menu">
+
+                
+                    <li id="dark-mode-toggle">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="8" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="16" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <span>暗色模式</span>
+                    </li>
+                
+            </ol>
+        </li>
+    </ol>
+</aside>
+
+    <aside class="sidebar right-sidebar sticky">
+        
+            
+                
+    <section class="widget archives">
+        <div class="widget-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <line x1="5" y1="9" x2="19" y2="9" />
+  <line x1="5" y1="15" x2="19" y2="15" />
+  <line x1="11" y1="4" x2="7" y2="20" />
+  <line x1="17" y1="4" x2="13" y2="20" />
+</svg>
+
+
+
+        </div>
+        <h2 class="widget-title section-title">目录</h2>
+        
+        <div class="widget--toc">
+            <nav id="TableOfContents">
+  <ol>
+    <li><a href="#一入门">一、入门</a></li>
+    <li><a href="#二mysql命令">二、MySQL命令</a>
+      <ol>
+        <li><a href="#sql命令">SQL命令</a></li>
+        <li><a href="#数据库管理">数据库管理</a></li>
+        <li><a href="#mysql核心概念">MySQL核心概念</a></li>
+        <li><a href="#database管理命令">database管理命令</a></li>
+      </ol>
+    </li>
+    <li><a href="#三-table管理命令">三、 table管理命令</a>
+      <ol>
+        <li><a href="#1-表结构">1. 表结构</a></li>
+        <li><a href="#2数据类型">2.数据类型</a></li>
+        <li><a href="#3-表管理命令">3. 表管理命令</a></li>
+        <li><a href="#4-数据管理">4. 数据管理</a>
+          <ol>
+            <li><a href="#添加数据">添加数据</a></li>
+            <li><a href="#查询数据">查询数据</a></li>
+            <li><a href="#修改数据">修改数据</a></li>
+            <li><a href="#删除数据">删除数据</a></li>
+            <li><a href="#清空表truncate">清空表truncate</a></li>
+            <li><a href="#复制表">复制表</a></li>
+          </ol>
+        </li>
+      </ol>
+    </li>
+    <li><a href="#四查询">四、查询</a>
+      <ol>
+        <li><a href="#1数据准备">1、数据准备</a></li>
+        <li><a href="#2sql语句总结最后">2、SQL语句总结(最后)</a></li>
+        <li><a href="#3简单查询">3、简单查询</a></li>
+        <li><a href="#4where条件查询">4、where条件查询</a></li>
+        <li><a href="#5order排序">5、order排序</a></li>
+        <li><a href="#6limit截取">6、limit截取</a></li>
+      </ol>
+    </li>
+    <li><a href="#五函数">五、函数</a>
+      <ol>
+        <li><a href="#1-单行函数">1. 单行函数</a></li>
+        <li><a href="#2-组函数">2. 组函数</a></li>
+      </ol>
+    </li>
+    <li><a href="#六分组">六、分组</a>
+      <ol>
+        <li><a href="#1-分组group">1. 分组group</a></li>
+        <li><a href="#2-分组过滤having">2. 分组过滤having</a></li>
+        <li><a href="#3-对比where和having">3. 对比where和having</a></li>
+      </ol>
+    </li>
+    <li><a href="#七sql总结">七、SQL总结</a>
+      <ol>
+        <li><a href="#1-编写顺序">1. 编写顺序</a></li>
+        <li><a href="#2-执行顺序">2. 执行顺序</a></li>
+      </ol>
+    </li>
+    <li><a href="#八子查询">八、子查询</a>
+      <ol>
+        <li><a href="#1-单列单行">1. 单列单行</a></li>
+        <li><a href="#2-单列多行">2. 单列多行</a></li>
+        <li><a href="#3-多列多行">3. 多列多行</a></li>
+        <li><a href="#2-右外连">(2) 右外连</a></li>
+        <li><a href="#3-内连接">(3) 内连接</a></li>
+        <li><a href="#4-自连接">(4) 自连接</a></li>
+      </ol>
+    </li>
+  </ol>
+</nav>
+        </div>
+    </section>
+
+            
+        
+    </aside>
+
+
+            <main class="main full-width">
+    <article class="main-article">
+    <header class="article-header">
+
+    <div class="article-details">
+    
+
+    <div class="article-title-wrapper">
+        <h2 class="article-title">
+            <a href="/xiaoshi/p/mysql%E5%9F%BA%E7%A1%80%E8%AF%AD%E6%B3%95/">MySQL基础语法</a>
+        </h2>
+    
+        
+    </div>
+
+    
+    
+    
+    
+    <footer class="article-time">
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
+  <circle cx="18" cy="18" r="4" />
+  <path d="M15 3v4" />
+  <path d="M7 3v4" />
+  <path d="M3 11h16" />
+  <path d="M18 16.496v1.504l1 1" />
+</svg>
+                <time class="article-time--published">2025-04-14</time>
+            </div>
+        
+
+        
+    </footer>
+    
+
+    
+</div>
+
+</header>
+
+    <section class="article-content">
+    
+    
+    <h1 id="03-mysql基础">03-MySQL基础
+</h1><h2 id="一入门">一、入门
+</h2><ul>
+<li>
+<p><strong>Navicat图形化</strong></p>
+<ul>
+<li>
+<p>① 安装：略。</p>
+</li>
+<li>
+<p>② 连接MySQL服务器</p>
+<p><img src="D:/desktop/seekwork/%e7%9b%b8%e5%85%b3%e7%9f%a5%e8%af%86/baizhi/16.MySQL%e7%ac%94%e8%ae%b02/assets/image-20231030113728-emd2gv3.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="image"
+	
+	
+></p>
+</li>
+</ul>
+</li>
+</ul>
+<h2 id="二mysql命令">二、MySQL命令
+</h2><h3 id="sql命令">SQL命令
+</h3><ul>
+<li>
+<p>概念：MySQL客户端远程操作和管理MySQL服务器里面的数据一种指令（代码）。</p>
+</li>
+<li>
+<p>语法规则：</p>
+<ul>
+<li>
+<p>① 必须以<strong>分号结尾</strong>，MySQL服务器以分号判定SQL是否结束了。</p>
+</li>
+<li>
+<p>② <strong>关键词大小写一样</strong>，不敏感。例如：<strong>select</strong> 和<code>SELECT</code>​，但是数据&rsquo;abc&rsquo; &lsquo;ABC&rsquo;;</p>
+</li>
+<li>
+<p>③ 注释使用 &ndash;表示。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="line"><span class="cl"><span class="c1">-- 说明文字,不算代码，mysql不执行，给程序员给人看的。
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div></li>
+</ul>
+</li>
+</ul>
+<h3 id="数据库管理">数据库管理
+</h3><ul>
+<li>
+<p>(1) 查看当前数据库版本信息</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="line"><span class="cl"><span class="k">select</span><span class="w"> </span><span class="k">version</span><span class="p">();</span><span class="w"> 
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">SELECT</span><span class="w"> </span><span class="k">version</span><span class="p">();</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div></li>
+<li>
+<p>(2) 查看当前mysql服务器连接的客户端信息</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="line"><span class="cl"><span class="k">show</span><span class="w"> </span><span class="n">processlist</span><span class="p">;</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><ul>
+<li>结果说明</li>
+</ul>
+<p><img src="D:/desktop/seekwork/%e7%9b%b8%e5%85%b3%e7%9f%a5%e8%af%86/baizhi/16.MySQL%e7%ac%94%e8%ae%b02/assets/image-20231031110536-henms4u.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="image"
+	
+	
+></p>
+</li>
+</ul>
+<h3 id="mysql核心概念">MySQL核心概念
+</h3><ul>
+<li>
+<p>例如：学校管理学生信息</p>
+<p>目的：提高数据管理和检索效率。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="line"><span class="cl"><span class="mi">1</span><span class="p">.</span><span class="w"> </span><span class="err">学生信息：鹿晗博</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="mi">2</span><span class="p">.</span><span class="w"> </span><span class="err">班级：</span><span class="mi">66</span><span class="err">班</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="mi">3</span><span class="p">.</span><span class="w"> </span><span class="err">年级：</span><span class="mi">3</span><span class="err">年级</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="mi">4</span><span class="p">.</span><span class="w"> </span><span class="err">专业：计算机专业</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="mi">5</span><span class="p">.</span><span class="w"> </span><span class="err">学校：清华大学</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div></li>
+<li>
+<p>数据库数据管理：<code>row行数据</code>​、<code>table表</code>​、<code>database库</code>​。</p>
+<p><img src="D:/desktop/seekwork/%e7%9b%b8%e5%85%b3%e7%9f%a5%e8%af%86/baizhi/16.MySQL%e7%ac%94%e8%ae%b02/assets/image-20231031113328-9uk1a9j.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="image"
+	
+	
+></p>
+<div class="table-wrapper"><table>
+<thead>
+<tr>
+<th>关键词</th>
+<th>概念</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>row</code>​</td>
+<td>行</td>
+<td>一条数据。</td>
+</tr>
+<tr>
+<td><code>table</code>​</td>
+<td>表</td>
+<td>一个表和包含多row行数据，一个表存数据都是业务含义相似的数据，例如：学生表存学生，老师表存老师，商品表，存商品。</td>
+</tr>
+<tr>
+<td><code>database</code>​</td>
+<td>库</td>
+<td>管理table表，一个database管理多个table。一个软件系统的多张表管理在一个database。</td>
+</tr>
+<tr>
+<td><code>primary key</code>​</td>
+<td>主键</td>
+<td>唯一标识一条数据，例如：身份证号、卡号、学生号、工号、游戏ID、递增不重复的数字。<br /></td>
+</tr>
+<tr>
+<td><code>column</code>​</td>
+<td>列</td>
+<td>列不属于数据，明确table当前列的数据含义、数据类型。</td>
+</tr>
+</tbody>
+</table></div>
+</li>
+</ul>
+<h3 id="database管理命令">database管理命令
+</h3><ul>
+<li>
+<p>(1) 创建database</p>
+<ul>
+<li>
+<p>语法</p>
+<p><code>create database db名字;</code>​</p>
+</li>
+<li>
+<p>代码</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="line"><span class="cl"><span class="c1">-- 创建一个 edu的database
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="k">create</span><span class="w"> </span><span class="k">database</span><span class="w"> </span><span class="n">edu</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="c1">-- 创建一个shop的database
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="k">create</span><span class="w"> </span><span class="k">database</span><span class="w"> </span><span class="n">shop</span><span class="p">;</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div></li>
+</ul>
+</li>
+<li>
+<p>(2) 查看系统所有database</p>
+<ul>
+<li>
+<p>语法</p>
+<p><code>show databases;</code>​</p>
+</li>
+</ul>
+</li>
+<li>
+<p>(3) 切换database</p>
+<ul>
+<li>
+<p>语法</p>
+<p><code>use db名字;</code>​</p>
+</li>
+</ul>
+</li>
+<li>
+<p>(4) 删除database</p>
+<ul>
+<li>
+<p>语法</p>
+<p><code>drop database db名字;</code>​</p>
+</li>
+</ul>
+</li>
+</ul>
+<h2 id="三-table管理命令">三、 table管理命令
+</h2><h3 id="1-表结构">1. 表结构
+</h3><ul>
+<li>
+<p>表名</p>
+</li>
+<li>
+<p>列信息：① 列名 ② 数据类型 ③ 约束</p>
+<p><img src="D:/desktop/seekwork/%e7%9b%b8%e5%85%b3%e7%9f%a5%e8%af%86/baizhi/16.MySQL%e7%ac%94%e8%ae%b02/assets/image-20231031150428-5tu3s6n.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="image"
+	
+	
+>​</p>
+</li>
+</ul>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="line"><span class="cl"><span class="mi">1</span><span class="p">.</span><span class="w"> </span><span class="err">表名：</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">	</span><span class="err">例如：</span><span class="n">t_product</span><span class="err">、</span><span class="n">t_emp</span><span class="err">、</span><span class="n">t_user</span><span class="err">、</span><span class="n">t_category</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">	</span><span class="err">命名规范：</span><span class="n">t_名字</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="mi">2</span><span class="p">.</span><span class="w"> </span><span class="err">列信息</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">	</span><span class="err">列名：表名列的含义</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">	</span><span class="err">命名规范：</span><span class="n">username</span><span class="err">、</span><span class="n">password</span><span class="err">、</span><span class="n">product_name</span><span class="err">、</span><span class="n">shangping_mingzi</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">	</span><span class="err">数据类型：该列的所有的值类型是什么：数字、文本、日期。</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="2数据类型">2.数据类型
+</h3><div class="table-wrapper"><table>
+<thead>
+<tr>
+<th style="text-align:center">总类</th>
+<th>类型</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">整数</td>
+<td><code>int</code></td>
+<td>整数：范围  -2147483648~2147483647</td>
+</tr>
+<tr>
+<td style="text-align:center"></td>
+<td><code>bigint</code>​</td>
+<td>大整数</td>
+</tr>
+<tr>
+<td style="text-align:center">小数</td>
+<td><code>double(m,n)</code>​</td>
+<td>小数。m表示数字的最大长度，n表示最多小数位。<br /><code>例如：double(5,2)，123.45 √  12.345 x </code>​</td>
+</tr>
+<tr>
+<td style="text-align:center">文本/字符串</td>
+<td><code>char(n)</code></td>
+<td>定长文字类型，n表示最大的字符个数，如果实际给的字符个数少于n，MySQL自动补白。补够n的个数。<br /><code>例如：char(1) 最多只能存1个字符，char(11) 最多存11个字符</code><br /><code>注意：char(11),如果只存了10个字符，剩余字符空间自动补白。</code><br /><code>场景：性别、状态、手机号</code><br />优点：查找效率比较高。</td>
+</tr>
+<tr>
+<td style="text-align:center"></td>
+<td><code>varchar(n)</code>​</td>
+<td>可变长文字类型，n表示最大字符个数，如果实际给的个数少于n。<br /><code>例如：用户名、商品名、简介、地址。</code><br />优点：节省空间</td>
+</tr>
+<tr>
+<td style="text-align:center"></td>
+<td><code>text``longtext</code></td>
+<td>65,535字符 ≈ 64KB长度字符串<br />longtext 最大 4GB字符<br /></td>
+</tr>
+<tr>
+<td style="text-align:center">日期</td>
+<td><code>date</code></td>
+<td>日期，包含信息<br />日期date：年月日<br />时间time：时分秒<br /></td>
+</tr>
+</tbody>
+</table></div>
+<h3 id="3-表管理命令">3. 表管理命令
+</h3><p>　　(1) 建表</p>
+<ul>
+<li>
+<p>语法</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="line"><span class="cl"><span class="k">create</span><span class="w"> </span><span class="k">table</span><span class="w"> </span><span class="err">表名</span><span class="p">(</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">	</span><span class="err">列名</span><span class="mi">1</span><span class="w"> </span><span class="err">类型</span><span class="p">,</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">	</span><span class="err">列名</span><span class="mi">2</span><span class="w"> </span><span class="err">类型</span><span class="p">,</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">	</span><span class="err">列名</span><span class="mi">3</span><span class="w"> </span><span class="err">类型</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">);</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div></li>
+<li>
+<p>案例</p>
+<p>创建一个员工表,包含：工号、姓名、生日、性别(1男 0女 2其他)、手机号、工资、地址</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span><span class="lnt">9
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="line"><span class="cl"><span class="k">create</span><span class="w"> </span><span class="k">table</span><span class="w"> </span><span class="n">t_emp</span><span class="p">(</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">	</span><span class="n">emp_id</span><span class="w"> </span><span class="nb">bigint</span><span class="p">,</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">	</span><span class="n">emp_name</span><span class="w"> </span><span class="nb">varchar</span><span class="p">(</span><span class="mi">20</span><span class="p">),</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">	</span><span class="n">sex</span><span class="w"> </span><span class="nb">char</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">	</span><span class="n">birth</span><span class="w"> </span><span class="nb">date</span><span class="p">,</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">	</span><span class="n">mobile</span><span class="w"> </span><span class="nb">char</span><span class="p">(</span><span class="mi">11</span><span class="p">),</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">	</span><span class="n">salary</span><span class="w"> </span><span class="n">double</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span><span class="mi">2</span><span class="p">),</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">	</span><span class="n">address</span><span class="w"> </span><span class="nb">varchar</span><span class="p">(</span><span class="mi">100</span><span class="p">)</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">);</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div></li>
+</ul>
+<p>　　(2) 查看表信息</p>
+<ul>
+<li>
+<p>查看表结构信息</p>
+<ul>
+<li>
+<p>语法：</p>
+<p><code>desc 表名;</code>​</p>
+</li>
+</ul>
+</li>
+</ul>
+<p>　　(3) 删除表</p>
+<ul>
+<li>
+<p>语法</p>
+<p><code>drop table 表名;</code>​</p>
+</li>
+</ul>
+<p>　　(4) 约束</p>
+<ul>
+<li>
+<p>概念</p>
+<blockquote>
+<p>建表针对列添加除了类型以外额外数据限制要求,常见：主键、非空、唯一、自增。</p>
+</blockquote>
+</li>
+<li>
+<p>常见约束</p>
+<div class="table-wrapper"><table>
+<thead>
+<tr>
+<th>约束</th>
+<th>说明</th>
+<th>例子</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>primary key</code>​</td>
+<td>主键：唯一+非空</td>
+<td>身份证、工号、学号、游戏ID</td>
+</tr>
+<tr>
+<td><code>not null</code>​</td>
+<td>非空，要求该列的值必须给</td>
+<td>用户名、手机号、密码&hellip;</td>
+</tr>
+<tr>
+<td><code>unique</code>​</td>
+<td>唯一，要求该列的值不能重复</td>
+<td>手机号、用户名</td>
+</tr>
+<tr>
+<td><code>auto_increment</code>​</td>
+<td>自增列，该列的值自动有MySQL分配，主键递增。</td>
+<td>ID分配</td>
+</tr>
+</tbody>
+</table></div>
+</li>
+<li>
+<p>语法</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="line"><span class="cl"><span class="k">create</span><span class="w"> </span><span class="k">table</span><span class="w"> </span><span class="err">表名</span><span class="p">(</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">	</span><span class="err">列名</span><span class="mi">1</span><span class="w"> </span><span class="err">类型</span><span class="w"> </span><span class="err">约束</span><span class="w"> </span><span class="err">约束</span><span class="p">,</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">	</span><span class="err">列名</span><span class="mi">2</span><span class="w"> </span><span class="err">类型</span><span class="w"> </span><span class="err">约束</span><span class="p">,</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">	</span><span class="err">列名</span><span class="mi">3</span><span class="w"> </span><span class="err">类型</span><span class="w"> </span><span class="err">约束</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">);</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div></li>
+<li>
+<p>案例</p>
+<p>创建一个员工表,包含：工号、姓名、生日、性别(1男 0女 2其他)、手机号、工资、地址</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span><span class="lnt">9
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="line"><span class="cl"><span class="k">create</span><span class="w"> </span><span class="k">table</span><span class="w"> </span><span class="n">t_emp_check</span><span class="p">(</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">	</span><span class="n">emp_id</span><span class="w"> </span><span class="nb">bigint</span><span class="w"> </span><span class="k">primary</span><span class="w"> </span><span class="k">key</span><span class="w"> </span><span class="n">auto_increment</span><span class="p">,</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">	</span><span class="n">emp_name</span><span class="w"> </span><span class="nb">varchar</span><span class="p">(</span><span class="mi">20</span><span class="p">)</span><span class="w"> </span><span class="k">not</span><span class="w"> </span><span class="k">null</span><span class="w"> </span><span class="k">unique</span><span class="p">,</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">	</span><span class="n">sex</span><span class="w"> </span><span class="nb">char</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">	</span><span class="n">birth</span><span class="w"> </span><span class="nb">date</span><span class="p">,</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">	</span><span class="n">mobile</span><span class="w"> </span><span class="nb">char</span><span class="p">(</span><span class="mi">11</span><span class="p">)</span><span class="w"> </span><span class="k">unique</span><span class="p">,</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">	</span><span class="n">salary</span><span class="w"> </span><span class="n">double</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span><span class="w"> </span><span class="k">not</span><span class="w"> </span><span class="k">null</span><span class="p">,</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">	</span><span class="n">address</span><span class="w"> </span><span class="nb">varchar</span><span class="p">(</span><span class="mi">100</span><span class="p">)</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">);</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div></li>
+<li>
+<p>任务：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="line"><span class="cl"><span class="err">创建一个学生表：</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">	</span><span class="err">学号</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">	</span><span class="err">姓名</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">	</span><span class="err">班级号</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">	</span><span class="err">专业名称</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">	</span><span class="err">性别</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">	</span><span class="err">出生日期</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">	</span><span class="err">籍贯</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">	</span><span class="err">手机号</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">	</span><span class="err">政治面貌</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">	</span><span class="err">高考成绩</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div></li>
+</ul>
+<h3 id="4-数据管理">4. 数据管理
+</h3><ul>
+<li>
+<p>准备一个table表</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="line"><span class="cl"><span class="c1">-- 创建一个database：baizhi
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="k">create</span><span class="w"> </span><span class="k">database</span><span class="w"> </span><span class="n">baizhi</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">use</span><span class="w"> </span><span class="n">baizhi</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="c1">-- 用户表
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="k">create</span><span class="w"> </span><span class="k">table</span><span class="w"> </span><span class="n">t_user</span><span class="p">(</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">	</span><span class="n">id</span><span class="w"> </span><span class="nb">bigint</span><span class="w"> </span><span class="k">primary</span><span class="w"> </span><span class="k">key</span><span class="w"> </span><span class="n">auto_increment</span><span class="p">,</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">	</span><span class="n">username</span><span class="w"> </span><span class="nb">varchar</span><span class="p">(</span><span class="mi">20</span><span class="p">),</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">	</span><span class="n">password</span><span class="w"> </span><span class="nb">varchar</span><span class="p">(</span><span class="mi">20</span><span class="p">),</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">	</span><span class="n">age</span><span class="w"> </span><span class="nb">int</span><span class="p">,</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">	</span><span class="n">birth</span><span class="w"> </span><span class="nb">date</span><span class="p">,</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">	</span><span class="n">mobile</span><span class="w"> </span><span class="nb">varchar</span><span class="p">(</span><span class="mi">11</span><span class="p">)</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">);</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div></li>
+</ul>
+<h4 id="添加数据">添加数据
+</h4><ul>
+<li>
+<p>场景</p>
+<p>向t_user表添加一条数据：luhanbo、123123、20、1999-9-9、 15533367988</p>
+</li>
+<li>
+<p>语法</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="line"><span class="cl"><span class="err">分析：</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">	</span><span class="err">①</span><span class="w"> </span><span class="err">表</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">	</span><span class="err">②</span><span class="w"> </span><span class="err">列</span><span class="p">...</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">	</span><span class="err">③</span><span class="w"> </span><span class="err">数据值</span><span class="p">...</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="err">语法：</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">insert</span><span class="w"> </span><span class="k">into</span><span class="w"> </span><span class="err">表名</span><span class="p">(</span><span class="err">列名</span><span class="mi">1</span><span class="p">,</span><span class="err">列名</span><span class="mi">2</span><span class="p">,</span><span class="err">列名</span><span class="mi">3</span><span class="p">...)</span><span class="w"> </span><span class="k">values</span><span class="p">(</span><span class="err">值</span><span class="mi">1</span><span class="p">,</span><span class="err">值</span><span class="mi">2</span><span class="p">,</span><span class="err">值</span><span class="mi">3</span><span class="p">...);</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p>注意：表名后面的列顺序，和values后面值的顺序保持一致。</p>
+</li>
+<li>
+<p>SQL</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="line"><span class="cl"><span class="k">insert</span><span class="w"> </span><span class="k">into</span><span class="w"> </span><span class="n">t_user</span><span class="p">(</span><span class="n">username</span><span class="p">,</span><span class="n">password</span><span class="p">,</span><span class="n">age</span><span class="p">,</span><span class="n">birth</span><span class="p">,</span><span class="n">mobile</span><span class="p">)</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">			</span><span class="k">values</span><span class="p">(</span><span class="s1">&#39;luhanbo&#39;</span><span class="p">,</span><span class="s1">&#39;123123&#39;</span><span class="p">,</span><span class="mi">20</span><span class="p">,</span><span class="s1">&#39;1999-9-9&#39;</span><span class="p">,</span><span class="s1">&#39;15533367777&#39;</span><span class="p">);</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div></li>
+<li>
+<p>批量插入</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-markdown" data-lang="markdown"><span class="line"><span class="cl">insert into 表名(列名1,列名2,列名3...) 
+</span></span><span class="line"><span class="cl">	values(值1,值2,值3...),
+</span></span><span class="line"><span class="cl">		(值1,值2,值3...),
+</span></span><span class="line"><span class="cl">		(值1,值2,值3...),
+</span></span><span class="line"><span class="cl">		(值1,值2,值3...);
+</span></span></code></pre></td></tr></table>
+</div>
+</div></li>
+</ul>
+<h4 id="查询数据">查询数据
+</h4><ul>
+<li>
+<p>场景</p>
+<p>从t_user表查询全部数据</p>
+</li>
+<li>
+<p>语法</p>
+<p><code>select * from 表名;</code>​</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="line"><span class="cl"><span class="k">select</span><span class="p">:</span><span class="w"> </span><span class="err">指定数据提取那些列</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">from</span><span class="p">:</span><span class="w"> </span><span class="err">指定数据来源哪张表</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div></li>
+<li>
+<p>SQL</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="line"><span class="cl"><span class="c1">-- 查询部分列
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="k">select</span><span class="w"> </span><span class="err">列</span><span class="mi">1</span><span class="p">,</span><span class="err">列</span><span class="mi">1</span><span class="p">,</span><span class="err">列</span><span class="mi">1</span><span class="p">,</span><span class="err">列</span><span class="mi">1</span><span class="w"> </span><span class="k">from</span><span class="w"> </span><span class="err">表名</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="c1">--查询所有列
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="k">select</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="k">from</span><span class="w"> </span><span class="n">t_user</span><span class="p">;</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div></li>
+</ul>
+<h4 id="修改数据">修改数据
+</h4><ul>
+<li>
+<p>场景：</p>
+<p>修改t_user表中悟空，age=800，密码=111111?</p>
+</li>
+<li>
+<p>语法</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="line"><span class="cl"><span class="err">分析：</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="err">①</span><span class="w"> </span><span class="err">指定表</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="err">②</span><span class="w"> </span><span class="err">指定那条数据</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="err">③</span><span class="w"> </span><span class="err">那些列，新值</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">update</span><span class="w"> </span><span class="err">表名</span><span class="w"> </span><span class="k">set</span><span class="w"> </span><span class="err">列名</span><span class="o">=</span><span class="err">新值</span><span class="p">,</span><span class="err">列名</span><span class="o">=</span><span class="err">新值</span><span class="w"> </span><span class="k">where</span><span class="w"> </span><span class="n">id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">?</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div></li>
+<li>
+<p>SQL</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="line"><span class="cl"><span class="k">update</span><span class="w"> </span><span class="n">t_user</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">set</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">	</span><span class="n">age</span><span class="o">=</span><span class="mi">800</span><span class="p">,</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">	</span><span class="n">password</span><span class="o">=</span><span class="mi">111111</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">where</span><span class="w"> </span><span class="n">id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">2</span><span class="p">;</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div></li>
+</ul>
+<h4 id="删除数据">删除数据
+</h4><ul>
+<li>
+<p>场景</p>
+<p>删除数据库的luhanbo这条数据？</p>
+</li>
+<li>
+<p>语法</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="line"><span class="cl"><span class="err">分析：</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="err">①</span><span class="w"> </span><span class="err">表</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="err">②</span><span class="w"> </span><span class="err">那条数据？</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="err">语法：</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">delete</span><span class="w"> </span><span class="k">from</span><span class="w"> </span><span class="err">表</span><span class="w"> </span><span class="k">where</span><span class="w"> </span><span class="n">id</span><span class="o">=?</span><span class="p">;</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div></li>
+<li>
+<p>SQL</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="line"><span class="cl"><span class="k">delete</span><span class="w"> </span><span class="k">from</span><span class="w"> </span><span class="n">t_user</span><span class="w"> </span><span class="k">where</span><span class="w"> </span><span class="n">id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div></li>
+</ul>
+<h4 id="清空表truncate">清空表truncate
+</h4><blockquote>
+<p>将表中全部数据截断（将表数据部分占用空间直接回收），保留表结构。</p>
+</blockquote>
+<ul>
+<li>
+<p>方法1：delete删除</p>
+<ul>
+<li><code>delete from 表;</code>​</li>
+<li>问题：逐行删除，效率低，数据量越大删除越慢。</li>
+</ul>
+</li>
+<li>
+<p>方法2：truncate 截断</p>
+<ul>
+<li><code>truncate table 表;</code>​</li>
+</ul>
+</li>
+<li>
+<p>truncate特点</p>
+<ul>
+<li>TRUNCATE不支持WHERE条件</li>
+<li>自增长列，TRUNCATE后归1，delete删除的数据占用递增之，不会释放的。</li>
+<li>效率高于DELETE</li>
+</ul>
+</li>
+</ul>
+<h4 id="复制表">复制表
+</h4><blockquote>
+<p>将表复制一份新的，场景：调试、测试场景。</p>
+</blockquote>
+<ol>
+<li>
+<p>仅复制表结构</p>
+<blockquote>
+<p>针对原表的完整表结构进行复制，包含 所有列、类型、约束。</p>
+</blockquote>
+</li>
+</ol>
+<ul>
+<li><strong>语法：</strong></li>
+</ul>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="line"><span class="cl"><span class="k">CREATE</span><span class="w"> </span><span class="k">TABLE</span><span class="w"> </span><span class="err">待创建的表名</span><span class="w"> </span><span class="k">LIKE</span><span class="w"> </span><span class="err">已有表名</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><ul>
+<li><strong>示例：</strong></li>
+</ul>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">mysql&gt; create table departments like nsd2021.departments;
+</span></span><span class="line"><span class="cl">Query OK, 0 rows affected (0.01 sec)
+</span></span></code></pre></td></tr></table>
+</div>
+</div><ol start="2">
+<li>
+<p>复制表结构及数据</p>
+<blockquote>
+<p>针对查询语句结果，创建一个表，可以制定要选择的那些数据那些列。作为新表。</p>
+</blockquote>
+</li>
+</ol>
+<ul>
+<li><strong>语法：</strong></li>
+</ul>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="line"><span class="cl"><span class="k">CREATE</span><span class="w"> </span><span class="k">TABLE</span><span class="w"> </span><span class="err">待创建的表名</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">SELECT</span><span class="w"> </span><span class="err">字段</span><span class="p">,</span><span class="w"> </span><span class="p">...</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="err">已有表名</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><ul>
+<li><strong>示例：</strong></li>
+</ul>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">mysql&gt; create table departments2
+</span></span><span class="line"><span class="cl">    -&gt; select * from nsd2021.departments;
+</span></span><span class="line"><span class="cl">Query OK, 13 rows affected (0.01 sec)
+</span></span><span class="line"><span class="cl">Records: 13  Duplicates: 0  Warnings: 0
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="四查询">四、查询
+</h2><h3 id="1数据准备">1、数据准备
+</h3><p>　　(1) 步骤</p>
+<ul>
+<li>
+<p>① 创建database，名字：edu</p>
+<p><code>create database edu;</code></p>
+</li>
+<li>
+<p>② 进入baizhi</p>
+<p><code>use edu;</code>​</p>
+</li>
+<li>
+<p>③ 复制<code>课堂案例数据edu员工.sql</code>中所有代码，粘贴到mysql的客户端sql命令中。执行。</p>
+</li>
+</ul>
+<p>　　(2) 简介</p>
+<ul>
+<li>
+<p><strong>t_employees</strong>：员工表</p>
+<div class="table-wrapper"><table>
+<thead>
+<tr>
+<th>员工ID</th>
+<th>名字</th>
+<th>姓</th>
+<th>邮箱</th>
+<th>手机号</th>
+<th>入职时间</th>
+<th>职位ID</th>
+<th>月薪</th>
+<th>佣金比例</th>
+<th>直属领导ID</th>
+<th>部门ID</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>EMPLOYEE_ID</td>
+<td>FIRST_NAME</td>
+<td>LAST_NAME</td>
+<td>EMAIL</td>
+<td>PHONE_NUMBER</td>
+<td>HIRE_DATE</td>
+<td>JOB_ID</td>
+<td>SALARY</td>
+<td>COMMISSION_PCT</td>
+<td>MANAGER_ID</td>
+<td>DEPARTMENT_ID</td>
+</tr>
+</tbody>
+</table></div>
+</li>
+<li>
+<p>t_jobs：职位表</p>
+</li>
+<li>
+<p>t_departments：部门表</p>
+</li>
+<li>
+<p>t_countries：国家信息</p>
+</li>
+<li>
+<p>t_locations：分公司事业部所在地址</p>
+</li>
+</ul>
+<h3 id="2sql语句总结最后">2、SQL语句总结(最后)
+</h3><ul>
+<li>
+<p>关键词作用</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">1. <span class="k">select</span>
+</span></span><span class="line"><span class="cl">	选择提取列
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">2. from
+</span></span><span class="line"><span class="cl">	指定数据来源哪个表
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">3. where
+</span></span><span class="line"><span class="cl">	指定过滤数据的条件
+</span></span><span class="line"><span class="cl">	① and or 连接多个条件
+</span></span><span class="line"><span class="cl">	② between 区间查询：数字 日期
+</span></span><span class="line"><span class="cl">	③ is null <span class="p">|</span> is not null
+</span></span><span class="line"><span class="cl">	④ in 枚举选项，满足任何一个即可
+</span></span><span class="line"><span class="cl">	⑤ like模糊查询
+</span></span><span class="line"><span class="cl">4. order by 
+</span></span><span class="line"><span class="cl">	排序
+</span></span><span class="line"><span class="cl">5. limit
+</span></span><span class="line"><span class="cl">	满足查询结果的数据进行截取
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">6. group by
+</span></span><span class="line"><span class="cl">	分组
+</span></span></code></pre></td></tr></table>
+</div>
+</div></li>
+<li>
+<p>SQL书写语法</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="line"><span class="cl"><span class="mi">1</span><span class="p">.</span><span class="w"> </span><span class="err">版本</span><span class="mi">1</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">	</span><span class="k">select</span><span class="w"> </span><span class="err">列名</span><span class="mi">1</span><span class="p">,</span><span class="err">列名</span><span class="mi">2</span><span class="p">,</span><span class="err">列名</span><span class="mi">3</span><span class="w"> </span><span class="k">from</span><span class="w"> </span><span class="err">表名</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="mi">2</span><span class="p">.</span><span class="w"> </span><span class="err">版本</span><span class="mi">2</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">	</span><span class="k">select</span><span class="w"> </span><span class="err">列名</span><span class="mi">1</span><span class="p">,</span><span class="err">列名</span><span class="mi">2</span><span class="p">,</span><span class="err">列名</span><span class="mi">3</span><span class="w"> </span><span class="k">from</span><span class="w"> </span><span class="err">表名</span><span class="w"> </span><span class="k">where</span><span class="w"> </span><span class="err">条件</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="mi">3</span><span class="p">.</span><span class="w"> </span><span class="err">版本</span><span class="mi">3</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">	</span><span class="k">select</span><span class="w"> </span><span class="p">...</span><span class="w"> </span><span class="k">from</span><span class="w"> </span><span class="p">...</span><span class="w"> </span><span class="k">where</span><span class="w"> </span><span class="err">条件</span><span class="w"> </span><span class="k">order</span><span class="w"> </span><span class="k">by</span><span class="w"> </span><span class="err">排序列</span><span class="w"> </span><span class="k">limit</span><span class="w"> </span><span class="k">start</span><span class="p">,</span><span class="n">num</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="mi">4</span><span class="p">.</span><span class="w"> </span><span class="err">版本</span><span class="mi">4</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div></li>
+<li>
+<p>SQL的执行顺序</p>
+<div class="table-wrapper"><table>
+<thead>
+<tr>
+<th><strong>执行顺序</strong></th>
+<th><strong>关键字</strong></th>
+<th><strong>作用</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td><code>from</code>​</td>
+<td>明确数据源</td>
+</tr>
+<tr>
+<td>2</td>
+<td><code>where</code>​</td>
+<td>过滤表中数据</td>
+</tr>
+<tr>
+<td>3</td>
+<td><code>group by</code>​</td>
+<td>对满足where条件的数据进行分组group</td>
+</tr>
+<tr>
+<td></td>
+<td><code>having</code>​</td>
+<td>对分组后的数据进行过滤。</td>
+</tr>
+<tr>
+<td>6</td>
+<td><code>select</code>​</td>
+<td>选择指定的列</td>
+</tr>
+<tr>
+<td>7</td>
+<td><code>order by</code>​</td>
+<td>排序</td>
+</tr>
+<tr>
+<td>8</td>
+<td><code>limit</code>​</td>
+<td>截取查询结果</td>
+</tr>
+</tbody>
+</table></div>
+</li>
+</ul>
+<h3 id="3简单查询">3、简单查询
+</h3><p>　　(1) 查询部分列</p>
+<ul>
+<li>
+<p>场景</p>
+<p>查询t_emp中所有员工的id工号、名字、月薪？</p>
+</li>
+<li>
+<p>关键</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">1. <span class="k">select</span>：选择要查看的列。
+</span></span><span class="line"><span class="cl">2. from: 确定数据来源的表
+</span></span></code></pre></td></tr></table>
+</div>
+</div></li>
+<li>
+<p>语法</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="line"><span class="cl"><span class="k">select</span><span class="w"> </span><span class="err">列名</span><span class="mi">1</span><span class="p">,</span><span class="err">列名</span><span class="mi">2</span><span class="p">,</span><span class="err">列名</span><span class="mi">3</span><span class="w"> </span><span class="k">from</span><span class="w"> </span><span class="err">表名</span><span class="p">;</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div></li>
+<li>
+<p>案例</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="line"><span class="cl"><span class="k">select</span><span class="w"> </span><span class="n">employee_id</span><span class="p">,</span><span class="n">first_name</span><span class="p">,</span><span class="n">salary</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">from</span><span class="w"> </span><span class="n">t_emp</span><span class="p">;</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div></li>
+</ul>
+<p>　　(2) 查询全部列</p>
+<ul>
+<li>
+<p>场景</p>
+<p>查询t_emp表所有员工的全部信息：id、名字、月薪、姓、职位、部门id、佣金？</p>
+</li>
+<li>
+<p>语法</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="line"><span class="cl"><span class="k">select</span><span class="w"> </span><span class="o">*</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">from</span><span class="w"> </span><span class="n">t_employees</span><span class="p">;</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div></li>
+</ul>
+<p>　　(3) 列数学运算</p>
+<ul>
+<li>
+<p>场景</p>
+<p>查看所有员工的id、名字、月薪、年薪（salary*12）？</p>
+</li>
+<li>
+<p>语法</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="line"><span class="cl"><span class="k">select</span><span class="w"> </span><span class="err">列</span><span class="o">+</span><span class="n">n</span><span class="p">,</span><span class="err">列</span><span class="o">-</span><span class="n">n</span><span class="p">,</span><span class="err">列</span><span class="o">*</span><span class="n">n</span><span class="p">,</span><span class="err">列</span><span class="o">/</span><span class="n">n</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">from</span><span class="w"> </span><span class="err">表名</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="err">注意：列的数据类型必须是数字类型：</span><span class="nb">int</span><span class="w"> </span><span class="err">、</span><span class="nb">bigint</span><span class="err">、</span><span class="n">double</span><span class="err">。</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div></li>
+<li>
+<p>案例</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="k">select</span> employee_id,first_name,salary
+</span></span><span class="line"><span class="cl">from t_employees<span class="p">;</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div></li>
+</ul>
+<p>　　(4) 列起别名</p>
+<ul>
+<li>
+<p>场景</p>
+<p>查看所有员工的id、名字、月薪(mon_salary)、年薪(year_salary)？</p>
+</li>
+<li>
+<p>说明</p>
+<blockquote>
+<p>select查询结果列名，并不一定是表中的列名，由select语句后面的单词决定。</p>
+</blockquote>
+</li>
+<li>
+<p>语法</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="line"><span class="cl"><span class="k">select</span><span class="w"> </span><span class="err">列</span><span class="mi">1</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="err">别名</span><span class="w"> </span><span class="p">,</span><span class="err">列</span><span class="mi">2</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="err">别名</span><span class="p">,</span><span class="err">列</span><span class="mi">3</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="s2">&#34;别名&#34;</span><span class="w"> </span><span class="p">...</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">from</span><span class="w"> </span><span class="err">表名</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="err">注意：</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">	</span><span class="err">如果别名中有特殊字符，关键词，空格，需要使用引号，建议使用双引号定义别名。</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div></li>
+<li>
+<p>案例</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="line"><span class="cl"><span class="k">select</span><span class="w"> </span><span class="n">employee_id</span><span class="p">,</span><span class="n">first_name</span><span class="p">,</span><span class="n">salary</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="s2">&#34;mon_salary&#34;</span><span class="p">,</span><span class="n">salary</span><span class="o">*</span><span class="mi">12</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="s2">&#34;year_salary&#34;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">from</span><span class="w"> </span><span class="n">t_employees</span><span class="p">;</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div></li>
+</ul>
+<p>　　(5) 去重</p>
+<ul>
+<li>
+<p>场景：</p>
+<p>查询员工t_emp表所有的领导的id编号？</p>
+</li>
+<li>
+<p>关键词</p>
+<p><code>distinct</code>​</p>
+<p>作用：针对查询结果中重复的数据，进行去重。(只有一行数据中所有列的值都一样，才算做重复数据。distinct作用于后面所有列)</p>
+<p>重复数据定义：看一整行row，一行数据所有的值，都重复。</p>
+</li>
+<li>
+<p>语法：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="line"><span class="cl"><span class="k">select</span><span class="w"> </span><span class="k">distinct</span><span class="w"> </span><span class="err">列名</span><span class="mi">1</span><span class="p">,</span><span class="err">列名</span><span class="mi">2</span><span class="p">,</span><span class="err">列名</span><span class="mi">3</span><span class="w"> 
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">from</span><span class="w"> </span><span class="err">表名</span><span class="p">;</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div></li>
+</ul>
+<p>　　(6) case-when(**)</p>
+<ul>
+<li>
+<p>场景</p>
+<p>查询所有员工的id、名字、工资、工资等级(10000+:A,8000~10000:B, 6000 ~8000:C, 6000-：D)</p>
+</li>
+<li>
+<p>语法</p>
+<blockquote>
+<p>case-when是用来生成查询结果的列，书写位置在select后面和其他列同级别。</p>
+</blockquote>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="k">case</span>
+</span></span><span class="line"><span class="cl">	when 条件1 <span class="k">then</span> 值1
+</span></span><span class="line"><span class="cl">	when 条件2 <span class="k">then</span> 值2
+</span></span><span class="line"><span class="cl">	when 条件3 <span class="k">then</span> 值3
+</span></span><span class="line"><span class="cl">	<span class="k">else</span> 值4
+</span></span><span class="line"><span class="cl">end
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">说明：
+</span></span><span class="line"><span class="cl">	1. 按照case条件从上开始判断，满足某个条件，则选择then后面的值作为当前列的值，如果不满足，则继续向下判断。
+</span></span><span class="line"><span class="cl">		如果都不成立，最后值选择else的值。
+</span></span></code></pre></td></tr></table>
+</div>
+</div></li>
+<li>
+<p>代码</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="k">select</span> employee_id,first_name,salary,
+</span></span><span class="line"><span class="cl"><span class="k">case</span>
+</span></span><span class="line"><span class="cl">	when salary &gt; <span class="m">10000</span> <span class="k">then</span> <span class="s1">&#39;A&#39;</span>
+</span></span><span class="line"><span class="cl">	when salary &gt; <span class="m">8000</span> <span class="k">then</span> <span class="s1">&#39;B&#39;</span>
+</span></span><span class="line"><span class="cl">	when salary &gt; <span class="m">6000</span> <span class="k">then</span> <span class="s1">&#39;C&#39;</span>
+</span></span><span class="line"><span class="cl">	<span class="k">else</span> <span class="s1">&#39;D&#39;</span>
+</span></span><span class="line"><span class="cl">end
+</span></span><span class="line"><span class="cl">from t_employees<span class="p">;</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div></li>
+</ul>
+<h3 id="4where条件查询">4、where条件查询
+</h3><ul>
+<li>
+<p>场景：
+用户选择数据过滤的条件，然后出发查询操作，获得满足过滤条件的数据。</p>
+<p><img src="C:/Users/Administrator/Downloads/02-MySQL%E6%9F%A5%E8%AF%A2.md/%E6%95%B0%E6%8D%AE%E5%BA%93%E8%BF%90%E7%BB%B4/02-MySQL%E6%95%B0%E6%8D%AE%E5%BA%93/%E8%AF%BE%E4%BB%B6/assets/image-20231030172509-n6i6kza.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="image"
+	
+	
+>​</p>
+</li>
+<li>
+<p>关键词</p>
+<p><code>where</code>​</p>
+<p>作用：对查询表中的数据进行条件帅选，只有满足where条件的数据才会被客户端查询得到。</p>
+</li>
+<li>
+<p>运行机制</p>
+<p>① from表中所有数据，逐条进行where条件判断。</p>
+<p>② 只有满足where条件，才会被保留在查询结果中。</p>
+<p><img src="C:/Users/Administrator/Downloads/02-MySQL%E6%9F%A5%E8%AF%A2.md/%E6%95%B0%E6%8D%AE%E5%BA%93%E8%BF%90%E7%BB%B4/02-MySQL%E6%95%B0%E6%8D%AE%E5%BA%93/%E8%AF%BE%E4%BB%B6/assets/image-20231101111439-cqnw3k9.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="image"
+	
+	
+></p>
+</li>
+<li>
+<p>语法</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="line"><span class="cl"><span class="k">select</span><span class="w"> </span><span class="err">列名</span><span class="mi">1</span><span class="p">,</span><span class="err">列名</span><span class="mi">2</span><span class="p">,</span><span class="err">列名</span><span class="mi">3</span><span class="w"> </span><span class="k">from</span><span class="w"> </span><span class="err">表名</span><span class="w"> </span><span class="k">where</span><span class="w"> </span><span class="err">过滤条件</span><span class="p">;</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div></li>
+</ul>
+<p>　　(1) 单条件</p>
+<ul>
+<li>
+<p>场景：</p>
+<p>查询工资大于等于10000员工信息：id、名字、工资。</p>
+</li>
+<li>
+<p>代码</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="line"><span class="cl"><span class="k">select</span><span class="w"> </span><span class="n">employee_id</span><span class="p">,</span><span class="n">first_name</span><span class="p">,</span><span class="n">salary</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">from</span><span class="w"> </span><span class="n">t_employees</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">where</span><span class="w"> </span><span class="n">salary</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="mi">10000</span><span class="p">;</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div></li>
+</ul>
+<p>　　(2) 多条件</p>
+<ul>
+<li>
+<p>场景</p>
+<p>查询部门编号90，且工资大于10000的员工信息id、名字、工资？</p>
+</li>
+<li>
+<p>分析</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="line"><span class="cl"><span class="n">where条件</span><span class="err">：</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">	</span><span class="err">①</span><span class="w"> </span><span class="err">条件</span><span class="mi">1</span><span class="err">：</span><span class="n">department_id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">90</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">	</span><span class="err">②</span><span class="w"> </span><span class="err">条件</span><span class="mi">2</span><span class="err">：</span><span class="n">salary</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="mi">10000</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div></li>
+<li>
+<p>语法</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="line"><span class="cl"><span class="k">select</span><span class="w"> </span><span class="err">列名</span><span class="mi">1</span><span class="p">,</span><span class="err">列名</span><span class="mi">2</span><span class="p">,</span><span class="err">列名</span><span class="mi">3</span><span class="w"> 
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">from</span><span class="w"> </span><span class="err">表名</span><span class="w"> 
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">where</span><span class="w"> </span><span class="err">条件</span><span class="mi">1</span><span class="w"> </span><span class="k">and</span><span class="o">|</span><span class="k">or</span><span class="w"> </span><span class="err">条件</span><span class="mi">2</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="err">说明：</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">	</span><span class="k">and</span><span class="err">：且：只有</span><span class="n">and两边条件都满足</span><span class="err">，才会作为查询结果。</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">	</span><span class="k">or</span><span class="err">：或：数据条件只要满足</span><span class="mi">1</span><span class="err">个即可作为查询结果。</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div></li>
+<li>
+<p>代码</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="line"><span class="cl"><span class="c1">-- 1. 查询部门编号90，且工资大于10000的员工信息id、名字、工资？
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">select</span><span class="w"> </span><span class="n">employee_id</span><span class="p">,</span><span class="n">first_name</span><span class="p">,</span><span class="n">salary</span><span class="p">,</span><span class="n">department_id</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">from</span><span class="w"> </span><span class="n">t_employees</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">where</span><span class="w"> </span><span class="n">department_id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">90</span><span class="w"> </span><span class="k">and</span><span class="w"> </span><span class="n">salary</span><span class="o">&gt;=</span><span class="w"> </span><span class="mi">10000</span><span class="p">;</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p>&ndash; 2. 查询部门编号90，或者 工资大于10000的员工信息id、名字、工资？
+select employee_id,first_name,salary,department_id
+from t_employees
+where department_id = 90 or salary&gt;= 10000;</p>
+<p>&ndash; 3. 查询工资 8000~10000之间员工信息：id，名字，工资。
+select employee_id,first_name,salary
+from t_employees
+where salary &gt;= 8000 and salary &lt;=10000;</p>
+</li>
+</ul>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">　　(3) 区间
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">* 场景
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  查询工资 8000~10000之间员工信息：id，名字，工资。
+</span></span><span class="line"><span class="cl">* 关键
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  ​`where 列名 between min and max`​
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  含义：过滤数据条件在min和max之间的数据。(结果中包含min和max的情况)
+</span></span><span class="line"><span class="cl">* 语法
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  ```sql
+</span></span><span class="line"><span class="cl">  select 列名1,列名2,列名3 
+</span></span><span class="line"><span class="cl">  from 表名 
+</span></span><span class="line"><span class="cl">  where 列名 between 最小值 and 最大值;
+</span></span></code></pre></td></tr></table>
+</div>
+</div><ul>
+<li>
+<p>代码</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="line"><span class="cl"><span class="k">select</span><span class="w"> </span><span class="n">employee_id</span><span class="p">,</span><span class="n">first_name</span><span class="p">,</span><span class="n">salary</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">from</span><span class="w"> </span><span class="n">t_employees</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">where</span><span class="w"> </span><span class="n">salary</span><span class="w"> </span><span class="k">between</span><span class="w"> </span><span class="mi">8000</span><span class="w"> </span><span class="k">and</span><span class="w"> </span><span class="mi">10000</span><span class="p">;</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div></li>
+</ul>
+<p>　　(4) in枚举</p>
+<ul>
+<li>
+<p>场景</p>
+<p>查询部门编号60 70 80 部门的员工信息：id、名字、工资、部门id？</p>
+</li>
+<li>
+<p>关键</p>
+<p><code>where 列 in (值1,值2,值3,值4)</code>​</p>
+<p><strong>含义：</strong> 判断<strong>列的值</strong>否满足in后面括号中<strong>任意一个</strong>值，如果满足任意一个，即可作为查询结果。</p>
+</li>
+<li>
+<p>语法</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="line"><span class="cl"><span class="k">select</span><span class="w"> </span><span class="err">列名</span><span class="mi">1</span><span class="p">,</span><span class="err">列名</span><span class="mi">2</span><span class="p">,</span><span class="err">列名</span><span class="mi">3</span><span class="w"> 
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">from</span><span class="w"> </span><span class="err">表名</span><span class="w"> 
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">where</span><span class="w"> </span><span class="err">列</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="p">(</span><span class="err">值</span><span class="mi">1</span><span class="p">,</span><span class="err">值</span><span class="mi">2</span><span class="p">,</span><span class="err">值</span><span class="mi">3</span><span class="p">,</span><span class="err">值</span><span class="mi">4</span><span class="p">)</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div></li>
+<li>
+<p>代码</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="line"><span class="cl"><span class="k">select</span><span class="w"> </span><span class="n">employee_id</span><span class="p">,</span><span class="n">first_name</span><span class="p">,</span><span class="n">salary</span><span class="p">,</span><span class="n">department_id</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">from</span><span class="w"> </span><span class="n">t_employees</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">where</span><span class="w"> </span><span class="n">department_id</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="p">(</span><span class="mi">60</span><span class="p">,</span><span class="mi">70</span><span class="p">,</span><span class="mi">80</span><span class="p">,</span><span class="mi">90</span><span class="p">);</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div></li>
+</ul>
+<p>　　(5) 空值</p>
+<ul>
+<li>
+<p>场景</p>
+<p>查询员工信息，没有佣金的员工信息？</p>
+</li>
+<li>
+<p>关键词</p>
+<p><code>where 列 is </code>​<strong>​<code>null</code>​</strong>​</p>
+<p>含义：判断指定列的值是否是null，如果是null，则作为查询结果。</p>
+<p><code>where 列 is </code>​<strong>​<code>not null</code>​</strong>​</p>
+<p>含义：判断指定的值是否是非null(是否有值)。</p>
+</li>
+<li>
+<p>代码</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="line"><span class="cl"><span class="c1">-- 查询员工信息，没有佣金的员工信息？
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="k">select</span><span class="w"> </span><span class="o">*</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">from</span><span class="w"> </span><span class="n">t_employees</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">where</span><span class="w"> </span><span class="n">comission_pct</span><span class="w"> </span><span class="k">is</span><span class="w"> </span><span class="k">null</span><span class="p">;</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div></li>
+</ul>
+<p>　　(6) 模糊查询</p>
+<ul>
+<li>
+<p>场景：</p>
+<p>查询员工职位名称 以&quot;IT&quot;开头的员工信息？</p>
+</li>
+<li>
+<p>语法</p>
+<p><code>where 列名 like '关键词和通配符'</code>​</p>
+<p>SQL通配符：</p>
+<div class="table-wrapper"><table>
+<thead>
+<tr>
+<th>序号</th>
+<th>符号</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td><code>%</code>​</td>
+<td>任意字符，个数<span data-type="text" style="color: var(--b3-font-color1);">0~n</span>个</td>
+</tr>
+<tr>
+<td>2</td>
+<td><code>_</code>​</td>
+<td>任意字符，表示<span data-type="text" style="color: var(--b3-font-color1);">1</span>个</td>
+</tr>
+</tbody>
+</table></div>
+</li>
+<li>
+<p>代码</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="line"><span class="cl"><span class="c1">-- 查询员工职位名称 以&#34;IT&#34;开头的员工信息？
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="k">select</span><span class="w"> </span><span class="o">*</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">from</span><span class="w"> </span><span class="n">t_employees</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">where</span><span class="w"> </span><span class="n">job_id</span><span class="w"> </span><span class="k">like</span><span class="w"> </span><span class="s1">&#39;IT%&#39;</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="c1">-- 查询名字中以A开头的员工信息？
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="k">select</span><span class="w"> </span><span class="o">*</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">from</span><span class="w"> </span><span class="n">t_employees</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">where</span><span class="w"> </span><span class="n">first_name</span><span class="w"> </span><span class="k">like</span><span class="w"> </span><span class="s1">&#39;A%&#39;</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="c1">-- 查询员工的名字4个字母的员工信息？
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="k">select</span><span class="w"> </span><span class="o">*</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">from</span><span class="w"> </span><span class="n">t_employees</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">where</span><span class="w"> </span><span class="n">first_name</span><span class="w"> </span><span class="k">like</span><span class="w"> </span><span class="s1">&#39;____&#39;</span><span class="p">;</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div></li>
+</ul>
+<h3 id="5order排序">5、order排序
+</h3><ul>
+<li>
+<p>场景：为了方便用户查看信息，数据展示往往会提供可以排序的功能。</p>
+<p><img src="C:/Users/Administrator/Downloads/02-MySQL%E6%9F%A5%E8%AF%A2.md/%E6%95%B0%E6%8D%AE%E5%BA%93%E8%BF%90%E7%BB%B4/02-MySQL%E6%95%B0%E6%8D%AE%E5%BA%93/%E8%AF%BE%E4%BB%B6/assets/image-20231101143141-4gwsq5g.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="image"
+	
+	
+>​</p>
+</li>
+<li>
+<p>关键词</p>
+<p><code>order by 列名 asc | desc</code>​</p>
+<blockquote>
+<p>order by可以支持<strong>整数</strong>、<strong>小数</strong>、<strong>日期</strong>类型排序。(可以对字符串排序)</p>
+</blockquote>
+</li>
+<li>
+<p>语法</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="line"><span class="cl"><span class="k">select</span><span class="w"> </span><span class="p">...</span><span class="w"> </span><span class="k">from</span><span class="w"> </span><span class="p">...</span><span class="w"> </span><span class="k">where</span><span class="w"> </span><span class="p">...</span><span class="w"> </span><span class="k">order</span><span class="w"> </span><span class="k">by</span><span class="w"> </span><span class="err">排序列</span><span class="mi">1</span><span class="w"> </span><span class="k">asc</span><span class="o">|</span><span class="k">desc</span><span class="p">,</span><span class="err">排序列</span><span class="mi">2</span><span class="w"> </span><span class="k">asc</span><span class="o">|</span><span class="k">desc</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p>说明：
+order by：基于指定列进行排序,可以指定多个列，且当第一个列的值相同，按照第二列的排序方式进行排序。
+asc：升序 默认
+desc：降序</p>
+</li>
+</ul>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">* 代码
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  ```sql
+</span></span><span class="line"><span class="cl">  -- 查询员工信息，按照薪资降序排序？
+</span></span><span class="line"><span class="cl">  select *
+</span></span><span class="line"><span class="cl">  from t_employees
+</span></span><span class="line"><span class="cl">  order by salary desc;
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  -- 查询员工信息，按照信息升序，如果薪资相同按照部门id降序排序？
+</span></span><span class="line"><span class="cl">  select * 
+</span></span><span class="line"><span class="cl">  from t_employees
+</span></span><span class="line"><span class="cl">  order by salary asc,department_id desc;
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="6limit截取">6、limit截取
+</h3><ul>
+<li>
+<p>场景：往往每次查询返回给用户的数据并不是全部数据，而是进行截取分批查询，<code>分页展示</code>​。</p>
+<p><img src="C:/Users/Administrator/Downloads/02-MySQL%E6%9F%A5%E8%AF%A2.md/%E6%95%B0%E6%8D%AE%E5%BA%93%E8%BF%90%E7%BB%B4/02-MySQL%E6%95%B0%E6%8D%AE%E5%BA%93/%E8%AF%BE%E4%BB%B6/assets/image-20231101143209-enj89bh.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="image"
+	
+	
+>​</p>
+</li>
+<li>
+<p>分析优化：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="line"><span class="cl"><span class="mi">1</span><span class="p">.</span><span class="w"> </span><span class="err">实际开发中，数据不会全部查询发送给客户端，用户多了以后不需要的数据也会大量占用</span><span class="n">MySQL服务器网络带宽</span><span class="err">，降低查询效率。</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">	</span><span class="err">结论：不必要查询的数据，就不返回给用户。</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="mi">2</span><span class="p">.</span><span class="w"> </span><span class="n">select后面的列</span><span class="err">，不需要的数据，就不要给客户端传输。不要使用</span><span class="k">select</span><span class="w"> </span><span class="o">*</span><span class="p">.</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div></li>
+<li>
+<p>语法</p>
+<p><code>limit start,count</code>​</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="line"><span class="cl"><span class="k">limit</span><span class="w"> </span><span class="k">start</span><span class="p">,</span><span class="k">count</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">start</span><span class="p">:</span><span class="w"> </span><span class="err">截取数据，从第几条开始，从</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="err">开始计数。</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">count</span><span class="p">:</span><span class="err">本次查询，查询多少条。</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div></li>
+<li>
+<p>代码</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="line"><span class="cl"><span class="c1">-- 查询员工的信息，每页显示10条，查询第一页（0,10）
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="k">select</span><span class="w"> </span><span class="o">*</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">from</span><span class="w"> </span><span class="n">t_employees</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">limit</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="mi">10</span><span class="p">;</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div></li>
+</ul>
+<h2 id="五函数">五、函数
+</h2><ul>
+<li>
+<p>概念：</p>
+<blockquote>
+<p>MySQL内置了一些SQL 特定数据处理功能的工具，叫做函数。</p>
+</blockquote>
+</li>
+<li>
+<p>语法</p>
+<p><code>函数名()</code>​</p>
+<p><code>函数名(参数)</code>​</p>
+</li>
+</ul>
+<h3 id="1-单行函数">1. 单行函数
+</h3><ul>
+<li>
+<p>概念：</p>
+<blockquote>
+<p>被单行函数处理的数据，<strong>输入n条</strong>，<strong>输出n个结果</strong>。逐条数据进行处理。
+总结：单行函数处理的目标数据一行一行，一行数据产生一条结果。</p>
+</blockquote>
+<p><img src="C:/Users/Administrator/Downloads/02-MySQL%E6%9F%A5%E8%AF%A2.md/%E6%95%B0%E6%8D%AE%E5%BA%93%E8%BF%90%E7%BB%B4/02-MySQL%E6%95%B0%E6%8D%AE%E5%BA%93/%E8%AF%BE%E4%BB%B6/assets/image-20231102095849-14wa6cn.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="image"
+	
+	
+>​</p>
+</li>
+<li>
+<p>常见：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="line"><span class="cl"><span class="mi">1</span><span class="p">.</span><span class="w"> </span><span class="err">获得当前系统时间：</span><span class="p">(</span><span class="n">MySQL</span><span class="o">-</span><span class="n">Server服务器所在电脑</span><span class="p">)</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">	</span><span class="n">sysdate</span><span class="p">()</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="mi">2</span><span class="p">.</span><span class="w"> </span><span class="err">获得字符串长度：</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">	</span><span class="k">length</span><span class="p">(</span><span class="err">列名</span><span class="p">)</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="mi">3</span><span class="p">.</span><span class="w"> </span><span class="err">字符串拼接：</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">	</span><span class="n">concat</span><span class="p">(</span><span class="err">列</span><span class="p">,</span><span class="err">列</span><span class="p">,</span><span class="err">列</span><span class="p">,</span><span class="s1">&#39;abc&#39;</span><span class="p">)</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="mi">4</span><span class="p">.</span><span class="w"> </span><span class="err">将字符串格式</span><span class="w"> </span><span class="s1">&#39;1999年9月9日&#39;</span><span class="w"> </span><span class="err">转变成</span><span class="n">date类型</span><span class="err">。</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">	</span><span class="n">str_to_date</span><span class="p">(</span><span class="err">参数</span><span class="p">..)</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="mi">5</span><span class="p">.</span><span class="w"> </span><span class="err">提取日期中部分数据</span><span class="p">(</span><span class="err">日期：年月日</span><span class="w"> </span><span class="err">时分秒</span><span class="p">)</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">	</span><span class="n">date_format</span><span class="p">(</span><span class="err">参数</span><span class="p">..)</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="mi">6</span><span class="p">.</span><span class="w"> </span><span class="err">其他</span><span class="p">...</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">	</span><span class="err">相同单行函数。</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div></li>
+</ul>
+<p>　　(1) sysdate 获得日期</p>
+<ul>
+<li>
+<p>场景：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="line"><span class="cl"><span class="c1">-- 查看当前系统时间
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="k">select</span><span class="w"> 
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div></li>
+<li>
+<p>语法：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="line"><span class="cl"><span class="k">select</span><span class="w"> </span><span class="n">sysdate</span><span class="p">();</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div></li>
+</ul>
+<p>　　(2) length 获得字符串长度</p>
+<ul>
+<li>
+<p>语法</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="line"><span class="cl"><span class="k">length</span><span class="p">(</span><span class="err">列名</span><span class="p">)</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div></li>
+<li>
+<p>场景</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="line"><span class="cl"><span class="c1">-- 1. 查看所有员工的id，名字，工资，及其名字的长度？
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="k">select</span><span class="w"> </span><span class="n">employee_id</span><span class="p">,</span><span class="n">first_name</span><span class="p">,</span><span class="n">salary</span><span class="p">,</span><span class="k">length</span><span class="p">(</span><span class="n">first_name</span><span class="p">)</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">from</span><span class="w"> </span><span class="n">t_employees</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="c1">-- 2. 查看员工的名字长度是5位员工信息？
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="k">select</span><span class="w"> </span><span class="o">*</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">from</span><span class="w"> </span><span class="n">t_employees</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">where</span><span class="w"> </span><span class="k">length</span><span class="p">(</span><span class="n">first_name</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">5</span><span class="p">;</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div></li>
+</ul>
+<p>　　(3) concat 字符串拼接</p>
+<ul>
+<li>
+<p>语法</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="line"><span class="cl"><span class="n">concat</span><span class="p">(</span><span class="err">列名</span><span class="mi">1</span><span class="p">,</span><span class="err">列名</span><span class="mi">2</span><span class="p">)</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">concat</span><span class="p">(</span><span class="err">列名</span><span class="mi">1</span><span class="p">,</span><span class="err">列名</span><span class="mi">2</span><span class="p">,</span><span class="err">列名</span><span class="mi">3</span><span class="p">...)</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">concat</span><span class="p">(</span><span class="err">列名</span><span class="mi">1</span><span class="p">,</span><span class="s1">&#39;固定字符&#39;</span><span class="p">)</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div></li>
+<li>
+<p>场景</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="line"><span class="cl"><span class="c1">-- 查看员工姓名和工资？
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="k">select</span><span class="w"> </span><span class="n">concat</span><span class="p">(</span><span class="n">first_name</span><span class="p">,</span><span class="n">last_name</span><span class="p">),</span><span class="n">salary</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">from</span><span class="w"> </span><span class="n">t_employees</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">select</span><span class="w"> </span><span class="n">concat</span><span class="p">(</span><span class="n">first_name</span><span class="p">,</span><span class="s1">&#39;·&#39;</span><span class="p">,</span><span class="n">last_name</span><span class="p">)</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="s2">&#34;name&#34;</span><span class="p">,</span><span class="n">salary</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">from</span><span class="w"> </span><span class="n">t_employees</span><span class="p">;</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div></li>
+</ul>
+<p>　　(4) str_to_date 字符串转为date</p>
+<ul>
+<li>
+<p>语法</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="line"><span class="cl"><span class="n">str_to_date</span><span class="p">(</span><span class="s1">&#39;1999年9月9日&#39;</span><span class="p">,</span><span class="s1">&#39;日期提取格式&#39;</span><span class="p">)</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div></li>
+<li>
+<p>日期通配符</p>
+<div class="table-wrapper"><table>
+<thead>
+<tr>
+<th style="text-align:center"><strong>格式标识符</strong></th>
+<th style="text-align:center"><strong>含义</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">**<code>%Y</code>**​</td>
+<td style="text-align:center">年（4位）</td>
+</tr>
+<tr>
+<td style="text-align:center">**<code>%m</code>**​</td>
+<td style="text-align:center">月，格式为（01~12)</td>
+</tr>
+<tr>
+<td style="text-align:center">**<code>%d</code>**​</td>
+<td style="text-align:center">天，格式为（00~31）</td>
+</tr>
+<tr>
+<td style="text-align:center">**<code>%H</code>**​</td>
+<td style="text-align:center">小时，格式为（00~23）</td>
+</tr>
+<tr>
+<td style="text-align:center">**<code>%i</code>**​</td>
+<td style="text-align:center">分钟，格式为（00~59）</td>
+</tr>
+<tr>
+<td style="text-align:center">**<code>%s</code>**​</td>
+<td style="text-align:center">秒，格式为（00~59）</td>
+</tr>
+</tbody>
+</table></div>
+</li>
+<li>
+<p>场景</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="line"><span class="cl"><span class="c1">-- 将 &#39;1999年9月9日&#39; 转化为日期类型
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="k">select</span><span class="w"> </span><span class="n">str_to_date</span><span class="p">(</span><span class="s1">&#39;1999年9月9日&#39;</span><span class="p">,</span><span class="s1">&#39;%Y年%m月%d日&#39;</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="c1">-- 向t_user表的name和birth添加一条数据&#39;麦克阿瑟&#39; &#39;1999年9月9日&#39;
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="k">insert</span><span class="w"> </span><span class="k">into</span><span class="w"> </span><span class="n">t_user</span><span class="p">(</span><span class="n">name</span><span class="p">,</span><span class="n">birth</span><span class="p">)</span><span class="w"> </span><span class="k">values</span><span class="p">(</span><span class="s1">&#39;美国五星上将马克阿瑟&#39;</span><span class="p">,</span><span class="n">str_to_date</span><span class="p">(</span><span class="s1">&#39;1999年9月9日&#39;</span><span class="p">,</span><span class="s1">&#39;%Y年%m月%d日&#39;</span><span class="p">));</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div></li>
+</ul>
+<p>　　(5) date_format 日期格式化</p>
+<ul>
+<li>
+<p>作用：提取日期的部分(年 月 日 时 分 秒)信息。</p>
+</li>
+<li>
+<p>语法：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="line"><span class="cl"><span class="n">date_format</span><span class="p">(</span><span class="n">date类型列名</span><span class="p">,</span><span class="s1">&#39;日期格式&#39;</span><span class="p">)</span><span class="w"> </span><span class="c1">-- 结果是一个字符串类型的结果。
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="n">date_format</span><span class="p">(</span><span class="n">date类型列名</span><span class="p">,</span><span class="s1">&#39;%Y-%m&#39;</span><span class="p">)</span><span class="w"> </span><span class="c1">-- 
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div></li>
+<li>
+<p>场景</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span><span class="lnt">9
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="line"><span class="cl"><span class="c1">-- 1. 查看所有员工的入职日期，精确到年月(1999-9)？
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="k">select</span><span class="w"> </span><span class="n">first_name</span><span class="p">,</span><span class="n">date_format</span><span class="p">(</span><span class="n">hire_date</span><span class="p">,</span><span class="s1">&#39;%Y-%m&#39;</span><span class="p">)</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">from</span><span class="w"> </span><span class="n">t_employees</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="c1">-- 2. 查看一下本月生日的员工信息？（假设hire_date就是生日）
+</span></span></span><span class="line"><span class="cl"><span class="c1">-- 翻译：hire_date 的月份 = 当前系统时间的月份
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="k">select</span><span class="w"> </span><span class="o">*</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">from</span><span class="w"> </span><span class="n">t_employees</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">where</span><span class="w"> </span><span class="n">date_format</span><span class="p">(</span><span class="n">hire_date</span><span class="p">,</span><span class="s1">&#39;%m&#39;</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">date_format</span><span class="p">(</span><span class="n">sysdate</span><span class="p">(),</span><span class="s1">&#39;%m&#39;</span><span class="p">);</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div></li>
+</ul>
+<h3 id="2-组函数">2. 组函数
+</h3><ul>
+<li>
+<p>概念：</p>
+<blockquote>
+<p>对组数据进行处理的，<strong>输入n组</strong>数据，<strong>产生n条</strong>结果。</p>
+</blockquote>
+<p><img src="C:/Users/Administrator/Downloads/02-MySQL%E6%9F%A5%E8%AF%A2.md/%E6%95%B0%E6%8D%AE%E5%BA%93%E8%BF%90%E7%BB%B4/02-MySQL%E6%95%B0%E6%8D%AE%E5%BA%93/%E8%AF%BE%E4%BB%B6/assets/image-20231102112100-tu75xil.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="image"
+	
+	
+></p>
+</li>
+<li>
+<p>常见组函数</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="line"><span class="cl"><span class="mi">1</span><span class="w"> </span><span class="err">统计一组的总个数：</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">	</span><span class="k">count</span><span class="p">(</span><span class="err">列</span><span class="p">)</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="mi">2</span><span class="w"> </span><span class="err">统计总和：</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">	</span><span class="k">sum</span><span class="p">(</span><span class="err">列</span><span class="p">)</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="mi">3</span><span class="p">.</span><span class="w"> </span><span class="err">最大值、最小值、平均值</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">	</span><span class="k">max</span><span class="p">(</span><span class="err">列</span><span class="p">)</span><span class="w">	</span><span class="k">min</span><span class="p">(</span><span class="err">列</span><span class="p">)</span><span class="w">  </span><span class="k">avg</span><span class="p">(</span><span class="err">列</span><span class="p">)</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div></li>
+<li>
+<p>案例</p>
+<p>当sql中没有分组group by 操作，组函数会将原表where过滤之后的数据当成一组来看。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="line"><span class="cl"><span class="err">前提：如果针对一张表的数据，统计</span><span class="p">(</span><span class="err">没有分组</span><span class="p">)</span><span class="err">，一张表直接看做</span><span class="mi">1</span><span class="err">组。</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="c1">-- 1. 统计所有员工人数？
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="w">	</span><span class="k">select</span><span class="w"> </span><span class="k">count</span><span class="p">(</span><span class="n">employee_id</span><span class="p">)</span><span class="w"> </span><span class="k">from</span><span class="w"> </span><span class="n">t_employees</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="c1">-- 2. 统计员工的平均工资？
+</span></span></span><span class="line"><span class="cl"><span class="c1">-- 3. 插卡员工最大工资和最小工资？
+</span></span></span><span class="line"><span class="cl"><span class="c1">-- 4. 统计员工月人力成本？ 
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="k">select</span><span class="w"> </span><span class="k">avg</span><span class="p">(</span><span class="n">salary</span><span class="p">),</span><span class="k">max</span><span class="p">(</span><span class="n">salary</span><span class="p">),</span><span class="k">min</span><span class="p">(</span><span class="n">salary</span><span class="p">),</span><span class="k">sum</span><span class="p">(</span><span class="n">salary</span><span class="p">),</span><span class="n">fist_name</span><span class="w"> </span><span class="k">from</span><span class="w"> </span><span class="n">t_employees</span><span class="p">;</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div></li>
+</ul>
+<h2 id="六分组">六、分组
+</h2><h3 id="1-分组group">1. 分组group
+</h3><blockquote>
+<p>对from表满足where条件之后的数据进行分组。</p>
+</blockquote>
+<ul>
+<li>
+<p>场景</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="line"><span class="cl"><span class="mi">1</span><span class="p">.</span><span class="w"> </span><span class="err">统计每个部门的平均工资？</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="mi">2</span><span class="p">.</span><span class="w"> </span><span class="err">统计每个班级的班级人数？</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="mi">3</span><span class="p">.</span><span class="w"> </span><span class="err">统计每种类别的商品平均价格？</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div></li>
+<li>
+<p>思路</p>
+<p>① 第一步：按照某个列，将数据分成多组。</p>
+<p>② 第二步：对每组数据，进行组函数统计。<img src="C:/Users/Administrator/Downloads/02-MySQL%E6%9F%A5%E8%AF%A2.md/%E6%95%B0%E6%8D%AE%E5%BA%93%E8%BF%90%E7%BB%B4/02-MySQL%E6%95%B0%E6%8D%AE%E5%BA%93/%E8%AF%BE%E4%BB%B6/assets/image-20231102112100-tu75xil.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="image"
+	
+	
+></p>
+</li>
+<li>
+<p>关键词</p>
+<p><code>group by 分组依据列名</code>​</p>
+</li>
+<li>
+<p>语法</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="line"><span class="cl"><span class="k">select</span><span class="w"> </span><span class="p">...</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">from</span><span class="w"> </span><span class="p">...</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">where</span><span class="w"> </span><span class="p">...</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">group</span><span class="w"> </span><span class="k">by</span><span class="w"> </span><span class="err">依据列</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div></li>
+<li>
+<p>代码</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="line"><span class="cl"><span class="c1">-- 1. 统计每个部门的平均工资？(平均工资 部门id)
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="k">select</span><span class="w"> </span><span class="n">department_id</span><span class="p">,</span><span class="k">avg</span><span class="p">(</span><span class="n">salary</span><span class="p">),</span><span class="k">max</span><span class="p">(</span><span class="n">salary</span><span class="p">),</span><span class="k">min</span><span class="p">(</span><span class="n">salary</span><span class="p">)</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">from</span><span class="w"> </span><span class="n">t_employees</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">group</span><span class="w"> </span><span class="k">by</span><span class="w"> </span><span class="n">department_id</span><span class="p">;</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div></li>
+<li>
+<p><span data-type="text" style="color: var(--b3-font-color1);">注意</span>：</p>
+<ol>
+<li>表数据一旦经过分组group by后，</li>
+<li>select后只能出现group by的字段。</li>
+<li>select后还能出现组函数处理字段。</li>
+</ol>
+</li>
+</ul>
+<h3 id="2-分组过滤having">2. 分组过滤having
+</h3><ul>
+<li>
+<p>场景：</p>
+<p>查看平均工资高于8000的，部门id，平均工资，人数？</p>
+</li>
+<li>
+<p>思路：</p>
+<p><img src="C:/Users/Administrator/Downloads/02-MySQL%E6%9F%A5%E8%AF%A2.md/%E6%95%B0%E6%8D%AE%E5%BA%93%E8%BF%90%E7%BB%B4/02-MySQL%E6%95%B0%E6%8D%AE%E5%BA%93/%E8%AF%BE%E4%BB%B6/assets/image-20231102150534-vkbia7t.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="image"
+	
+	
+></p>
+</li>
+<li>
+<p>分析(x)</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="line"><span class="cl"><span class="k">select</span><span class="w"> </span><span class="n">dept_id</span><span class="p">,</span><span class="k">avg</span><span class="p">(</span><span class="n">salary</span><span class="p">),</span><span class="k">count</span><span class="p">(</span><span class="n">emp_id</span><span class="p">)</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">from</span><span class="w"> </span><span class="n">t_emp</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">where</span><span class="w"> </span><span class="err">部门平均工资</span><span class="o">&gt;</span><span class="mi">8000</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">group</span><span class="w"> </span><span class="k">by</span><span class="w"> </span><span class="err">部门</span><span class="n">id</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div></li>
+<li>
+<p>自以为是的SQL</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="line"><span class="cl"><span class="k">select</span><span class="w"> </span><span class="n">department_id</span><span class="p">,</span><span class="k">avg</span><span class="p">(</span><span class="n">salary</span><span class="p">),</span><span class="k">count</span><span class="p">(</span><span class="n">employee_id</span><span class="p">)</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">from</span><span class="w"> </span><span class="n">t_employees</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">where</span><span class="w"> </span><span class="k">avg</span><span class="p">(</span><span class="n">salary</span><span class="p">)</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mi">8000</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">group</span><span class="w"> </span><span class="k">by</span><span class="w"> </span><span class="n">department_id</span><span class="p">;</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p>错误原因：</p>
+<p>① where关键词执行顺序在group分组之前。</p>
+<p>② where语句执行，数据未分组，不能使用组函数。</p>
+</li>
+<li>
+<p>关键词</p>
+<p><code>having</code>​</p>
+<p>作用：对分组后的数据进行过滤，可以having中使用组函数处理结果(组函数、分组依据列)</p>
+</li>
+<li>
+<p>语法</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="line"><span class="cl"><span class="k">select</span><span class="w"> </span><span class="p">...</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">from</span><span class="w"> </span><span class="p">...</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">where</span><span class="w"> </span><span class="err">分组前的过滤条件</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">group</span><span class="w"> </span><span class="k">by</span><span class="w"> </span><span class="err">分组依据列</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">having</span><span class="w"> </span><span class="err">分组后过滤条件</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div></li>
+<li>
+<p>代码改写</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="line"><span class="cl"><span class="c1">-- 查看平均工资高于8000的，部门id，平均工资，人数？
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="k">select</span><span class="w"> </span><span class="n">department_id</span><span class="p">,</span><span class="k">avg</span><span class="p">(</span><span class="n">salary</span><span class="p">),</span><span class="k">count</span><span class="p">(</span><span class="n">employee_id</span><span class="p">)</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">from</span><span class="w"> </span><span class="n">t_employees</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">group</span><span class="w"> </span><span class="k">by</span><span class="w"> </span><span class="n">department_id</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">having</span><span class="w">  </span><span class="k">avg</span><span class="p">(</span><span class="n">salary</span><span class="p">)</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="mi">8000</span><span class="p">;</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div></li>
+</ul>
+<h3 id="3-对比where和having">3. 对比where和having
+</h3><ul>
+<li>
+<p>场景</p>
+<p>统计统计60,80,90部门的平均工资(department_id,平均工资)？</p>
+</li>
+<li>
+<p>代码</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="line"><span class="cl"><span class="mi">1</span><span class="p">.</span><span class="w"> </span><span class="err">方式</span><span class="mi">1</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">select</span><span class="w"> </span><span class="n">department_id</span><span class="p">,</span><span class="k">avg</span><span class="p">(</span><span class="n">salary</span><span class="p">)</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">from</span><span class="w"> </span><span class="n">t_employees</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">group</span><span class="w"> </span><span class="k">by</span><span class="w"> </span><span class="n">department_id</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">having</span><span class="w"> </span><span class="n">department_id</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="p">(</span><span class="mi">60</span><span class="p">,</span><span class="mi">80</span><span class="p">,</span><span class="mi">90</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="mi">2</span><span class="p">.</span><span class="w"> </span><span class="err">方式</span><span class="mi">2</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">select</span><span class="w"> </span><span class="n">department_id</span><span class="p">,</span><span class="k">avg</span><span class="p">(</span><span class="n">salary</span><span class="p">)</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">from</span><span class="w"> </span><span class="n">t_employees</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">where</span><span class="w"> </span><span class="n">department_id</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="p">(</span><span class="mi">60</span><span class="p">,</span><span class="mi">80</span><span class="p">,</span><span class="mi">90</span><span class="p">)</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">group</span><span class="w"> </span><span class="k">by</span><span class="w"> </span><span class="n">department_id</span><span class="p">;</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div></li>
+<li>
+<p><span data-type="text" style="color: var(--b3-font-color1);">总结</span></p>
+<p>① where是在分组之前过滤。</p>
+<p>② having是在分组之后过滤。</p>
+<p>③ where过滤早于having，但凡可以，优先使用where过滤掉不需要的数据。以免无意义的数据进入后续处理流程，浪费MySQL操作性能。</p>
+</li>
+</ul>
+<h2 id="七sql总结">七、SQL总结
+</h2><h3 id="1-编写顺序">1. 编写顺序
+</h3><ul>
+<li>
+<p>语法</p>
+<p><code>select ... from ... where ... group by ... having ... order by .... limit ...;</code>​</p>
+</li>
+<li>
+<p>详细</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="line"><span class="cl"><span class="k">select</span><span class="w"> </span><span class="err">列</span><span class="p">,</span><span class="err">列</span><span class="p">...</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">from</span><span class="w"> </span><span class="err">表</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">where</span><span class="w"> </span><span class="err">分组前过滤条件</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">group</span><span class="w"> </span><span class="k">by</span><span class="w"> </span><span class="err">分组依据列</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">having</span><span class="w"> </span><span class="err">分组后的过滤条件</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">order</span><span class="w"> </span><span class="k">by</span><span class="w"> </span><span class="err">列</span><span class="w"> </span><span class="k">desc</span><span class="o">|</span><span class="k">asc</span><span class="p">,</span><span class="err">列</span><span class="w"> </span><span class="k">desc</span><span class="o">|</span><span class="k">asc</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">limit</span><span class="w"> </span><span class="k">start</span><span class="p">,</span><span class="n">total</span><span class="p">;</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div></li>
+<li>
+<p>SQL编写思路</p>
+</li>
+</ul>
+<p>① 先分析需求，用自己的思路，需要如何操作，1,2,3,4 ？</p>
+<p>② 确定所需的关键词，注意关键词执行顺序。</p>
+<p>③ 补充完每个关键字依据。</p>
+<h3 id="2-执行顺序">2. 执行顺序
+</h3><ul>
+<li>
+<p>SQL关键词执行顺序</p>
+<p><img src="C:/Users/Administrator/Downloads/02-MySQL%E6%9F%A5%E8%AF%A2.md/%E6%95%B0%E6%8D%AE%E5%BA%93%E8%BF%90%E7%BB%B4/02-MySQL%E6%95%B0%E6%8D%AE%E5%BA%93/%E8%AF%BE%E4%BB%B6/assets/%E6%9C%AA%E5%91%BD%E5%90%8D%E7%BB%98%E5%9B%BE-20231102154857-cctela1.jpg"
+	
+	
+	
+	loading="lazy"
+	
+		alt="未命名绘图"
+	
+	
+></p>
+</li>
+</ul>
+<h2 id="八子查询">八、子查询
+</h2><blockquote>
+<p>select查询的from的表，是另一个sql的查询结果，嵌套查询。</p>
+</blockquote>
+<h3 id="1-单列单行">1. 单列单行
+</h3><ul>
+<li>
+<p>总结</p>
+<blockquote>
+<p>子查询结果单行单列的一个值，通常用在单值条件判断。</p>
+</blockquote>
+</li>
+<li>
+<p>场景</p>
+<ol>
+<li>查询工资大于Nancy工资的员工信息?</li>
+<li>查询与Nancy同一部门（department_id）的员工信息</li>
+</ol>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="line"><span class="cl"><span class="c1">-- 1. 查询工资大于Nancy工资的员工信息
+</span></span></span><span class="line"><span class="cl"><span class="c1">-- 2. 查询与Nancy同一部门（department_id）的员工信息?
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div></li>
+<li>
+<p>分析1</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="line"><span class="cl"><span class="mi">1</span><span class="p">.</span><span class="w"> </span><span class="err">查询工资大于</span><span class="n">xSalary的员工信息</span><span class="err">？</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">	</span><span class="k">select</span><span class="w"> </span><span class="o">*</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">	</span><span class="k">from</span><span class="w"> </span><span class="n">t_employees</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">	</span><span class="k">where</span><span class="w"> </span><span class="n">salary</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">xSalary</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="mi">2</span><span class="p">.</span><span class="w"> </span><span class="err">查询</span><span class="n">Nancy的工资xSalary</span><span class="err">？</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">	</span><span class="k">select</span><span class="w"> </span><span class="n">salary</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">	</span><span class="k">from</span><span class="w"> </span><span class="n">t_employees</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">	</span><span class="k">where</span><span class="w"> </span><span class="n">first_name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;Nancy&#39;</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="mi">3</span><span class="p">.</span><span class="w"> </span><span class="err">组合</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">	</span><span class="err">将</span><span class="n">Nancy工资SQL作为子查询</span><span class="err">，替换</span><span class="n">xSalary</span><span class="err">。</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">select</span><span class="w"> </span><span class="o">*</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">	</span><span class="k">from</span><span class="w"> </span><span class="n">t_employees</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">	</span><span class="k">where</span><span class="w"> </span><span class="n">salary</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="p">(</span><span class="k">select</span><span class="w"> </span><span class="n">salary</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">	</span><span class="k">from</span><span class="w"> </span><span class="n">t_employees</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">	</span><span class="k">where</span><span class="w"> </span><span class="n">first_name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;Nancy&#39;</span><span class="p">);</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div></li>
+<li>
+<p>分析1</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="line"><span class="cl"><span class="c1">-- 查询与Nancy同一部门（department_id）的员工信息
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="mi">1</span><span class="p">.</span><span class="w"> </span><span class="err">查询员工信息，</span><span class="k">where</span><span class="w"> </span><span class="n">department_id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">?</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">select</span><span class="w"> </span><span class="o">*</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">from</span><span class="w"> </span><span class="n">t_employees</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">where</span><span class="w"> </span><span class="n">department_id</span><span class="w"> </span><span class="o">=</span><span class="w">  </span><span class="n">XDeptId</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="mi">2</span><span class="p">.</span><span class="w"> </span><span class="err">查询</span><span class="n">Nancy所在部门是</span><span class="err">？</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">select</span><span class="w"> </span><span class="n">deparment_id</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">from</span><span class="w"> </span><span class="n">t_employees</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">where</span><span class="w"> </span><span class="n">first_name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;Nancy&#39;</span><span class="p">;</span><span class="c1">--XDeptId
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="mi">3</span><span class="p">.</span><span class="w"> </span><span class="err">组合</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">select</span><span class="w"> </span><span class="o">*</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">from</span><span class="w"> </span><span class="n">t_employees</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">where</span><span class="w"> </span><span class="n">department_id</span><span class="w"> </span><span class="o">=</span><span class="w">  </span><span class="p">(</span><span class="k">select</span><span class="w"> </span><span class="n">deparment_id</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">from</span><span class="w"> </span><span class="n">t_employees</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">where</span><span class="w"> </span><span class="n">first_name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;Nancy&#39;</span><span class="p">);</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div></li>
+</ul>
+<h3 id="2-单列多行">2. 单列多行
+</h3><ul>
+<li>
+<p>总结</p>
+<blockquote>
+<p>查询结果是单列多行的多个值，通常用在in条件语法中。</p>
+</blockquote>
+</li>
+<li>
+<p>场景</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="line"><span class="cl"><span class="c1">-- 查询与名字叫john(多个人同名)同一部门的员工信息？
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div></li>
+<li>
+<p>分析</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="line"><span class="cl"><span class="mi">1</span><span class="p">.</span><span class="w"> </span><span class="err">查询员工的信息？</span><span class="k">where</span><span class="w"> </span><span class="n">department_id</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">,</span><span class="n">z</span><span class="p">...)</span><span class="w"> </span><span class="err">假设</span><span class="w"> </span><span class="n">deptids</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">select</span><span class="w"> </span><span class="o">*</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">from</span><span class="w"> </span><span class="n">t_employees</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">where</span><span class="w"> </span><span class="n">department_id</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="p">(</span><span class="n">deptids</span><span class="p">)</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="mi">2</span><span class="p">.</span><span class="w"> </span><span class="err">查询</span><span class="n">john</span><span class="p">(</span><span class="err">重名</span><span class="p">)</span><span class="err">所在部门</span><span class="n">id</span><span class="err">。</span><span class="c1">-- deptids
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="k">select</span><span class="w"> </span><span class="n">department_id</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">from</span><span class="w"> </span><span class="n">t_employees</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">where</span><span class="w"> </span><span class="n">first_name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;John&#39;</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="mi">3</span><span class="p">.</span><span class="w"> </span><span class="err">组装</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">select</span><span class="w"> </span><span class="o">*</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">from</span><span class="w"> </span><span class="n">t_employees</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">where</span><span class="w"> </span><span class="n">department_id</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="p">(</span><span class="k">select</span><span class="w"> </span><span class="n">department_id</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">from</span><span class="w"> </span><span class="n">t_employees</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">where</span><span class="w"> </span><span class="n">first_name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;John&#39;</span><span class="p">);</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div></li>
+</ul>
+<h3 id="3-多列多行">3. 多列多行
+</h3><ul>
+<li>
+<p>场景</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="line"><span class="cl"><span class="c1">-- 计算工资最高的前5名员工的薪资总和
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div></li>
+<li>
+<p>分析</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="line"><span class="cl"><span class="err">顺序：</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="err">①</span><span class="w"> </span><span class="k">order</span><span class="w"> </span><span class="n">by排序</span><span class="err">：</span><span class="k">order</span><span class="w"> </span><span class="k">by</span><span class="w"> </span><span class="n">salary</span><span class="w"> </span><span class="n">desc分组</span><span class="err">：</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="err">②</span><span class="w"> </span><span class="k">limit</span><span class="err">：</span><span class="k">limit</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="mi">5</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="err">③</span><span class="w"> </span><span class="err">分组函数：</span><span class="k">sum</span><span class="p">(</span><span class="n">salary</span><span class="p">)</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="err">自以为是的</span><span class="k">SQL</span><span class="err">：</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">select</span><span class="w"> </span><span class="k">sum</span><span class="p">(</span><span class="n">salary</span><span class="p">)</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">from</span><span class="w"> </span><span class="n">t_employees</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">order</span><span class="w"> </span><span class="k">by</span><span class="w"> </span><span class="n">salary</span><span class="w"> </span><span class="k">desc</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">limit</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="mi">5</span><span class="p">;</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div></li>
+<li>
+<p>思路</p>
+<p><span data-type="text" style="color: var(--b3-font-color1);">注意：from后面是一个sql子查询的话，需要起别名</span>，然后使用子查询别名表的列：<code>别名.列名</code>​.</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="line"><span class="cl"><span class="mi">1</span><span class="p">.</span><span class="w"> </span><span class="err">先排序</span><span class="o">+</span><span class="k">limit</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">select</span><span class="w"> </span><span class="n">salary</span><span class="p">,</span><span class="n">first_name</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">from</span><span class="w"> </span><span class="n">t_employees</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">order</span><span class="w"> </span><span class="k">by</span><span class="w"> </span><span class="n">salary</span><span class="w"> </span><span class="k">desc</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">limit</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="mi">5</span><span class="p">;</span><span class="w"> </span><span class="c1">-- t_temp
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="mi">2</span><span class="p">.</span><span class="w"> </span><span class="err">对上</span><span class="n">SQL结果</span><span class="err">，统计</span><span class="k">sum</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">select</span><span class="w"> </span><span class="k">sum</span><span class="p">(</span><span class="n">salary</span><span class="p">)</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">from</span><span class="w"> </span><span class="n">t_temp</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="mi">3</span><span class="p">.</span><span class="w"> </span><span class="err">组装</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">select</span><span class="w"> </span><span class="k">sum</span><span class="p">(</span><span class="n">tb</span><span class="p">.</span><span class="n">salary</span><span class="p">)</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">from</span><span class="w"> </span><span class="p">(</span><span class="k">select</span><span class="w"> </span><span class="n">salary</span><span class="p">,</span><span class="n">first_name</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">from</span><span class="w"> </span><span class="n">t_employees</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">order</span><span class="w"> </span><span class="k">by</span><span class="w"> </span><span class="n">salary</span><span class="w"> </span><span class="k">desc</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">limit</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="mi">5</span><span class="p">)</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="n">tb</span><span class="p">;</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div></li>
+</ul>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">## 六、表连接
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">&gt; 当查询数据需要的列，来源于多张表的时候，需要将多表合并成1个表，作为from查询。
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">### 　　(1) 左外连
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">* 概念：
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  在sql的连接操作中，左表为主，右表为辅，连接结果**保留全部左表**数据。
+</span></span><span class="line"><span class="cl">* 场景：
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  查询员工的信息：工号id、名字、工资、部门名称？
+</span></span><span class="line"><span class="cl">* 语法
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  ```sql
+</span></span><span class="line"><span class="cl">  表1 别名1 left join 表2 别名2 on 别名1.字段 = 别名2.字段
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  -- 将场景表连接
+</span></span><span class="line"><span class="cl">  t_employees as t_emp left join t_departments as t_dept on t_emp.department_id = t_dept.department_id
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  说明：将2个表合并成一张表。
+</span></span></code></pre></td></tr></table>
+</div>
+</div><ul>
+<li>
+<p>思路</p>
+<p><img src="C:/Users/Administrator/Downloads/02-MySQL%E6%9F%A5%E8%AF%A2.md/%E6%95%B0%E6%8D%AE%E5%BA%93%E8%BF%90%E7%BB%B4/02-MySQL%E6%95%B0%E6%8D%AE%E5%BA%93/%E8%AF%BE%E4%BB%B6/assets/image-20231103105250-ozkopvq.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="image"
+	
+	
+></p>
+</li>
+<li>
+<p>代码</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="line"><span class="cl"><span class="k">select</span><span class="w"> </span><span class="n">e</span><span class="p">.</span><span class="n">employee_id</span><span class="p">,</span><span class="n">e</span><span class="p">.</span><span class="n">first_name</span><span class="p">,</span><span class="n">e</span><span class="p">.</span><span class="n">salary</span><span class="p">,</span><span class="n">d</span><span class="p">.</span><span class="n">department_name</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">from</span><span class="w"> </span><span class="n">t_employees</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="n">e</span><span class="w"> </span><span class="k">left</span><span class="w"> </span><span class="k">join</span><span class="w"> </span><span class="n">t_departments</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="n">d</span><span class="w"> </span><span class="k">on</span><span class="w"> </span><span class="n">e</span><span class="p">.</span><span class="n">department_id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">d</span><span class="p">.</span><span class="n">department_id</span><span class="p">;</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div></li>
+<li>
+<p>代码2</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="line"><span class="cl"><span class="c1">-- 查询员工的信息：工号id、名字、工资、部门名称，职位名字title，职位最大工资，职位最小工资？
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="mi">1</span><span class="p">.</span><span class="w"> </span><span class="err">数据来源的表：员工表、部门表、职位表？</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">select</span><span class="w"> </span><span class="n">e</span><span class="p">.</span><span class="n">EMPLOYEE_ID</span><span class="p">,</span><span class="n">e</span><span class="p">.</span><span class="n">FIRST_NAME</span><span class="p">,</span><span class="n">e</span><span class="p">.</span><span class="n">SALARY</span><span class="p">,</span><span class="n">d</span><span class="p">.</span><span class="n">DEPARTMENT_NAME</span><span class="p">,</span><span class="n">j</span><span class="p">.</span><span class="n">JOB_TITLE</span><span class="p">,</span><span class="n">j</span><span class="p">.</span><span class="n">MAX_SALARY</span><span class="p">,</span><span class="n">j</span><span class="p">.</span><span class="n">MIN_SALARY</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">from</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">	</span><span class="n">t_employees</span><span class="w"> </span><span class="n">e</span><span class="w"> </span><span class="k">left</span><span class="w"> </span><span class="k">join</span><span class="w"> </span><span class="n">t_departments</span><span class="w"> </span><span class="n">d</span><span class="w"> </span><span class="k">on</span><span class="w"> </span><span class="n">e</span><span class="p">.</span><span class="n">department_id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">d</span><span class="p">.</span><span class="n">department_id</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">	</span><span class="k">left</span><span class="w"> </span><span class="k">join</span><span class="w"> </span><span class="n">t_jobs</span><span class="w"> </span><span class="n">j</span><span class="w"> </span><span class="k">on</span><span class="w"> </span><span class="n">e</span><span class="p">.</span><span class="n">job_id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">j</span><span class="p">.</span><span class="n">job_id</span><span class="p">;</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div></li>
+</ul>
+<h3 id="2-右外连">(2) 右外连
+</h3><ul>
+<li>
+<p>概念</p>
+<p>以右表为主，左表为辅，保留全部右表数据，左表中只有满足on条件的数据才会保留。</p>
+</li>
+<li>
+<p>语法</p>
+<p><code>表1 right join 表2 on 连接条件;</code>​</p>
+</li>
+</ul>
+<h3 id="3-内连接">(3) 内连接
+</h3><ul>
+<li>
+<p>概念</p>
+<p>没有主次之分，只保留满足on连接条件的数据。</p>
+</li>
+<li>
+<p>语法</p>
+<p><code>表1 inner join 表2 on 连接条件;</code>​</p>
+</li>
+</ul>
+<h3 id="4-自连接">(4) 自连接
+</h3><blockquote>
+<p>需要通过表连接，将2个条数据连接成一条数据。借助左外连实现数据连接。如果join2个表都是同一个表的。自连接。</p>
+</blockquote>
+<ul>
+<li>
+<p>场景</p>
+<p>查看员工的id、名字、工资、及其上级领导的id、名字、工资?</p>
+</li>
+<li>
+<p>代码</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="line"><span class="cl"><span class="mi">1</span><span class="p">.</span><span class="w"> </span><span class="mi">2</span><span class="err">个员工表自连接成</span><span class="mi">1</span><span class="err">张表</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">t_employees</span><span class="w"> </span><span class="n">e1</span><span class="w"> </span><span class="k">left</span><span class="w"> </span><span class="k">join</span><span class="w"> </span><span class="n">t_employees</span><span class="w"> </span><span class="n">e2</span><span class="w"> </span><span class="k">on</span><span class="w"> </span><span class="n">e1</span><span class="p">.</span><span class="n">manager_id</span><span class="w"> </span><span class="o">=</span><span class="w">  </span><span class="n">e2</span><span class="p">.</span><span class="n">employee_id</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="mi">2</span><span class="p">.</span><span class="w"> </span><span class="k">SQL</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">select</span><span class="w"> </span><span class="n">e1</span><span class="p">.</span><span class="n">EMPLOYEE_ID</span><span class="p">,</span><span class="n">e1</span><span class="p">.</span><span class="n">FIRST_NAME</span><span class="p">,</span><span class="n">e1</span><span class="p">.</span><span class="n">SALARY</span><span class="p">,</span><span class="n">e2</span><span class="p">.</span><span class="n">EMPLOYEE_ID</span><span class="p">,</span><span class="n">e2</span><span class="p">.</span><span class="n">FIRST_NAME</span><span class="p">,</span><span class="n">e2</span><span class="p">.</span><span class="n">SALARY</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">from</span><span class="w"> 
+</span></span></span><span class="line"><span class="cl"><span class="w">	</span><span class="n">t_employees</span><span class="w"> </span><span class="n">e1</span><span class="w"> </span><span class="k">left</span><span class="w"> </span><span class="k">join</span><span class="w"> </span><span class="n">t_employees</span><span class="w"> </span><span class="n">e2</span><span class="w"> </span><span class="k">on</span><span class="w"> </span><span class="n">e1</span><span class="p">.</span><span class="n">manager_id</span><span class="w"> </span><span class="o">=</span><span class="w">  </span><span class="n">e2</span><span class="p">.</span><span class="n">employee_id</span><span class="p">;</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div></li>
+</ul>
+
+</section>
+
+
+    <footer class="article-footer">
+    
+
+    </footer>
+
+
+    
+</article>
+
+    
+
+    
+
+     
+    
+        
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+        2025 小诗
+    </section>
+    
+    <section class="powerby">
+        使用 <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> 构建 <br />
+        主题 <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.26.0">Stack</a></b> 由 <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a> 设计
+    </section>
+</footer>
+
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css"crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css"crossorigin="anonymous"
+            >
+
+            </main>
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.6/dist/vibrant.min.js"integrity="sha256-awcR2jno4kI5X0zL8ex0vi2z&#43;KMkF24hUW8WePSA9HM="crossorigin="anonymous"
+                
+                >
+            </script><script type="text/javascript" src="/xiaoshi/ts/main.js" defer></script>
+<script>
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+
+    </body>
+</html>

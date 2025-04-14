@@ -1,0 +1,1819 @@
+<!DOCTYPE html>
+<html lang="zh-cn" dir="ltr">
+    <head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content="02-2-mysql基础实践 为什么mysql用的这么多 性能强悍，服务稳定，很少因为MySQL自身宕机 开放源代码，社区很活跃，出了问题可以很快">
+<title>MySQL基础实践</title>
+
+<link rel='canonical' href='https://ZackMoel.github.io/xiaoshi/p/mysql%E5%9F%BA%E7%A1%80%E5%AE%9E%E8%B7%B5/'>
+
+<link rel="stylesheet" href="/xiaoshi/scss/style.min.0304c6baf04e01a8fe70693791cb744d56a3578a3120a8796cefc66825aa39c7.css"><meta property='og:title' content="MySQL基础实践">
+<meta property='og:description' content="02-2-mysql基础实践 为什么mysql用的这么多 性能强悍，服务稳定，很少因为MySQL自身宕机 开放源代码，社区很活跃，出了问题可以很快">
+<meta property='og:url' content='https://ZackMoel.github.io/xiaoshi/p/mysql%E5%9F%BA%E7%A1%80%E5%AE%9E%E8%B7%B5/'>
+<meta property='og:site_name' content='小诗的博客'>
+<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:published_time' content='2025-04-14T15:44:19&#43;08:00'/><meta property='article:modified_time' content='2025-04-14T15:44:19&#43;08:00'/>
+<meta name="twitter:title" content="MySQL基础实践">
+<meta name="twitter:description" content="02-2-mysql基础实践 为什么mysql用的这么多 性能强悍，服务稳定，很少因为MySQL自身宕机 开放源代码，社区很活跃，出了问题可以很快">
+  
+
+
+    </head>
+    <body class="
+    article-page
+    ">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex on-phone--column extended"><aside class="sidebar left-sidebar sticky ">
+    <button class="hamburger hamburger--spin" type="button" id="toggle-menu" aria-label="切换菜单">
+        <span class="hamburger-box">
+            <span class="hamburger-inner"></span>
+        </span>
+    </button>
+
+    <header>
+        
+            
+            <figure class="site-avatar">
+                <a href="/xiaoshi/">
+                
+                    
+                    
+                    
+                        
+                        <img src="/xiaoshi/img/avatar_hu8920112365793990935.png" width="300"
+                            height="300" class="site-logo" loading="lazy" alt="Avatar">
+                    
+                
+                </a>
+                
+                    <span class="emoji">🍥</span>
+                
+            </figure>
+            
+        
+        
+        <div class="site-meta">
+            <h1 class="site-name"><a href="/xiaoshi">小诗的博客</a></h1>
+            <h2 class="site-description">欢迎来到小诗的博客</h2>
+        </div>
+    </header><ol class="menu-social">
+            
+                <li>
+                    <a 
+                        href='https://space.bilibili.com/1055981889?spm_id_from=333.1007.0.0'
+                        target="_blank"
+                        title="bilibili"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg  xmlns="http://www.w3.org/2000/svg"  width="24"  height="24"  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  stroke-width="2"  stroke-linecap="round"  stroke-linejoin="round"  class="icon icon-tabler icons-tabler-outline icon-tabler-brand-bilibili"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M3 10a4 4 0 0 1 4 -4h10a4 4 0 0 1 4 4v6a4 4 0 0 1 -4 4h-10a4 4 0 0 1 -4 -4v-6z" /><path d="M8 3l2 3" /><path d="M16 3l-2 3" /><path d="M9 13v-2" /><path d="M15 11v2" /></svg>
+                        
+                    </a>
+                </li>
+            
+                <li>
+                    <a 
+                        href='https://github.com/ZackMoel/xiaoshi.github.io'
+                        target="_blank"
+                        title="GitHub"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-github" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M9 19c-4.3 1.4 -4.3 -2.5 -6 -3m12 5v-3.5c0 -1 .1 -1.4 -.5 -2c2.8 -.3 5.5 -1.4 5.5 -6a4.6 4.6 0 0 0 -1.3 -3.2a4.2 4.2 0 0 0 -.1 -3.2s-1.1 -.3 -3.5 1.3a12.3 12.3 0 0 0 -6.2 0c-2.4 -1.6 -3.5 -1.3 -3.5 -1.3a4.2 4.2 0 0 0 -.1 3.2a4.6 4.6 0 0 0 -1.3 3.2c0 4.6 2.7 5.7 5.5 6c-.6 .6 -.6 1.2 -.5 2v3.5" />
+</svg>
+
+
+
+                        
+                    </a>
+                </li>
+            
+        </ol><ol class="menu" id="main-menu">
+        
+        
+        
+        <li >
+            <a href='/xiaoshi/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-home" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <polyline points="5 12 3 12 12 3 21 12 19 12" />
+  <path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7" />
+  <path d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6" />
+</svg>
+
+
+
+                
+                <span>主页</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/xiaoshi/%E5%85%B3%E4%BA%8E/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-user" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="7" r="4" />
+  <path d="M6 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2" />
+</svg>
+
+
+
+                
+                <span>关于</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/xiaoshi/archives/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-archive" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <rect x="3" y="4" width="18" height="4" rx="2" />
+  <path d="M5 8v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-10" />
+  <line x1="10" y1="12" x2="14" y2="12" />
+</svg>
+
+
+
+                
+                <span>归档</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/xiaoshi/search/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-search" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="10" cy="10" r="7" />
+  <line x1="21" y1="21" x2="15" y2="15" />
+</svg>
+
+
+
+                
+                <span>搜索</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/xiaoshi/%E5%8F%8B%E6%83%85%E9%93%BE%E6%8E%A5/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-link" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M10 14a3.5 3.5 0 0 0 5 0l4 -4a3.5 3.5 0 0 0 -5 -5l-.5 .5" />
+  <path d="M14 10a3.5 3.5 0 0 0 -5 0l-4 4a3.5 3.5 0 0 0 5 5l.5 -.5" />
+</svg>
+
+
+
+                
+                <span>友情链接</span>
+            </a>
+        </li>
+        
+        <li class="menu-bottom-section">
+            <ol class="menu">
+
+                
+                    <li id="dark-mode-toggle">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="8" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="16" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <span>暗色模式</span>
+                    </li>
+                
+            </ol>
+        </li>
+    </ol>
+</aside>
+
+    <aside class="sidebar right-sidebar sticky">
+        
+            
+                
+    <section class="widget archives">
+        <div class="widget-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <line x1="5" y1="9" x2="19" y2="9" />
+  <line x1="5" y1="15" x2="19" y2="15" />
+  <line x1="11" y1="4" x2="7" y2="20" />
+  <line x1="17" y1="4" x2="13" y2="20" />
+</svg>
+
+
+
+        </div>
+        <h2 class="widget-title section-title">目录</h2>
+        
+        <div class="widget--toc">
+            <nav id="TableOfContents">
+  <ol>
+    <li><a href="#企业版">企业版</a></li>
+    <li><a href="#社区版">社区版</a></li>
+    <li><a href="#选哪个">选哪个</a></li>
+    <li><a href="#mysql特点">MySQL特点</a></li>
+  </ol>
+
+  <ol>
+    <li>
+      <ol>
+        <li><a href="#mysql下载选择">mysql下载选择</a></li>
+      </ol>
+    </li>
+  </ol>
+
+  <ol>
+    <li><a href="#1安装全流程">1.安装全流程</a></li>
+    <li><a href="#2配置文件">2.配置文件</a></li>
+    <li><a href="#3启动脚本">3.启动脚本</a></li>
+    <li><a href="#4登录mysql">4.登录mysql</a></li>
+  </ol>
+
+  <ol>
+    <li><a href="#什么是多实例">什么是多实例</a></li>
+    <li><a href="#多实例的好处">多实例的好处</a></li>
+    <li><a href="#多实例的弊端">多实例的弊端</a></li>
+  </ol>
+
+  <ol>
+    <li><a href="#资金紧张的公司">资金紧张的公司</a></li>
+    <li><a href="#用户并发访问量不大的业务">用户并发访问量不大的业务</a></li>
+    <li><a href="#大型网站也有用多实例">大型网站也有用多实例</a></li>
+  </ol>
+
+  <ol>
+    <li><a href="#图解">图解</a></li>
+    <li><a href="#创建数据目录">创建数据目录</a></li>
+    <li><a href="#初始化2个实例的数据">初始化2个实例的数据</a></li>
+    <li><a href="#至此有3个实例了">至此有3个实例了</a></li>
+    <li><a href="#额外创建俩实例的配置文件">额外创建俩实例的配置文件</a>
+      <ol>
+        <li><a href="#3306">3306</a></li>
+        <li><a href="#3307">3307</a></li>
+        <li><a href="#3308">3308</a></li>
+      </ol>
+    </li>
+    <li><a href="#检查配置文件">检查配置文件</a></li>
+    <li><a href="#多实例脚本">多实例脚本</a></li>
+    <li><a href="#启动多实例">启动多实例</a>
+      <ol>
+        <li><a href="#检查3个实例的pid文件socket文件">检查3个实例的pid文件，socket文件</a></li>
+        <li><a href="#生产下的暗坑">生产下的暗坑</a></li>
+      </ol>
+    </li>
+    <li><a href="#设置多实例的密码">设置多实例的密码</a></li>
+    <li><a href="#登录多实例">登录多实例</a>
+      <ol>
+        <li><a href="#查看mysql的仨实例进程信息">查看mysql的仨实例进程信息</a></li>
+      </ol>
+    </li>
+  </ol>
+</nav>
+        </div>
+    </section>
+
+            
+        
+    </aside>
+
+
+            <main class="main full-width">
+    <article class="main-article">
+    <header class="article-header">
+
+    <div class="article-details">
+    
+
+    <div class="article-title-wrapper">
+        <h2 class="article-title">
+            <a href="/xiaoshi/p/mysql%E5%9F%BA%E7%A1%80%E5%AE%9E%E8%B7%B5/">MySQL基础实践</a>
+        </h2>
+    
+        
+    </div>
+
+    
+    
+    
+    
+    <footer class="article-time">
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
+  <circle cx="18" cy="18" r="4" />
+  <path d="M15 3v4" />
+  <path d="M7 3v4" />
+  <path d="M3 11h16" />
+  <path d="M18 16.496v1.504l1 1" />
+</svg>
+                <time class="article-time--published">2025-04-14</time>
+            </div>
+        
+
+        
+    </footer>
+    
+
+    
+</div>
+
+</header>
+
+    <section class="article-content">
+    
+    
+    <h1 id="02-2-mysql基础实践">02-2-mysql基础实践
+</h1><h1 id="为什么mysql用的这么多">为什么mysql用的这么多
+</h1><p>性能强悍，服务稳定，很少因为MySQL自身宕机</p>
+<p>开放源代码，社区很活跃，出了问题可以很快得到解决方案</p>
+<p>MySQL软件体积优化了N次后，安装包也很小，部署简单，配置易懂，文档也多</p>
+<p>历史悠久，MySQL得到了全世界的公司验证，选它没问题</p>
+<p>LAMP,LNMP、都是和MySQL架构</p>
+<p>MySQL便于编程语言，基于API直接获取数据，如java、python、golang等</p>
+<h1 id="版本选择">版本选择
+</h1><h2 id="企业版">企业版
+</h2><p>MySQL企业版由MySQLAB公司内部专门的人员负责开发及维护,但同时也会吸纳社区人员编写的优秀代码及算法,并且由他们严格按照软件测试流程对这些采纳的代码进行测试,确定没有问题之后才会进行发布。简单地说,MySQL企业版是由MySQL公司内部发布的,它参考了社区版的先进代码功能和算法,是MySQL公司的赢利产品,需要付费才能使用及提供服务支持,稳定性和可靠性无疑都是最好的,当然了,企业腰包得够鼓才能买得起。某知名分类门户网站2008年就购买过MySQL企业版,价格不比那些闭源的商业数据库便宜,也是大几十万。</p>
+<h2 id="社区版">社区版
+</h2><p>MySQL社区版则是由分散在世界各地的MySQL开发者、爱好者以及用户参与开发与测试的，包括软件代码的管理、测试工作，也是他们在负责。社区也会设立BUG汇报机制，收集用户在使用过程中遇到的BUG情况，相比于企业版，社区版的开发及测试环境没有那么严格。</p>
+<h2 id="选哪个">选哪个
+</h2><p>mysql是成熟产品，企业版和社区版在性能方面区别不大，对于我们学习而言，社区版即可。它们的区别可以如下了解</p>
+<ul>
+<li>企业版对代码的管理、测试更严格、稳定性更好</li>
+<li>企业版不遵循GPL开源协议，而社区版遵循，可以免费用</li>
+<li>企业版可以购买额外的收费服务，如7*24的技术支持，有钱任性。</li>
+<li>社区版的安全性，稳定性，无法像企业版有及时的维护、技术支持。</li>
+</ul>
+<h2 id="mysql特点">MySQL特点
+</h2><p>支持多种操作系统,Windows、MacOS、Linux等支持多种语言API,如C、C++、Python、PHP、Java等</p>
+<p>支持多线程、充分利用硬件资源支持多种存储引掌</p>
+<p>mysq就是一个基于socket编写的C/S架构的软件</p>
+<p>客户端软件：mysq自带:如mysql命令,mysqldump命令等;python模块:如pymysql</p>
+<h1 id="mysql服务端-客户端">MySQL服务端-客户端
+</h1><p>先看下什么是B/S和C/S架构。</p>
+<p>B/S是Browser/Server指浏览器和服务器端,在客户机不需要装软件,只需要装一个浏览器。</p>
+<p>C/S是Client/Server指客户端和服务器,在客户机端必须装客户端软件及相应环境后,才能访问服务器</p>
+<p>MySQL是基于客户端-服务端的运行模式数据库,服务满负责数据处理,运行在数据库服务器上。</p>
+<p>用户通过发送增删改查等请求,发送给 客户端软件,然后通过网络提交请求给 服务端,服务端接收到请求,再进行处理,然后返回。</p>
+<blockquote>
+<p>服务端、客户端可以在不同的机器上,也可以在一台机器上。</p>
+</blockquote>
+<p>这种服务端,客户端,就在生活里很常见,如打游戏时的登录,QQ、微信的登录,MySQL也是一个登录的过程。</p>
+<h3 id="mysql下载选择">mysql下载选择
+</h3><p>了解数据库后，我们可以下载mysql软件了</p>
+<p><a class="link" href="http://mirrors.sohu.com/mysql/"  target="_blank" rel="noopener"
+    >http://mirrors.sohu.com/mysql/</a></p>
+<h1 id="mysql安装启动">mysql安装启动
+</h1><p>准备3个新机器，</p>
+<p>db-51</p>
+<p>db-52</p>
+<p>db-53</p>
+<p>我们会用到</p>
+<p>或者自己快照管理</p>
+<h2 id="1安装全流程">1.安装全流程
+</h2><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span><span class="lnt">43
+</span><span class="lnt">44
+</span><span class="lnt">45
+</span><span class="lnt">46
+</span><span class="lnt">47
+</span><span class="lnt">48
+</span><span class="lnt">49
+</span><span class="lnt">50
+</span><span class="lnt">51
+</span><span class="lnt">52
+</span><span class="lnt">53
+</span><span class="lnt">54
+</span><span class="lnt">55
+</span><span class="lnt">56
+</span><span class="lnt">57
+</span><span class="lnt">58
+</span><span class="lnt">59
+</span><span class="lnt">60
+</span><span class="lnt">61
+</span><span class="lnt">62
+</span><span class="lnt">63
+</span><span class="lnt">64
+</span><span class="lnt">65
+</span><span class="lnt">66
+</span><span class="lnt">67
+</span><span class="lnt">68
+</span><span class="lnt">69
+</span><span class="lnt">70
+</span><span class="lnt">71
+</span><span class="lnt">72
+</span><span class="lnt">73
+</span><span class="lnt">74
+</span><span class="lnt">75
+</span><span class="lnt">76
+</span><span class="lnt">77
+</span><span class="lnt">78
+</span><span class="lnt">79
+</span><span class="lnt">80
+</span><span class="lnt">81
+</span><span class="lnt">82
+</span><span class="lnt">83
+</span><span class="lnt">84
+</span><span class="lnt">85
+</span><span class="lnt">86
+</span><span class="lnt">87
+</span><span class="lnt">88
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">yum
+</span></span><span class="line"><span class="cl">源码编译
+</span></span><span class="line"><span class="cl">rpm包
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">装和卸载
+</span></span><span class="line"><span class="cl">如何处理依赖关系
+</span></span><span class="line"><span class="cl">都是要掌握的技能
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">我这里是省事，二进制解压即用
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># 确认时间正确</span>
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@tech-db-51 /opt<span class="o">]</span><span class="c1">#crontab -l</span>
+</span></span><span class="line"><span class="cl">* * * * * ntpdate -u ntp.aliyun.com
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="m">1</span> .准备好包
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@tech-db-51 /opt<span class="o">]</span><span class="c1">#ll</span>
+</span></span><span class="line"><span class="cl">total <span class="m">707688</span>
+</span></span><span class="line"><span class="cl">-rw-r--r-- <span class="m">1</span> root root <span class="m">724672294</span> Jul <span class="m">28</span> 19:56 mysql-5.7.38-linux-glibc2.12-x86_64.tar.gz
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@tech-db-51 /opt<span class="o">]</span><span class="c1">#</span>
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@tech-db-51 /opt<span class="o">]</span><span class="c1">#</span>
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@tech-db-51 /opt<span class="o">]</span><span class="c1">#du -h</span>
+</span></span><span class="line"><span class="cl">692M	.
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">2. 解压缩
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@tech-db-51 /opt<span class="o">]</span><span class="c1">## 常见做法，做软连接，便于二进制包的升级，后续的使用路径，用的都是软连接</span>
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@tech-db-51 /opt<span class="o">]</span><span class="c1">#</span>
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@tech-db-51 /opt<span class="o">]</span><span class="c1">#</span>
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@tech-db-51 /opt<span class="o">]</span><span class="c1">#ln -s /opt/mysql-5.7.38-linux-glibc2.12-x86_64   /opt/mysql</span>
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@tech-db-51 /opt<span class="o">]</span><span class="c1">#</span>
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@tech-db-51 /opt<span class="o">]</span><span class="c1">#</span>
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@tech-db-51 /opt<span class="o">]</span><span class="c1">#</span>
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@tech-db-51 /opt<span class="o">]</span><span class="c1">#ls /opt/ -l</span>
+</span></span><span class="line"><span class="cl">total <span class="m">707688</span>
+</span></span><span class="line"><span class="cl">lrwxrwxrwx <span class="m">1</span> root root        <span class="m">40</span> Jul <span class="m">28</span> 19:58 mysql -&gt; /opt/mysql-5.7.38-linux-glibc2.12-x86_64
+</span></span><span class="line"><span class="cl">drwxr-xr-x <span class="m">9</span> root root       <span class="m">129</span> Jul <span class="m">28</span> 19:57 mysql-5.7.38-linux-glibc2.12-x86_64
+</span></span><span class="line"><span class="cl">-rw-r--r-- <span class="m">1</span> root root <span class="m">724672294</span> Jul <span class="m">28</span> 19:56 mysql-5.7.38-linux-glibc2.12-x86_64.tar.gz
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@tech-db-51 /opt<span class="o">]</span><span class="c1">#</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># 3. 配置PATH</span>
+</span></span><span class="line"><span class="cl"><span class="nb">echo</span> <span class="s1">&#39;export PATH=$PATH:/opt/mysql/bin&#39;</span>  &gt;&gt; /etc/profile
+</span></span><span class="line"><span class="cl"><span class="nb">source</span> /etc/profile
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># 4. 验证mysql版本</span>
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@tech-db-51 /opt<span class="o">]</span><span class="c1">#mysql -V </span>
+</span></span><span class="line"><span class="cl">mysql  Ver 14.14 Distrib 5.7.38, <span class="k">for</span> linux-glibc2.12 <span class="o">(</span>x86_64<span class="o">)</span> using  EditLine wrapper
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@tech-db-51 /opt<span class="o">]</span><span class="c1">#</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># 5.删除mariadb的依赖，删除默认的配置文件 </span>
+</span></span><span class="line"><span class="cl">yum remove mariadb-libs.x86_64  -y
+</span></span><span class="line"><span class="cl">rm -f /etc/my.cnf
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># 6.装mysql5.7特有的依赖包</span>
+</span></span><span class="line"><span class="cl">yum install libaio-devel -y
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">#7. 创建数据目录，</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># 准备mysql的数据目录，授权用户</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">useradd -s /sbin/nologin -M mysql
+</span></span><span class="line"><span class="cl">mkdir -p /linux0224/
+</span></span><span class="line"><span class="cl">mkdir -p /linux0224/mysql_3306/
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># 授权</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">chown -R mysql.mysql /linux0224/
+</span></span><span class="line"><span class="cl">chown -R mysql.mysql /linux0224/mysql_3306/
+</span></span><span class="line"><span class="cl">chown -R mysql.mysql /opt/mysql*
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">#检查</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">ls -ld  /linux0224 /linux0224/mysql_3306/  /opt/mysql*
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@tech-db-51 /opt<span class="o">]</span><span class="c1">#ls -ld  /linux0224 /linux0224/mysql_3306/  /opt/mysql*</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># 8.此时自建的mysql目录，没有输数据，mysql 无法使用，初始化生成mysql默认库的数据源 ，用户等信息，即可启动</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># mysqld 服务端命令，启动，初始化，都用的这个</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># --basedir  mysql二进制命令装再哪了，主程序目录</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># --datadir 数据目录初始到哪</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">mysqld --initialize-insecure --user<span class="o">=</span>mysql --basedir<span class="o">=</span>/opt/mysql --datadir<span class="o">=</span>/linux0224/mysql_3306/
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="2配置文件">2.配置文件
+</h2><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">初始化完毕后，有配置文件即可正确启动，告诉 my.cnf
+</span></span><span class="line"><span class="cl">mysqld的数据源目录在哪，日志写入到哪等
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"># /etc/my.cnf 默认mysql会去读这个，不指定，也读这个
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"># [mysqld] 服务端会读取的配置
+</span></span><span class="line"><span class="cl"># [mysql]  再机器本地，执行mysql命令，客户端读取的配置 
+</span></span><span class="line"><span class="cl"># socket 本地进程套接字文件，用于mysql客户端再本地区链接
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">cat &gt;/etc/my.cnf &lt;&lt;&#39;EOF&#39;
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">[mysqld]
+</span></span><span class="line"><span class="cl">port=3306
+</span></span><span class="line"><span class="cl">user=mysql
+</span></span><span class="line"><span class="cl">basedir=/opt/mysql
+</span></span><span class="line"><span class="cl">datadir=/linux0224/mysql_3306/
+</span></span><span class="line"><span class="cl">socket=/tmp/mysql.sock
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">[mysql]
+</span></span><span class="line"><span class="cl">socket=/tmp/mysql.sock
+</span></span><span class="line"><span class="cl">EOF
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="3启动脚本">3.启动脚本
+</h2><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-gdscript3" data-lang="gdscript3"><span class="line"><span class="cl"><span class="err">复制自带脚本即可</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="p">[</span><span class="n">root</span><span class="err">@</span><span class="n">tech</span><span class="o">-</span><span class="n">db</span><span class="o">-</span><span class="mi">51</span> <span class="o">/</span><span class="n">linux0224</span><span class="o">/</span><span class="n">mysql_3306</span><span class="p">]</span><span class="c1">#cp /opt/mysql/support-files/mysql.server   /etc/init.d/mysqld</span>
+</span></span><span class="line"><span class="cl"><span class="p">[</span><span class="n">root</span><span class="err">@</span><span class="n">tech</span><span class="o">-</span><span class="n">db</span><span class="o">-</span><span class="mi">51</span> <span class="o">/</span><span class="n">linux0224</span><span class="o">/</span><span class="n">mysql_3306</span><span class="p">]</span><span class="c1">#</span>
+</span></span><span class="line"><span class="cl"><span class="p">[</span><span class="n">root</span><span class="err">@</span><span class="n">tech</span><span class="o">-</span><span class="n">db</span><span class="o">-</span><span class="mi">51</span> <span class="o">/</span><span class="n">linux0224</span><span class="o">/</span><span class="n">mysql_3306</span><span class="p">]</span><span class="c1">#</span>
+</span></span><span class="line"><span class="cl"><span class="p">[</span><span class="n">root</span><span class="err">@</span><span class="n">tech</span><span class="o">-</span><span class="n">db</span><span class="o">-</span><span class="mi">51</span> <span class="o">/</span><span class="n">linux0224</span><span class="o">/</span><span class="n">mysql_3306</span><span class="p">]</span><span class="c1">#systemctl daemon-reload</span>
+</span></span><span class="line"><span class="cl"><span class="p">[</span><span class="n">root</span><span class="err">@</span><span class="n">tech</span><span class="o">-</span><span class="n">db</span><span class="o">-</span><span class="mi">51</span> <span class="o">/</span><span class="n">linux0224</span><span class="o">/</span><span class="n">mysql_3306</span><span class="p">]</span><span class="c1">#</span>
+</span></span><span class="line"><span class="cl"><span class="p">[</span><span class="n">root</span><span class="err">@</span><span class="n">tech</span><span class="o">-</span><span class="n">db</span><span class="o">-</span><span class="mi">51</span> <span class="o">/</span><span class="n">linux0224</span><span class="o">/</span><span class="n">mysql_3306</span><span class="p">]</span><span class="c1">#</span>
+</span></span><span class="line"><span class="cl"><span class="p">[</span><span class="n">root</span><span class="err">@</span><span class="n">tech</span><span class="o">-</span><span class="n">db</span><span class="o">-</span><span class="mi">51</span> <span class="o">/</span><span class="n">linux0224</span><span class="o">/</span><span class="n">mysql_3306</span><span class="p">]</span><span class="c1">#systemctl status mysqld</span>
+</span></span><span class="line"><span class="cl"><span class="err">●</span> <span class="n">mysqld</span><span class="o">.</span><span class="n">service</span> <span class="o">-</span> <span class="n">LSB</span><span class="p">:</span> <span class="n">start</span> <span class="ow">and</span> <span class="n">stop</span> <span class="n">MySQL</span>
+</span></span><span class="line"><span class="cl">   <span class="n">Loaded</span><span class="p">:</span> <span class="n">loaded</span> <span class="p">(</span><span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">rc</span><span class="o">.</span><span class="n">d</span><span class="o">/</span><span class="n">init</span><span class="o">.</span><span class="n">d</span><span class="o">/</span><span class="n">mysqld</span><span class="p">;</span> <span class="n">bad</span><span class="p">;</span> <span class="n">vendor</span> <span class="n">preset</span><span class="p">:</span> <span class="n">disabled</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">   <span class="n">Active</span><span class="p">:</span> <span class="n">inactive</span> <span class="p">(</span><span class="n">dead</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">     <span class="n">Docs</span><span class="p">:</span> <span class="n">man</span><span class="p">:</span><span class="n">systemd</span><span class="o">-</span><span class="n">sysv</span><span class="o">-</span><span class="n">generator</span><span class="p">(</span><span class="mi">8</span><span class="p">)</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="4登录mysql">4.登录mysql
+</h2><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl"># 启动即可
+</span></span><span class="line"><span class="cl">[root@tech-db-51 /linux0224/mysql_3306]#systemctl start mysqld
+</span></span><span class="line"><span class="cl">[root@tech-db-51 /linux0224/mysql_3306]#
+</span></span><span class="line"><span class="cl">[root@tech-db-51 /linux0224/mysql_3306]#
+</span></span><span class="line"><span class="cl">[root@tech-db-51 /linux0224/mysql_3306]#mysql 
+</span></span><span class="line"><span class="cl">Welcome to the MySQL monitor.  Commands end with ; or /g.
+</span></span><span class="line"><span class="cl">Your MySQL connection id is 2
+</span></span><span class="line"><span class="cl">Server version: 5.7.38 MySQL Community Server (GPL)
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">Copyright (c) 2000, 2019, Oracle and/or its affiliates. All rights reserved.
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">Oracle is a registered trademark of Oracle Corporation and/or its
+</span></span><span class="line"><span class="cl">affiliates. Other names may be trademarks of their respective
+</span></span><span class="line"><span class="cl">owners.
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">Type &#39;help;&#39; or &#39;/h&#39; for help. Type &#39;/c&#39; to clear the current input statement.
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">mysql&gt; 
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h1 id="mysql多实例管理">mysql多实例管理
+</h1><p>前面已经针对MySQL数据库进行了介绍,并说明了为什么选择MySQL数据库,以及MySQL数据库在Linux系统下的多种安装方式,同时以单实例讲解了如何以编译方式安装MySQL和基础安全优化等内容,本章将为大家讲解更为实用的MySQL多实例安装</p>
+<p>百度、淘宝、阿里、新浪等大公司无一例外地都会使用多实例的方式
+部署数据库,那么是什么原因促使他们选择多实例数据库的部署方式呢?</p>
+<p>单实例,也就是老师前面是带着大家,在一台Linux上,某个目录下,安装了一个mysql,且启动了这个mysql,这就表示,这个机器上,有单独的一个mysql个体,一个实例。</p>
+<h2 id="什么是多实例">什么是多实例
+</h2><p>多实例,就是一台Linux上,同时运行多个mysql,当然是区别了不同的端口,例如3306、3307、3308。运行三个mysql数据库</p>
+<p>这三个mysql,就相当于三个独立的卧室,互相没关系,在Linux上的呈现区别就是</p>
+<ul>
+<li>不同的端口</li>
+<li>不同的数据目录,不同的配置文件</li>
+<li>不同的mysql进程,不同的pid</li>
+</ul>
+<h2 id="多实例的好处">多实例的好处
+</h2><p>可有效利用服务器资源。当单个服务器资源有剩余时,可以充分利用剩余的资源提供更多的服务,且可以实现资源的逻辑隔离。</p>
+<p>节约服务器资源。若公司资金紧张,但是数据库又需要各自尽量独立地提供服务,而且还需要用到主从复制等技术,那么选择多实例就再好不过了。</p>
+<p>例如公司有多个业务,需要用到好几套mysq数据库,都得单独的部著,数据区分开</p>
+<h2 id="多实例的弊端">多实例的弊端
+</h2><p>MySQL多实例有它的好处,也有其弊端,比如,会存在资源互相抢占的问题。当某个数据库实例并发很高或者有SQL慢查询时,整个实例会消耗大量的系统CPU、磁盘1/O等资源,导致服务器上的其他数据库实例提供服务的质量一起下降。</p>
+<p>这就相当于大家住在一个房子的不同卧室中,早展起来上班,都要刷牙、洗脸等,这样卫生间就会长期处于占用状态,其他人则必须要等待。</p>
+<p>不同实例获取的资源是相对独立的,无法像虚拟化一样完全隔离。(毕竞大家都是在同一个文件系统下)</p>
+<p>以后老师教大家学习虚拟化后,就可以实现完全隔离。</p>
+<h1 id="学mysql多实例用在哪些场景">学MySQL多实例用在哪些场景
+</h1><h2 id="资金紧张的公司">资金紧张的公司
+</h2><p>若公司资金紧张,公司业务访问量不太大,但又希望不同业务的数据库服务各自能够尽量独立地提供服务而互相不受影响,或者,还有需要主从复制等技术提供备份或读写分离服务的需求,那么,多实例就再好不过了</p>
+<p>比如:可以通过3台服务器部署9~15个实例,交叉做主从复制、数据备份及读写分离</p>
+<p>这样就可以等同于9~15台服务器每个只装一个数据库才有的效果。(很省钱了)</p>
+<p>这里需要强调的是,所谓的尽量独立是相对的。</p>
+<h2 id="用户并发访问量不大的业务">用户并发访问量不大的业务
+</h2><p>当公司业务访问量不太大的时候,服务器的资源基本上都是浪费的,这时就很适合多实例的应用,如果对SQL语句的优化做得比较好,MySQL多实例会是一个很值得使用的技术,即使并发很大,合理分配好系统资源以及搭配好服务,也不会有太大的问题。</p>
+<p>例如某古董、古玩展示的网站,比起电商网站,并发量会小一些,更多追求稳定,而不是高性能、高并发。
+大型网站也有用多实例</p>
+<h2 id="大型网站也有用多实例">大型网站也有用多实例
+</h2><p>门户网站通常都会使用多实例,因为配置硬件好的服务器,可以节省IDC机柜空间,同时,运行多实例也会减少硬件资源占用率不满的浪费。</p>
+<h1 id="mysql多实例部署">MySQL多实例部署
+</h1><h2 id="图解">图解
+</h2><p><img src="/MySQL%e5%ad%a6%e4%b9%a0%e7%ac%94%e8%ae%b01/assets/dca7bc7e39f274260d0e6256833b1bc8.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="dca7bc7e39f274260d0e6256833b1bc8"
+	
+	
+></p>
+<h2 id="创建数据目录">创建数据目录
+</h2><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">mkdir -p  /linux0224/mysql_3307
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">mkdir -p  /linux0224/mysql_3308
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">chown -R mysql.mysql /linux0224
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="初始化2个实例的数据">初始化2个实例的数据
+</h2><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span><span class="lnt">9
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">mysqld --initialize-insecure --user=mysql --basedir=/opt/mysql --datadir=/linux0224/mysql_3307
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">mysqld --initialize-insecure --user=mysql --basedir=/opt/mysql --datadir=/linux0224/mysql_3308
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"># 都会默认创建一个账户，链接权限
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">root 空密码 只允许再localhost登录
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="至此有3个实例了">至此有3个实例了
+</h2><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">[root@tech-db-51 /linux0224]#ll
+</span></span><span class="line"><span class="cl">total 4
+</span></span><span class="line"><span class="cl">drwxr-xr-x 6 mysql mysql 4096 Jul 28 14:00 mysql_3306
+</span></span><span class="line"><span class="cl">drwxr-xr-x 5 mysql mysql  314 Jul 28 14:37 mysql_3307
+</span></span><span class="line"><span class="cl">drwxr-xr-x 5 mysql mysql  314 Jul 28 14:38 mysql_3308
+</span></span><span class="line"><span class="cl">[root@tech-db-51 /linux0224]#
+</span></span><span class="line"><span class="cl">[root@tech-db-51 /linux0224]#du -sh *
+</span></span><span class="line"><span class="cl">134M	mysql_3306
+</span></span><span class="line"><span class="cl">122M	mysql_3307
+</span></span><span class="line"><span class="cl">122M	mysql_3308
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="额外创建俩实例的配置文件">额外创建俩实例的配置文件
+</h2><h3 id="3306">3306
+</h3><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">[root@tech-db-51 /linux0224]#cat /etc/my.cnf 
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">[mysqld]
+</span></span><span class="line"><span class="cl">port=3306
+</span></span><span class="line"><span class="cl">user=mysql
+</span></span><span class="line"><span class="cl">basedir=/opt/mysql
+</span></span><span class="line"><span class="cl">datadir=/linux0224/mysql_3306/
+</span></span><span class="line"><span class="cl">socket=/tmp/mysql.sock
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">[mysql]
+</span></span><span class="line"><span class="cl">socket=/tmp/mysql.sock
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="3307">3307
+</h3><p>区别在参数</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">cat /etc/my.cnf 
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">[mysqld]
+</span></span><span class="line"><span class="cl">port=3307
+</span></span><span class="line"><span class="cl">user=mysql
+</span></span><span class="line"><span class="cl">basedir=/opt/mysql
+</span></span><span class="line"><span class="cl">datadir=/linux0224/mysql_3307/
+</span></span><span class="line"><span class="cl">socket=/tmp/mysql.sock
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">[mysql]
+</span></span><span class="line"><span class="cl">socket=/tmp/mysql.sock
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>port</p>
+<p>datadir</p>
+<p>socket 进程套接字文件</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">链接mysql的俩方式，找到它   
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">进程
+</span></span><span class="line"><span class="cl">pid   
+</span></span><span class="line"><span class="cl">能链接程序的俩方式
+</span></span><span class="line"><span class="cl">1. 通过远程网络的链接形式，效率很低，网络波动，
+</span></span><span class="line"><span class="cl">ip:port   10.0.0.51:3306
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">mysql -uroot -p -h10.0.0.51  -P3306
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">--------------------------------
+</span></span><span class="line"><span class="cl">--------------------------------
+</span></span><span class="line"><span class="cl">--------------------------------
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">2. 通过再机器本地，进程套接字文件去链接，直接是基于内存的链接
+</span></span><span class="line"><span class="cl">程序和程序之间，直接走内存数据，效率极高，遇见一些软件的部署，走socket链接
+</span></span><span class="line"><span class="cl">如nginx的反向代理配置
+</span></span><span class="line"><span class="cl">proxy_pass  ip:port;
+</span></span><span class="line"><span class="cl">proxy_pass  unxi:socket;
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">/linux0224/mysql_3307/mysql.sock
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"># -S  等于 -h -P 
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"># 链接3307的进程
+</span></span><span class="line"><span class="cl">mysql -uroot -p密码 -S  /linux0224/mysql_3307/mysql.sock
+</span></span><span class="line"><span class="cl">mysql -uroot -p密码 -S  /linux0224/mysql_3306/mysql.sock
+</span></span><span class="line"><span class="cl">mysql -uroot -p密码 -S  /linux0224/mysql_3308/mysql.sock
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>log目录</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span><span class="lnt">9
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">cat &gt;/etc/mysql_3307.cnf &lt;&lt;&#39;EOF&#39;
+</span></span><span class="line"><span class="cl">[mysqld]
+</span></span><span class="line"><span class="cl">port=3307
+</span></span><span class="line"><span class="cl">user=mysql
+</span></span><span class="line"><span class="cl">basedir=/opt/mysql/
+</span></span><span class="line"><span class="cl">datadir=/linux0224/mysql_3307/
+</span></span><span class="line"><span class="cl">socket=/linux0224/mysql_3307/mysql.sock
+</span></span><span class="line"><span class="cl">log_error=/linux0224/mysql_3307/mysql.log
+</span></span><span class="line"><span class="cl">EOF
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="3308">3308
+</h3><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">cat &gt;/etc/mysql_3308.cnf &lt;&lt;&#39;EOF&#39;
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">[mysqld]
+</span></span><span class="line"><span class="cl">port=3308
+</span></span><span class="line"><span class="cl">user=mysql
+</span></span><span class="line"><span class="cl">basedir=/opt/mysql/
+</span></span><span class="line"><span class="cl">datadir=/linux0224/mysql_3308/
+</span></span><span class="line"><span class="cl">socket=/linux0224/mysql_3308/mysql.sock
+</span></span><span class="line"><span class="cl">log_error=/linux0224/mysql_3308/mysql.log
+</span></span><span class="line"><span class="cl">EOF
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="检查配置文件">检查配置文件
+</h2><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="o">[</span>root@tech-db-51 /linux0224<span class="o">]</span><span class="c1">#</span>
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@tech-db-51 /linux0224<span class="o">]</span><span class="c1">#ls /etc/my*</span>
+</span></span><span class="line"><span class="cl">/etc/my.cnf  /etc/mysql_3307.cnf  /etc/mysql_3308.cnf
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="多实例脚本">多实例脚本
+</h2><p>有3个数据目录+ 3个独立的配置文件+ shell脚本 -=====3个运行程序</p>
+<p>提供一个脚本模板，自己区分3个实例的端口，数据目录即可</p>
+<p>生成 3307 和3308即可</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span><span class="lnt">43
+</span><span class="lnt">44
+</span><span class="lnt">45
+</span><span class="lnt">46
+</span><span class="lnt">47
+</span><span class="lnt">48
+</span><span class="lnt">49
+</span><span class="lnt">50
+</span><span class="lnt">51
+</span><span class="lnt">52
+</span><span class="lnt">53
+</span><span class="lnt">54
+</span><span class="lnt">55
+</span><span class="lnt">56
+</span><span class="lnt">57
+</span><span class="lnt">58
+</span><span class="lnt">59
+</span><span class="lnt">60
+</span><span class="lnt">61
+</span><span class="lnt">62
+</span><span class="lnt">63
+</span><span class="lnt">64
+</span><span class="lnt">65
+</span><span class="lnt">66
+</span><span class="lnt">67
+</span><span class="lnt">68
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">cat &gt; /linux0224/3307.sh &lt;&lt;&#39;EOF&#39;
+</span></span><span class="line"><span class="cl">port=&#34;3307&#34;
+</span></span><span class="line"><span class="cl">mysql_user=&#34;mysql&#34;
+</span></span><span class="line"><span class="cl">Cmdpath=&#34;/opt/mysql/bin/&#34;
+</span></span><span class="line"><span class="cl"># socket用于判断程序是否运行
+</span></span><span class="line"><span class="cl"># 程序运行中，该socket文件存在
+</span></span><span class="line"><span class="cl"># 进程挂了，socket文件自动消失
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">mysql_sock=&#34;/linux0224/mysql_${port}/mysql.sock&#34;
+</span></span><span class="line"><span class="cl"># 定义路径，mysql进程启动后，一个存储该进程pid号码的文件在哪
+</span></span><span class="line"><span class="cl">mysqld_pid_file_path=/linux0224/mysql_${port}/mysqld_${port}.pid
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"># 启动mysqld服务端的入口命令
+</span></span><span class="line"><span class="cl">start(){
+</span></span><span class="line"><span class="cl">if [ ! -e &#34;$mysql_sock&#34; ];then
+</span></span><span class="line"><span class="cl">    printf &#34;Starting MySQL.../n&#34;
+</span></span><span class="line"><span class="cl">    #  mysql的启动逻辑
+</span></span><span class="line"><span class="cl">    # mysqld_safe 脚本 &gt;  mysqld 脚本 &gt; 运行mysql进程
+</span></span><span class="line"><span class="cl">  
+</span></span><span class="line"><span class="cl">    /bin/sh ${Cmdpath}/mysqld_safe --defaults-file=/etc/mysql_${port}.cnf --pid-file=$mysqld_pid_file_path 2&gt;&amp;1 &gt; /dev/null &amp;
+</span></span><span class="line"><span class="cl">    sleep 3
+</span></span><span class="line"><span class="cl">else
+</span></span><span class="line"><span class="cl">    printf &#34;MySQL is running.../n&#34;
+</span></span><span class="line"><span class="cl">    exit 1
+</span></span><span class="line"><span class="cl">fi
+</span></span><span class="line"><span class="cl">}
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">stop(){
+</span></span><span class="line"><span class="cl">    if [ ! -e &#34;$mysql_sock&#34; ];then
+</span></span><span class="line"><span class="cl">        printf &#34;MySQL is stopped.../n&#34;
+</span></span><span class="line"><span class="cl">        exit 1
+</span></span><span class="line"><span class="cl">    else
+</span></span><span class="line"><span class="cl">        printf &#34;Stoping MySQL.../n&#34;
+</span></span><span class="line"><span class="cl">        mysqld_pid=`cat &#34;$mysqld_pid_file_path&#34;`
+</span></span><span class="line"><span class="cl">    if (kill -0 $mysqld_pid 2&gt;/dev/null)
+</span></span><span class="line"><span class="cl">        then
+</span></span><span class="line"><span class="cl">        kill $mysqld_pid
+</span></span><span class="line"><span class="cl">        sleep 2
+</span></span><span class="line"><span class="cl">        fi
+</span></span><span class="line"><span class="cl">    fi
+</span></span><span class="line"><span class="cl">}
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">restart(){
+</span></span><span class="line"><span class="cl">    printf &#34;Restarting MySQL.../n&#34;
+</span></span><span class="line"><span class="cl">    stop
+</span></span><span class="line"><span class="cl">    sleep 2
+</span></span><span class="line"><span class="cl">    start
+</span></span><span class="line"><span class="cl">}
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">case &#34;$1&#34; in
+</span></span><span class="line"><span class="cl">start)
+</span></span><span class="line"><span class="cl">    start
+</span></span><span class="line"><span class="cl">;;
+</span></span><span class="line"><span class="cl">stop)
+</span></span><span class="line"><span class="cl">    stop
+</span></span><span class="line"><span class="cl">;;
+</span></span><span class="line"><span class="cl">restart)
+</span></span><span class="line"><span class="cl">    restart
+</span></span><span class="line"><span class="cl">;;
+</span></span><span class="line"><span class="cl">*)
+</span></span><span class="line"><span class="cl">    printf &#34;Usage: /data/${port}/mysql{start|stop|restart}/n&#34;
+</span></span><span class="line"><span class="cl">esac
+</span></span><span class="line"><span class="cl">EOF
+</span></span></code></pre></td></tr></table>
+</div>
+</div><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span><span class="lnt">43
+</span><span class="lnt">44
+</span><span class="lnt">45
+</span><span class="lnt">46
+</span><span class="lnt">47
+</span><span class="lnt">48
+</span><span class="lnt">49
+</span><span class="lnt">50
+</span><span class="lnt">51
+</span><span class="lnt">52
+</span><span class="lnt">53
+</span><span class="lnt">54
+</span><span class="lnt">55
+</span><span class="lnt">56
+</span><span class="lnt">57
+</span><span class="lnt">58
+</span><span class="lnt">59
+</span><span class="lnt">60
+</span><span class="lnt">61
+</span><span class="lnt">62
+</span><span class="lnt">63
+</span><span class="lnt">64
+</span><span class="lnt">65
+</span><span class="lnt">66
+</span><span class="lnt">67
+</span><span class="lnt">68
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">cat &gt; /linux0224/3308.sh <span class="s">&lt;&lt;&#39;EOF&#39;
+</span></span></span><span class="line"><span class="cl"><span class="s">port=&#34;3308&#34;
+</span></span></span><span class="line"><span class="cl"><span class="s">mysql_user=&#34;mysql&#34;
+</span></span></span><span class="line"><span class="cl"><span class="s">Cmdpath=&#34;/opt/mysql/bin/&#34;
+</span></span></span><span class="line"><span class="cl"><span class="s"># socket用于判断程序是否运行
+</span></span></span><span class="line"><span class="cl"><span class="s"># 程序运行中，该socket文件存在
+</span></span></span><span class="line"><span class="cl"><span class="s"># 进程挂了，socket文件自动消失
+</span></span></span><span class="line"><span class="cl"><span class="s">
+</span></span></span><span class="line"><span class="cl"><span class="s">mysql_sock=&#34;/linux0224/mysql_${port}/mysql.sock&#34;
+</span></span></span><span class="line"><span class="cl"><span class="s"># 定义路径，mysql进程启动后，一个存储该进程pid号码的文件在哪
+</span></span></span><span class="line"><span class="cl"><span class="s">mysqld_pid_file_path=/linux0224/mysql_${port}/mysqld_${port}.pid
+</span></span></span><span class="line"><span class="cl"><span class="s">
+</span></span></span><span class="line"><span class="cl"><span class="s"># 启动mysqld服务端的入口命令
+</span></span></span><span class="line"><span class="cl"><span class="s">start(){
+</span></span></span><span class="line"><span class="cl"><span class="s">if [ ! -e &#34;$mysql_sock&#34; ];then
+</span></span></span><span class="line"><span class="cl"><span class="s">    printf &#34;Starting MySQL.../n&#34;
+</span></span></span><span class="line"><span class="cl"><span class="s">    #  mysql的启动逻辑
+</span></span></span><span class="line"><span class="cl"><span class="s">    # mysqld_safe 脚本 &gt;  mysqld 脚本 &gt; 运行mysql进程
+</span></span></span><span class="line"><span class="cl"><span class="s">  
+</span></span></span><span class="line"><span class="cl"><span class="s">    /bin/sh ${Cmdpath}/mysqld_safe --defaults-file=/etc/mysql_${port}.cnf --pid-file=$mysqld_pid_file_path 2&gt;&amp;1 &gt; /dev/null &amp;
+</span></span></span><span class="line"><span class="cl"><span class="s">    sleep 3
+</span></span></span><span class="line"><span class="cl"><span class="s">else
+</span></span></span><span class="line"><span class="cl"><span class="s">    printf &#34;MySQL is running.../n&#34;
+</span></span></span><span class="line"><span class="cl"><span class="s">    exit 1
+</span></span></span><span class="line"><span class="cl"><span class="s">fi
+</span></span></span><span class="line"><span class="cl"><span class="s">}
+</span></span></span><span class="line"><span class="cl"><span class="s">
+</span></span></span><span class="line"><span class="cl"><span class="s">
+</span></span></span><span class="line"><span class="cl"><span class="s">stop(){
+</span></span></span><span class="line"><span class="cl"><span class="s">    if [ ! -e &#34;$mysql_sock&#34; ];then
+</span></span></span><span class="line"><span class="cl"><span class="s">        printf &#34;MySQL is stopped.../n&#34;
+</span></span></span><span class="line"><span class="cl"><span class="s">        exit 1
+</span></span></span><span class="line"><span class="cl"><span class="s">    else
+</span></span></span><span class="line"><span class="cl"><span class="s">        printf &#34;Stoping MySQL.../n&#34;
+</span></span></span><span class="line"><span class="cl"><span class="s">        mysqld_pid=`cat &#34;$mysqld_pid_file_path&#34;`
+</span></span></span><span class="line"><span class="cl"><span class="s">    if (kill -0 $mysqld_pid 2&gt;/dev/null)
+</span></span></span><span class="line"><span class="cl"><span class="s">        then
+</span></span></span><span class="line"><span class="cl"><span class="s">        kill $mysqld_pid
+</span></span></span><span class="line"><span class="cl"><span class="s">        sleep 2
+</span></span></span><span class="line"><span class="cl"><span class="s">        fi
+</span></span></span><span class="line"><span class="cl"><span class="s">    fi
+</span></span></span><span class="line"><span class="cl"><span class="s">}
+</span></span></span><span class="line"><span class="cl"><span class="s">
+</span></span></span><span class="line"><span class="cl"><span class="s">
+</span></span></span><span class="line"><span class="cl"><span class="s">
+</span></span></span><span class="line"><span class="cl"><span class="s">restart(){
+</span></span></span><span class="line"><span class="cl"><span class="s">    printf &#34;Restarting MySQL.../n&#34;
+</span></span></span><span class="line"><span class="cl"><span class="s">    stop
+</span></span></span><span class="line"><span class="cl"><span class="s">    sleep 2
+</span></span></span><span class="line"><span class="cl"><span class="s">    start
+</span></span></span><span class="line"><span class="cl"><span class="s">}
+</span></span></span><span class="line"><span class="cl"><span class="s">
+</span></span></span><span class="line"><span class="cl"><span class="s">
+</span></span></span><span class="line"><span class="cl"><span class="s">
+</span></span></span><span class="line"><span class="cl"><span class="s">case &#34;$1&#34; in
+</span></span></span><span class="line"><span class="cl"><span class="s">start)
+</span></span></span><span class="line"><span class="cl"><span class="s">    start
+</span></span></span><span class="line"><span class="cl"><span class="s">;;
+</span></span></span><span class="line"><span class="cl"><span class="s">stop)
+</span></span></span><span class="line"><span class="cl"><span class="s">    stop
+</span></span></span><span class="line"><span class="cl"><span class="s">;;
+</span></span></span><span class="line"><span class="cl"><span class="s">restart)
+</span></span></span><span class="line"><span class="cl"><span class="s">    restart
+</span></span></span><span class="line"><span class="cl"><span class="s">;;
+</span></span></span><span class="line"><span class="cl"><span class="s">*)
+</span></span></span><span class="line"><span class="cl"><span class="s">    printf &#34;Usage: /data/${port}/mysql{start|stop|restart}/n&#34;
+</span></span></span><span class="line"><span class="cl"><span class="s">esac
+</span></span></span><span class="line"><span class="cl"><span class="s">EOF</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/MySQL%e5%ad%a6%e4%b9%a0%e7%ac%94%e8%ae%b01/pic/1658991194995.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="1658991194995"
+	
+	
+></p>
+<h2 id="启动多实例">启动多实例
+</h2><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl"># 查看已有的3306实例
+</span></span><span class="line"><span class="cl">[root@tech-db-51 /linux0224]#netstat -tunlp|grep 3306
+</span></span><span class="line"><span class="cl">tcp6       0      0 :::3306                 :::*                    LISTEN      2018/mysqld     
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"># 启动3307
+</span></span><span class="line"><span class="cl">[root@tech-db-51 /linux0224]#bash 3307.sh start
+</span></span><span class="line"><span class="cl">Starting MySQL...
+</span></span><span class="line"><span class="cl">Logging to &#39;/linux0224/mysql_3307/mysql.log&#39;.
+</span></span><span class="line"><span class="cl">[root@tech-db-51 /linux0224]#
+</span></span><span class="line"><span class="cl">[root@tech-db-51 /linux0224]#
+</span></span><span class="line"><span class="cl">[root@tech-db-51 /linux0224]#netstat -tunlp|grep mysql
+</span></span><span class="line"><span class="cl">tcp6       0      0 :::3306                 :::*                    LISTEN      2018/mysqld         
+</span></span><span class="line"><span class="cl">tcp6       0      0 :::3307                 :::*                    LISTEN      12514/mysqld   
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"># 启动3308
+</span></span><span class="line"><span class="cl">[root@tech-db-51 /linux0224]#bash 3308.sh start
+</span></span><span class="line"><span class="cl">Starting MySQL...
+</span></span><span class="line"><span class="cl">Logging to &#39;/linux0224/mysql_3308/mysql.log&#39;.
+</span></span><span class="line"><span class="cl">[root@tech-db-51 /linux0224]#
+</span></span><span class="line"><span class="cl">[root@tech-db-51 /linux0224]#netstat -tunlp|grep mysql
+</span></span><span class="line"><span class="cl">tcp6       0      0 :::3306                 :::*                    LISTEN      2018/mysqld         
+</span></span><span class="line"><span class="cl">tcp6       0      0 :::3307                 :::*                    LISTEN      12514/mysqld        
+</span></span><span class="line"><span class="cl">tcp6       0      0 :::3308                 :::*                    LISTEN      12700/mysqld  
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="检查3个实例的pid文件socket文件">检查3个实例的pid文件，socket文件
+</h3><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl"># pid文件 ，3个实例的
+</span></span><span class="line"><span class="cl">[root@tech-db-51 /linux0224]#find . -name &#39;*.pid&#39;
+</span></span><span class="line"><span class="cl">./mysql_3306/tech-db-51.pid
+</span></span><span class="line"><span class="cl">./mysql_3307/mysqld_3307.pid
+</span></span><span class="line"><span class="cl">./mysql_3308/mysqld_3308.pid
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">#socket文件
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/MySQL%e5%ad%a6%e4%b9%a0%e7%ac%94%e8%ae%b01/1658991488217.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="1658991488217"
+	
+	
+></p>
+<h3 id="生产下的暗坑">生产下的暗坑
+</h3><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">[root@tech-db-51 /linux0224]#systemctl start mysqld
+</span></span><span class="line"><span class="cl">[root@tech-db-51 /linux0224]#
+</span></span><span class="line"><span class="cl">[root@tech-db-51 /linux0224]#
+</span></span><span class="line"><span class="cl">[root@tech-db-51 /linux0224]#bash /linux0224/3307.sh start
+</span></span><span class="line"><span class="cl">Starting MySQL...
+</span></span><span class="line"><span class="cl">[root@tech-db-51 /linux0224]#
+</span></span><span class="line"><span class="cl">[root@tech-db-51 /linux0224]#
+</span></span><span class="line"><span class="cl">[root@tech-db-51 /linux0224]#find / -name &#39;*.sock&#39; |xargs -i ls -l {}
+</span></span><span class="line"><span class="cl">srwxrwxrwx 1 mysql mysql 0 Jul 28 15:00 /tmp/mysql.sock
+</span></span><span class="line"><span class="cl">srwxrwxrwx 1 mysql mysql 0 Jul 28 15:00 /linux0224/mysql_3307/mysql.sock
+</span></span><span class="line"><span class="cl">srwxrwxrwx 1 mysql mysql 0 Jul 28 14:55 /linux0224/mysql_3308/mysql.sock
+</span></span><span class="line"><span class="cl">[root@tech-db-51 /linux0224]#
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">有些程序，不专业的程序员，会清空/tmp下的数据
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"># mysql的链接有的链接方式是走 sock文件的，因此sock文件不得删除，导致无法链接
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"># 建议，sock文件，别放入/tmp目录
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="设置多实例的密码">设置多实例的密码
+</h2><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">3实例，
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"># mysqladmin和mysql一样，也是客户端链接命令
+</span></span><span class="line"><span class="cl"># 精确定位 每一个实例
+</span></span><span class="line"><span class="cl"># ip:port
+</span></span><span class="line"><span class="cl"># socket
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">mysqladmin -uroot -p   password  新的密码
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"># ==================3306=========
+</span></span><span class="line"><span class="cl"># socket修改
+</span></span><span class="line"><span class="cl"># -u账户
+</span></span><span class="line"><span class="cl"># -p密码 ，啥也没写，会交互式提示让你输入
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">mysqladmin -uroot -p   -S /tmp/mysql.sock  password linux0224
+</span></span><span class="line"><span class="cl"># 还要再改3306的密码
+</span></span><span class="line"><span class="cl"># -p后面建议别跟上密码，因为history能看到密码记录
+</span></span><span class="line"><span class="cl"># mysql也给你提示不安全
+</span></span><span class="line"><span class="cl"># mysqladmin -uroot -plinux0224 -S /tmp/mysql.sock password  linux3306
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">mysql -uroot -p
+</span></span><span class="line"><span class="cl">mysql&gt; ALTER USER &#39;root&#39;@&#39;localhost&#39; IDENTIFIED BY &#39;123456&#39;;
+</span></span><span class="line"><span class="cl">Query OK, 0 rows affected (0.00 sec)
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">mysql&gt; FLUSH PRIVILEGES;
+</span></span><span class="line"><span class="cl">Query OK, 0 rows affected (0.00 sec)
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"># ==================3307=========
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">mysqladmin -uroot -p -S /linux0224/mysql_3307/mysql.sock password  linux3307
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"># ==================3308=========
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">mysqladmin -uroot -p -S /linux0224/mysql_3308/mysql.sock password  linux3308
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="登录多实例">登录多实例
+</h2><ul>
+<li>ip:port方式</li>
+</ul>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="o">[</span>root@tech-db-51 /linux0224<span class="o">]</span><span class="c1">#mysql -hlocalhost -P3306   -uroot -plinux3306 -e &#34;show global variables like &#39;port&#39;;&#34;</span>
+</span></span><span class="line"><span class="cl">mysql: <span class="o">[</span>Warning<span class="o">]</span> Using a password on the <span class="nb">command</span> line interface can be insecure.
+</span></span><span class="line"><span class="cl">+---------------+-------+
+</span></span><span class="line"><span class="cl"><span class="p">|</span> Variable_name <span class="p">|</span> Value <span class="p">|</span>
+</span></span><span class="line"><span class="cl">+---------------+-------+
+</span></span><span class="line"><span class="cl"><span class="p">|</span> port          <span class="p">|</span> <span class="m">3306</span>  <span class="p">|</span>
+</span></span><span class="line"><span class="cl">+---------------+-------+
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># 3307 ，mysql的用户远程链接，权限问题</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@tech-db-51 /linux0224<span class="o">]</span><span class="c1">#mysql -uroot -plinux3307 -h127.0.0.1 -P3307   -e &#34;show global variables like &#39;port&#39;;&#34;</span>
+</span></span><span class="line"><span class="cl">mysql: <span class="o">[</span>Warning<span class="o">]</span> Using a password on the <span class="nb">command</span> line interface can be insecure.
+</span></span><span class="line"><span class="cl">+---------------+-------+
+</span></span><span class="line"><span class="cl"><span class="p">|</span> Variable_name <span class="p">|</span> Value <span class="p">|</span>
+</span></span><span class="line"><span class="cl">+---------------+-------+
+</span></span><span class="line"><span class="cl"><span class="p">|</span> port          <span class="p">|</span> <span class="m">3307</span>  <span class="p">|</span>
+</span></span><span class="line"><span class="cl">+---------------+-------+
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@tech-db-51 /linux0224<span class="o">]</span><span class="c1">#mysql -uroot -plinux3308 -h127.0.0.1 -P3308   -e &#34;show global variables like &#39;port&#39;;&#34;</span>
+</span></span><span class="line"><span class="cl">mysql: <span class="o">[</span>Warning<span class="o">]</span> Using a password on the <span class="nb">command</span> line interface can be insecure.
+</span></span><span class="line"><span class="cl">+---------------+-------+
+</span></span><span class="line"><span class="cl"><span class="p">|</span> Variable_name <span class="p">|</span> Value <span class="p">|</span>
+</span></span><span class="line"><span class="cl">+---------------+-------+
+</span></span><span class="line"><span class="cl"><span class="p">|</span> port          <span class="p">|</span> <span class="m">3308</span>  <span class="p">|</span>
+</span></span><span class="line"><span class="cl">+---------------+-------+
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># ip:port有很多种规则</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># 授权语法</span>
+</span></span><span class="line"><span class="cl"><span class="c1">#  locahost,  127.0.0.1   10.0.0.10</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><ul>
+<li>sock文件方式</li>
+</ul>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-gdscript3" data-lang="gdscript3"><span class="line"><span class="cl"><span class="n">mysql</span> <span class="o">-</span><span class="n">uroot</span> <span class="o">-</span><span class="n">plinux3308</span> <span class="o">-</span><span class="n">S</span> <span class="o">/</span><span class="n">linux0224</span><span class="o">/</span><span class="n">mysql_3308</span><span class="o">/</span><span class="n">mysql</span><span class="o">.</span><span class="n">sock</span>  <span class="o">-</span><span class="n">e</span> <span class="s2">&#34;show global variables like &#39;port&#39;;&#34;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">mysql</span> <span class="o">-</span><span class="n">uroot</span> <span class="o">-</span><span class="n">plinux3307</span> <span class="o">-</span><span class="n">S</span> <span class="o">/</span><span class="n">linux0224</span><span class="o">/</span><span class="n">mysql_3307</span><span class="o">/</span><span class="n">mysql</span><span class="o">.</span><span class="n">sock</span>  <span class="o">-</span><span class="n">e</span> <span class="s2">&#34;show global variables like &#39;port&#39;;&#34;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">mysql</span> <span class="o">-</span><span class="n">uroot</span> <span class="o">-</span><span class="n">plinux3306</span> <span class="o">-</span><span class="n">S</span> <span class="o">/</span><span class="n">tmp</span><span class="o">/</span><span class="n">mysql</span><span class="o">.</span><span class="n">sock</span>  <span class="o">-</span><span class="n">e</span> <span class="s2">&#34;show global variables like &#39;port&#39;;&#34;</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="查看mysql的仨实例进程信息">查看mysql的仨实例进程信息
+</h3><p><img src="/MySQL%e5%ad%a6%e4%b9%a0%e7%ac%94%e8%ae%b01/pic/1658992578273.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="1658992578273"
+	
+	
+></p>
+
+</section>
+
+
+    <footer class="article-footer">
+    
+
+    </footer>
+
+
+    
+</article>
+
+    
+
+    
+
+     
+    
+        
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+        2025 小诗
+    </section>
+    
+    <section class="powerby">
+        使用 <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> 构建 <br />
+        主题 <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.26.0">Stack</a></b> 由 <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a> 设计
+    </section>
+</footer>
+
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css"crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css"crossorigin="anonymous"
+            >
+
+            </main>
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.6/dist/vibrant.min.js"integrity="sha256-awcR2jno4kI5X0zL8ex0vi2z&#43;KMkF24hUW8WePSA9HM="crossorigin="anonymous"
+                
+                >
+            </script><script type="text/javascript" src="/xiaoshi/ts/main.js" defer></script>
+<script>
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+
+    </body>
+</html>

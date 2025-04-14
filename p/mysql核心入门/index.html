@@ -1,0 +1,721 @@
+<!DOCTYPE html>
+<html lang="zh-cn" dir="ltr">
+    <head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content="02-1-数据库基础知识 1 2 今天主要快速入门，学习数据库的核心理论，运维和数据库的关系等 以及安装部署 数据库开篇架构 什么是数据? 1 2 3 数据就是">
+<title>MySQL核心入门</title>
+
+<link rel='canonical' href='https://ZackMoel.github.io/xiaoshi/p/mysql%E6%A0%B8%E5%BF%83%E5%85%A5%E9%97%A8/'>
+
+<link rel="stylesheet" href="/xiaoshi/scss/style.min.0304c6baf04e01a8fe70693791cb744d56a3578a3120a8796cefc66825aa39c7.css"><meta property='og:title' content="MySQL核心入门">
+<meta property='og:description' content="02-1-数据库基础知识 1 2 今天主要快速入门，学习数据库的核心理论，运维和数据库的关系等 以及安装部署 数据库开篇架构 什么是数据? 1 2 3 数据就是">
+<meta property='og:url' content='https://ZackMoel.github.io/xiaoshi/p/mysql%E6%A0%B8%E5%BF%83%E5%85%A5%E9%97%A8/'>
+<meta property='og:site_name' content='小诗的博客'>
+<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:published_time' content='2025-04-14T15:41:38&#43;08:00'/><meta property='article:modified_time' content='2025-04-14T15:41:38&#43;08:00'/>
+<meta name="twitter:title" content="MySQL核心入门">
+<meta name="twitter:description" content="02-1-数据库基础知识 1 2 今天主要快速入门，学习数据库的核心理论，运维和数据库的关系等 以及安装部署 数据库开篇架构 什么是数据? 1 2 3 数据就是">
+  
+
+
+    </head>
+    <body class="
+    article-page
+    ">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex on-phone--column extended"><aside class="sidebar left-sidebar sticky ">
+    <button class="hamburger hamburger--spin" type="button" id="toggle-menu" aria-label="切换菜单">
+        <span class="hamburger-box">
+            <span class="hamburger-inner"></span>
+        </span>
+    </button>
+
+    <header>
+        
+            
+            <figure class="site-avatar">
+                <a href="/xiaoshi/">
+                
+                    
+                    
+                    
+                        
+                        <img src="/xiaoshi/img/avatar_hu8920112365793990935.png" width="300"
+                            height="300" class="site-logo" loading="lazy" alt="Avatar">
+                    
+                
+                </a>
+                
+                    <span class="emoji">🍥</span>
+                
+            </figure>
+            
+        
+        
+        <div class="site-meta">
+            <h1 class="site-name"><a href="/xiaoshi">小诗的博客</a></h1>
+            <h2 class="site-description">欢迎来到小诗的博客</h2>
+        </div>
+    </header><ol class="menu-social">
+            
+                <li>
+                    <a 
+                        href='https://space.bilibili.com/1055981889?spm_id_from=333.1007.0.0'
+                        target="_blank"
+                        title="bilibili"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg  xmlns="http://www.w3.org/2000/svg"  width="24"  height="24"  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  stroke-width="2"  stroke-linecap="round"  stroke-linejoin="round"  class="icon icon-tabler icons-tabler-outline icon-tabler-brand-bilibili"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M3 10a4 4 0 0 1 4 -4h10a4 4 0 0 1 4 4v6a4 4 0 0 1 -4 4h-10a4 4 0 0 1 -4 -4v-6z" /><path d="M8 3l2 3" /><path d="M16 3l-2 3" /><path d="M9 13v-2" /><path d="M15 11v2" /></svg>
+                        
+                    </a>
+                </li>
+            
+                <li>
+                    <a 
+                        href='https://github.com/ZackMoel/xiaoshi.github.io'
+                        target="_blank"
+                        title="GitHub"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-github" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M9 19c-4.3 1.4 -4.3 -2.5 -6 -3m12 5v-3.5c0 -1 .1 -1.4 -.5 -2c2.8 -.3 5.5 -1.4 5.5 -6a4.6 4.6 0 0 0 -1.3 -3.2a4.2 4.2 0 0 0 -.1 -3.2s-1.1 -.3 -3.5 1.3a12.3 12.3 0 0 0 -6.2 0c-2.4 -1.6 -3.5 -1.3 -3.5 -1.3a4.2 4.2 0 0 0 -.1 3.2a4.6 4.6 0 0 0 -1.3 3.2c0 4.6 2.7 5.7 5.5 6c-.6 .6 -.6 1.2 -.5 2v3.5" />
+</svg>
+
+
+
+                        
+                    </a>
+                </li>
+            
+        </ol><ol class="menu" id="main-menu">
+        
+        
+        
+        <li >
+            <a href='/xiaoshi/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-home" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <polyline points="5 12 3 12 12 3 21 12 19 12" />
+  <path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7" />
+  <path d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6" />
+</svg>
+
+
+
+                
+                <span>主页</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/xiaoshi/%E5%85%B3%E4%BA%8E/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-user" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="7" r="4" />
+  <path d="M6 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2" />
+</svg>
+
+
+
+                
+                <span>关于</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/xiaoshi/archives/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-archive" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <rect x="3" y="4" width="18" height="4" rx="2" />
+  <path d="M5 8v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-10" />
+  <line x1="10" y1="12" x2="14" y2="12" />
+</svg>
+
+
+
+                
+                <span>归档</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/xiaoshi/search/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-search" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="10" cy="10" r="7" />
+  <line x1="21" y1="21" x2="15" y2="15" />
+</svg>
+
+
+
+                
+                <span>搜索</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/xiaoshi/%E5%8F%8B%E6%83%85%E9%93%BE%E6%8E%A5/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-link" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M10 14a3.5 3.5 0 0 0 5 0l4 -4a3.5 3.5 0 0 0 -5 -5l-.5 .5" />
+  <path d="M14 10a3.5 3.5 0 0 0 -5 0l-4 4a3.5 3.5 0 0 0 5 5l.5 -.5" />
+</svg>
+
+
+
+                
+                <span>友情链接</span>
+            </a>
+        </li>
+        
+        <li class="menu-bottom-section">
+            <ol class="menu">
+
+                
+                    <li id="dark-mode-toggle">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="8" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="16" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <span>暗色模式</span>
+                    </li>
+                
+            </ol>
+        </li>
+    </ol>
+</aside>
+
+    <aside class="sidebar right-sidebar sticky">
+        
+            
+                
+    <section class="widget archives">
+        <div class="widget-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <line x1="5" y1="9" x2="19" y2="9" />
+  <line x1="5" y1="15" x2="19" y2="15" />
+  <line x1="11" y1="4" x2="7" y2="20" />
+  <line x1="17" y1="4" x2="13" y2="20" />
+</svg>
+
+
+
+        </div>
+        <h2 class="widget-title section-title">目录</h2>
+        
+        <div class="widget--toc">
+            <nav id="TableOfContents">
+  <ol>
+    <li><a href="#运维和数据库">运维和数据库</a></li>
+    <li><a href="#数据库类别">数据库类别</a></li>
+    <li><a href="#关系型数据库">关系型数据库</a></li>
+    <li><a href="#图解数据库概念">图解数据库概念</a></li>
+    <li><a href="#什么是表">什么是表</a></li>
+    <li><a href="#什么是列">什么是列</a></li>
+    <li><a href="#什么是行">什么是行</a></li>
+    <li><a href="#什么是主键">什么是主键</a></li>
+    <li><a href="#什么是外键">什么是外键</a></li>
+  </ol>
+
+  <ol>
+    <li><a href="#其他关系型数据库">其他关系型数据库</a></li>
+  </ol>
+
+  <ol>
+    <li><a href="#相亲网">相亲网</a></li>
+    <li><a href="#游戏数据库">游戏数据库</a></li>
+  </ol>
+</nav>
+        </div>
+    </section>
+
+            
+        
+    </aside>
+
+
+            <main class="main full-width">
+    <article class="main-article">
+    <header class="article-header">
+
+    <div class="article-details">
+    
+
+    <div class="article-title-wrapper">
+        <h2 class="article-title">
+            <a href="/xiaoshi/p/mysql%E6%A0%B8%E5%BF%83%E5%85%A5%E9%97%A8/">MySQL核心入门</a>
+        </h2>
+    
+        
+    </div>
+
+    
+    
+    
+    
+    <footer class="article-time">
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
+  <circle cx="18" cy="18" r="4" />
+  <path d="M15 3v4" />
+  <path d="M7 3v4" />
+  <path d="M3 11h16" />
+  <path d="M18 16.496v1.504l1 1" />
+</svg>
+                <time class="article-time--published">2025-04-14</time>
+            </div>
+        
+
+        
+    </footer>
+    
+
+    
+</div>
+
+</header>
+
+    <section class="article-content">
+    
+    
+    <h1 id="02-1-数据库基础知识">02-1-数据库基础知识
+</h1><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">今天主要快速入门，学习数据库的核心理论，运维和数据库的关系等
+</span></span><span class="line"><span class="cl">以及安装部署
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h1 id="数据库开篇架构">数据库开篇架构
+</h1><p><img src="D:%5cdesktop%5cmyblog%5cmyblog%5ccontent%5cpost%5cMySQL%e5%ad%a6%e4%b9%a0%e7%ac%94%e8%ae%b01%5cpic%5c1658973006823.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="1658973006823"
+	
+	
+></p>
+<h1 id="什么是数据">什么是数据?
+</h1><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">数据就是数值,也就是我们通过观察、实验或计算得出的结果。
+</span></span><span class="line"><span class="cl">数据有很多种,最简单的就是数字。
+</span></span><span class="line"><span class="cl">数据也可以是文字、图像、声音等。
+</span></span></code></pre></td></tr></table>
+</div>
+</div><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">qq
+</span></span><span class="line"><span class="cl">就是mysql
+</span></span><span class="line"><span class="cl">我们打游戏最怕什么?最怕被盗号,怕自己的账号,密码丢失。
+</span></span><span class="line"><span class="cl">打游戏时候,腾讯为了保护大家的账号安全,提供了密码服务xl
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h1 id="数据存储">数据存储
+</h1><blockquote>
+<p>很早很早以前，古人是这么存数据的</p>
+</blockquote>
+<p>结绳、契刻、结珠、石头替代法等等,如今纸张是人们广泛使用的信息载体。但是书籍不便于
+询、共享、储藏等缺点。</p>
+<blockquote>
+<p>计算机去存储，管理数据</p>
+</blockquote>
+<p>随着计算机的发展,人们将信息转化为二进制数字,存储在磁性存储介质中,也就是磁盘进行
+据记录。数据通过文件系统管理,以文件形式显示出来。
+但是大量的文件数据,查询内容,还是很不方便。
+在这个背景下,一个专门用于数据管理的工具诞生了,它能让我们更简单的管理数据。</p>
+<h1 id="什么是数据库">什么是数据库
+</h1><p>顾名思义，数据库(DB，database)按照数据结构来组织、存储和管理数据的“仓库”，是一个文件或者一组文件。</p>
+<blockquote>
+<p>表是数据库中存储数据的基本单位，数据按照分类存储在不同的表中，便于查询。</p>
+</blockquote>
+<p>数据库可以通过统一的一些指令对数据进行增、删、改、查(Create,Retrive,Updata,Delete)等操作。</p>
+<p>例如财务人员使用Excel统计公司资产信息，进行管理，计算账户</p>
+<h1 id="dbms">DBMS
+</h1><p>Database Management System，数据库管理系统</p>
+<p>数据库管理系统这一软件用于创建和操作数据库。</p>
+<p>主流数据库软件,如Mysql(免费),Oracle(收费,甲骨文公司),MicrosoftSQLServer、SQLite(轻型)等。</p>
+<p>mysq主要用于大型门户,例如搜狗、新浪等,它主要的优势就是开放源代码,因为开放源代码这个数据库是免费的,他现在是甲骨文公司的产品。</p>
+<p>oracle主要用于银行、铁路、飞机场等。该数据库功能强大,软件费用高。也是甲骨文公司的产品</p>
+<p>sqlserver是微软公司的产品,主要应用于大中型企业,如联想、方正等。</p>
+<h1 id="数据库基础知识">数据库基础知识
+</h1><p>首先mysql前面超哥已经多少带着大家接触过，安装过、使用过，大家心中有一个基础的认识。</p>
+<h2 id="运维和数据库">运维和数据库
+</h2><p>说白了，数据库就是存数据的，是一款软件，用专门的数据库语言，增删改查数据。</p>
+<p>数据库的形式</p>
+<ul>
+<li>自己再inux上,直接安装,例如上图,数据都在inux机器磁盘上,运维自己管理</li>
+<li>云服务器RDS产品(数据库安装在阿里巴巴的服务器上,我们通过账号密码,远程使用)</li>
+</ul>
+<p><img src="D:%5cdesktop%5cmyblog%5cmyblog%5ccontent%5cpost%5cMySQL%e5%ad%a6%e4%b9%a0%e7%ac%94%e8%ae%b01%5cassets%5cclipImg.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="clipImg"
+	
+	
+></p>
+<h2 id="数据库类别">数据库类别
+</h2><p>目前主流数据库软件，分为两种</p>
+<ul>
+<li>关系型数据库</li>
+<li>非关系型数据库</li>
+</ul>
+<p><img src="D:%5cdesktop%5cmyblog%5cmyblog%5ccontent%5cpost%5cMySQL%e5%ad%a6%e4%b9%a0%e7%ac%94%e8%ae%b01%5cassets%5cimage-20241018090027602.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="image-20241018090027602"
+	
+	
+></p>
+<h2 id="关系型数据库">关系型数据库
+</h2><p>关系型数据库模型可将复杂的数据结构归结为简单的二元关系（即二维表格形式）</p>
+<p>数据库的操作建立在一个、或者多个关系表格上,通过对这些表格进行分类、合并、连接等查询方式,来找
+到我们想要的数据。</p>
+<p>最常见的数据库里是MySQL和Oracle,</p>
+<p><img src="D:%5cdesktop%5cmyblog%5cmyblog%5ccontent%5cpost%5cMySQL%e5%ad%a6%e4%b9%a0%e7%ac%94%e8%ae%b01%5cassets%5cclipImg-1729213517606-2.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="clipImg"
+	
+	
+></p>
+<h2 id="图解数据库概念">图解数据库概念
+</h2><ul>
+<li>数据库&ndash;文件夹…文件夹名字(luffy_dev)</li>
+<li>数据库里的数据表&ndash;文件夹里的table数据表&ndash;数据表的名字</li>
+<li>数据表里的数据…-文件中的数据&ndash;例如一个excel里的数据</li>
+</ul>
+<h2 id="什么是表">什么是表
+</h2><p>在 MySQL 中，<strong>表</strong>是数据库中的基本存储结构，用于组织和存储数据。表由行和列组成，每个表都有一个名称，用于标识和访问。</p>
+<h2 id="什么是列">什么是列
+</h2><p><strong>列</strong>是表中的一个垂直部分，代表数据的一个属性或字段。每列都有一个名称和数据类型，用于定义该列可以存储的数据类型（如整数、字符串等）。</p>
+<h2 id="什么是行">什么是行
+</h2><p><strong>行</strong>是表中的一个水平部分，代表一条完整的数据记录。每行包含多个列的值，每个值对应于表中定义的一个列。</p>
+<h2 id="什么是主键">什么是主键
+</h2><p><strong>主键</strong>是表中一列或多列的组合，其值唯一标识表中的每一行。主键约束确保没有两行具有相同的主键值，通常用于快速检索数据和建立表之间的关系。</p>
+<h2 id="什么是外键">什么是外键
+</h2><p><strong>外键</strong>是数据库表中的一个约束，用于建立和维护两个表之间的数据关联。它是一个或多个列，其值引用另一表的主键。外键约束确保数据的一致性和完整性，防止无效数据插入。通过外键，可以在不同表之间建立关系，实现数据的关联性和完整性。</p>
+<h1 id="运维要学的什么是sql">运维要学的：什么是SQL
+</h1><p>SQL是结构化查询语言的缩写,读作S-Q-L或者sequel,全称是(Structured QueryLanguage),是一种专用来与数据库交流的语言。</p>
+<p>SQL语法主要是</p>
+<ul>
+<li>查询语言:select</li>
+<li>操作语言:insert、update、delete</li>
+<li>事务处理:begintransaction、commit、rolback</li>
+<li>权限控制:grant、revoke</li>
+<li>数据库管理:create、drop</li>
+</ul>
+<p>以上语法不区分大小写</p>
+<h1 id="什么是mariadbmysql">什么是mariadb、mysql
+</h1><p>MySQL是一个开源的中小型关系型数据库管理系统,被应用于大、中、小型网站。由于其具有体积小、速度快、总体拥有成本低,且开放源码等特点,因此许多大中小型网站选择它作为网站数据库,从而降低网站总体拥有成本,甚至国内知名的淘宝网也选择弃用Oracle而更换成更为开放的MySQL。</p>
+<p>MySQL数据库的应用范围主要包括互联网领域、大中小型网站、游戏公司、电商平台等,因用户广泛,其产生了很多高并发的成熟解决方案,因此传统企业的用户也在逐渐增多。</p>
+<ul>
+<li>MariaDB</li>
+</ul>
+<p>mariadb是mysq数据库的一个分支,主要由开源社区维护,采用GPL授权许可。
+开发这个MariaDB数据库分支的可能原因之一是:Oracle公司收购了MySQL之后,有将MySQL闭源的潜在风险,因此MySQL开源社区采用分支的方式来避开这个风险。开发MariaDB数据库的目的是完全兼容MySQL数据库,包括APl和命令行,使之能够轻松地成为MySQL的替
+代品。在存储引擎方面,它使用XtraDB来代替MySQL的InnoDB。MariaDB由MySQL的创始人Michael Widenius主导开发,他早前普以10亿美元的价格,将自己创建的公司MySQLAB卖给Sun,此后,随着Sun被甲骨文收购,MySQL的所有权也落入Oracle的手中。MariaDB数据库的名称来自MySQL的创始人Michael Widenius的女儿Maria的名字
+MariaDB基于事务的Maria存储引擎,替换了MySQL的MyiSAM存储引擎,使用Percona的XtraDB替换了MySQL的innoDB存储引攀。</p>
+<p>MariaDB数据库的早期版本,均依照MySQL的版本发行。因此,使用MariaDB的人都会从MySQL中了解到MariaDB的相关功能,学习MySQL数据库的人,也可以轻松上手掌握MariaDB数据库。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span><span class="lnt">9
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">目前市面上用的最多的，是mysql 5.7系列 
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">一些最新的公司，用的是mysql8.0
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">传统行业，mysql更低的版本
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">或者其他数据库软件如 oracle，sql server等
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">本次学习mysql 5.7系列
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="其他关系型数据库">其他关系型数据库
+</h2><p>这里大家只需要了解有该数据库即可</p>
+<ul>
+<li>Microsoft SQL Server</li>
+<li>Microsoft Access</li>
+<li>PostgreSQL</li>
+<li>DB2</li>
+<li>Sysbase</li>
+<li>Informix</li>
+</ul>
+<h1 id="数据库具体应用场景">数据库具体应用场景
+</h1><h2 id="相亲网">相亲网
+</h2><p>譬如网站的注册登录功能，正确流程是，注册成功-&gt;可以登录。</p>
+<p>工程师就要检测在注册成功后，检查数据库是否正确保留了信息。</p>
+<p><img src="D:%5cdesktop%5cmyblog%5cmyblog%5ccontent%5cpost%5cMySQL%e5%ad%a6%e4%b9%a0%e7%ac%94%e8%ae%b01%5cpic%5c1658978678796.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="1658978678796"
+	
+	
+></p>
+<h2 id="游戏数据库">游戏数据库
+</h2><p>如下是英雄联盟所有的英雄数据库，列出了所有英雄数据</p>
+<p><img src="D:%5cdesktop%5cmyblog%5cmyblog%5ccontent%5cpost%5cMySQL%e5%ad%a6%e4%b9%a0%e7%ac%94%e8%ae%b01%5cpic%5c1658978883851.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="1658978883851"
+	
+	
+></p>
+<h1 id="总结">总结
+</h1><p>数据库方面知识，主要以运维、开发分为两个方向，不同的方向所重点学习的内容不一样</p>
+<ul>
+<li>运维人员，主要是对数据库架构、设计、维护
+<ul>
+<li>单实例、多实例</li>
+<li>SQL语句基础CURD学习、权限管理</li>
+<li>字符集、数据库引擎</li>
+<li>备份方案</li>
+<li>复制方案</li>
+<li>高可用方案</li>
+</ul>
+</li>
+<li>开发人员，主要是对数据进行设计、开发
+<ul>
+<li>针对业务进行数据库设计、表结构设计</li>
+<li>高性能索引</li>
+<li>视图</li>
+<li>存储过程</li>
+<li>函数</li>
+</ul>
+</li>
+</ul>
+
+</section>
+
+
+    <footer class="article-footer">
+    
+
+    </footer>
+
+
+    
+</article>
+
+    
+
+    
+
+     
+    
+        
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+        2025 小诗
+    </section>
+    
+    <section class="powerby">
+        使用 <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> 构建 <br />
+        主题 <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.26.0">Stack</a></b> 由 <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a> 设计
+    </section>
+</footer>
+
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css"crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css"crossorigin="anonymous"
+            >
+
+            </main>
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.6/dist/vibrant.min.js"integrity="sha256-awcR2jno4kI5X0zL8ex0vi2z&#43;KMkF24hUW8WePSA9HM="crossorigin="anonymous"
+                
+                >
+            </script><script type="text/javascript" src="/xiaoshi/ts/main.js" defer></script>
+<script>
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+
+    </body>
+</html>

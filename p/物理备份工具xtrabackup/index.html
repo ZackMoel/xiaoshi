@@ -1,0 +1,1368 @@
+<!DOCTYPE html>
+<html lang="zh-cn" dir="ltr">
+    <head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content="1.为什么要学物理备份？ 一个合格的运维工程师或者dba工程师,如果有从事数据库方面的话,首先需要做的就是备份,如果没有备份,出现问题的话,你">
+<title>物理备份工具（xtrabackup）</title>
+
+<link rel='canonical' href='https://ZackMoel.github.io/xiaoshi/p/%E7%89%A9%E7%90%86%E5%A4%87%E4%BB%BD%E5%B7%A5%E5%85%B7xtrabackup/'>
+
+<link rel="stylesheet" href="/xiaoshi/scss/style.min.0304c6baf04e01a8fe70693791cb744d56a3578a3120a8796cefc66825aa39c7.css"><meta property='og:title' content="物理备份工具（xtrabackup）">
+<meta property='og:description' content="1.为什么要学物理备份？ 一个合格的运维工程师或者dba工程师,如果有从事数据库方面的话,首先需要做的就是备份,如果没有备份,出现问题的话,你">
+<meta property='og:url' content='https://ZackMoel.github.io/xiaoshi/p/%E7%89%A9%E7%90%86%E5%A4%87%E4%BB%BD%E5%B7%A5%E5%85%B7xtrabackup/'>
+<meta property='og:site_name' content='小诗的博客'>
+<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:published_time' content='2025-04-14T16:12:13&#43;08:00'/><meta property='article:modified_time' content='2025-04-14T16:12:13&#43;08:00'/>
+<meta name="twitter:title" content="物理备份工具（xtrabackup）">
+<meta name="twitter:description" content="1.为什么要学物理备份？ 一个合格的运维工程师或者dba工程师,如果有从事数据库方面的话,首先需要做的就是备份,如果没有备份,出现问题的话,你">
+  
+
+
+    </head>
+    <body class="
+    article-page
+    ">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex on-phone--column extended"><aside class="sidebar left-sidebar sticky ">
+    <button class="hamburger hamburger--spin" type="button" id="toggle-menu" aria-label="切换菜单">
+        <span class="hamburger-box">
+            <span class="hamburger-inner"></span>
+        </span>
+    </button>
+
+    <header>
+        
+            
+            <figure class="site-avatar">
+                <a href="/xiaoshi/">
+                
+                    
+                    
+                    
+                        
+                        <img src="/xiaoshi/img/avatar_hu8920112365793990935.png" width="300"
+                            height="300" class="site-logo" loading="lazy" alt="Avatar">
+                    
+                
+                </a>
+                
+                    <span class="emoji">🍥</span>
+                
+            </figure>
+            
+        
+        
+        <div class="site-meta">
+            <h1 class="site-name"><a href="/xiaoshi">小诗的博客</a></h1>
+            <h2 class="site-description">欢迎来到小诗的博客</h2>
+        </div>
+    </header><ol class="menu-social">
+            
+                <li>
+                    <a 
+                        href='https://space.bilibili.com/1055981889?spm_id_from=333.1007.0.0'
+                        target="_blank"
+                        title="bilibili"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg  xmlns="http://www.w3.org/2000/svg"  width="24"  height="24"  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  stroke-width="2"  stroke-linecap="round"  stroke-linejoin="round"  class="icon icon-tabler icons-tabler-outline icon-tabler-brand-bilibili"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M3 10a4 4 0 0 1 4 -4h10a4 4 0 0 1 4 4v6a4 4 0 0 1 -4 4h-10a4 4 0 0 1 -4 -4v-6z" /><path d="M8 3l2 3" /><path d="M16 3l-2 3" /><path d="M9 13v-2" /><path d="M15 11v2" /></svg>
+                        
+                    </a>
+                </li>
+            
+                <li>
+                    <a 
+                        href='https://github.com/ZackMoel/xiaoshi.github.io'
+                        target="_blank"
+                        title="GitHub"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-github" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M9 19c-4.3 1.4 -4.3 -2.5 -6 -3m12 5v-3.5c0 -1 .1 -1.4 -.5 -2c2.8 -.3 5.5 -1.4 5.5 -6a4.6 4.6 0 0 0 -1.3 -3.2a4.2 4.2 0 0 0 -.1 -3.2s-1.1 -.3 -3.5 1.3a12.3 12.3 0 0 0 -6.2 0c-2.4 -1.6 -3.5 -1.3 -3.5 -1.3a4.2 4.2 0 0 0 -.1 3.2a4.6 4.6 0 0 0 -1.3 3.2c0 4.6 2.7 5.7 5.5 6c-.6 .6 -.6 1.2 -.5 2v3.5" />
+</svg>
+
+
+
+                        
+                    </a>
+                </li>
+            
+        </ol><ol class="menu" id="main-menu">
+        
+        
+        
+        <li >
+            <a href='/xiaoshi/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-home" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <polyline points="5 12 3 12 12 3 21 12 19 12" />
+  <path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7" />
+  <path d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6" />
+</svg>
+
+
+
+                
+                <span>主页</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/xiaoshi/%E5%85%B3%E4%BA%8E/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-user" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="7" r="4" />
+  <path d="M6 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2" />
+</svg>
+
+
+
+                
+                <span>关于</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/xiaoshi/archives/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-archive" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <rect x="3" y="4" width="18" height="4" rx="2" />
+  <path d="M5 8v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-10" />
+  <line x1="10" y1="12" x2="14" y2="12" />
+</svg>
+
+
+
+                
+                <span>归档</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/xiaoshi/search/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-search" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="10" cy="10" r="7" />
+  <line x1="21" y1="21" x2="15" y2="15" />
+</svg>
+
+
+
+                
+                <span>搜索</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/xiaoshi/%E5%8F%8B%E6%83%85%E9%93%BE%E6%8E%A5/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-link" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M10 14a3.5 3.5 0 0 0 5 0l4 -4a3.5 3.5 0 0 0 -5 -5l-.5 .5" />
+  <path d="M14 10a3.5 3.5 0 0 0 -5 0l-4 4a3.5 3.5 0 0 0 5 5l.5 -.5" />
+</svg>
+
+
+
+                
+                <span>友情链接</span>
+            </a>
+        </li>
+        
+        <li class="menu-bottom-section">
+            <ol class="menu">
+
+                
+                    <li id="dark-mode-toggle">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="8" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="16" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <span>暗色模式</span>
+                    </li>
+                
+            </ol>
+        </li>
+    </ol>
+</aside>
+
+    <aside class="sidebar right-sidebar sticky">
+        
+            
+                
+    <section class="widget archives">
+        <div class="widget-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <line x1="5" y1="9" x2="19" y2="9" />
+  <line x1="5" y1="15" x2="19" y2="15" />
+  <line x1="11" y1="4" x2="7" y2="20" />
+  <line x1="17" y1="4" x2="13" y2="20" />
+</svg>
+
+
+
+        </div>
+        <h2 class="widget-title section-title">目录</h2>
+        
+        <div class="widget--toc">
+            <nav id="TableOfContents">
+  <ol>
+    <li><a href="#xtrabackup工具">xtrabackup工具</a></li>
+    <li><a href="#什么是物理备份">什么是物理备份</a></li>
+    <li><a href="#数据文件扩张名">数据文件扩张名</a></li>
+    <li><a href="#看看mysql的数据是什么">看看mysql的数据是什么</a></li>
+    <li><a href="#安装xtrabackup工具">安装xtrabackup工具</a></li>
+  </ol>
+
+  <ol>
+    <li>
+      <ol>
+        <li><a href="#查看xtrabackup工具生成的日志文件">查看xtrabackup工具生成的日志文件</a></li>
+      </ol>
+    </li>
+    <li><a href="#不要该工具自带的时间戳信息">不要该工具自带的时间戳信息</a>
+      <ol>
+        <li><a href="#恢复该全量备份的数据">恢复该全量备份的数据</a></li>
+      </ol>
+    </li>
+  </ol>
+
+  <ol>
+    <li><a href="#恢复思路">恢复思路</a></li>
+  </ol>
+</nav>
+        </div>
+    </section>
+
+            
+        
+    </aside>
+
+
+            <main class="main full-width">
+    <article class="main-article">
+    <header class="article-header">
+
+    <div class="article-details">
+    
+
+    <div class="article-title-wrapper">
+        <h2 class="article-title">
+            <a href="/xiaoshi/p/%E7%89%A9%E7%90%86%E5%A4%87%E4%BB%BD%E5%B7%A5%E5%85%B7xtrabackup/">物理备份工具（xtrabackup）</a>
+        </h2>
+    
+        
+    </div>
+
+    
+    
+    
+    
+    <footer class="article-time">
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
+  <circle cx="18" cy="18" r="4" />
+  <path d="M15 3v4" />
+  <path d="M7 3v4" />
+  <path d="M3 11h16" />
+  <path d="M18 16.496v1.504l1 1" />
+</svg>
+                <time class="article-time--published">2025-04-14</time>
+            </div>
+        
+
+        
+    </footer>
+    
+
+    
+</div>
+
+</header>
+
+    <section class="article-content">
+    
+    
+    <h1 id="1为什么要学物理备份">1.为什么要学物理备份？
+</h1><p>一个合格的运维工程师或者dba工程师,如果有从事数据库方面的话,首先需要做的就是备份,如果没有备份,出现问题的话,你的业务就会出问题,你的工作甚至会丢掉</p>
+<p>所以备份是重要的,但光有备份还不行,备份后如果出现问题,你还得使用备份数据来恢复,但恢复数据的时间一般都是很长的,不符合业务需求,所以回复效率较高的物理备份也会被使用。</p>
+<blockquote>
+<p>就像前文给大家看的微盟数据库被删。,最后是腾讯云的工程师协助进行数据恢复</p>
+</blockquote>
+<p>但是单纯的物理备份会有以下问题：</p>
+<ol>
+<li>
+<p>存储引擎依赖：</p>
+<ul>
+<li>物理备份通常与特定的存储引擎实现密切相关。不同版本的 MySQL 可能会对存储引擎的内部数据结构（如 InnoDB 的 redo 和 undo 日志）进行更改，从而导致兼容性问题。</li>
+</ul>
+</li>
+<li>
+<p>版本变化：</p>
+<ul>
+<li>MySQL 的不同版本之间，数据文件格式可能会发生变化。物理备份直接复制数据文件，这些变化可能导致备份在不同版本之间不兼容。</li>
+</ul>
+</li>
+<li>
+<p>平台依赖：</p>
+<ul>
+<li>物理备份可能依赖于特定的操作系统和文件系统特性。例如，文件锁定和文件系统快照在不同操作系统上可能表现不同。</li>
+</ul>
+</li>
+<li>
+<p>事务日志：</p>
+<ul>
+<li>redo 和 undo 日志用于恢复和回滚事务。它们的格式和管理方式在不同版本中可能会有所变化，影响备份的可移植性。</li>
+</ul>
+</li>
+</ol>
+<p>为了解决以上问题，所以一个快速备份与恢复的软件就很有必要。</p>
+<h2 id="xtrabackup工具">xtrabackup工具
+</h2><p>Percona-xtrabackup是Percona公司开发的一个用于MySQL数据库物理热备的备份工具,支持MySQL、Percona server和MariaDB,开源免费,是目前较为受欢迎的主流备份工具</p>
+<p>xtrabackup只能备份innoDB和xtraDB两种数据引擎的表,而不能备份MyiSAM数据表。</p>
+<p>特点</p>
+<ul>
+<li>物理备份工具,拷贝数据文件</li>
+<li>备份和恢复数据的速度非常快,安全可靠</li>
+<li>在备份期间执行的事务不会间断,备份innodb数据不影响业务</li>
+<li>备份期间不增加太多数据库的性能压力</li>
+<li>支持对备份的数据自动校验</li>
+<li>运行全量,增量,压缩备份及流备份</li>
+<li>支持在线迁移表以及快速创建新的从库</li>
+<li>运行几乎所有版本的mysql和maridb</li>
+</ul>
+<h2 id="什么是物理备份">什么是物理备份
+</h2><p>查看如下物理备份方式</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">1. 基于逻辑备份的全量备份，导入执行，前提是数据库能正常启动
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">2. 直接恢复物理文件数据
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">- tar对mysql数据打包压缩，做了个备份
+</span></span><span class="line"><span class="cl">- 删数据
+</span></span><span class="line"><span class="cl">- 解压恢复数据
+</span></span><span class="line"><span class="cl">- 数据库重启还是可以继续用
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">但是这种方式太粗暴，有更专门的工具，通过这种直接操作数据文件的，备份，恢复方案，且对数据库做很多的校验工作。
+</span></span><span class="line"><span class="cl">一些主流的物理备份工具，例如xtrabackup工具
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="数据文件扩张名">数据文件扩张名
+</h2><div class="table-wrapper"><table>
+<thead>
+<tr>
+<th>文件类型</th>
+<th>作用</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>.idb文件</td>
+<td>以独立表空间存储的InnoDB引擎类型的数据文件扩展名</td>
+</tr>
+<tr>
+<td>.ibdata文件</td>
+<td>以共享表空间存储的InnoDB引擎类型的数据文件扩展名</td>
+</tr>
+<tr>
+<td>.frm文件</td>
+<td>存放于表相关的元数据(meta)信息及表结构的定义信息</td>
+</tr>
+<tr>
+<td>.MYD文件</td>
+<td>存放MyISAM引擎表的数据文件扩展名</td>
+</tr>
+<tr>
+<td>.MYI文件</td>
+<td>存放MyISAM引擎表的索引信息文件扩展名</td>
+</tr>
+</tbody>
+</table></div>
+<h2 id="看看mysql的数据是什么">看看mysql的数据是什么
+</h2><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-gdscript3" data-lang="gdscript3"><span class="line"><span class="cl"><span class="p">[</span><span class="n">root</span><span class="err">@</span><span class="n">tech</span><span class="o">-</span><span class="n">db</span><span class="o">-</span><span class="mi">51</span> <span class="o">/</span><span class="n">linux0224</span><span class="o">/</span><span class="n">mysql_3306</span><span class="o">/</span><span class="n">test_backup</span><span class="p">]</span><span class="c1">#ll</span>
+</span></span><span class="line"><span class="cl"><span class="n">total</span> <span class="mi">112</span>
+</span></span><span class="line"><span class="cl"><span class="o">-</span><span class="n">rw</span><span class="o">-</span><span class="n">r</span><span class="o">-----</span> <span class="mi">1</span> <span class="n">mysql</span> <span class="n">mysql</span>    <span class="mi">67</span> <span class="n">Aug</span> <span class="mi">10</span> <span class="mi">12</span><span class="p">:</span><span class="mi">15</span> <span class="n">db</span><span class="o">.</span><span class="n">opt</span>
+</span></span><span class="line"><span class="cl"><span class="o">-</span><span class="n">rw</span><span class="o">-</span><span class="n">r</span><span class="o">-----</span> <span class="mi">1</span> <span class="n">mysql</span> <span class="n">mysql</span>  <span class="mi">8556</span> <span class="n">Aug</span> <span class="mi">10</span> <span class="mi">12</span><span class="p">:</span><span class="mi">15</span> <span class="n">test_table</span><span class="o">.</span><span class="n">frm</span>
+</span></span><span class="line"><span class="cl"><span class="o">-</span><span class="n">rw</span><span class="o">-</span><span class="n">r</span><span class="o">-----</span> <span class="mi">1</span> <span class="n">mysql</span> <span class="n">mysql</span> <span class="mi">98304</span> <span class="n">Aug</span> <span class="mi">10</span> <span class="mi">12</span><span class="p">:</span><span class="mi">32</span> <span class="n">test_table</span><span class="o">.</span><span class="n">ibd</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="err">所以数据库引擎，就是帮你</span>
+</span></span><span class="line"><span class="cl"><span class="mf">1.</span> <span class="err">分析</span><span class="n">SQL语法</span>
+</span></span><span class="line"><span class="cl"><span class="mf">2.</span> <span class="err">执行</span><span class="n">SQL</span>
+</span></span><span class="line"><span class="cl"><span class="mf">3.</span> <span class="err">修改库，表数据</span>
+</span></span><span class="line"><span class="cl"><span class="mf">4.</span> <span class="err">提供了如事务的特性，能回滚，等，。</span>
+</span></span><span class="line"><span class="cl"><span class="n">mysql</span><span class="o">&gt;</span> <span class="n">show</span> <span class="n">engines</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="err">查看当前机器是什么引擎</span>
+</span></span><span class="line"><span class="cl"><span class="n">mysql</span><span class="o">&gt;</span> <span class="n">show</span> <span class="n">variables</span> <span class="n">like</span> <span class="s1">&#39;</span><span class="si">%s</span><span class="s1">torage%&#39;</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="o">+----------------------------------+--------+</span>
+</span></span><span class="line"><span class="cl"><span class="o">|</span> <span class="n">Variable_name</span>                    <span class="o">|</span> <span class="n">Value</span>  <span class="o">|</span>
+</span></span><span class="line"><span class="cl"><span class="o">+----------------------------------+--------+</span>
+</span></span><span class="line"><span class="cl"><span class="o">|</span> <span class="n">default_storage_engine</span>           <span class="o">|</span> <span class="n">InnoDB</span> <span class="o">|</span>
+</span></span><span class="line"><span class="cl"><span class="o">|</span> <span class="n">default_tmp_storage_engine</span>       <span class="o">|</span> <span class="n">InnoDB</span> <span class="o">|</span>
+</span></span><span class="line"><span class="cl"><span class="o">|</span> <span class="n">disabled_storage_engines</span>         <span class="o">|</span>        <span class="o">|</span>
+</span></span><span class="line"><span class="cl"><span class="o">|</span> <span class="n">internal_tmp_disk_storage_engine</span> <span class="o">|</span> <span class="n">InnoDB</span> <span class="o">|</span>
+</span></span><span class="line"><span class="cl"><span class="o">+----------------------------------+--------+</span>
+</span></span><span class="line"><span class="cl"><span class="mi">4</span> <span class="n">rows</span> <span class="ow">in</span> <span class="n">set</span> <span class="p">(</span><span class="mf">0.00</span> <span class="n">sec</span><span class="p">)</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="安装xtrabackup工具">安装xtrabackup工具
+</h2><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-gdscript3" data-lang="gdscript3"><span class="line"><span class="cl"><span class="n">yum</span> <span class="n">install</span> <span class="n">perl</span> <span class="n">perl</span><span class="o">-</span><span class="n">devel</span> <span class="n">libaio</span> <span class="n">libaio</span><span class="o">-</span><span class="n">devel</span> <span class="n">perl</span><span class="o">-</span><span class="n">Time</span><span class="o">-</span><span class="n">HiRes</span> <span class="n">perl</span><span class="o">-</span><span class="n">DBD</span><span class="o">-</span><span class="n">MySQL</span> <span class="o">-</span><span class="n">y</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># 下载软件且安装</span>
+</span></span><span class="line"><span class="cl"><span class="n">wget</span> <span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">www</span><span class="o">.</span><span class="n">percona</span><span class="o">.</span><span class="n">com</span><span class="o">/</span><span class="n">downloads</span><span class="o">/</span><span class="n">XtraBackup</span><span class="o">/</span><span class="n">Percona</span><span class="o">-</span><span class="n">XtraBackup</span><span class="o">-</span><span class="mf">2.4</span><span class="o">.</span><span class="mi">9</span><span class="o">/</span><span class="n">binary</span><span class="o">/</span><span class="n">redhat</span><span class="o">/</span><span class="mi">7</span><span class="o">/</span><span class="n">x86_64</span><span class="o">/</span><span class="n">percona</span><span class="o">-</span><span class="n">xtrabackup</span><span class="o">-</span><span class="mi">24</span><span class="o">-</span><span class="mf">2.4</span><span class="o">.</span><span class="mi">9</span><span class="o">-</span><span class="mf">1.</span><span class="n">el7</span><span class="o">.</span><span class="n">x86_64</span><span class="o">.</span><span class="n">rpm</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">yum</span> <span class="n">localinstall</span> <span class="n">percona</span><span class="o">-</span><span class="n">xtrabackup</span><span class="o">-</span><span class="mi">24</span><span class="o">-</span><span class="mf">2.4</span><span class="o">.</span><span class="mi">9</span><span class="o">-</span><span class="mf">1.</span><span class="n">el7</span><span class="o">.</span><span class="n">x86_64</span><span class="o">.</span><span class="n">rpm</span> <span class="o">-</span><span class="n">y</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># 就是用它的命令而已</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># 搜索查看安装的这个rpm包，默认生成了哪些文件</span>
+</span></span><span class="line"><span class="cl"><span class="p">[</span><span class="n">root</span><span class="err">@</span><span class="n">tech</span><span class="o">-</span><span class="n">db</span><span class="o">-</span><span class="mi">51</span> <span class="o">/</span><span class="n">opt</span><span class="p">]</span><span class="c1">#rpm -ql percona-xtrabackup-24 </span>
+</span></span><span class="line"><span class="cl"><span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="n">bin</span><span class="o">/</span><span class="n">innobackupex</span>
+</span></span><span class="line"><span class="cl"><span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="n">bin</span><span class="o">/</span><span class="n">xbcloud</span>
+</span></span><span class="line"><span class="cl"><span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="n">bin</span><span class="o">/</span><span class="n">xbcloud_osenv</span>
+</span></span><span class="line"><span class="cl"><span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="n">bin</span><span class="o">/</span><span class="n">xbcrypt</span>
+</span></span><span class="line"><span class="cl"><span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="n">bin</span><span class="o">/</span><span class="n">xbstream</span>
+</span></span><span class="line"><span class="cl"><span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="n">bin</span><span class="o">/</span><span class="n">xtrabackup</span>
+</span></span><span class="line"><span class="cl"><span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="n">share</span><span class="o">/</span><span class="n">doc</span><span class="o">/</span><span class="n">percona</span><span class="o">-</span><span class="n">xtrabackup</span><span class="o">-</span><span class="mi">24</span><span class="o">-</span><span class="mf">2.4</span><span class="o">.</span><span class="mi">9</span>
+</span></span><span class="line"><span class="cl"><span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="n">share</span><span class="o">/</span><span class="n">doc</span><span class="o">/</span><span class="n">percona</span><span class="o">-</span><span class="n">xtrabackup</span><span class="o">-</span><span class="mi">24</span><span class="o">-</span><span class="mf">2.4</span><span class="o">.</span><span class="mi">9</span><span class="o">/</span><span class="n">COPYING</span>
+</span></span><span class="line"><span class="cl"><span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="n">share</span><span class="o">/</span><span class="n">man</span><span class="o">/</span><span class="n">man1</span><span class="o">/</span><span class="n">innobackupex</span><span class="o">.</span><span class="mf">1.</span><span class="n">gz</span>
+</span></span><span class="line"><span class="cl"><span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="n">share</span><span class="o">/</span><span class="n">man</span><span class="o">/</span><span class="n">man1</span><span class="o">/</span><span class="n">xbcrypt</span><span class="o">.</span><span class="mf">1.</span><span class="n">gz</span>
+</span></span><span class="line"><span class="cl"><span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="n">share</span><span class="o">/</span><span class="n">man</span><span class="o">/</span><span class="n">man1</span><span class="o">/</span><span class="n">xbstream</span><span class="o">.</span><span class="mf">1.</span><span class="n">gz</span>
+</span></span><span class="line"><span class="cl"><span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="n">share</span><span class="o">/</span><span class="n">man</span><span class="o">/</span><span class="n">man1</span><span class="o">/</span><span class="n">xtrabackup</span><span class="o">.</span><span class="mf">1.</span><span class="n">gz</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h1 id="2全量备份恢复">2.全量备份，恢复
+</h1><p>1.明确，这个工具，其实就是再 备份mysql的数据文件而已</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">0. 给你的机器，设置基于GTID的模式运行
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">1. 基于命令 ，全量备份命令
+</span></span><span class="line"><span class="cl"># 和mysqldump很像，链接实例，备份数据
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"># 创建备份目录
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">innobackupex --user=root  --password=linux3306  -S /tmp/mysql.sock  /xtrabackup_data/ 
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/MySQL%e5%9f%ba%e7%a1%80%e8%af%ad%e6%b3%95/assets/1660116799700.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="1660116799700"
+	
+	
+></p>
+<h3 id="查看xtrabackup工具生成的日志文件">查看xtrabackup工具生成的日志文件
+</h3><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span><span class="lnt">43
+</span><span class="lnt">44
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-gdscript3" data-lang="gdscript3"><span class="line"><span class="cl"><span class="err">查看具体备份的数据信息，以及自己生成了哪些日志文件</span>
+</span></span><span class="line"><span class="cl"><span class="n">xtrabackup_binlog_info</span> <span class="err">记录全量备份时，该实例最后的一个</span><span class="n">binlog</span>  <span class="err">事务</span><span class="n">ID</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">xtrabackup_logfile</span> <span class="err">是该工具本身的一个二进制日志文件</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="p">[</span><span class="n">root</span><span class="err">@</span><span class="n">tech</span><span class="o">-</span><span class="n">db</span><span class="o">-</span><span class="mi">51</span> <span class="o">/</span><span class="n">xtrabackup_data</span><span class="o">/</span><span class="mi">2022</span><span class="o">-</span><span class="mi">08</span><span class="o">-</span><span class="mi">10</span><span class="n">_15</span><span class="o">-</span><span class="mi">29</span><span class="o">-</span><span class="mi">12</span><span class="p">]</span><span class="c1">#strings xtrabackup_logfile </span>
+</span></span><span class="line"><span class="cl"><span class="n">xtrabkup</span> <span class="mi">220810</span> <span class="mi">15</span><span class="p">:</span><span class="mi">29</span><span class="p">:</span><span class="mi">12</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">xtrabackup_info</span>  <span class="err">当前</span><span class="mi">3306</span><span class="err">全量备份的详细信息，</span><span class="n">xtraback备份当前实例数据</span><span class="err">，一个版本信息</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="p">[</span><span class="n">root</span><span class="err">@</span><span class="n">tech</span><span class="o">-</span><span class="n">db</span><span class="o">-</span><span class="mi">51</span> <span class="o">/</span><span class="n">xtrabackup_data</span><span class="o">/</span><span class="mi">2022</span><span class="o">-</span><span class="mi">08</span><span class="o">-</span><span class="mi">10</span><span class="n">_15</span><span class="o">-</span><span class="mi">29</span><span class="o">-</span><span class="mi">12</span><span class="p">]</span><span class="c1">#cat xtrabackup_info</span>
+</span></span><span class="line"><span class="cl"><span class="n">uuid</span> <span class="o">=</span> <span class="mi">22363968</span><span class="o">-</span><span class="mf">187e-11</span><span class="n">ed</span><span class="o">-</span><span class="mi">8</span><span class="n">a4d</span><span class="o">-</span><span class="mi">000</span><span class="n">c29463bc7</span>
+</span></span><span class="line"><span class="cl"><span class="n">name</span> <span class="o">=</span> 
+</span></span><span class="line"><span class="cl"><span class="n">tool_name</span> <span class="o">=</span> <span class="n">innobackupex</span>
+</span></span><span class="line"><span class="cl"><span class="n">tool_command</span> <span class="o">=</span> <span class="o">--</span><span class="n">user</span><span class="o">=</span><span class="n">root</span> <span class="o">--</span><span class="n">password</span><span class="o">=...</span> <span class="o">-</span><span class="n">S</span> <span class="o">/</span><span class="n">tmp</span><span class="o">/</span><span class="n">mysql</span><span class="o">.</span><span class="n">sock</span> <span class="o">/</span><span class="n">xtrabackup_data</span><span class="o">/</span>
+</span></span><span class="line"><span class="cl"><span class="n">tool_version</span> <span class="o">=</span> <span class="mf">2.4</span><span class="o">.</span><span class="mi">9</span>
+</span></span><span class="line"><span class="cl"><span class="n">ibbackup_version</span> <span class="o">=</span> <span class="mf">2.4</span><span class="o">.</span><span class="mi">9</span>
+</span></span><span class="line"><span class="cl"><span class="n">server_version</span> <span class="o">=</span> <span class="mf">5.7</span><span class="o">.</span><span class="mi">28</span><span class="o">-</span><span class="nb">log</span>
+</span></span><span class="line"><span class="cl"><span class="n">start_time</span> <span class="o">=</span> <span class="mi">2022</span><span class="o">-</span><span class="mi">08</span><span class="o">-</span><span class="mi">10</span> <span class="mi">15</span><span class="p">:</span><span class="mi">29</span><span class="p">:</span><span class="mi">12</span>
+</span></span><span class="line"><span class="cl"><span class="n">end_time</span> <span class="o">=</span> <span class="mi">2022</span><span class="o">-</span><span class="mi">08</span><span class="o">-</span><span class="mi">10</span> <span class="mi">15</span><span class="p">:</span><span class="mi">29</span><span class="p">:</span><span class="mi">13</span>
+</span></span><span class="line"><span class="cl"><span class="n">lock_time</span> <span class="o">=</span> <span class="mi">0</span>
+</span></span><span class="line"><span class="cl"><span class="n">binlog_pos</span> <span class="o">=</span> <span class="n">filename</span> <span class="s1">&#39;mysql-log-bin.000012&#39;</span><span class="p">,</span> <span class="n">position</span> <span class="s1">&#39;194&#39;</span><span class="p">,</span> <span class="n">GTID</span> <span class="n">of</span> <span class="n">the</span> <span class="n">last</span> <span class="n">change</span> <span class="s1">&#39;187299d4-0e2b-11ed-8b0c-000c29463bc7:1-6&#39;</span>
+</span></span><span class="line"><span class="cl"><span class="n">innodb_from_lsn</span> <span class="o">=</span> <span class="mi">0</span>
+</span></span><span class="line"><span class="cl"><span class="n">innodb_to_lsn</span> <span class="o">=</span> <span class="mi">950998185</span>
+</span></span><span class="line"><span class="cl"><span class="n">partial</span> <span class="o">=</span> <span class="n">N</span>
+</span></span><span class="line"><span class="cl"><span class="n">incremental</span> <span class="o">=</span> <span class="n">N</span>
+</span></span><span class="line"><span class="cl"><span class="n">format</span> <span class="o">=</span> <span class="n">file</span>
+</span></span><span class="line"><span class="cl"><span class="n">compact</span> <span class="o">=</span> <span class="n">N</span>
+</span></span><span class="line"><span class="cl"><span class="n">compressed</span> <span class="o">=</span> <span class="n">N</span>
+</span></span><span class="line"><span class="cl"><span class="n">encrypted</span> <span class="o">=</span> <span class="n">N</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># xtrabackup备份数据，也是有连续性记录，</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># xtrabackup通过lsn号，确认数据的起点，截止点</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># xtrabackup备份数据，出现不一致的情况，会来查看该信息（DBA的活）</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="p">[</span><span class="n">root</span><span class="err">@</span><span class="n">tech</span><span class="o">-</span><span class="n">db</span><span class="o">-</span><span class="mi">51</span> <span class="o">/</span><span class="n">xtrabackup_data</span><span class="o">/</span><span class="mi">2022</span><span class="o">-</span><span class="mi">08</span><span class="o">-</span><span class="mi">10</span><span class="n">_15</span><span class="o">-</span><span class="mi">29</span><span class="o">-</span><span class="mi">12</span><span class="p">]</span><span class="c1">#cat xtrabackup_checkpoints</span>
+</span></span><span class="line"><span class="cl"><span class="n">backup_type</span> <span class="o">=</span> <span class="n">full</span><span class="o">-</span><span class="n">backuped</span>
+</span></span><span class="line"><span class="cl"><span class="n">from_lsn</span> <span class="o">=</span> <span class="mi">0</span>
+</span></span><span class="line"><span class="cl"><span class="n">to_lsn</span> <span class="o">=</span> <span class="mi">950998185</span>
+</span></span><span class="line"><span class="cl"><span class="n">last_lsn</span> <span class="o">=</span> <span class="mi">950998194</span>
+</span></span><span class="line"><span class="cl"><span class="n">compact</span> <span class="o">=</span> <span class="mi">0</span>
+</span></span><span class="line"><span class="cl"><span class="n">recover_binlog_info</span> <span class="o">=</span> <span class="mi">0</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/MySQL%e5%9f%ba%e7%a1%80%e8%af%ad%e6%b3%95/pic/1660116982852.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="1660116982852"
+	
+	
+></p>
+<h2 id="不要该工具自带的时间戳信息">不要该工具自带的时间戳信息
+</h2><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">--no-timestamp  
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">#自己指定备份的时间目录 
+</span></span><span class="line"><span class="cl">innobackupex --no-timestamp   --user=root   --password=123456  -S /tmp/mysql.sock  /xtrabackup_data_no_time/full_3306_db_$(date +%F)/
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/MySQL%e5%9f%ba%e7%a1%80%e8%af%ad%e6%b3%95/pic/1660118168282.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="1660118168282"
+	
+	
+></p>
+<h3 id="恢复该全量备份的数据">恢复该全量备份的数据
+</h3><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span><span class="lnt">43
+</span><span class="lnt">44
+</span><span class="lnt">45
+</span><span class="lnt">46
+</span><span class="lnt">47
+</span><span class="lnt">48
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">1. 挪走自带的数据，用mv替代rm
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">[root@tech-db-51 /linux0224/mysql_3306]#mv ./*  /opt/3306_db_backup/
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">2.尝试用xtrabackup命令恢复
+</span></span><span class="line"><span class="cl">恢复的思路其实，把备份的数据，原封不动，再放回mysql  datadir下
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">3. 基于xtraback命令的参数，对默认所有的未提交事务，确保数据一致性
+</span></span><span class="line"><span class="cl"># 操作备份的数据即可
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">innobackupex --apply-log     /xtrabackup_data_no_time/full_3306_db_2022-08-10/
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">4. 此时就可以直接恢复数据了
+</span></span><span class="line"><span class="cl"># innobackupex &gt; rsync 数据拷贝回去
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">innobackupex --defaults-file=/etc/my.cnf --copy-back --rsync  /xtrabackup_data_no_time/full_3306_db_2022-08-10/
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">4.1 重新授权给mysql
+</span></span><span class="line"><span class="cl">[root@tech-db-51 /linux0224/mysql_3306]#chown -R mysql.mysql ./*
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">5.恢复数据之后，建议重启mysql，确保数据重新加载正常
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">6.修改配置文件，修改日志目录
+</span></span><span class="line"><span class="cl">[root@tech-db-51 /linux0224/mysql_3306]#mkdir -p /mysql_3306/logs/
+</span></span><span class="line"><span class="cl">[root@tech-db-51 /linux0224/mysql_3306]#
+</span></span><span class="line"><span class="cl">[root@tech-db-51 /linux0224/mysql_3306]#
+</span></span><span class="line"><span class="cl">[root@tech-db-51 /linux0224/mysql_3306]#chown -R mysql.mysql /mysql_3306/logs/
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">7.重启
+</span></span><span class="line"><span class="cl">[root@tech-db-51 /linux0224/mysql_3306]#systemctl restart mysqld
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">8.新的日志目录
+</span></span><span class="line"><span class="cl">[root@tech-db-51 /linux0224/mysql_3306]#ls /mysql_3306/logs/
+</span></span><span class="line"><span class="cl">3306-err.log
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">9.确保数据可以访问
+</span></span><span class="line"><span class="cl">mysql&gt; select * from test_backup.test_table;
+</span></span><span class="line"><span class="cl">+------+
+</span></span><span class="line"><span class="cl">| id   |
+</span></span><span class="line"><span class="cl">+------+
+</span></span><span class="line"><span class="cl">|  777 |
+</span></span><span class="line"><span class="cl">|  888 |
+</span></span><span class="line"><span class="cl">|  999 |
+</span></span><span class="line"><span class="cl">+------+
+</span></span><span class="line"><span class="cl">3 rows in set (0.01 sec)
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/MySQL%e5%9f%ba%e7%a1%80%e8%af%ad%e6%b3%95/pic/1660118747472.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="1660118747472"
+	
+	
+></p>
+<h1 id="3增量备份">3.增量备份
+</h1><p><img src="/MySQL%e5%9f%ba%e7%a1%80%e8%af%ad%e6%b3%95/pic/1660119445574.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="1660119445574"
+	
+	
+></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span><span class="lnt">43
+</span><span class="lnt">44
+</span><span class="lnt">45
+</span><span class="lnt">46
+</span><span class="lnt">47
+</span><span class="lnt">48
+</span><span class="lnt">49
+</span><span class="lnt">50
+</span><span class="lnt">51
+</span><span class="lnt">52
+</span><span class="lnt">53
+</span><span class="lnt">54
+</span><span class="lnt">55
+</span><span class="lnt">56
+</span><span class="lnt">57
+</span><span class="lnt">58
+</span><span class="lnt">59
+</span><span class="lnt">60
+</span><span class="lnt">61
+</span><span class="lnt">62
+</span><span class="lnt">63
+</span><span class="lnt">64
+</span><span class="lnt">65
+</span><span class="lnt">66
+</span><span class="lnt">67
+</span><span class="lnt">68
+</span><span class="lnt">69
+</span><span class="lnt">70
+</span><span class="lnt">71
+</span><span class="lnt">72
+</span><span class="lnt">73
+</span><span class="lnt">74
+</span><span class="lnt">75
+</span><span class="lnt">76
+</span><span class="lnt">77
+</span><span class="lnt">78
+</span><span class="lnt">79
+</span><span class="lnt">80
+</span><span class="lnt">81
+</span><span class="lnt">82
+</span><span class="lnt">83
+</span><span class="lnt">84
+</span><span class="lnt">85
+</span><span class="lnt">86
+</span><span class="lnt">87
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">完成演练目标
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">周日full + 周一inc1 + 周二inc2 + 周三 inc3 
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">注意命令细节即可，最后恢复时，需要先合并多个增量备份的日志，然后再统一恢复完整的数据。
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"># 1. 先模拟8-10 全量备份
+</span></span><span class="line"><span class="cl">innobackupex --no-timestamp   --user=root   --password=123456  -S /tmp/mysql.sock  /xtrabackup_0224/full_3306_db_$(date +%F)/
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"># 2.检查全量数据
+</span></span><span class="line"><span class="cl">[root@tech-db-51 /xtrabackup_0224]#du -sh .
+</span></span><span class="line"><span class="cl">93M	.
+</span></span><span class="line"><span class="cl">[root@tech-db-51 /xtrabackup_0224]#ll
+</span></span><span class="line"><span class="cl">total 4
+</span></span><span class="line"><span class="cl">drwxr-x--- 26 root root 4096 Aug 10 16:18 full_3306_db_2022-08-10
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"># 3.模拟次日的增量写入即可
+</span></span><span class="line"><span class="cl">mysql&gt; show master status;
+</span></span><span class="line"><span class="cl">+----------------------+----------+--------------+------------------+------------------------------------------+
+</span></span><span class="line"><span class="cl">| File                 | Position | Binlog_Do_DB | Binlog_Ignore_DB | Executed_Gtid_Set                        |
+</span></span><span class="line"><span class="cl">+----------------------+----------+--------------+------------------+------------------------------------------+
+</span></span><span class="line"><span class="cl">| mysql-log-bin.000013 |      194 |              |                  | 187299d4-0e2b-11ed-8b0c-000c29463bc7:1-6 |
+</span></span><span class="line"><span class="cl">+----------------------+----------+--------------+------------------+------------------------------------------+
+</span></span><span class="line"><span class="cl">1 row in set (0.00 sec)
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"># 增量的数据写入
+</span></span><span class="line"><span class="cl">mysql&gt; create database db_8_11;
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"># 4. 进行次日的增量备份，生成增量数据目录
+</span></span><span class="line"><span class="cl"># --incremental-basedir   以哪个目录为基础数据目录，然后进行增量备份 
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">#  --incremental  增量备份的数据，放到哪
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">innobackupex --defaults-file=/etc/my.cnf --user=root --password=123456 --socket=/tmp/mysql.sock --no-timestamp --incremental-basedir=/xtrabackup_data/2025-03-22_18-04-19  --incremental   /xtrabackup_0224/incr_1_2022-08-11 
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">innobackupex --defaults-file=/etc/my.cnf  --socket=/tmp/mysql.sock --no-timestamp --incremental-basedir=/xtrabackup_data/2025-03-22_18-04-19  --incremental   /xtrabackup_data/incr_1_2025-03-22 
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"># 5.进行 8-12的 增量备份，写入数据，模拟当天的数据增量
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">mysql&gt; show master status;
+</span></span><span class="line"><span class="cl">+----------------------+----------+--------------+------------------+----------------------------------------------------------------------------------+
+</span></span><span class="line"><span class="cl">| File                 | Position | Binlog_Do_DB | Binlog_Ignore_DB | Executed_Gtid_Set                                                                |
+</span></span><span class="line"><span class="cl">+----------------------+----------+--------------+------------------+----------------------------------------------------------------------------------+
+</span></span><span class="line"><span class="cl">| mysql-log-bin.000013 |      362 |              |                  | 187299d4-0e2b-11ed-8b0c-000c29463bc7:1-6,
+</span></span><span class="line"><span class="cl">9945ceea-1883-11ed-b2b4-000c29463bc7:1 |
+</span></span><span class="line"><span class="cl">+----------------------+----------+--------------+------------------+----------------------------------------------------------------------------------+
+</span></span><span class="line"><span class="cl">1 row in set (0.00 sec)
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">mysql&gt; create database db_8_12;
+</span></span><span class="line"><span class="cl">Query OK, 1 row affected (0.00 sec)
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">mysql&gt; 
+</span></span><span class="line"><span class="cl">mysql&gt; show master status;
+</span></span><span class="line"><span class="cl">+----------------------+----------+--------------+------------------+------------------------------------------------------------------------------------+
+</span></span><span class="line"><span class="cl">| File                 | Position | Binlog_Do_DB | Binlog_Ignore_DB | Executed_Gtid_Set                                                                  |
+</span></span><span class="line"><span class="cl">+----------------------+----------+--------------+------------------+------------------------------------------------------------------------------------+
+</span></span><span class="line"><span class="cl">| mysql-log-bin.000013 |      530 |              |                  | 187299d4-0e2b-11ed-8b0c-000c29463bc7:1-6,
+</span></span><span class="line"><span class="cl">9945ceea-1883-11ed-b2b4-000c29463bc7:1-2 |
+</span></span><span class="line"><span class="cl">+----------------------+----------+--------------+------------------+------------------------------------------------------------------------------------+
+</span></span><span class="line"><span class="cl">1 row in set (0.00 sec)
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"># 6.对 8-12的数据，进行增量备份
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"># --incremental-basedir=/xtrabackup_0224/incr_1_2022-08-11 以谁为相对进行增量
+</span></span><span class="line"><span class="cl"># --incremental=/xtrabackup_0224/incr_2_2022-08-12 本次增量数据写到哪
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">innobackupex --defaults-file=/etc/my.cnf --user=root --password=linux3306 --socket=/tmp/mysql.sock --no-timestamp --incremental-basedir=/xtrabackup_0224/incr_1_2022-08-11  --incremental /xtrabackup_0224/incr_2_2022-08-12
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">7.检查当前所有的备份环境
+</span></span><span class="line"><span class="cl">[root@tech-db-51 /xtrabackup_0224]#du -sh *
+</span></span><span class="line"><span class="cl">93M	full_3306_db_2022-08-10
+</span></span><span class="line"><span class="cl">3.6M	incr_1_2022-08-11
+</span></span><span class="line"><span class="cl">3.6M	incr_2_2022-08-12
+</span></span><span class="line"><span class="cl">[root@tech-db-51 /xtrabackup_0224]#
+</span></span><span class="line"><span class="cl">[root@tech-db-51 /xtrabackup_0224]#
+</span></span><span class="line"><span class="cl">[root@tech-db-51 /xtrabackup_0224]## 看懂22222
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">8.模拟8-13数据写入 
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="恢复思路">恢复思路
+</h2><p>先模拟删数据，全部删除，反正有全量备份</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">mkdir -p /tmp/test_xtrabackup_db/
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">[root@tech-db-51 /xtrabackup_0224]#mv /linux0224/mysql_3306/*  /tmp/test_xtrabackup_db/
+</span></span></code></pre></td></tr></table>
+</div>
+</div><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span><span class="lnt">43
+</span><span class="lnt">44
+</span><span class="lnt">45
+</span><span class="lnt">46
+</span><span class="lnt">47
+</span><span class="lnt">48
+</span><span class="lnt">49
+</span><span class="lnt">50
+</span><span class="lnt">51
+</span><span class="lnt">52
+</span><span class="lnt">53
+</span><span class="lnt">54
+</span><span class="lnt">55
+</span><span class="lnt">56
+</span><span class="lnt">57
+</span><span class="lnt">58
+</span><span class="lnt">59
+</span><span class="lnt">60
+</span><span class="lnt">61
+</span><span class="lnt">62
+</span><span class="lnt">63
+</span><span class="lnt">64
+</span><span class="lnt">65
+</span><span class="lnt">66
+</span><span class="lnt">67
+</span><span class="lnt">68
+</span><span class="lnt">69
+</span><span class="lnt">70
+</span><span class="lnt">71
+</span><span class="lnt">72
+</span><span class="lnt">73
+</span><span class="lnt">74
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl"># 1. 明确了，目前可以恢复  8-10  到 8-12的数据，
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"># 2. 注意8-13的数据，再binlog里，找binlog在哪
+</span></span><span class="line"><span class="cl">[root@tech-db-51 /xtrabackup_0224]#ls /mysql_log/log_bin_3306/
+</span></span><span class="line"><span class="cl">all-06.txt  mysql-log-bin.000001  mysql-log-bin.000003  mysql-log-bin.000005  mysql-log-bin.000007  mysql-log-bin.000009  mysql-log-bin.000011  mysql-log-bin.000013  mysqllogOK.sql  table_delete.txt
+</span></span><span class="line"><span class="cl">jpress.sql  mysql-log-bin.000002  mysql-log-bin.000004  mysql-log-bin.000006  mysql-log-bin.000008  mysql-log-bin.000010  mysql-log-bin.000012  mysql-log-bin.index   recovery.sql    test4.txt
+</span></span><span class="line"><span class="cl">[root@tech-db-51 /xtrabackup_0224]#
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"># 3.开始合并增量日志
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">在使用 Percona XtraBackup 工具进行备份时，--apply-log 和--redo-only 参数用于处理备份的一致性和恢复。
+</span></span><span class="line"><span class="cl">--apply-log
+</span></span><span class="line"><span class="cl">- 作用：将备份文件恢复到一致状态。
+</span></span><span class="line"><span class="cl">- 用途：在备份完成后，使用 `--apply-log` 可以应用 redo 日志，以确保数据文件的一致性。这一步通常在准备恢复之前执行，使得备份能够直接用于恢复。
+</span></span><span class="line"><span class="cl">--redo-only
+</span></span><span class="line"><span class="cl">- 作用：应用 redo 日志但不清理 undo 日志。
+</span></span><span class="line"><span class="cl">- 用途：用于准备增量备份链。在应用增量备份时，先对基础备份使用 `--apply-log --redo-only`，然后逐个应用增量备份。最后，在应用完所有增量备份后，再次运行 `--apply-log`（不带 `--redo-only`）以完成恢复。
+</span></span><span class="line"><span class="cl">这两个步骤确保备份在恢复时是一致的，并且支持增量备份的应用。
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">- 先处理8-10全量数据
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">innobackupex --apply-log   --redo-only  /xtrabackup_0224/full_3306_db_2022-08-10 
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">- 合并增量1，到全量数据
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"># --incremental-dir 填入增量的数据目录    写入 全量数据目录
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">innobackupex --apply-log   --redo-only --incremental-dir=/xtrabackup_0224/incr_1_2022-08-11  /xtrabackup_0224/full_3306_db_2022-08-10
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"># 合并8-12的增量数据
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">innobackupex --apply-log   --redo-only --incremental-dir=/xtrabackup_0224/incr_2_2022-08-12  /xtrabackup_0224/full_3306_db_2022-08-10  
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"># 最后对full数据 一致性校验确认，提交事务
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">innobackupex --apply-log /xtrabackup_0224/full_3306_db_2022-08-10 
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"># 基于最终的全量数据，恢复
+</span></span><span class="line"><span class="cl"># 预测结果，应该是有 db_8_11  db_8_12 
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">innobackupex --copy-back /xtrabackup_0224/full_3306_db_2022-08-10  
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">[root@tech-db-51 /linux0224/mysql_3306]#chown -R mysql.mysql ./*
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"># 此时还差一个 8-13的增量写入， 目前是 8-10 8-11 8-12 数据全部恢复了
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"># 基于mysqlbinlog  基于GTID的号码，恢复数据  db_8-13
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">mysqlbinlog --skip-gtids --include-gtids=&#39;9945ceea-1883-11ed-b2b4-000c29463bc7:3&#39;      /mysql_log/log_bin_3306/mysql-log-bin.000013  &gt; /tmp/db_8_13.sql
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"># 恢复该导出的SQL文件
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">mysql&gt; set sql_log_bin=0;
+</span></span><span class="line"><span class="cl">mysql&gt; source /tmp/db_8_13.sql;
+</span></span><span class="line"><span class="cl">mysql&gt; set sql_log_bin=1;
+</span></span><span class="line"><span class="cl">Query OK, 0 rows affected (0.00 sec)
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"># 确认后续的日志，会继续记录
+</span></span><span class="line"><span class="cl">mysql&gt; insert into  db_8_13.table_13 values(6666);
+</span></span><span class="line"><span class="cl">Query OK, 1 row affected (0.00 sec)
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">mysql&gt; show master status;
+</span></span><span class="line"><span class="cl">+----------------------+----------+--------------+------------------+------------------------------------------------------------------------------------------------------------------------------+
+</span></span><span class="line"><span class="cl">| File                 | Position | Binlog_Do_DB | Binlog_Ignore_DB | Executed_Gtid_Set                                                                                                            |
+</span></span><span class="line"><span class="cl">+----------------------+----------+--------------+------------------+------------------------------------------------------------------------------------------------------------------------------+
+</span></span><span class="line"><span class="cl">| mysql-log-bin.000014 |      667 |              |                  | 187299d4-0e2b-11ed-8b0c-000c29463bc7:1-6,
+</span></span><span class="line"><span class="cl">7929ae4c-188a-11ed-ba6b-000c29463bc7:1-2,
+</span></span><span class="line"><span class="cl">9945ceea-1883-11ed-b2b4-000c29463bc7:1-3 |
+</span></span><span class="line"><span class="cl">+----------------------+----------+--------------+------------------+------------------------------------------------------------------------------------------------------------------------------+
+</span></span><span class="line"><span class="cl">1 row in set (0.00 sec)
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/MySQL%e5%9f%ba%e7%a1%80%e8%af%ad%e6%b3%95/pic/1660121009699.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="1660121009699"
+	
+	
+></p>
+<h1 id="今日作业">今日作业
+</h1><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">1.整理mysql数据备份方案 全量+增量
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">2. xtrabackup工具，当你需要处理超过百GB级别的数据，才会用到这个。
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">但其实到这个时候，也就有DBA介入了。
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">3.预习mysql主从复制博客，做练习。
+</span></span></code></pre></td></tr></table>
+</div>
+</div>
+</section>
+
+
+    <footer class="article-footer">
+    
+
+    </footer>
+
+
+    
+</article>
+
+    
+
+    
+
+     
+    
+        
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+        2025 小诗
+    </section>
+    
+    <section class="powerby">
+        使用 <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> 构建 <br />
+        主题 <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.26.0">Stack</a></b> 由 <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a> 设计
+    </section>
+</footer>
+
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css"crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css"crossorigin="anonymous"
+            >
+
+            </main>
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.6/dist/vibrant.min.js"integrity="sha256-awcR2jno4kI5X0zL8ex0vi2z&#43;KMkF24hUW8WePSA9HM="crossorigin="anonymous"
+                
+                >
+            </script><script type="text/javascript" src="/xiaoshi/ts/main.js" defer></script>
+<script>
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+
+    </body>
+</html>

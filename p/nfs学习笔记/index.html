@@ -1,0 +1,1308 @@
+<!DOCTYPE html>
+<html lang="zh-cn" dir="ltr">
+    <head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content="nfs前言 用于Linux之间进行文件共享则是用NFS服务(Network FileSystem) 目的在于让不同的机器，不同的操作系统可以彼此分享各自的文件数据 NF">
+<title>NFS学习笔记</title>
+
+<link rel='canonical' href='https://ZackMoel.github.io/xiaoshi/p/nfs%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/'>
+
+<link rel="stylesheet" href="/xiaoshi/scss/style.min.0304c6baf04e01a8fe70693791cb744d56a3578a3120a8796cefc66825aa39c7.css"><meta property='og:title' content="NFS学习笔记">
+<meta property='og:description' content="nfs前言 用于Linux之间进行文件共享则是用NFS服务(Network FileSystem) 目的在于让不同的机器，不同的操作系统可以彼此分享各自的文件数据 NF">
+<meta property='og:url' content='https://ZackMoel.github.io/xiaoshi/p/nfs%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/'>
+<meta property='og:site_name' content='小诗的博客'>
+<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:published_time' content='2025-04-14T15:36:22&#43;08:00'/><meta property='article:modified_time' content='2025-04-14T15:36:22&#43;08:00'/>
+<meta name="twitter:title" content="NFS学习笔记">
+<meta name="twitter:description" content="nfs前言 用于Linux之间进行文件共享则是用NFS服务(Network FileSystem) 目的在于让不同的机器，不同的操作系统可以彼此分享各自的文件数据 NF">
+  
+
+
+    </head>
+    <body class="
+    article-page
+    ">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex on-phone--column extended"><aside class="sidebar left-sidebar sticky ">
+    <button class="hamburger hamburger--spin" type="button" id="toggle-menu" aria-label="切换菜单">
+        <span class="hamburger-box">
+            <span class="hamburger-inner"></span>
+        </span>
+    </button>
+
+    <header>
+        
+            
+            <figure class="site-avatar">
+                <a href="/xiaoshi/">
+                
+                    
+                    
+                    
+                        
+                        <img src="/xiaoshi/img/avatar_hu8920112365793990935.png" width="300"
+                            height="300" class="site-logo" loading="lazy" alt="Avatar">
+                    
+                
+                </a>
+                
+                    <span class="emoji">🍥</span>
+                
+            </figure>
+            
+        
+        
+        <div class="site-meta">
+            <h1 class="site-name"><a href="/xiaoshi">小诗的博客</a></h1>
+            <h2 class="site-description">欢迎来到小诗的博客</h2>
+        </div>
+    </header><ol class="menu-social">
+            
+                <li>
+                    <a 
+                        href='https://space.bilibili.com/1055981889?spm_id_from=333.1007.0.0'
+                        target="_blank"
+                        title="bilibili"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg  xmlns="http://www.w3.org/2000/svg"  width="24"  height="24"  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  stroke-width="2"  stroke-linecap="round"  stroke-linejoin="round"  class="icon icon-tabler icons-tabler-outline icon-tabler-brand-bilibili"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M3 10a4 4 0 0 1 4 -4h10a4 4 0 0 1 4 4v6a4 4 0 0 1 -4 4h-10a4 4 0 0 1 -4 -4v-6z" /><path d="M8 3l2 3" /><path d="M16 3l-2 3" /><path d="M9 13v-2" /><path d="M15 11v2" /></svg>
+                        
+                    </a>
+                </li>
+            
+                <li>
+                    <a 
+                        href='https://github.com/ZackMoel/xiaoshi.github.io'
+                        target="_blank"
+                        title="GitHub"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-github" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M9 19c-4.3 1.4 -4.3 -2.5 -6 -3m12 5v-3.5c0 -1 .1 -1.4 -.5 -2c2.8 -.3 5.5 -1.4 5.5 -6a4.6 4.6 0 0 0 -1.3 -3.2a4.2 4.2 0 0 0 -.1 -3.2s-1.1 -.3 -3.5 1.3a12.3 12.3 0 0 0 -6.2 0c-2.4 -1.6 -3.5 -1.3 -3.5 -1.3a4.2 4.2 0 0 0 -.1 3.2a4.6 4.6 0 0 0 -1.3 3.2c0 4.6 2.7 5.7 5.5 6c-.6 .6 -.6 1.2 -.5 2v3.5" />
+</svg>
+
+
+
+                        
+                    </a>
+                </li>
+            
+        </ol><ol class="menu" id="main-menu">
+        
+        
+        
+        <li >
+            <a href='/xiaoshi/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-home" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <polyline points="5 12 3 12 12 3 21 12 19 12" />
+  <path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7" />
+  <path d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6" />
+</svg>
+
+
+
+                
+                <span>主页</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/xiaoshi/%E5%85%B3%E4%BA%8E/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-user" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="7" r="4" />
+  <path d="M6 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2" />
+</svg>
+
+
+
+                
+                <span>关于</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/xiaoshi/archives/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-archive" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <rect x="3" y="4" width="18" height="4" rx="2" />
+  <path d="M5 8v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-10" />
+  <line x1="10" y1="12" x2="14" y2="12" />
+</svg>
+
+
+
+                
+                <span>归档</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/xiaoshi/search/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-search" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="10" cy="10" r="7" />
+  <line x1="21" y1="21" x2="15" y2="15" />
+</svg>
+
+
+
+                
+                <span>搜索</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/xiaoshi/%E5%8F%8B%E6%83%85%E9%93%BE%E6%8E%A5/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-link" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M10 14a3.5 3.5 0 0 0 5 0l4 -4a3.5 3.5 0 0 0 -5 -5l-.5 .5" />
+  <path d="M14 10a3.5 3.5 0 0 0 -5 0l-4 4a3.5 3.5 0 0 0 5 5l.5 -.5" />
+</svg>
+
+
+
+                
+                <span>友情链接</span>
+            </a>
+        </li>
+        
+        <li class="menu-bottom-section">
+            <ol class="menu">
+
+                
+                    <li id="dark-mode-toggle">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="8" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="16" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <span>暗色模式</span>
+                    </li>
+                
+            </ol>
+        </li>
+    </ol>
+</aside>
+
+    <aside class="sidebar right-sidebar sticky">
+        
+            
+                
+    <section class="widget archives">
+        <div class="widget-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <line x1="5" y1="9" x2="19" y2="9" />
+  <line x1="5" y1="15" x2="19" y2="15" />
+  <line x1="11" y1="4" x2="7" y2="20" />
+  <line x1="17" y1="4" x2="13" y2="20" />
+</svg>
+
+
+
+        </div>
+        <h2 class="widget-title section-title">目录</h2>
+        
+        <div class="widget--toc">
+            <nav id="TableOfContents">
+  <ol>
+    <li><a href="#配置文件默认语法">配置文件默认语法</a></li>
+    <li><a href="#nfs客户端地址说明">nfs客户端地址说明</a></li>
+    <li><a href="#关于nfs挂载参数所有解释">关于nfs挂载参数所有解释</a></li>
+  </ol>
+
+  <ol>
+    <li><a href="#需求说明">需求说明</a></li>
+  </ol>
+</nav>
+        </div>
+    </section>
+
+            
+        
+    </aside>
+
+
+            <main class="main full-width">
+    <article class="main-article">
+    <header class="article-header">
+
+    <div class="article-details">
+    
+
+    <div class="article-title-wrapper">
+        <h2 class="article-title">
+            <a href="/xiaoshi/p/nfs%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/">NFS学习笔记</a>
+        </h2>
+    
+        
+    </div>
+
+    
+    
+    
+    
+    <footer class="article-time">
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
+  <circle cx="18" cy="18" r="4" />
+  <path d="M15 3v4" />
+  <path d="M7 3v4" />
+  <path d="M3 11h16" />
+  <path d="M18 16.496v1.504l1 1" />
+</svg>
+                <time class="article-time--published">2025-04-14</time>
+            </div>
+        
+
+        
+    </footer>
+    
+
+    
+</div>
+
+</header>
+
+    <section class="article-content">
+    
+    
+    <h1 id="nfs前言">nfs前言
+</h1><ul>
+<li>用于Linux之间进行文件共享则是用NFS服务(Network FileSystem) 目的在于让不同的机器，不同的操作系统可以彼此分享各自的文件数据 NFS服务可以将远程Linux系统上的文件共享资源挂载到本地机器的目录上</li>
+<li>NFS很像Windows系统的网络共享、安全功能、网络驱动器映射</li>
+<li>一般情况下，中小型网站集群架构后端通常用 NFS数据共享，如果大型网络集群，还会用更复杂的文件系统，如GlusterFS、FastDFS等。 NFS系统已有30年发展历史，代表了一个稳定的网络文件系统，具备可扩展，高性能等特点。</li>
+<li>由于网络速度的加快和延迟的减少，NFS系统一直是通过网络提供文件系统的不错的选择，特别是在中小型互联网企业用的广泛。</li>
+</ul>
+<h1 id="nfs在企业的应用架构">NFS在企业的应用架构
+</h1><ul>
+<li>在企业集群架构的工作场景中，NFS网络文件系统一般被用来存储共享视频、图片、静态文件，通常网站用 户上传的文件也都会放在NFS共享里，例如BBS产品(论坛)产生的图片、附件、头像等，然后前端所有的节 点访问静态资源时都会读取NFS存储上的资源。</li>
+<li>阿里云等公有云平台的NAS就是云版的NFS服务应用。</li>
+<li>这个奔驰官网，需要展示大量的图片，动态图，html网页文件，这些都是存储在服务器上的。</li>
+</ul>
+<p><img src="D:/desktop/myblog/myblog/content/post/NFS%e5%ad%a6%e4%b9%a0%e7%ac%94%e8%ae%b0/assets/image-20240910135313464.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="image-20240910135313464"
+	
+	
+></p>
+<h1 id="企业生产集群为什么需要共享存储">企业生产集群为什么需要共享存储
+</h1><ul>
+<li>
+<p>先看一下如果没有共享存储的问题</p>
+<p>A用户上传图片到web01服务器，然后用户B访该图片，结果B的请求被负载均衡分发到了Web02,但是由于 没有配置共享存储，web02没有该图片，导致用户B看不到该资源，用户心理很不爽呀。<img src="D:/desktop/myblog/myblog/content/post/NFS%e5%ad%a6%e4%b9%a0%e7%ac%94%e8%ae%b0/assets/clipImg.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="clipImg"
+	
+	
+></p>
+</li>
+<li>
+<p>那么如果配置了共享存储，无论A用户上传的图片是发给了web01还是其他，最终都会存储到共享存储上， 用户B再访问该图片的时候，无论请求被负载均衡发给了web01,web02、web03最终都会去共享存储上寻 找资源，这样也就能够访问到资源了。</p>
+</li>
+<li>
+<p>这个共享存储对于中小企业，也就是使用服务器配置NFS网络文件共享系统实现。</p>
+</li>
+</ul>
+<p><img src="D:/desktop/myblog/myblog/content/post/NFS%e5%ad%a6%e4%b9%a0%e7%ac%94%e8%ae%b0/assets/clipImg-1725951215084-5.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="clipImg"
+	
+	
+></p>
+<h1 id="任务用nfs完成网站共享存储">任务：用NFS完成网站共享存储
+</h1><p><img src="D:/desktop/myblog/myblog/content/post/NFS%e5%ad%a6%e4%b9%a0%e7%ac%94%e8%ae%b0/assets/clipImg-1725951438041-7.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="clipImg"
+	
+	
+></p>
+<h1 id="什么是nfs共享存储">什么是NFS共享存储
+</h1><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">network file system 网络文件系统
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">NFS主要使用在局域网下，让不同的主机之间可以共享文件、或者目录数据
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">主要用于linux系统上实现文件共享的一种协议，其客户端主要是Linux
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">没有用户认证机制，且数据在网络上传送的时候是明文传送，一般只能在局域网中使用
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">不需要输入账号密码，在配置文件中，定义好可访问该NFS的机器，ip地址即可，如果需要进行安全认证， 还得借助其他用户认证的插件，结合NFS，提高安全性
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">支持多节点同时挂载及并发写入
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h1 id="nfs服务架构nfs原理">NFS服务架构(NFS原理)
+</h1><ul>
+<li>NFS程序运行后，产生如下组件</li>
+<li>RPC(Remote Procedure Call Protocol):远程过程调用协议，它是一种通过网络从远程计算机程序 上请求服务，不需要了解底层网络技术的协议。</li>
+<li>rpcbind//负责NFS的数据传输，远程过程调用tcpludp协议端口11</li>
+<li>nfs-utils //控制共享哪些文件，权限管理</li>
+</ul>
+<h1 id="什么是rpc">什么是RPC
+</h1><ul>
+<li>RPC(Remote Procedure Call)远程过程调用，它是一种通过网络从远程计算机程序上请求服务，而不需 要了解底层网络技术的协议。</li>
+<li>下类个简单的例子来理解RPC：</li>
+</ul>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">远程过程调用，相对应的就是，本地过程调用。
+</span></span><span class="line"><span class="cl">rpc一般是开发中的网络编程知识
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">1.本地写好了一个代码文件，如hello-world.py ，本地运行该程序，这就是本地过程调用（执行程序，拿到结果）
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">2.远程过程调用
+</span></span><span class="line"><span class="cl">将代码文件放在远程服务器上，在自己笔记本上，远程调用、执行该代码文件，执行结果会通过网络把数据发回来，这就是远程过程调用
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="D:/desktop/myblog/myblog/content/post/NFS%e5%ad%a6%e4%b9%a0%e7%ac%94%e8%ae%b0/assets/clipImg-1725957679466-9.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="clipImg"
+	
+	
+></p>
+<h1 id="nfs和rpc关系">NFS和RPC关系
+</h1><ul>
+<li>我们已知NFS是通过网络来进行数据传输(网络文件系统),因此NFS会使用 一些port来传输数据。</li>
+<li>关键点：
+<ul>
+<li>但是NFS在传输数据的时，使用的端口是随机选择(可以重启NFS服务查看 端口)。</li>
+</ul>
+</li>
+<li>既然NFS是随机端口选择(好比银行的取钱窗口总发生变化，你知道几号窗口 是取钱业务吗?)</li>
+<li>那么NFS在传输数据的时候，怎么知道NFS服务器使用的端口是哪个呢? 答案就是NFS使用的RPC(Remote Procedure Call,就是远程过程调用) 协议来实现的。</li>
+</ul>
+<h1 id="nfs结合rpcbind通信原理">NFS结合rpcbind通信原理
+</h1><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">1.NFS服务端启动后、将自己的端口信息，注册到rpcbind服务中
+</span></span><span class="line"><span class="cl">2.NFS客户端通过TCP/IP的方式，连接到NFS服务端提供的rpcbind服务，并且从该服务中获取具体的端口信息
+</span></span><span class="line"><span class="cl">3.NFS客户端拿到具体端口信息后，将自己需要执行的函数，通过网络发给NFS服务端对应的端口
+</span></span><span class="line"><span class="cl">4.NFS服务端接收到请求后，通过rpc.nfsd进程判断该客户端是否有权限连接
+</span></span><span class="line"><span class="cl">5.NFS服务端的rpc.mount进程判断客户端是否有对应的操作权限
+</span></span><span class="line"><span class="cl">6.最终NFS服务端会将客户端请求的函数，识别为本地可以执行的命令，传递给内核、最终内核驱动硬件
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">结论:nfs的客户端、服务端之间的通信基于rpc协议，且必须运行rpcbind服务  
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h1 id="rpcbind服务">rpcbind服务
+</h1><p>该服务是用于，nfs启动后，将端口号，注册到这个rpcbind服务中</p>
+<h1 id="图解nfs工作原理">图解NFS工作原理
+</h1><p><img src="D:/desktop/myblog/myblog/content/post/NFS%e5%ad%a6%e4%b9%a0%e7%ac%94%e8%ae%b0/assets/clipImg-1726014480849-1.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="clipImg"
+	
+	
+></p>
+<h1 id="nfs工作流程图原理">nfs工作流程图原理
+</h1><p><img src="D:/desktop/myblog/myblog/content/post/NFS%e5%ad%a6%e4%b9%a0%e7%ac%94%e8%ae%b0/assets/clipImg-1726014752245-3.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="clipImg"
+	
+	
+></p>
+<h1 id="nfs服务端部署">NFS服务端部署
+</h1><p><strong>机器准备</strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">nfs服务端   nfs-31
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">多个nfs客户端    web-7
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">最终完成效果:
+</span></span><span class="line"><span class="cl">让web-7 可以读写 nfs共享的静态文件数据
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>安装nfs服务，需要安装如下软件包:
+·nfs-utils:NFS服务的主程序，包括了rpc.nfsd、rpc.mountd这两个守护进 程以及相关文档，命令
+·rpcbind:是centos7/6环境下的RPC程序</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span><span class="lnt">43
+</span><span class="lnt">44
+</span><span class="lnt">45
+</span><span class="lnt">46
+</span><span class="lnt">47
+</span><span class="lnt">48
+</span><span class="lnt">49
+</span><span class="lnt">50
+</span><span class="lnt">51
+</span><span class="lnt">52
+</span><span class="lnt">53
+</span><span class="lnt">54
+</span><span class="lnt">55
+</span><span class="lnt">56
+</span><span class="lnt">57
+</span><span class="lnt">58
+</span><span class="lnt">59
+</span><span class="lnt">60
+</span><span class="lnt">61
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">1.准备好nfs服务端机器
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">2.安装nfs工具包
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@nfs-31 ~<span class="o">]</span><span class="c1">#yum install nfs-utils rpcbind -y</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">3.修改配置文件，填写为你需要的共享参数即可
+</span></span><span class="line"><span class="cl">先学学该软件的配置文件语法，每一个软件的配置文件语法，可能都不相同
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@nfs-31 ~<span class="o">]</span><span class="c1">#cat /etc/exports</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">需要你填入如下配置，定义共享文件，以及限定访问的ip主机，以及共享的参数，权限设置
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">4. 设置一个共享 /nfs-data文件夹，运行172.16.1.0局域网内的用户可以访问，权限是只读
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@nfs-31 ~<span class="o">]</span><span class="c1">#mkdir  /nfs-data</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@nfs-31 ~<span class="o">]</span><span class="c1">#vim /etc/exports</span>
+</span></span><span class="line"><span class="cl">/nfs-data  172.16.1.0/24<span class="o">(</span>ro<span class="o">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">5.注意要先启动rpcbind服务
+</span></span><span class="line"><span class="cl">确保如下2个进程都运行，rpc服务才正常，如果想停止rpc服务，也是关闭这俩进程
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">rpcbind.service
+</span></span><span class="line"><span class="cl">rpcbind.socket
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@nfs-31 ~<span class="o">]</span><span class="c1">#systemctl start rpcbind.service</span>
+</span></span><span class="line"><span class="cl">一定要先启动rpc服务
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@nfs-31 ~<span class="o">]</span><span class="c1">#systemctl start rpcbind.socket</span>
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@nfs-31 ~<span class="o">]</span><span class="c1">#netstat -tunlp</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">6.运行nfs服务 ，每次重启nfs，nfs端口号，不断变化中
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@nfs-31 ~<span class="o">]</span><span class="c1">#systemctl start nfs</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">7.检查nfs共享的情况
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@nfs-31 ~<span class="o">]</span><span class="c1">#showmount -e 172.16.1.31</span>
+</span></span><span class="line"><span class="cl">Export list <span class="k">for</span> 172.16.1.31:
+</span></span><span class="line"><span class="cl">/nfs-data 172.16.1.0/24
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">创建测试数据
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@nfs-31 ~<span class="o">]</span><span class="c1">#touch /nfs-data/123.txt</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">8.客户端可以去挂载使用了
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">9.修改服务端的nfs配置文件，允许读写操作
+</span></span><span class="line"><span class="cl">这里需要添加参数，让挂载后的客户端，身份改为匿名用户，降低权限，以及设置对应的读写权限
+</span></span><span class="line"><span class="cl">root_squash 这个参数，就是将客户端机器在nfs中创建的数据，用于改为nfsnobody
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@nfs-31 ~<span class="o">]</span><span class="c1">#cat /etc/exports</span>
+</span></span><span class="line"><span class="cl">/nfs-data  172.16.1.0/24<span class="o">(</span>rw,root_squash<span class="o">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">还需要修改该共享文件夹的权限
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@nfs-31 ~<span class="o">]</span><span class="c1">#chown -R nfsnobody:nfsnobody  /nfs-data</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">10.nfs配置文件修改或，无需重启，使用重新加载，方式NFS端口号再次变化
+</span></span><span class="line"><span class="cl">方法1
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@nfs-31 ~<span class="o">]</span><span class="c1">#systemctl reload  nfs</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">方法2，更新nfs的配置文件设置
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@nfs-31 ~<span class="o">]</span><span class="c1">#exportfs -r</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="配置文件默认语法">配置文件默认语法
+</h2><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-gdscript3" data-lang="gdscript3"><span class="line"><span class="cl"><span class="err">默认配置文件路径是</span><span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">exports</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">exports配置文件语法</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">NFS共享目录</span>  <span class="n">NFS客户端地址</span><span class="p">(</span><span class="err">参数</span><span class="mi">1</span><span class="err">、参数</span><span class="mf">2.</span><span class="o">..</span><span class="p">)</span> <span class="err">客户点地址</span><span class="mi">2</span><span class="err">（参数</span><span class="mi">1</span><span class="err">、参数</span><span class="mf">2.</span><span class="o">..</span><span class="err">）</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="err">例如</span>
+</span></span><span class="line"><span class="cl"><span class="o">/</span>        <span class="n">hostname1</span><span class="p">(</span><span class="n">rw</span><span class="p">)</span>  <span class="n">hostname2</span><span class="p">(</span><span class="n">rw</span><span class="p">,</span><span class="n">no_root_squash</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="o">/</span><span class="n">pub</span>   <span class="o">*</span><span class="p">(</span><span class="n">rw</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="o">/</span><span class="n">home</span><span class="o">/</span><span class="n">chao</span>   <span class="mf">123.206</span><span class="o">.</span><span class="mf">16.61</span><span class="p">(</span><span class="n">ro</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="err">参数解释</span>
+</span></span><span class="line"><span class="cl"><span class="mf">1.</span><span class="n">NFS共享目录</span><span class="err">：为</span><span class="n">NFS服务器要共享的实际目录</span><span class="err">，必须绝对路径，注意目录的本地权限，如果要读写共享，要让本地目录可以被</span><span class="n">NFS客户端的</span><span class="p">(</span><span class="n">nfsnobody</span><span class="p">)</span><span class="err">读写</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="mf">2.</span><span class="n">NFS客户端地址</span><span class="err">，也就是</span><span class="n">NFS服务器端授权可以访问共享目录的客户端地址</span><span class="err">，详见下表</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="mf">3.</span><span class="err">权限参数，对授权的</span><span class="n">NFS客户端访问权限设置</span><span class="err">，见下表</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="nfs客户端地址说明">nfs客户端地址说明
+</h2><div class="table-wrapper"><table>
+<thead>
+<tr>
+<th>客户端地址</th>
+<th>具体地址</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>单一客户端</td>
+<td>192.168.178.142</td>
+<td>用的少</td>
+</tr>
+<tr>
+<td>整个网段</td>
+<td>192.168.178.0/24</td>
+<td>24表示子网掩码255.255.255.0，指定网段，用的较多192.168.178.1~ 192.168.178.254</td>
+</tr>
+<tr>
+<td>授权域名客户端</td>
+<td>nfs.cn</td>
+<td>弃用</td>
+</tr>
+<tr>
+<td>授权整个域名客户端</td>
+<td>*.cn</td>
+<td>弃用</td>
+</tr>
+</tbody>
+</table></div>
+<h2 id="关于nfs挂载参数所有解释">关于nfs挂载参数所有解释
+</h2><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-gdscript3" data-lang="gdscript3"><span class="line"><span class="cl"><span class="n">ro</span> <span class="err">只读</span>
+</span></span><span class="line"><span class="cl"><span class="n">rw</span> <span class="err">读写</span>
+</span></span><span class="line"><span class="cl"><span class="n">root_squash</span> <span class="err">当</span><span class="n">nfs客户端以root访问时</span><span class="err">，它的权限映射为</span><span class="n">NFS服务端的匿名用户</span><span class="err">，它的用户</span><span class="n">ID</span><span class="o">/</span><span class="n">GID会变成nfsnobody</span>
+</span></span><span class="line"><span class="cl"><span class="n">no_root_squash</span> <span class="err">同上，但映射客户端的</span><span class="n">root为服务器的root</span><span class="err">，不安全，避免使用</span>
+</span></span><span class="line"><span class="cl"><span class="n">all_squash</span> <span class="err">所有</span><span class="n">nfs客户端用户映射为匿名用户</span><span class="err">，生产常用参数，降低用户权限，增大安全性。</span>
+</span></span><span class="line"><span class="cl"><span class="n">sync</span> <span class="err">数据同步写入到内存与硬盘，优点数据安全，缺点性能较差</span>
+</span></span><span class="line"><span class="cl"><span class="n">async</span> <span class="err">数据写入到内存，再写入硬盘，效率高，但可能内存数据会丢</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">exports</span>  <span class="n">man</span> <span class="mi">5</span> <span class="n">exports</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="err">共享目录</span>        <span class="err">共享选项</span>
+</span></span><span class="line"><span class="cl"><span class="o">/</span><span class="n">nfs</span><span class="o">/</span><span class="n">share</span>      <span class="o">*</span><span class="p">(</span><span class="n">ro</span><span class="p">,</span><span class="n">sync</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="err">共享主机：</span>
+</span></span><span class="line"><span class="cl"><span class="o">*</span>   <span class="err">：代表所有主机</span>
+</span></span><span class="line"><span class="cl"><span class="mf">192.168</span><span class="o">.</span><span class="mf">0.0</span><span class="o">/</span><span class="mi">24</span><span class="err">：代表共享给某个网段</span>
+</span></span><span class="line"><span class="cl"><span class="mf">192.168</span><span class="o">.</span><span class="mf">0.0</span><span class="o">/</span><span class="mi">24</span><span class="p">(</span><span class="n">rw</span><span class="p">)</span> <span class="mf">192.168</span><span class="o">.</span><span class="mf">1.0</span><span class="o">/</span><span class="mi">24</span><span class="p">(</span><span class="n">ro</span><span class="p">)</span> <span class="p">:</span><span class="err">代表共享给不同网段</span>
+</span></span><span class="line"><span class="cl"><span class="mf">192.168</span><span class="o">.</span><span class="mf">0.254</span><span class="err">：共享给某个</span><span class="ne">IP</span>
+</span></span><span class="line"><span class="cl"><span class="o">*.</span><span class="n">yuchaoit</span><span class="o">.</span><span class="n">cn</span><span class="p">:</span><span class="err">代表共享给某个域下的所有主机</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="err">共享选项：</span>
+</span></span><span class="line"><span class="cl"><span class="n">ro</span><span class="err">：只读，不常用</span>
+</span></span><span class="line"><span class="cl"><span class="n">rw</span><span class="err">：读写</span>
+</span></span><span class="line"><span class="cl"><span class="n">sync</span><span class="err">：实时同步，直接写入磁盘</span>
+</span></span><span class="line"><span class="cl"><span class="n">async</span><span class="err">：异步，先缓存在内存再同步磁盘</span>
+</span></span><span class="line"><span class="cl"><span class="n">anonuid</span><span class="err">：设置访问</span><span class="n">nfs服务的用户的uid</span><span class="err">，</span><span class="n">uid需要在</span><span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">passwd中存在</span>
+</span></span><span class="line"><span class="cl"><span class="n">anongid</span><span class="err">：设置访问</span><span class="n">nfs服务的用户的gid</span>
+</span></span><span class="line"><span class="cl"><span class="n">root_squash</span> <span class="err">：默认选项</span> <span class="n">root用户创建的文件的属主和属组都变成nfsnobody</span><span class="p">,</span><span class="err">其他人</span><span class="n">nfs</span><span class="o">-</span><span class="n">server端是它自己</span><span class="err">，</span><span class="n">client端是nobody</span><span class="err">。</span>
+</span></span><span class="line"><span class="cl"><span class="n">no_root_squash</span><span class="err">：</span><span class="n">root用户创建的文件属主和属组还是root</span><span class="err">，其他人</span><span class="n">server端是它自己uid</span><span class="err">，</span><span class="n">client端是nobody</span><span class="err">。</span>
+</span></span><span class="line"><span class="cl"><span class="n">all_squash</span><span class="err">：</span> <span class="err">不管是</span><span class="n">root还是其他普通用户创建的文件的属主和属组都是nfsnobody</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="err">说明：</span>
+</span></span><span class="line"><span class="cl"><span class="err">请用如下的参数，即可，生产环境用这个</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">anonuid和anongid参数和all_squash一起使用</span><span class="err">。</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">all_squash表示不管是root还是其他普通用户从客户端所创建的文件在服务器端的拥有者和所属组都是nfsnobody</span><span class="err">；服务端为了对文件做相应管理，可以设置</span><span class="n">anonuid和anongid进而指定文件的拥有者和所属组</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h1 id="nfs客户端部署">NFS客户端部署
+</h1><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">1.查看机器的挂载情况
+</span></span><span class="line"><span class="cl">mount -l
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">2. 查看磁盘分区挂载情况
+</span></span><span class="line"><span class="cl">df -h
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">3.挂载nfs，查看nfs
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@web-7 ~<span class="o">]</span><span class="c1">#yum install nfs-utils -y</span>
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@web-7 ~<span class="o">]</span><span class="c1">#mount -t nfs  172.16.1.31:/nfs-data  /test-nfs</span>
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@web-7 ~<span class="o">]</span><span class="c1">#df -h</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">4.尝试读写数据
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@web-7 ~<span class="o">]</span><span class="c1">#ls /test-nfs</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">touch /test-nfs/hello.log  <span class="c1"># 发现没有权限</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">5.更新nfs服务端的读写权限后，再次测试数据操作
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@web-7 ~<span class="o">]</span><span class="c1">#</span>
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@web-7 ~<span class="o">]</span><span class="c1">#touch /test-nfs/456.txt</span>
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@web-7 ~<span class="o">]</span><span class="c1">#</span>
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@web-7 ~<span class="o">]</span><span class="c1">#ll /test-nfs/ </span>
+</span></span><span class="line"><span class="cl">total <span class="m">0</span>
+</span></span><span class="line"><span class="cl">-rw-r--r-- <span class="m">1</span> nfsnobody nfsnobody <span class="m">0</span> Apr <span class="m">22</span> 10:58 123.txt
+</span></span><span class="line"><span class="cl">-rw-r--r-- <span class="m">1</span> nfsnobody nfsnobody <span class="m">0</span> Apr <span class="m">22</span> 11:12 456.txt
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@web-7 ~<span class="o">]</span><span class="c1">#echo &#34;今天又是氪金的一天&#34; &gt;&gt; /test-nfs/123.txt </span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@web-7 ~<span class="o">]</span><span class="c1">#cat /test-nfs/123.txt </span>
+</span></span><span class="line"><span class="cl">今天又是氪金的一天
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@web-7 ~<span class="o">]</span><span class="c1">#cat /test-nfs/123.txt </span>
+</span></span><span class="line"><span class="cl">今天又是氪金的一天
+</span></span><span class="line"><span class="cl">冲他个十万吧 勇士
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h1 id="nfs结合nginx实现共享存储">NFS结合nginx实现共享存储
+</h1><ul>
+<li>
+<p>安装部署nfs服务端</p>
+</li>
+<li>
+<p>生产环境下的参数rw,sync,all_squash,anonuid,anongid</p>
+</li>
+</ul>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">rw,sync,
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">all_squash ,将web-7的任意用户root,bob01,，在该共享目录下的操作，全部改为nfsnobody以实现权限控制
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">web-7   /test-nfs   172.16.1.31:/nfs-data  
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">无论是root去读写 、/test-nfs
+</span></span><span class="line"><span class="cl">还是bob01读写 /test-nfs
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">创建的数据，都会被改为user，group都是 默认的nfsnobody
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">anonuid=id号
+</span></span><span class="line"><span class="cl">anongid=
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">集合这俩参数，就可以限制在 该nfs共享目录下的所有用户操作，统一被限制为了某个指定的用户
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="需求说明">需求说明
+</h2><p><img src="/xiaoshi/p/nfs%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/assets/image-20240911113457195.png"
+	width="481"
+	height="117"
+	srcset="/xiaoshi/p/nfs%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/assets/image-20240911113457195_hu366157489735554894.png 480w, /xiaoshi/p/nfs%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/assets/image-20240911113457195_hu12824356681399557551.png 1024w"
+	loading="lazy"
+	
+		alt="image-20240911113457195"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="411"
+		data-flex-basis="986px"
+	
+></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span><span class="lnt">43
+</span><span class="lnt">44
+</span><span class="lnt">45
+</span><span class="lnt">46
+</span><span class="lnt">47
+</span><span class="lnt">48
+</span><span class="lnt">49
+</span><span class="lnt">50
+</span><span class="lnt">51
+</span><span class="lnt">52
+</span><span class="lnt">53
+</span><span class="lnt">54
+</span><span class="lnt">55
+</span><span class="lnt">56
+</span><span class="lnt">57
+</span><span class="lnt">58
+</span><span class="lnt">59
+</span><span class="lnt">60
+</span><span class="lnt">61
+</span><span class="lnt">62
+</span><span class="lnt">63
+</span><span class="lnt">64
+</span><span class="lnt">65
+</span><span class="lnt">66
+</span><span class="lnt">67
+</span><span class="lnt">68
+</span><span class="lnt">69
+</span><span class="lnt">70
+</span><span class="lnt">71
+</span><span class="lnt">72
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-gdscript3" data-lang="gdscript3"><span class="line"><span class="cl"><span class="err">任务需求</span>
+</span></span><span class="line"><span class="cl"><span class="mf">1.</span><span class="n">nginx的启动用户必须是www</span><span class="err">，</span><span class="n">uid是</span> <span class="mi">1500</span><span class="err">，不允许登录</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="p">[</span><span class="n">root</span><span class="err">@</span><span class="n">web</span><span class="o">-</span><span class="mi">7</span> <span class="o">~</span><span class="p">]</span><span class="c1">#useradd  www -u 1500 -M -s /sbin/nologin</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="mf">1.0</span> <span class="err">安装</span><span class="n">nginx</span>
+</span></span><span class="line"><span class="cl"><span class="p">[</span><span class="n">root</span><span class="err">@</span><span class="n">web</span><span class="o">-</span><span class="mi">7</span> <span class="o">~</span><span class="p">]</span><span class="c1">#yum install nginx -y</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="mf">1.1</span> <span class="err">修改</span><span class="n">nginx配置文件</span><span class="err">，指定是</span><span class="n">www用户运行</span>
+</span></span><span class="line"><span class="cl"><span class="p">[</span><span class="n">root</span><span class="err">@</span><span class="n">web</span><span class="o">-</span><span class="mi">7</span> <span class="o">~</span><span class="p">]</span><span class="c1">#vim /etc/nginx/nginx.conf</span>
+</span></span><span class="line"><span class="cl"><span class="err">修改如下</span>
+</span></span><span class="line"><span class="cl"><span class="n">user</span> <span class="n">www</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="mf">1.2</span> <span class="err">启动</span><span class="n">nginx</span>
+</span></span><span class="line"><span class="cl"><span class="p">[</span><span class="n">root</span><span class="err">@</span><span class="n">web</span><span class="o">-</span><span class="mi">7</span> <span class="o">~</span><span class="p">]</span><span class="c1">#systemctl start nginx </span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="mf">1.3</span> <span class="err">检查</span><span class="n">nginx进程</span>
+</span></span><span class="line"><span class="cl"><span class="p">[</span><span class="n">root</span><span class="err">@</span><span class="n">web</span><span class="o">-</span><span class="mi">7</span> <span class="o">~</span><span class="p">]</span><span class="c1">#ps -ef|grep nginx</span>
+</span></span><span class="line"><span class="cl"><span class="n">root</span>       <span class="mi">5038</span>      <span class="mi">1</span>  <span class="mi">0</span> <span class="mi">12</span><span class="p">:</span><span class="mi">07</span> <span class="err">?</span>        <span class="mi">00</span><span class="p">:</span><span class="mi">00</span><span class="p">:</span><span class="mi">00</span> <span class="n">nginx</span><span class="p">:</span> <span class="n">master</span> <span class="n">process</span> <span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="n">sbin</span><span class="o">/</span><span class="n">nginx</span>
+</span></span><span class="line"><span class="cl"><span class="n">www</span>        <span class="mi">5040</span>   <span class="mi">5038</span>  <span class="mi">0</span> <span class="mi">12</span><span class="p">:</span><span class="mi">07</span> <span class="err">?</span>        <span class="mi">00</span><span class="p">:</span><span class="mi">00</span><span class="p">:</span><span class="mi">00</span> <span class="n">nginx</span><span class="p">:</span> <span class="n">worker</span> <span class="n">process</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="mf">2.</span><span class="n">nfs共享存储用户也是www</span><span class="err">，</span><span class="n">uid是</span> <span class="mi">1500</span><span class="err">，不允许登录，允许读写</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="err">修改</span><span class="n">nfs配置文件如下</span><span class="err">，限定客户端在该目录中的操作，权限都被转化为</span><span class="n">www用户</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="err">限制</span><span class="n">nginx机器才能访问</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="p">[</span><span class="n">root</span><span class="err">@</span><span class="n">nfs</span><span class="o">-</span><span class="mi">31</span> <span class="o">~</span><span class="p">]</span><span class="c1">#mkdir /nfs-nginx</span>
+</span></span><span class="line"><span class="cl"><span class="p">[</span><span class="n">root</span><span class="err">@</span><span class="n">nfs</span><span class="o">-</span><span class="mi">31</span> <span class="o">~</span><span class="p">]</span><span class="c1">#useradd  www -u 1500 -M -s /sbin/nologin</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="err">修改配置文件</span>
+</span></span><span class="line"><span class="cl"><span class="p">[</span><span class="n">root</span><span class="err">@</span><span class="n">nfs</span><span class="o">-</span><span class="mi">31</span> <span class="o">~</span><span class="p">]</span><span class="c1">#cat /etc/exports</span>
+</span></span><span class="line"><span class="cl"><span class="o">/</span><span class="n">nfs</span><span class="o">-</span><span class="n">data</span> <span class="o">*</span><span class="p">(</span><span class="n">rw</span><span class="p">,</span><span class="n">all_squash</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="o">/</span><span class="n">nfs</span><span class="o">-</span><span class="n">nginx</span>     <span class="mf">172.16</span><span class="o">.</span><span class="mf">1.7</span><span class="p">(</span><span class="n">rw</span><span class="p">,</span><span class="n">sync</span><span class="p">,</span><span class="n">all_squash</span><span class="p">,</span><span class="n">anonuid</span><span class="o">=</span><span class="mi">1500</span><span class="p">,</span><span class="n">anongid</span><span class="o">=</span><span class="mi">1500</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="mf">3.</span><span class="err">重新加载</span><span class="n">nfs</span><span class="err">（</span><span class="n">reload是针对已经有进程在运行了</span><span class="err">，重新读取配置文件）</span>
+</span></span><span class="line"><span class="cl"><span class="err">你是新安装的机器</span><span class="n">nfs</span><span class="err">，还能</span><span class="n">reload吗</span><span class="err">？</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="p">[</span><span class="n">root</span><span class="err">@</span><span class="n">nfs</span><span class="o">-</span><span class="mi">31</span> <span class="o">~</span><span class="p">]</span><span class="c1">#systemctl reload nfs</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="mf">4.</span><span class="err">修改共享目录的属主、属组为</span><span class="n">www</span>
+</span></span><span class="line"><span class="cl"><span class="p">[</span><span class="n">root</span><span class="err">@</span><span class="n">nfs</span><span class="o">-</span><span class="mi">31</span> <span class="o">/</span><span class="n">nfs</span><span class="o">-</span><span class="n">nginx</span><span class="p">]</span><span class="c1">#chown -R www.www /nfs-nginx/</span>
+</span></span><span class="line"><span class="cl"><span class="p">[</span><span class="n">root</span><span class="err">@</span><span class="n">nfs</span><span class="o">-</span><span class="mi">31</span> <span class="o">/</span><span class="n">nfs</span><span class="o">-</span><span class="n">nginx</span><span class="p">]</span><span class="c1">#ll -d /nfs-nginx/</span>
+</span></span><span class="line"><span class="cl"><span class="n">drwxr</span><span class="o">-</span><span class="n">xr</span><span class="o">-</span><span class="n">x</span> <span class="mi">2</span> <span class="n">www</span> <span class="n">www</span> <span class="mi">6</span> <span class="n">Apr</span> <span class="mi">22</span> <span class="mi">12</span><span class="p">:</span><span class="mi">09</span> <span class="o">/</span><span class="n">nfs</span><span class="o">-</span><span class="n">nginx</span><span class="o">/</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="mf">3.</span><span class="n">nginx网站可以正常读写共享存储资料</span>
+</span></span><span class="line"><span class="cl"><span class="err">先挂载</span><span class="n">nfs</span>
+</span></span><span class="line"><span class="cl"><span class="n">mount</span> <span class="o">-</span><span class="n">t</span> <span class="n">nfs</span> <span class="mf">172.16</span><span class="o">.</span><span class="mf">1.31</span><span class="p">:</span><span class="o">/</span><span class="n">nfs</span><span class="o">-</span><span class="n">nginx</span> <span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="n">share</span><span class="o">/</span><span class="n">nginx</span><span class="o">/</span><span class="n">html</span><span class="o">/</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="p">[</span><span class="n">root</span><span class="err">@</span><span class="n">web</span><span class="o">-</span><span class="mi">7</span> <span class="o">~</span><span class="p">]</span><span class="c1">#df -h |grep nginx</span>
+</span></span><span class="line"><span class="cl"><span class="mf">172.16</span><span class="o">.</span><span class="mf">1.31</span><span class="p">:</span><span class="o">/</span><span class="n">nfs</span><span class="o">-</span><span class="n">nginx</span>    <span class="mi">17</span><span class="n">G</span>  <span class="mf">1.6</span><span class="n">G</span>   <span class="mi">16</span><span class="n">G</span>  <span class="mi">10</span><span class="o">%</span> <span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="n">share</span><span class="o">/</span><span class="n">nginx</span><span class="o">/</span><span class="n">html</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="err">客户端生成网页，和图片等静态资源，查看是否写入到</span><span class="n">NFS服务端</span>
+</span></span><span class="line"><span class="cl"><span class="p">[</span><span class="n">root</span><span class="err">@</span><span class="n">web</span><span class="o">-</span><span class="mi">7</span> <span class="o">~</span><span class="p">]</span><span class="c1">#vim /usr/share/nginx/html/index.html</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="err">模拟用普通用户，到该</span><span class="n">nginx目录下</span><span class="err">，生成一个数据图片</span>
+</span></span><span class="line"><span class="cl"><span class="p">[</span><span class="n">client01</span><span class="err">@</span><span class="n">web</span><span class="o">-</span><span class="mi">7</span> <span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="n">share</span><span class="o">/</span><span class="n">nginx</span><span class="o">/</span><span class="n">html</span><span class="p">]</span><span class="o">$</span><span class="n">wget</span> <span class="o">-</span><span class="n">O</span>  <span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="n">share</span><span class="o">/</span><span class="n">nginx</span><span class="o">/</span><span class="n">html</span><span class="o">/</span><span class="n">liyunlong</span><span class="o">.</span><span class="n">jpg</span>  <span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">inews</span><span class="o">.</span><span class="n">gtimg</span><span class="o">.</span><span class="n">com</span><span class="o">/</span><span class="n">newsapp_bt</span><span class="o">/</span><span class="mi">0</span><span class="o">/</span><span class="mi">8823765779</span><span class="o">/</span><span class="mi">1000</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="mf">4.</span><span class="err">修改</span><span class="n">nginx网页</span><span class="err">，加载该用户自己创建的图片信息吗</span>
+</span></span><span class="line"><span class="cl"><span class="p">[</span><span class="n">client01</span><span class="err">@</span><span class="n">web</span><span class="o">-</span><span class="mi">7</span> <span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="n">share</span><span class="o">/</span><span class="n">nginx</span><span class="o">/</span><span class="n">html</span><span class="p">]</span><span class="o">$</span><span class="n">cat</span> <span class="n">index</span><span class="o">.</span><span class="n">html</span> 
+</span></span><span class="line"><span class="cl"><span class="o">&lt;</span><span class="n">meta</span> <span class="n">charset</span><span class="o">=</span><span class="n">utf</span><span class="o">-</span><span class="mi">8</span><span class="o">&gt;</span>
+</span></span><span class="line"><span class="cl"><span class="err">把我李云龙的意大利炮拿来</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="o">&lt;</span><span class="n">img</span> <span class="n">src</span><span class="o">=</span><span class="s1">&#39;./liyunlong.jpg&#39;</span><span class="o">&gt;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="mf">5.</span><span class="err">模拟用户访问该</span><span class="n">nginx网站</span>
+</span></span><span class="line"><span class="cl"><span class="n">http</span><span class="p">:</span><span class="o">//</span><span class="mf">10.0</span><span class="o">.</span><span class="mf">0.7</span><span class="o">/</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h1 id="nfs故障案例">NFS故障案例
+</h1><p>1.客户端未挂载NFS</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">[root@web-7 ~]#
+</span></span><span class="line"><span class="cl">[root@web-7 ~]#umount /usr/share/nginx/html
+</span></span><span class="line"><span class="cl">[root@web-7 ~]#
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">重新挂载
+</span></span><span class="line"><span class="cl">mount -t nfs 172.16.1.31:/nfs-nginx /usr/share/nginx/html/
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>2.服务端出问题，。nfs挂了</p>
+<p>导致nginx页面卡死，nginx网页目录操作也都卡死</p>
+<p>此时明确了共享存储出问题了</p>
+<p>去共享存储NFS服务器上找原因</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">发现nfs挂了，重启即可
+</span></span><span class="line"><span class="cl">systemctl restart nfs
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>3.nfs修复后，客户端的挂载可以恢复</p>
+<p>4.如果真的nfs死机了，且暂时无法恢复，你还得快速恢复网站的业务，可以强制取消挂载</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">使用强制卸载参数
+</span></span><span class="line"><span class="cl">，先看看挂载了什么
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">mount -l |grep nfs
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">umount -fl 挂载点  # 取消挂载即可
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">然后最终还是要以恢复NFS为主
+</span></span></code></pre></td></tr></table>
+</div>
+</div>
+</section>
+
+
+    <footer class="article-footer">
+    
+
+    </footer>
+
+
+    
+</article>
+
+    
+
+    
+
+     
+    
+        
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+        2025 小诗
+    </section>
+    
+    <section class="powerby">
+        使用 <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> 构建 <br />
+        主题 <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.26.0">Stack</a></b> 由 <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a> 设计
+    </section>
+</footer>
+
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css"crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css"crossorigin="anonymous"
+            >
+
+            </main>
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.6/dist/vibrant.min.js"integrity="sha256-awcR2jno4kI5X0zL8ex0vi2z&#43;KMkF24hUW8WePSA9HM="crossorigin="anonymous"
+                
+                >
+            </script><script type="text/javascript" src="/xiaoshi/ts/main.js" defer></script>
+<script>
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+
+    </body>
+</html>

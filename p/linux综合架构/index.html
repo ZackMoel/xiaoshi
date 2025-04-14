@@ -1,0 +1,2079 @@
+<!DOCTYPE html>
+<html lang="zh-cn" dir="ltr">
+    <head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content="开篇前言 第二阶段：综合架构篇 学习前言 第一阶段总结 1 2 3 4 5 6 7 8 9 10 第一阶段 1.死记硬背 2.多敲命令，多做练习题 3.学的东西的确特别多，但是">
+<title>Linux综合架构</title>
+
+<link rel='canonical' href='https://ZackMoel.github.io/xiaoshi/p/linux%E7%BB%BC%E5%90%88%E6%9E%B6%E6%9E%84/'>
+
+<link rel="stylesheet" href="/xiaoshi/scss/style.min.0304c6baf04e01a8fe70693791cb744d56a3578a3120a8796cefc66825aa39c7.css"><meta property='og:title' content="Linux综合架构">
+<meta property='og:description' content="开篇前言 第二阶段：综合架构篇 学习前言 第一阶段总结 1 2 3 4 5 6 7 8 9 10 第一阶段 1.死记硬背 2.多敲命令，多做练习题 3.学的东西的确特别多，但是">
+<meta property='og:url' content='https://ZackMoel.github.io/xiaoshi/p/linux%E7%BB%BC%E5%90%88%E6%9E%B6%E6%9E%84/'>
+<meta property='og:site_name' content='小诗的博客'>
+<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:published_time' content='2025-04-14T15:40:04&#43;08:00'/><meta property='article:modified_time' content='2025-04-14T15:40:04&#43;08:00'/>
+<meta name="twitter:title" content="Linux综合架构">
+<meta name="twitter:description" content="开篇前言 第二阶段：综合架构篇 学习前言 第一阶段总结 1 2 3 4 5 6 7 8 9 10 第一阶段 1.死记硬背 2.多敲命令，多做练习题 3.学的东西的确特别多，但是">
+  
+
+
+    </head>
+    <body class="
+    article-page
+    ">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex on-phone--column extended"><aside class="sidebar left-sidebar sticky ">
+    <button class="hamburger hamburger--spin" type="button" id="toggle-menu" aria-label="切换菜单">
+        <span class="hamburger-box">
+            <span class="hamburger-inner"></span>
+        </span>
+    </button>
+
+    <header>
+        
+            
+            <figure class="site-avatar">
+                <a href="/xiaoshi/">
+                
+                    
+                    
+                    
+                        
+                        <img src="/xiaoshi/img/avatar_hu8920112365793990935.png" width="300"
+                            height="300" class="site-logo" loading="lazy" alt="Avatar">
+                    
+                
+                </a>
+                
+                    <span class="emoji">🍥</span>
+                
+            </figure>
+            
+        
+        
+        <div class="site-meta">
+            <h1 class="site-name"><a href="/xiaoshi">小诗的博客</a></h1>
+            <h2 class="site-description">欢迎来到小诗的博客</h2>
+        </div>
+    </header><ol class="menu-social">
+            
+                <li>
+                    <a 
+                        href='https://space.bilibili.com/1055981889?spm_id_from=333.1007.0.0'
+                        target="_blank"
+                        title="bilibili"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg  xmlns="http://www.w3.org/2000/svg"  width="24"  height="24"  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  stroke-width="2"  stroke-linecap="round"  stroke-linejoin="round"  class="icon icon-tabler icons-tabler-outline icon-tabler-brand-bilibili"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M3 10a4 4 0 0 1 4 -4h10a4 4 0 0 1 4 4v6a4 4 0 0 1 -4 4h-10a4 4 0 0 1 -4 -4v-6z" /><path d="M8 3l2 3" /><path d="M16 3l-2 3" /><path d="M9 13v-2" /><path d="M15 11v2" /></svg>
+                        
+                    </a>
+                </li>
+            
+                <li>
+                    <a 
+                        href='https://github.com/ZackMoel/xiaoshi.github.io'
+                        target="_blank"
+                        title="GitHub"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-github" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M9 19c-4.3 1.4 -4.3 -2.5 -6 -3m12 5v-3.5c0 -1 .1 -1.4 -.5 -2c2.8 -.3 5.5 -1.4 5.5 -6a4.6 4.6 0 0 0 -1.3 -3.2a4.2 4.2 0 0 0 -.1 -3.2s-1.1 -.3 -3.5 1.3a12.3 12.3 0 0 0 -6.2 0c-2.4 -1.6 -3.5 -1.3 -3.5 -1.3a4.2 4.2 0 0 0 -.1 3.2a4.6 4.6 0 0 0 -1.3 3.2c0 4.6 2.7 5.7 5.5 6c-.6 .6 -.6 1.2 -.5 2v3.5" />
+</svg>
+
+
+
+                        
+                    </a>
+                </li>
+            
+        </ol><ol class="menu" id="main-menu">
+        
+        
+        
+        <li >
+            <a href='/xiaoshi/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-home" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <polyline points="5 12 3 12 12 3 21 12 19 12" />
+  <path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7" />
+  <path d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6" />
+</svg>
+
+
+
+                
+                <span>主页</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/xiaoshi/%E5%85%B3%E4%BA%8E/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-user" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="7" r="4" />
+  <path d="M6 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2" />
+</svg>
+
+
+
+                
+                <span>关于</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/xiaoshi/archives/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-archive" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <rect x="3" y="4" width="18" height="4" rx="2" />
+  <path d="M5 8v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-10" />
+  <line x1="10" y1="12" x2="14" y2="12" />
+</svg>
+
+
+
+                
+                <span>归档</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/xiaoshi/search/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-search" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="10" cy="10" r="7" />
+  <line x1="21" y1="21" x2="15" y2="15" />
+</svg>
+
+
+
+                
+                <span>搜索</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/xiaoshi/%E5%8F%8B%E6%83%85%E9%93%BE%E6%8E%A5/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-link" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M10 14a3.5 3.5 0 0 0 5 0l4 -4a3.5 3.5 0 0 0 -5 -5l-.5 .5" />
+  <path d="M14 10a3.5 3.5 0 0 0 -5 0l-4 4a3.5 3.5 0 0 0 5 5l.5 -.5" />
+</svg>
+
+
+
+                
+                <span>友情链接</span>
+            </a>
+        </li>
+        
+        <li class="menu-bottom-section">
+            <ol class="menu">
+
+                
+                    <li id="dark-mode-toggle">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="8" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="16" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <span>暗色模式</span>
+                    </li>
+                
+            </ol>
+        </li>
+    </ol>
+</aside>
+
+    <aside class="sidebar right-sidebar sticky">
+        
+            
+                
+    <section class="widget archives">
+        <div class="widget-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <line x1="5" y1="9" x2="19" y2="9" />
+  <line x1="5" y1="15" x2="19" y2="15" />
+  <line x1="11" y1="4" x2="7" y2="20" />
+  <line x1="17" y1="4" x2="13" y2="20" />
+</svg>
+
+
+
+        </div>
+        <h2 class="widget-title section-title">目录</h2>
+        
+        <div class="widget--toc">
+            <nav id="TableOfContents">
+  <ol>
+    <li><a href="#第二阶段综合架构篇">第二阶段：综合架构篇</a>
+      <ol>
+        <li><a href="#学习前言">学习前言</a></li>
+        <li><a href="#第一阶段总结">第一阶段总结</a></li>
+        <li><a href="#第二阶段开始学习思路的转变">第二阶段开始，学习思路的转变</a></li>
+      </ol>
+    </li>
+    <li><a href="#小白成长记">小白成长记</a></li>
+    <li><a href="#如何学好第二阶段">如何学好第二阶段</a>
+      <ol>
+        <li><a href="#提问的艺术">提问的艺术</a>
+          <ol>
+            <li><a href="#错误的提问">错误的提问</a></li>
+            <li><a href="#正确的提问">正确的提问</a></li>
+          </ol>
+        </li>
+        <li><a href="#笔记的重要性">笔记的重要性</a></li>
+        <li><a href="#搜索工具的重要性">搜索工具的重要性</a></li>
+        <li><a href="#学点英语">学点英语</a></li>
+        <li><a href="#ai工具">AI工具</a></li>
+      </ol>
+    </li>
+  </ol>
+
+  <ol>
+    <li><a href="#大型网站架构特点淘宝网">大型网站架构特点(淘宝网)</a></li>
+    <li><a href="#基本架构名词">基本架构名词</a>
+      <ol>
+        <li><a href="#单体应用架构">单体应用架构</a></li>
+        <li><a href="#集群架构">集群架构</a></li>
+        <li><a href="#负载均衡">负载均衡</a></li>
+        <li><a href="#高可用">高可用</a></li>
+      </ol>
+    </li>
+  </ol>
+
+  <ol>
+    <li><a href="#单机架构">单机架构</a></li>
+    <li><a href="#第一次升级tomcat和数据库分开了">第一次升级、tomcat和数据库分开了</a>
+      <ol>
+        <li><a href="#应用服务和数据库分离">应用服务和数据库分离</a></li>
+      </ol>
+    </li>
+    <li><a href="#第二次升级引入本地缓存分布式缓存">第二次升级、引入本地缓存、分布式缓存</a>
+      <ol>
+        <li><a href="#本地缓存的弊端">本地缓存的弊端</a></li>
+        <li><a href="#分布式缓存的优点">分布式缓存的优点</a></li>
+      </ol>
+    </li>
+    <li><a href="#第三次升级引入反向代理负载均衡">第三次升级、引入反向代理、负载均衡</a></li>
+    <li><a href="#第四次升级数据库读写分离">第四次升级、数据库读写分离</a>
+      <ol>
+        <li><a href="#主从复制">主从复制</a></li>
+        <li><a href="#读写分离">读写分离</a></li>
+        <li><a href="#问题又来了">问题又来了</a></li>
+      </ol>
+    </li>
+    <li><a href="#第五次升级负载均衡升级">第五次升级、负载均衡升级</a></li>
+    <li><a href="#第六次升级dns负载均衡">第六次升级、DNS负载均衡</a>
+      <ol>
+        <li><a href="#dns负载均衡">DNS负载均衡</a></li>
+        <li><a href="#问题又来了-1">问题又来了</a></li>
+      </ol>
+    </li>
+    <li><a href="#第n次升级">第N次升级</a></li>
+    <li><a href="#容器时代">容器时代</a></li>
+    <li><a href="#以云平台承载系统">以云平台承载系统</a>
+      <ol>
+        <li><a href="#问题它又来了">问题它又来了</a></li>
+      </ol>
+    </li>
+    <li><a href="#云平台是什么">云平台是什么</a></li>
+    <li><a href="#架构师原则">架构师原则</a></li>
+    <li><a href="#综合架构图">综合架构图</a></li>
+  </ol>
+
+  <ol>
+    <li><a href="#架构图中的服务组件">架构图中的服务组件</a></li>
+    <li><a href="#服务器环境规划">服务器环境规划</a></li>
+  </ol>
+
+  <ol>
+    <li><a href="#1创建新虚拟机模板机">1.创建新虚拟机（模板机）</a></li>
+    <li><a href="#2安装centos7">2.安装centos7</a></li>
+    <li><a href="#3简化网卡配置文件">3.简化网卡配置文件</a></li>
+    <li><a href="#5系统初始化优化">5.系统初始化优化</a>
+      <ol>
+        <li><a href="#关闭networkmanager注意">关闭NetworkManager【注意！】</a></li>
+        <li><a href="#关闭防火墙selinux">关闭防火墙、selinux</a></li>
+        <li><a href="#加速ssh连接">加速ssh连接</a></li>
+        <li><a href="#优化ps1变量">优化PS1变量</a></li>
+        <li><a href="#yum源优化">yum源优化</a></li>
+        <li><a href="#安装基础软件">安装基础软件</a></li>
+        <li><a href="#关闭邮件告警">关闭邮件告警</a></li>
+        <li><a href="#配置hosts解析">配置hosts解析</a></li>
+        <li><a href="#时间同步">时间同步</a></li>
+        <li><a href="#关闭swap">关闭swap</a></li>
+      </ol>
+    </li>
+    <li><a href="#6修改ip的脚本">6.修改ip的脚本</a></li>
+    <li><a href="#7拍摄快照">7.拍摄快照</a></li>
+    <li><a href="#8克隆新的虚拟机">8.克隆新的虚拟机</a></li>
+  </ol>
+</nav>
+        </div>
+    </section>
+
+            
+        
+    </aside>
+
+
+            <main class="main full-width">
+    <article class="main-article">
+    <header class="article-header">
+
+    <div class="article-details">
+    
+
+    <div class="article-title-wrapper">
+        <h2 class="article-title">
+            <a href="/xiaoshi/p/linux%E7%BB%BC%E5%90%88%E6%9E%B6%E6%9E%84/">Linux综合架构</a>
+        </h2>
+    
+        
+    </div>
+
+    
+    
+    
+    
+    <footer class="article-time">
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
+  <circle cx="18" cy="18" r="4" />
+  <path d="M15 3v4" />
+  <path d="M7 3v4" />
+  <path d="M3 11h16" />
+  <path d="M18 16.496v1.504l1 1" />
+</svg>
+                <time class="article-time--published">2025-04-14</time>
+            </div>
+        
+
+        
+    </footer>
+    
+
+    
+</div>
+
+</header>
+
+    <section class="article-content">
+    
+    
+    <h1 id="开篇前言">开篇前言
+</h1><h2 id="第二阶段综合架构篇">第二阶段：综合架构篇
+</h2><h3 id="学习前言">学习前言
+</h3><h3 id="第一阶段总结">第一阶段总结
+</h3><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">第一阶段
+</span></span><span class="line"><span class="cl">1.死记硬背
+</span></span><span class="line"><span class="cl">2.多敲命令，多做练习题
+</span></span><span class="line"><span class="cl">3.学的东西的确特别多，但是工作里日常用的其实反复就那几个，参数也就那几个
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">关于学习方法的理解
+</span></span><span class="line"><span class="cl">1.在不知道网站是如何搭建的时候（没做过这件事，会很难，LNMP LAMP，wordpress，discuz）刚开始，没有思路是最难的
+</span></span><span class="line"><span class="cl">2.在尝试实践过后，有了思路过后，后面的工作就是反复的重复，成为熟练工了
+</span></span><span class="line"><span class="cl">3.为什么新人是万事开头难
+</span></span><span class="line"><span class="cl">4.你会发现领导都是不干活，都是写写文案，出方案，写写PPT，年入50万（人家曾经也辛苦过10年时间）
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="第二阶段开始学习思路的转变">第二阶段开始，学习思路的转变
+</h3><p>更多的是架构的理解，而不是太多的操作</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">大家都一样装软件，nginx
+</span></span><span class="line"><span class="cl">修改配置
+</span></span><span class="line"><span class="cl">	修改端口的参数
+</span></span><span class="line"><span class="cl">	修改网站html根目录的参数
+</span></span><span class="line"><span class="cl">启动
+</span></span><span class="line"><span class="cl"> 	启动玩了之后有日志
+</span></span><span class="line"><span class="cl"> 	你得去看日志，看大量的屏幕的英文输出，是正确启动，还是错误？
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>主动的思考</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">第二阶段
+</span></span><span class="line"><span class="cl">1.和第一阶段完全不一样，更多的是理解
+</span></span><span class="line"><span class="cl">（你千万不能死记硬背操作，否则换一个场景，你又不知道自己在干什么）
+</span></span><span class="line"><span class="cl">- 主动的通过自己的思考，想出每一题的解决方案，转化为你所理解的正则符号- 自己主动再去找更多的练习，不会的和老师交流
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">2.第二阶段会频繁的使用第一阶段的命令
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">3.第二阶段大多数是使用软件(ftp,ssh,rsync,nginx)，修改配置文件，那配置文件，好几百、几千行，你根本无法背诵
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">背死在固定的某一行，某些参数
+</span></span><span class="line"><span class="cl">- 理解你要做什么，去修改什么软件的配置文件，修改的参数是什么意思
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">4.做好笔记（帮你理解如何修改配置，如何使用软件，的流程）
+</span></span><span class="line"><span class="cl">盖房子一样，流程性很重，以及盖房子之间，cad图纸得画好
+</span></span><span class="line"><span class="cl">（架构图要画好，从前端，到后端，到数据库，之间所有涉及服务，如何去理解，他们之间如何相互调用，通信）
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>比如同样的安装nginx高可用，集群</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">第一、你先理解原理，心中有了架构思维，这是最重要的
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">第二、具体nginx集群的安装部署，这其实就很简单了，你笔记做好，以后用到，拿出来复制粘贴即可。
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">第三、这也是为什么，你会发现，越牛逼的大佬，具体干的活越少，而是写方案，出架构图，因为这是一个有含金量的东西，
+</span></span><span class="line"><span class="cl">当然，人家架构师也是从普通运维，一步步锻炼，反复安装部署软件几千次，敲打几万次命令，
+</span></span><span class="line"><span class="cl">心中早已有无数方案，踩过无数的坑，因此才能独当一面，见招拆招。
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">500台机器，维护几万的日活
+</span></span><span class="line"><span class="cl">维护了5万台机器，维护过几十亿的日活
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="小白成长记">小白成长记
+</h2><p>也是你未来很长一段时间要走的路线..</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">小白（2月24进班级之前，连电脑都不太会玩） 
+</span></span><span class="line"><span class="cl">&gt; 初级运维（很多的命令，服务搭建，配置，权限，等等等。。。。）
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">&gt; 运维熟练工 （通过不断的学习各种软件，反复的安装yum，编译，修改配置，刚开始是vim手动去修改，sed修改配置文件,启动systemctl，自己写启动脚本，得看进程，看端口，不断的去练习 ps ，netstat，ss，lsof）
+</span></span><span class="line"><span class="cl">学了2月过去， 网站集群，数据库，shell编程，监控
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">&gt; 高级运维开发
+</span></span><span class="line"><span class="cl">linux+python
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">&gt;  架构师
+</span></span><span class="line"><span class="cl">linux+python+安全+全栈==架构师
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">你在教室，每一天的学习强度，上班之后，一下子降低70%
+</span></span><span class="line"><span class="cl">每天的学习，输入大量的知识，自己看看书，
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">你现在的学习环境，类似于公司的测试环境，机器配置都是最低的，服务安装也是单机的配置也不复杂
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">小白 &gt; 新人
+</span></span><span class="line"><span class="cl">linux命令会用了 &gt;   初级运维
+</span></span><span class="line"><span class="cl">各种运维工具熟练安装、配置、搭建 &gt; 中高级运维
+</span></span><span class="line"><span class="cl">运维+编程，完成高级运维自动化开发工作 &gt; 高级运维、运维开发
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">最后、架构师
+</span></span><span class="line"><span class="cl">-实实在在维护过五年以上的linux服务器，从小公司，中型公司，大公司
+</span></span><span class="line"><span class="cl">-解决过太多问题，写过太多笔记、运维博客（博客园等，找运维大佬，写了有10年以上，linux命令基础，到服务部署，到xxx 所有运维都是围绕着k8s去转）
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">-扛得住大公司的大并发架构，复杂运维架构，在阿里，卷累了，不想卷了
+</span></span><span class="line"><span class="cl">-也能在小公司独当一面，一个人就能扛起公司所有的运维工作
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">-解决方案架构师（架构在心中，出几个PPT，月入几万，全球技术峰会，全球devops技术大佬会，公司也会有技术分享会，运维，给开发同事分享k8s的技术，linux基础都不会，docker，k8s,jenkins，领导是给钱，打绩效的， 500/课，2000/课)
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">-高级运维工程师（熟练操作sed、awk、grep、linux、nginx、mysql、jenkins、redis、kafka、zookeeper、hadoop、oracle、docker、kubernetes、prometheus，等一堆工具，维护过千台服务器，维护过日活一亿的网站，起步50k+）
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">小白 &gt; 工地新人 &gt; 熟练小推车、铁锹 、和水泥 &gt; 学会了工地图纸设计、造价方案 &gt; 学会了和领导喝酒 &gt; 自己成为了当初最讨厌的那个人（老板，月入百万）
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="如何学好第二阶段">如何学好第二阶段
+</h2><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">1.画图、架构图（一图胜千言、无图言*）
+</span></span><span class="line"><span class="cl">画图工具
+</span></span><span class="line"><span class="cl">https://www.processon.com/
+</span></span><span class="line"><span class="cl">https://excalidraw.com/
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">2.理解流程、架构先后关系，如软件安装的先后关系，服务启动的先后关系
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">3. 
+</span></span><span class="line"><span class="cl">nginx
+</span></span><span class="line"><span class="cl">mysql
+</span></span><span class="line"><span class="cl">运行了
+</span></span><span class="line"><span class="cl">程序一定会有日志输出，开发，运维，都通过这个日志，去掌握程序运行的状态
+</span></span><span class="line"><span class="cl">因此你后面的学习，工作生涯，会和大量的英文接触
+</span></span><span class="line"><span class="cl">所以，请你从此安装机器，再也别用中文了
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">程序崩溃，无法运行，这个信息，毫无意义，你得通过程序反馈的英文报错，日志，去搜索，去理解它的含义
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">学会看日志
+</span></span><span class="line"><span class="cl">学会看日志
+</span></span><span class="line"><span class="cl">学会看日志，
+</span></span><span class="line"><span class="cl">无论新人，还是20年架构师，干活都是在看日志
+</span></span><span class="line"><span class="cl">（程序运行了，正常，还是故障，只能去看运行日志！）
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="提问的艺术">提问的艺术
+</h3><h4 id="错误的提问">错误的提问
+</h4><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">傻蛋的提问
+</span></span><span class="line"><span class="cl">- 在吗?
+</span></span><span class="line"><span class="cl">	我在
+</span></span><span class="line"><span class="cl">	
+</span></span><span class="line"><span class="cl">- 有人知道nginx吗？
+</span></span><span class="line"><span class="cl">	大量的死群，qq群，微信群，学习交流群
+</span></span><span class="line"><span class="cl">	我知道，nginx是一个服务器
+</span></span><span class="line"><span class="cl">	
+</span></span><span class="line"><span class="cl">- 我遇到问题了
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">- 服务起不来了
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">- 什么问题？
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">- nginx报错了？
+</span></span><span class="line"><span class="cl">- 什么报错？
+</span></span><span class="line"><span class="cl">- 怎么看？
+</span></span><span class="line"><span class="cl">。。。我tm想给你一锤子
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">============================================================================================
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">如果有同学加过各种学习群，你就会见到各种这样的提问
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">有人知道centos吗？
+</span></span><span class="line"><span class="cl">nginx报错了怎么看？
+</span></span><span class="line"><span class="cl">然后群里永远是死群，无人回答，你让人家怎么回。。
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h4 id="正确的提问">正确的提问
+</h4><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">正确的提问艺术
+</span></span><span class="line"><span class="cl">架构搭建中，没人能简单服务为什么没启动、请求为什么没转发成功，自己要捋顺流程，再告诉别人大概你做了什么事
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">lnmp的部署
+</span></span><span class="line"><span class="cl">linux 最小化安装，系统的基础依赖会有区别
+</span></span><span class="line"><span class="cl">nginx安装 装在了哪里
+</span></span><span class="line"><span class="cl">mysql
+</span></span><span class="line"><span class="cl">php,python
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">如
+</span></span><span class="line"><span class="cl">各位大佬们打扰了，我部署LNMP时出错了，我做了如下的操作
+</span></span><span class="line"><span class="cl">1.怎么装的nginx
+</span></span><span class="line"><span class="cl">2.配置文件在哪，日志目录在哪
+</span></span><span class="line"><span class="cl">3.我改了什么操作，才导致报错的  nginx启动不了，看nginx的日志
+</span></span><span class="line"><span class="cl">4.如果你这些流程自己很清晰，其实你几乎已经快找到问题所在了，只不过经验欠缺，可能还无法解决问题
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">我已经尝试了这些解决方案，但是还是不行（这样大佬知道你做了什么事，是不是方案错了）
+</span></span><span class="line"><span class="cl">1.
+</span></span><span class="line"><span class="cl">2.
+</span></span><span class="line"><span class="cl">3.
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">以下是nginx的日志报错，有大佬懂的话可以指点以下，感谢
+</span></span><span class="line"><span class="cl">图1
+</span></span><span class="line"><span class="cl">图2
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">这样的提问，试问，如果是你，你愿不愿意回答一下？是不是好多了？
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="笔记的重要性">笔记的重要性
+</h3><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">部署搭建过程，务必记录好步骤，你如果部署出错了，记录下出错的日志,也给记下来
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">这样你有问题喊老师、同学来看看，大家才知道你做了什么，哪出错了
+</span></span><span class="line"><span class="cl">否则，神仙也不知道你做了什么事，你的问题也无法得到解决，耽误你我时间。
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="搜索工具的重要性">搜索工具的重要性
+</h3><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">你能遇见的绝大多数错误，搜索引擎上，都会有人曾经搜索过，查询过
+</span></span><span class="line"><span class="cl">也有人发布过类似问题的解决方案，合理利用它，能解决你大部分问题。
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="学点英语">学点英语
+</h3><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">做IT避免不了和英语打交道
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">运维部署，会反复和大量的英文日志打交道，看日志、看日志、要学会怎么看、提取重点部分信息
+</span></span><span class="line"><span class="cl">无论是去翻译，还是去搜索
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">都要反复积累英文单词的理解、否则一直看不懂日志，那肯定做不好
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="ai工具">AI工具
+</h3><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">GPT、天工大模型、KIM   I等
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h1 id="分享两本书">分享两本书
+</h1><p>淘宝的十年</p>
+<p>大型网站架构</p>
+<h2 id="大型网站架构特点淘宝网">大型网站架构特点(淘宝网)
+</h2><p>和传统企业应用系统相比，大型网站系统具备如下特点：
+·高并发，大流量：需要扛得住高并发，大流量的用户访问。Google日均PV数35亿，日均IP访问数3亿；腾讯QQ同时在线用户数过亿；淘宝双11当天活动交易额过百亿，活动开始的第一分钟独立访问用户数 达千万
+·高可用：网站系统需要7*24小时不间断提供服务，大型网站的宕机事件通常都会成为新闻焦点，例如百度域名曾被黑客劫持无法访问。
+·海量数据，高可用数据库：需要存储，管理海量数据，使用大量的服务器
+·世界各地用户分布广泛，网络环境复杂：大型网站都是为全球用户提供服务，全球各地网络环境千差万 别，即使国内也有多个运营商网络互通难的问题，面对海外用户还得假设海外数据中心。
+·服务器安全问题：互联网的开放性，很容易受到黑客攻击，需要保护服务器安全，保证数据安全。
+·需求快速变更，发布频繁：和传统应用比较不同，互联网产品为了快速满足市场需求，产品发布率很 高，一天内网站发布几十次已是正常。
+·渐进式发展：即使是世界级大型网站，也都是由小型架构慢慢演变而来，如阿里巴巴本是在马云家中客厅诞生。</p>
+<h2 id="基本架构名词">基本架构名词
+</h2><p>在介绍架构演进之前，你需要先有一些基本的名词理解</p>
+<h3 id="单体应用架构">单体应用架构
+</h3><p>单机就是所有的业务全部写在一个项目中，部署服务到一台服务器上，所有的请求业务都由这台服务器处 理，无论是开发代码、还是运维部署、都比较简单粗暴，重启搞定一切。
+显然，当业务增长到一定程度的时候，服务器的硬件会无法满足业务需求。自然而然地想到一个程序不行就 部署多个喽，就是集群。</p>
+<h3 id="集群架构">集群架构
+</h3><p>单机处理到达瓶颈的时候，你就把单机复制几份，这样就构成了一个“集群”。 集群中每台服务器就叫做这个集群的一个“节点”,所有节点构成了一个集群。
+每个节点都提供相同的服务，那么这样系统的处理能力就相当于提升了好几倍(有几个节点就相当于提升了 几倍)。 集群中的一个节点掉线时，也不会影响到整体的集群业务。</p>
+<h3 id="负载均衡">负载均衡
+</h3><p>但问题是用户的请求究竟由哪个节点来处理呢?最好能够让此时此刻负载较小的节点来处理，这样使得每个 节点的压力都比较平均。
+要实现这个功能，就需要在所有节点之前增加一个“调度者”的角色，用户的所有请求都先交给它，然后它根 据当前所有节点的负载情况，决定将这个请求交给哪个节点处理。 这个“调度者”有个牛逼了名字——负载均衡服务器。 负载均衡：协调集群里的每个节点均衡地接受业务请求。 通俗的讲就是服务A和服务B相同时间段内处理的同类业务请求数量是相似的。</p>
+<h3 id="高可用">高可用
+</h3><p>集群系统中部分节点失效时，其他节点能够接替它继续提供服务，则可认为系统具有高可用性。</p>
+<h1 id="淘宝网的十年架构演进">淘宝网的十年架构演进
+</h1><p>大型网站都是由小型网站发展而来，网站架构也是一样，从小网站逐步演化，最开始小网站访问人数很少，一台服务器即可完成工作。</p>
+<p>此时应用程序，数据库，文件等所有资源都在一台服务器，也就是我们常见的LAMP、LNMP单机，使用各种开源软件和一台普通的服务器即可运行网站。</p>
+<h2 id="单机架构">单机架构
+</h2><p>以淘宝作为例子。在网站最初时，应用数量与用户数都较少，可以把Tomcat(后端)和数据库部署在同一台服务器上。</p>
+<p>浏览器往www.taobao.com发起请求时，首先经过DNS服务器（域名系统）把域名转换为实际IP地址10.102.4.1，浏览器转而访问该IP对应的Tomcat。</p>
+<blockquote>
+<p><strong>随着用户数的增长，Tomcat和数据库之间竞争资源，单机性能不足以支撑业务</strong></p>
+</blockquote>
+<h2 id="第一次升级tomcat和数据库分开了">第一次升级、tomcat和数据库分开了
+</h2><p>因为tomcat是java写的，非常占内存资源，总是和数据库抢占磁盘资源、内存资源，导致服务器压力过大，网站解析、处理整体能力都很差。</p>
+<p>因此让tomcat和数据库分开两台机器，显著提升各自的运行性能。</p>
+<h3 id="应用服务和数据库分离">应用服务和数据库分离
+</h3><p>随着网站业务的发展，用户量增多，一台服务器逐渐支撑不住，越来越多的用户访问导致网站响应速度变慢，越来越多的数据，导致存储空间不足。这时候应该把应用和数据分离，使用三台服务器的架构，分别运行应用服务器、文件服务器、数据库服务器。</p>
+<p>这三台机器对硬件资源要求各不同，</p>
+<ul>
+<li>应用服务器需要处理大量的业务逻辑，需要更强大，更快的CPU处理器</li>
+<li>数据库服务器需要更快速的读写数据，因此需要更强大的磁盘和大内存</li>
+<li>文件服务器要存储大量用户上传的文件，因此需要更大容量的硬盘。</li>
+</ul>
+<p>应用和数据分离后，不同作用的服务器承担不同的服务角色，各司其职，网站的并发处理能力和存储空间都得到了很大的改善，进一步支持网站业务。</p>
+<p>但是随着公司发展，用户持续增长，网站此时架构又一次面临挑战，数据库压力太大，导致用户访问延迟，用户体验变差，老板又要拍板骂人了，需要对网站架构进一步优化。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">mysql是磁盘性数据库，和机械硬盘，固态硬盘的读写速度挂钩
+</span></span><span class="line"><span class="cl">如果硬盘太差，速度速度从物理上就慢
+</span></span><span class="line"><span class="cl">其他的软件技术都是白扯
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">数据库，读写速度很快？
+</span></span><span class="line"><span class="cl">内存读写速度，比磁盘块的多的多
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">市面上主流的磁盘数据库，mysql
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">内存性数据，redis，直接数据写入到内存中
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="第二次升级引入本地缓存分布式缓存">第二次升级、引入本地缓存、分布式缓存
+</h2><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">数据放在内存中，这就叫做缓存（数据写入到内存中，读写都是和内存交互）
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>网站访问特点也逃不掉现实世界的二八定律：80%的业务访问集中在20%的商品数据上。</p>
+<p>例如淘宝的用户最关注的都是成交量多，评价较好的商品；</p>
+<p>很明显，对于网站的数据，就有热数据，冷数据之分，大部分的业务集中在一小部分数据上，那么如果把热门的数据缓存再内存中，是不是可以减轻数据库的访问压力，提高网站的整体访问效果呢，当然是可以。</p>
+<p>PS：内存的I/O速度是远超于磁盘的</p>
+<p>网站的缓存主要分两种：</p>
+<ul>
+<li>缓存再应用服务器上的本地缓存（内存）</li>
+<li>缓存放在专门的分布式缓存服务器上（单独的一台大内存服务器）</li>
+</ul>
+<h3 id="本地缓存的弊端">本地缓存的弊端
+</h3><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">第一种缓存，利用程序本身提供的缓存功能（还未引入第二种内存数据库，）
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">php
+</span></span><span class="line"><span class="cl">java
+</span></span><span class="line"><span class="cl">python
+</span></span><span class="line"><span class="cl">本身这个程序，可以将部分数据，直接写入到内存里，读取时候，也去读取内存的数据
+</span></span><span class="line"><span class="cl">这个叫做程序的本身缓存，本地缓存
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>比如修改tomcat的参数、添加JVM缓存参数、或者在应用服务器部署memcached缓存数据库，也都可以。</p>
+<p>本地缓存的访问更快，没有网络延时，但是应用服务器的内存有限，缓存的数据量有限制，而且会有缓存和应用程序争夺内存的情况。</p>
+<h3 id="分布式缓存的优点">分布式缓存的优点
+</h3><p>远程分布式缓存可以采用集群的方案，部署较大内存的服务器作为专门的缓存服务器，可以在理论上实现内存不受限的扩容服务。当然这需要有成本代价。</p>
+<blockquote>
+<p>新的问题又来了</p>
+</blockquote>
+<p>使用缓存后，数据库的访问压力得到有效的缓解，但是应用服务器在后续也有了瓶颈；</p>
+<p>缓存抗住了绝大多数的访问请求，但是随着淘宝网的崛起，用户越来越多，并发压力更大了，网站的压力就集中在了tomcat这样的应用服务器上；</p>
+<p>后端服务器解析速度越来越慢；</p>
+<p>主要使用负载均衡集群方式改善。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">第二种缓存，需要引入独立的产品，独立的软件
+</span></span><span class="line"><span class="cl">引入一个新的数据库，叫做redis数据库
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="第三次升级引入反向代理负载均衡">第三次升级、引入反向代理、负载均衡
+</h2><p>关于反向代理的概念</p>
+<ul>
+<li>反向代理，以房东 &gt; 中介 &gt; 租客</li>
+<li>正向代理， 用户浏览器 &gt; vpn &gt; facebook</li>
+</ul>
+<p>使用集群是网站解决高并发，海量请求的常见手段，俗话说三个臭皮匠，胜过诸葛亮。</p>
+<p>一台服务器的处理能力，存储空间都会有瓶颈，此时压根不要企图再去换一个更强大的服务器，对于大型网站而言，无论多么强大的服务器，都满足不了业务增长的需求，此时你的做法应该是再增加一个<code>臭皮匠</code>，也就是增加一台服务器，去分担原有服务器的压力。</p>
+<p>对于网站架构而言，通过增加机器的形式改善负载压力，就可以持续不断的改善系统性能，实现系统的可伸缩性。</p>
+<p>在很多台机器上，都部署tomcat、使用反向代理软件nginx，把请求均匀的分发给每一个tomcat。</p>
+<p>假设tomcat本身最多支持1000个并发（1000个用户同时在线）；</p>
+<p>Nginx最多支持50000个并发（支持5万个用户同时连接）；</p>
+<p>那么nginx只要把5万个并发请求，转发给50个tomcat服务器就能扛得住这个流量；</p>
+<blockquote>
+<p>通过负载均衡调度服务器，将用户的请求分发到应用服务器集群中的任何一台机器上，根据用户访问量，来决定增/删集群中的服务器，以此来解决应用服务器的压力。</p>
+</blockquote>
+<p>涉及技术、nginx、haproxy、lvs等</p>
+<blockquote>
+<p>问题又来了</p>
+</blockquote>
+<p>既然理论上，只要不断增加负载均衡的节点，应用服务器的数量，后端就必然能扛得住更多的用户流量；</p>
+<p>此时的压力就落到了谁身上？</p>
+<p>数据库，此时数据库mysql、依然是单机，读写性能达到瓶颈。</p>
+<h2 id="第四次升级数据库读写分离">第四次升级、数据库读写分离
+</h2><p>数据库优化技术，读写分离</p>
+<p>网站在使用缓存后，使得大部分数据的<code>读取</code>操作，不通过数据库就可以访问完成，但是也会有一部分的读取操作（例如缓存未命中，缓存过期）和全部的<code>写入</code>操作需要访问数据库，在网站达到一定规模之后，数据库因为负载压力过高而成为网站瓶颈。</p>
+<h3 id="主从复制">主从复制
+</h3><p>目前主流的数据库软件都提供了主从热备功能 ，配置两台数据库的主从关系，可以将一台数据库的数据，同步更新到另一台机器上。</p>
+<p>网站利用该功能，可以实现数据读写分离，减轻数据库负载压力。</p>
+<h3 id="读写分离">读写分离
+</h3><p>数据库规划为读库（从库）；写库（主库）；</p>
+<p>应用服务器进行<code>写入操作的时候，访问主数据库</code>，主数据库通过主从复制机制将数据更新同步到从数据库，这样当</p>
+<p>应用服务器<code>读取数据的时候，可以通过从库获取数据</code>，以此实现数据读写分离；</p>
+<p>针对不同的网站业务，读，写的操作比率，也是不一样的。</p>
+<p>如电商类站点，用户浏览商品居多，读取居多；</p>
+<p>博客类站点，用户写入数据居多，需要依次进行不同的优化调整。</p>
+<p>读库可以有多个，通过<code>主从同步技术</code>把写库的数据，同步到所有的读库；</p>
+<p>对于需要读取最新数据的场景，可以再从写库，同步到缓存中，确保可以通过缓存也能拿到最新数据；</p>
+<p>这里的数据库拆分、主要是DBA的专业数据库运维工作内容，以及开发工程师要根据业务的拆分涉及，系统运维主要以配置数据库复制为主。</p>
+<h3 id="问题又来了">问题又来了
+</h3><p>依然是随着淘宝网的发展，不仅是用户量、并发量更大了、业务复杂性也更高了</p>
+<p>业务越来越多、不同业务之间的访问量、访问频率相差也太大，甚至有业务会对数据库竞争，相互影响性能，因此数据库瓶颈依然是个问题。</p>
+<blockquote>
+<p>后续就是DBA级别的数据库优化架构了，主要是</p>
+<ul>
+<li>数据库按业务分为多个数据库</li>
+<li>数据表拆分</li>
+</ul>
+<p>这就不在网站架构的讨论范畴了，因此不做讲解了</p>
+</blockquote>
+<h2 id="第五次升级负载均衡升级">第五次升级、负载均衡升级
+</h2><p>假设nginx能够支撑5万的用户并发，但是此时的淘宝网已经有50万的用户了，也就是入口的nginx也扛不住这个请求压力了，瓶颈此时出现在了nginx。</p>
+<p>因此依然是采用负载均衡的理念，运行多个nginx来分摊这个集中式的请求压力；</p>
+<p>入口此时发现被修改为了叫做LVS、或是F5这样的软件，它俩也是提供负载均衡能力的软件，但是性能上比nginx更强悍，支持更高的并发，单机的F5就能扛得住支持几十万的用户请求，但是价格昂贵，是一台硬件负载均衡设备，需要企业估值成本；</p>
+<p>成本不允许，则可以使用开源技术，LVS替代F5、性能也足够强悍，也是提供负载均衡的能力。</p>
+<p>但是LVS是软件负载均衡，也就是linux上运行的一个程序而已，如果lvs服务器宕机了，会导致网站入口直接就挂了，因此需要实现高可用，常见的方案就是keepalived；</p>
+<h2 id="第六次升级dns负载均衡">第六次升级、DNS负载均衡
+</h2><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">提示，服务器理论上，最大并发数是
+</span></span><span class="line"><span class="cl">&gt;&gt;&gt; 2**48
+</span></span><span class="line"><span class="cl">281474976710656
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">每一条连接都是要消耗系统资源的，所以实际中可能会设置最大并发数来保证服务器的安全和稳定，所以这个理论最大并发数是不可能达到的。
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">实际中并发数和业务是直接相关的，服务器支持几十万连接是没问题的
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>由于LVS这套软件负载均衡技术，虽说并发数能达到几十万，但是淘宝实在是太挣钱了，老百姓花钱的能力太强了，淘宝网的用户已经达到千万、上亿级别了。</p>
+<p>并且此时的服务器架构，已经是在全国不同的地区，有很多的机房了，并且用户也是分散在全国不同的地区，和服务器的距离各不相同；</p>
+<p>新疆的用户访问淘宝网，请求如果是发给了杭州的淘宝服务器，那这个过程显然是太慢太慢了。。</p>
+<p>你得让新疆的用户，访问淘宝网，这个请求发给了新疆周边的淘宝服务器、或者说找到一个离新疆最近的淘宝服务器（前提是，淘宝在新疆地区周边部署了机房），要不只能通过网络去找其他地区的服务器了。</p>
+<p>以阿里云官网提供的资料来看，如果是新疆的用户，离得最近的就是呼和浩特这个机房。</p>
+<h3 id="dns负载均衡">DNS负载均衡
+</h3><p>在DNS服务器中可以配置一个域名、解析到多个IP地址，每个IP地址对应不同地区的机房服务器IP。</p>
+<p>用户在不同的地区访问www.taobao.com时，DNS服务器会自动判断该用户所在地区，然后选择离他最近的淘宝服务器，返回其IP地址提供访问。</p>
+<p>因此实现了DNS负载均衡，让用户可以访问离自己最近的淘宝网服务器，这样的话，只要增加机房，扩大服务器规模，无论你是千万、千亿级别的并发量，都可以负载均衡、分发给在全国各地的机房了，因此网站入口的并发再也不是问题。</p>
+<h3 id="问题又来了-1">问题又来了
+</h3><p>此时流量入口，不是什么大问题了，难题依然是在业务的复杂度上、业务发展、数据越来越恐怖，后续的优化、又是在数据库角度了</p>
+<h2 id="第n次升级">第N次升级
+</h2><ul>
+<li>引入NoSQL数据库，redis</li>
+<li>引入搜索引擎技术，ElasticSearch</li>
+<li>代码架构升级、大功能拆为小功能，如淘宝网首页，业务拆分为
+<ul>
+<li>淘宝网代码</li>
+<li>天猫超市代码</li>
+<li>聚划算代码</li>
+<li>&hellip;</li>
+</ul>
+</li>
+<li>复杂的功能抽象成微服务、置于淘宝网首页的诸多功能
+<ul>
+<li>淘宝网代码</li>
+<li>天猫超市代码</li>
+<li>聚划算代码</li>
+<li>这些等等子系统都有一些共同的功能，如
+<ul>
+<li>用户数据管理系统</li>
+<li>订单管理系统</li>
+<li>支付系统</li>
+<li>物流系统</li>
+<li>&hellip;
+<ul>
+<li>这些系统在多个应用中都存在，代码没必要重复的运行、重复的单独写、维护，因此可以抽象为一个公共的服务来关系，这就是微服务的概念，此时多个应用，都可以统一使用这些公共的微服务。</li>
+<li>这些微服务系统，都交给专门的团队去维护即可，目前市面上的微服务以阿里的Dubbo、SpringCLoud框架为主流。</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>当业务以微服务模式运行后、不仅开发工作更细化了、运维部署也更加频繁，且细化了</li>
+</ul>
+<h2 id="容器时代">容器时代
+</h2><p>目前市面上最主流的就是通过docker容器技术管理微服务应用，每一个微服务也就是一个个应用程序，全部运行在docker容器里，当容器数量过多后，你必须进行容器编排管理。</p>
+<p>目前最主流的docker管理平台肯定是Kubernetes了。</p>
+<h2 id="以云平台承载系统">以云平台承载系统
+</h2><p>到这里，就不是关乎于网站架构的性能问题了，而是成本问题，机器的运行、管理成本，服务器很贵的，部门每个月都有支出预算，这个月服务器费用是50万，如何降低个10万？是不是需要合理的去规划机器的硬件配置，以及不用的机器，是否要回收，关机？</p>
+<p>机房的电费也是很贵的。。</p>
+<h3 id="问题它又来了">问题它又来了
+</h3><p><strong>使用容器化技术后服务动态扩缩容问题得以解决，但是物理机器还是需要公司自身来管理</strong></p>
+<p><strong>在非大促的时候，还是需要闲置着大量的机器资源来应对大促，机器自身成本和运维成本都极高，资源利用率低</strong></p>
+<p>现在的企业，要么是用公有云（阿里、腾讯、华为云等），部署运行自己的应用；</p>
+<p>要么就是自己有机房、搭建私有云平台，管理虚拟机。</p>
+<p>核心都是在与系统部署在云平台上，利用云平台的海量机器资源，以及可以动态伸缩机器资源，可以在如大促的时候申请更多的机器硬件，结合docker、k8s快速部署业务；</p>
+<p>在大促结束之后，在降低、释放资源，真正做到按需付费，资源利用率提高了，也很大的降低了运营成本。</p>
+<h2 id="云平台是什么">云平台是什么
+</h2><p>所谓的云平台，就是把海量机器资源，通过统一的资源管理，抽象为一个资源整体，在之上可按需动态申请硬件资源（如CPU、内存、网络等），并且之上提供通用的操作系统，提供常用的技术组件（如Hadoop技术栈，MPP数据库等）供用户使用，甚至提供开发好的应用，用户不需要关系应用内部使用了什么技术，就能够解决需求（如音视频转码服务、邮件服务、个人博客等）。</p>
+<p>在云平台中会涉及如下几个概念：</p>
+<ul>
+<li>**IaaS：**基础设施即服务。对应于上面所说的机器资源统一为资源整体，可动态申请硬件资源的层面；</li>
+<li>**PaaS：**平台即服务。对应于上面所说的提供常用的技术组件方便系统的开发和维护；</li>
+<li>**SaaS：**软件即服务。对应于上面所说的提供开发好的应用或服务，按功能或性能要求付费。</li>
+</ul>
+<h2 id="架构师原则">架构师原则
+</h2><ul>
+<li>
+<p>N+1设计。系统中的每个组件都应做到没有单点故障；</p>
+</li>
+<li>
+<p>回滚设计。确保系统可以向前兼容，在系统升级时应能有办法回滚版本；</p>
+</li>
+<li>
+<p>禁用设计。应该提供控制具体功能是否可用的配置，在系统出现故障时能够快速下线功能；</p>
+</li>
+<li>
+<p>监控设计。在设计阶段就要考虑监控的手段；</p>
+</li>
+<li>
+<p>多活数据中心设计。若系统需要极高的高可用，应考虑在多地实施数据中心进行多活，至少在一个机房断电的情况下系统依然可用；</p>
+</li>
+<li>
+<p>采用成熟的技术。刚开发的或开源的技术往往存在很多隐藏的bug，出了问题没有商业支持可能会是一个灾难；</p>
+</li>
+<li>
+<p>资源隔离设计。应避免单一业务占用全部资源；</p>
+</li>
+<li>
+<p>架构应能水平扩展。系统只有做到能水平扩展，才能有效避免瓶颈问题；</p>
+</li>
+<li>
+<p>非核心则购买。非核心功能若需要占用大量的研发资源才能解决，则考虑购买成熟的产品；</p>
+</li>
+<li>
+<p>使用商用硬件。商用硬件能有效降低硬件故障的机率；</p>
+</li>
+<li>
+<p>快速迭代。系统应该快速开发小功能模块，尽快上线进行验证，早日发现问题大大降低系统交付的风险；</p>
+</li>
+<li>
+<p>无状态设计。服务接口应该做成无状态的，当前接口的访问不依赖于接口上次访问的状态。</p>
+</li>
+</ul>
+<h2 id="综合架构图">综合架构图
+</h2><p>![屏幕截图 2024-09-04 090012](D:/desktop/myblog/myblog/content/post/Linux综合架构/assets/屏幕截图 2024-09-04 090012.png)</p>
+<hr>
+<p>![屏幕截图 2024-09-04 090215](D:/desktop/myblog/myblog/content/post/Linux综合架构/assets/屏幕截图 2024-09-04 090215.png)</p>
+<p>![](D:/desktop/myblog/myblog/content/post/Linux综合架构/assets/屏幕截图 2024-09-04 150442.png)</p>
+<h1 id="今日任务">今日任务
+</h1><p>创建虚拟机，为实验环境做准备</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">1.今天学习的知识就是理解架构图，理解网站架构演进，升级的历程，
+</span></span><span class="line"><span class="cl">绘制同样的图，去理解架构
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">2.创建虚拟机，为了我们的运维架构部署做准备
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">-创建模板机，设置双网卡，主机名，静态ip地址
+</span></span><span class="line"><span class="cl">- 克隆该机器，克隆9台，且 根据文档，设置好主机名，ip地址
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="架构图中的服务组件">架构图中的服务组件
+</h2><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">1.用户、顾客（浏览器）
+</span></span><span class="line"><span class="cl">访问网站的用户请求
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">2.防火墙、保安（iptables）
+</span></span><span class="line"><span class="cl">设定防火墙策略、防火墙规则，请求的进入、响应的出口，针对ip、port的流量控制
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">3.负载均衡服务器、迎宾服务员（nginx）
+</span></span><span class="line"><span class="cl">对用户的请求进行调度、纷发
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">4.web服务器，点餐前台服务员（nginx）
+</span></span><span class="line"><span class="cl">接收用户请求、处理、响应用户请求，返回服务器资料
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">5.数据库服务器、厨房后厨仓库（mysql）
+</span></span><span class="line"><span class="cl">存储网站的动态数据、提供读写数据功能
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">6.存储服务器、粮仓仓库（nfs）
+</span></span><span class="line"><span class="cl">存储图片、音频、视频、各种附件等容量较大的静态资源
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">7.备份服务器、粮仓仓库二号（rsync+crond定时备份、rsync+inotify实时备份）
+</span></span><span class="line"><span class="cl">二次备份所有数据，存储图片、音频、视频、各种附件等容量较大的静态资源
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">8.缓存服务器、自助取餐（redis）
+</span></span><span class="line"><span class="cl">数据存储在内存里，提供内存的高速数据读写
+</span></span><span class="line"><span class="cl">以及减轻mysql服务器的读写压力
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">9.ansible服务器、调度总台（ansible）
+</span></span><span class="line"><span class="cl">批量化管理所有的服务器
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="服务器环境规划">服务器环境规划
+</h2><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">服务器作用            主机名                外网地址            内网地址                运行软件                                    
+</span></span><span class="line"><span class="cl">管理机                master-61            10.0.0.61        172.16.1.61            Ansible/zabbix/jumpserver/openvpn        
+</span></span><span class="line"><span class="cl">负载均衡服务器        slb-5                10.0.0.5        172.16.1.5            nginx/keepalived
+</span></span><span class="line"><span class="cl">负载均衡服务器        slb-6                10.0.0.6        172.16.1.6             nginx/keepalived
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">web服务器            web-7                10.0.0.7        172.16.1.7             nginx/php
+</span></span><span class="line"><span class="cl">web服务器            web-8                10.0.0.8        172.16.1.8            nginx/tomcat
+</span></span><span class="line"><span class="cl">web服务器            web-9                10.0.0.9        172.16.1.9            nginx/php
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">存储服务器            nfs-31                 10.0.0.31        172.16.1.31         nfs/rsyncd/lsyncd
+</span></span><span class="line"><span class="cl">备份服务器            rsync-41             10.0.0.41        172.16.1.41            nfs/rsyncd/lsyncd
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">数据库服务器            db-51                10.0.0.51        172.16.1.51            mysql/redis
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">注意去理解架构图，生产环境下、只有最外层的负载均衡设备，才能对接到公网流量，因此需要配置公网ip地址；
+</span></span><span class="line"><span class="cl">其他功能的服务器，只需要单网卡，内网IP即可；
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">外网地址
+</span></span><span class="line"><span class="cl">    - 模拟互联网的公网ip
+</span></span><span class="line"><span class="cl">    - 你可以直接使用windows，ping通该地址，（xshell）ssh连接该地址（服务器）
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">内网地址
+</span></span><span class="line"><span class="cl">    - 模拟服务器的内网，局域网环境
+</span></span><span class="line"><span class="cl">    - 无法直接通过xshell连接该服务器
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h1 id="综合架构实践">综合架构实践
+</h1><blockquote>
+<p>1.关闭你之前旧的所有虚拟机，甚至删除也行，别开机，因为你之前修改过网络设置</p>
+<p>2.你这里要修改新的网络设置，需要修改vmware的虚拟网络编辑器（实测要关闭dhcp功能，反正我们都是用静态ip）</p>
+</blockquote>
+<p><img src="D:/desktop/myblog/myblog/content/post/Linux%e7%bb%bc%e5%90%88%e6%9e%b6%e6%9e%84/assets/image-20220417200406832.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="image-20220417200406832"
+	
+	
+></p>
+<h2 id="1创建新虚拟机模板机">1.创建新虚拟机（模板机）
+</h2><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">系统 centos7
+</span></span><span class="line"><span class="cl">内存 至少2G/1c（特殊情况，给1c/1g也够了）
+</span></span><span class="line"><span class="cl">网卡
+</span></span><span class="line"><span class="cl">eth0，使用NAT、模拟外网环境 ，网段是10.0.0.xx
+</span></span><span class="line"><span class="cl">eth1，使用LAN区段，模拟内网环境，网段是172.16.1.xx
+</span></span><span class="line"><span class="cl">硬盘容量，40G
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>再添加另一块网卡（充当内网环境的网卡）</p>
+<p><img src="D:/desktop/myblog/myblog/content/post/Linux%e7%bb%bc%e5%90%88%e6%9e%b6%e6%9e%84/assets/image-20220417173157770.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="image-20220417173157770"
+	
+	
+></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">提示，常见的LAN和WAN是什么？
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">WAN接口，也就是广域网（WAN，Wide Area Network）的缩写，也称之为远程网（long haul network ）。
+</span></span><span class="line"><span class="cl">而LAN接口，也就是局域网（Local Area Network，LAN）的缩写，它是指在某一区域内由多台计算机互联成的计算机组。
+</span></span></code></pre></td></tr></table>
+</div>
+</div><blockquote>
+<p>图解双网卡的配置</p>
+</blockquote>
+<p><img src="D:/desktop/myblog/myblog/content/post/Linux%e7%bb%bc%e5%90%88%e6%9e%b6%e6%9e%84/assets/image-20220417174954548.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="image-20220417174954548"
+	
+	
+></p>
+<h2 id="2安装centos7">2.安装centos7
+</h2><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">1.进入内核选择界面时，按上下方向键，取消自动选择
+</span></span><span class="line"><span class="cl">2.输入tab键，复制粘贴进去如下代码，以下代码的作用是禁用基于硬件设备的命名风格，使网卡的命名风格回退到eth0、eth1的形式：
+</span></span><span class="line"><span class="cl">net.ifnames=0 biosdevname=0
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">3.输入回车，启动
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">4.请注意，必须是英文，以后再也别用中文了，因为你要看日志
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">5.只需要修改亚洲上海时区,其他全部默认
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">6.网络设置、修改静态ip地址、设置主机名
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">模板机，主机名 lj-template-100
+</span></span><span class="line"><span class="cl">ip，10.0.0.100
+</span></span><span class="line"><span class="cl">网关，10.0.0.254
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="D:/desktop/myblog/myblog/content/post/Linux%e7%bb%bc%e5%90%88%e6%9e%b6%e6%9e%84/assets/image-20220417165329264.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="image-20220417165329264"
+	
+	
+></p>
+<hr>
+<p>网络配置</p>
+<p><img src="D:/desktop/myblog/myblog/content/post/Linux%e7%bb%bc%e5%90%88%e6%9e%b6%e6%9e%84/assets/image-20240904084601289.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="image-20240904084601289"
+	
+	
+></p>
+<p><img src="D:/desktop/myblog/myblog/content/post/Linux%e7%bb%bc%e5%90%88%e6%9e%b6%e6%9e%84/assets/image-20240904084506120.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="image-20240904084506120"
+	
+	
+></p>
+<p><img src="D:/desktop/myblog/myblog/content/post/Linux%e7%bb%bc%e5%90%88%e6%9e%b6%e6%9e%84/assets/image-20240904084823026.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="image-20240904084823026"
+	
+	
+></p>
+<p><img src="D:/desktop/myblog/myblog/content/post/Linux%e7%bb%bc%e5%90%88%e6%9e%b6%e6%9e%84/assets/image-20220417170201372.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="image-20220417170201372"
+	
+	
+></p>
+<p>3.登录该机器</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">ssh root@10.0.0.100
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="D:/desktop/myblog/myblog/content/post/Linux%e7%bb%bc%e5%90%88%e6%9e%b6%e6%9e%84/assets/image-20220417172327140.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="image-20220417172327140"
+	
+	
+></p>
+<h2 id="3简化网卡配置文件">3.简化网卡配置文件
+</h2><blockquote>
+<p>友情提醒，sed是一个双刃剑</p>
+<p>用好了、高效修改配置文件</p>
+<p>用坏了，可能不小心会清空你的配置文件</p>
+<p>所以自己看着来，细心是第一位，做好备份是第一位</p>
+</blockquote>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">1.删除网卡配置文件中关于ipv4、ipv6的行
+</span></span><span class="line"><span class="cl">[root@lj-template-100 ~]# sed -i &#39;/ipv[46]/Id&#39; /etc/sysconfig/network-scripts/ifcfg-eth0 
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">2.再删除如下四行
+</span></span><span class="line"><span class="cl">proxy_method
+</span></span><span class="line"><span class="cl">browser_only
+</span></span><span class="line"><span class="cl">defroute
+</span></span><span class="line"><span class="cl">uuid
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">sed -r -i   &#39;/(proxy_method|browser_only|uuid|defroute)/Id&#39; /etc/sysconfig/network-scripts/ifcfg-eth0 
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">3.上述俩语句，你也可以一行搞定
+</span></span><span class="line"><span class="cl">确保最终的配置如下，和我一样即可
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">[root@lj-template-100 network-scripts]# sed -ri  &#39;/(proxy_method|browser_only|uuid|defroute)/Id&#39; /etc/sysconfig/network-scripts/ifcfg-eth0 
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">[root@lj-template-100 network-scripts]# 
+</span></span><span class="line"><span class="cl">[root@lj-template-100 network-scripts]# cat ifcfg-eth0 
+</span></span><span class="line"><span class="cl">TYPE=Ethernet
+</span></span><span class="line"><span class="cl">BOOTPROTO=none
+</span></span><span class="line"><span class="cl">NAME=eth0
+</span></span><span class="line"><span class="cl">DEVICE=eth0
+</span></span><span class="line"><span class="cl">ONBOOT=yes
+</span></span><span class="line"><span class="cl">IPADDR=10.0.0.100
+</span></span><span class="line"><span class="cl">PREFIX=24
+</span></span><span class="line"><span class="cl">GATEWAY=10.0.0.254
+</span></span><span class="line"><span class="cl">DNS1=223.5.5.5
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">4.如果你不这么做，你后续克隆虚拟机，会导致无法上网，必须要删除网卡配置文件的uuid
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>还得编辑eth1内网网卡配置文件</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">[root@lj-template-100 network-scripts]# sed -r -e &#39;s#eth0#eth1#g&#39; -e &#39;s#10.0.0.100#172.16.1.100#g&#39; -e &#39;s#10.0.0.254#172.16.1.254#g&#39; ifcfg-eth0 &gt;ifcfg-eth1
+</span></span><span class="line"><span class="cl">[root@lj-template-100 network-scripts]# cat ifcfg-eth1
+</span></span><span class="line"><span class="cl">TYPE=Ethernet
+</span></span><span class="line"><span class="cl">BOOTPROTO=none
+</span></span><span class="line"><span class="cl">NAME=eth1
+</span></span><span class="line"><span class="cl">DEVICE=eth1
+</span></span><span class="line"><span class="cl">ONBOOT=yes
+</span></span><span class="line"><span class="cl">IPADDR=172.16.1.100
+</span></span><span class="line"><span class="cl">PREFIX=24
+</span></span><span class="line"><span class="cl">GATEWAY=172.16.1.254
+</span></span><span class="line"><span class="cl">DNS1=223.5.5.5
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">如果sed用的不熟，实在不行，vim去手动改也一样
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>最后重启网络服务，确保ip正常</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">[root@lj-template-100 network-scripts]# systemctl restart network
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">[root@lj-template-100 network-scripts]# ip addr show |grep -E &#39;eth0|eth1&#39;
+</span></span><span class="line"><span class="cl">2: eth0: &lt;BROADCAST,MULTICAST,UP,LOWER_UP&gt; mtu 1500 qdisc pfifo_fast state UP group default qlen 1000
+</span></span><span class="line"><span class="cl">    inet 10.0.0.100/24 brd 10.0.0.255 scope global noprefixroute eth0
+</span></span><span class="line"><span class="cl">3: eth1: &lt;BROADCAST,MULTICAST,UP,LOWER_UP&gt; mtu 1500 qdisc pfifo_fast state UP group default qlen 1000
+</span></span><span class="line"><span class="cl">    inet 172.16.1.100/24 brd 172.16.1.255 scope global noprefixroute eth1
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>最后用你的windows、验证这两块网卡</p>
+<p><img src="D:/desktop/myblog/myblog/content/post/Linux%e7%bb%bc%e5%90%88%e6%9e%b6%e6%9e%84/assets/image-20220417182158958.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="image-20220417182158958"
+	
+	
+></p>
+<h2 id="5系统初始化优化">5.系统初始化优化
+</h2><h3 id="关闭networkmanager注意">关闭NetworkManager【注意！】
+</h3><p><strong>NetworkManager</strong> 服务是一个用于管理和配置网络连接的后台守护进程。它的主要目的是简化网络配置，特别是在动态环境中（如笔记本电脑或移动设备），<strong>所以如果你的网络环境是WIFI，请不要关闭该服务</strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">[root@lj-template-100 ~]# systemctl stop NetworkManager
+</span></span><span class="line"><span class="cl">[root@lj-template-100 ~]# systemctl disable NetworkManager
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="关闭防火墙selinux">关闭防火墙、selinux
+</h3><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">[root@lj-template-100 ~]# systemctl stop firewalld 
+</span></span><span class="line"><span class="cl">[root@lj-template-100 ~]# systemctl disable firewalld 
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">[root@lj-template-100 ~]# sed -i &#39;/^SELINUX=/c SELINUX=disabled&#39; /etc/selinux/config
+</span></span><span class="line"><span class="cl">[root@lj-template-100 ~]# grep -i &#39;selinux=&#39; /etc/selinux/config 
+</span></span><span class="line"><span class="cl"># SELINUX= can take one of these three values:
+</span></span><span class="line"><span class="cl">SELINUX=disabled
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">[root@lj-template-100 ~]# setenforce 0
+</span></span><span class="line"><span class="cl">[root@lj-template-100 ~]# getenforce 
+</span></span><span class="line"><span class="cl">Permissive
+</span></span><span class="line"><span class="cl">[root@lj-template-100 ~]# iptables -F
+</span></span><span class="line"><span class="cl">[root@lj-template-100 ~]# iptables -X
+</span></span><span class="line"><span class="cl">[root@lj-template-100 ~]# iptables -Z
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">最后检查
+</span></span><span class="line"><span class="cl">[root@lj-template-100 ~]# iptables -L
+</span></span><span class="line"><span class="cl">[root@lj-template-100 ~]# systemctl is-enabled firewalld NetworkManager
+</span></span><span class="line"><span class="cl">disabled
+</span></span><span class="line"><span class="cl">disabled
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="加速ssh连接">加速ssh连接
+</h3><p>修改如下2个参数</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">[root@lj-template-100 yum.repos.d]# grep -Ei &#39;^(usedns|gssapiauth)&#39; /etc/ssh/sshd_config 
+</span></span><span class="line"><span class="cl">GSSAPIAuthentication no
+</span></span><span class="line"><span class="cl">UseDNS no
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">[root@lj-template-100 yum.repos.d]# systemctl restart sshd.service
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="优化ps1变量">优化PS1变量
+</h3><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-gdscript3" data-lang="gdscript3"><span class="line"><span class="cl"><span class="n">echo</span>  <span class="s1">&#39;export PS1=&#34;[\[\e[34;1m\]\u@\[\e[0m\]\[\e[32;1m\]\H\[\e[0m\] \[\e[31;1m\]\w\[\e[0m\]]</span><span class="se">\\</span><span class="s1">$&#34;&#39;</span>   <span class="o">&gt;&gt;</span> <span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">profile</span> 
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="yum源优化">yum源优化
+</h3><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">1.备份旧的默认repo
+</span></span><span class="line"><span class="cl">[root@lj-template-100 ~]# cd /etc/yum.repos.d/
+</span></span><span class="line"><span class="cl">[root@lj-template-100 yum.repos.d]# mkdir bakrepo
+</span></span><span class="line"><span class="cl">[root@lj-template-100 yum.repos.d]# mv *.repo bakrepo/
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">2.下载新的repo
+</span></span><span class="line"><span class="cl">curl https://mirrors.aliyun.com/repo/Centos-7.repo &gt; /etc/yum.repos.d/centos-base.repo
+</span></span><span class="line"><span class="cl">curl -o /etc/yum.repos.d/epel.repo  http://mirrors.aliyun.com/repo/epel-7.repo
+</span></span><span class="line"><span class="cl">或
+</span></span><span class="line"><span class="cl">wget -O /etc/yum.repos.d/CentOS-Base.repo https://mirrors.aliyun.com/repo/Centos-7.repo
+</span></span><span class="line"><span class="cl">wget -O /etc/yum.repos.d/epel.repo http://mirrors.aliyun.com/repo/epel-7.repo
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">3.清楚旧的yum缓存  生成新的缓存
+</span></span><span class="line"><span class="cl">yum clean all &amp;&amp; yum makecache
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="安装基础软件">安装基础软件
+</h3><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-gdscript3" data-lang="gdscript3"><span class="line"><span class="cl"><span class="n">yum</span> <span class="n">install</span> <span class="o">-</span><span class="n">y</span> <span class="n">tree</span> <span class="n">wget</span> <span class="n">bash</span><span class="o">-</span><span class="n">completion</span> <span class="n">bash</span><span class="o">-</span><span class="n">completion</span><span class="o">-</span><span class="n">extras</span> <span class="n">lrzsz</span> <span class="n">net</span><span class="o">-</span><span class="n">tools</span> <span class="n">sysstat</span> <span class="n">iotop</span> <span class="n">iftop</span> <span class="n">htop</span> <span class="n">unzip</span> <span class="n">telnet</span> <span class="n">ntpdate</span> <span class="n">lsof</span> <span class="n">vim</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="关闭邮件告警">关闭邮件告警
+</h3><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-gdscript3" data-lang="gdscript3"><span class="line"><span class="cl"><span class="err">你所有的操作，都会被</span><span class="n">linux内置的邮件服务器记录</span><span class="err">，不断的写入</span> <span class="o">/</span><span class="k">var</span><span class="o">/</span><span class="n">log下的日志文件</span><span class="err">，可能会占用多余的磁盘</span>
+</span></span><span class="line"><span class="cl"><span class="p">[</span><span class="n">root</span><span class="err">@</span><span class="n">lj</span><span class="o">-</span><span class="n">template</span><span class="o">-</span><span class="mi">100</span> <span class="o">~</span><span class="p">]</span><span class="c1"># echo &#39;unset mailcheck&#39; &gt;&gt; /etc/profile</span>
+</span></span><span class="line"><span class="cl"><span class="p">[</span><span class="n">root</span><span class="err">@</span><span class="n">lj</span><span class="o">-</span><span class="n">template</span><span class="o">-</span><span class="mi">100</span> <span class="o">~</span><span class="p">]</span><span class="c1"># source /etc/profile</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="配置hosts解析">配置hosts解析
+</h3><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">cat &gt; /etc/hosts &lt;&lt;EOF
+</span></span><span class="line"><span class="cl"># 外网地址   内网地址     主机名
+</span></span><span class="line"><span class="cl">10.0.0.61  172.16.1.61  master-61
+</span></span><span class="line"><span class="cl">10.0.0.5   172.16.1.5   slb-5
+</span></span><span class="line"><span class="cl">10.0.0.6   172.16.1.6   slb-6
+</span></span><span class="line"><span class="cl">10.0.0.7   172.16.1.7   web-7
+</span></span><span class="line"><span class="cl">10.0.0.8   172.16.1.8   web-8
+</span></span><span class="line"><span class="cl">10.0.0.9   172.16.1.9   web-9
+</span></span><span class="line"><span class="cl">10.0.0.31  172.16.1.31  nfs-31
+</span></span><span class="line"><span class="cl">10.0.0.41  172.16.1.41  rsync-41
+</span></span><span class="line"><span class="cl">10.0.0.51  172.16.1.51  db-51
+</span></span><span class="line"><span class="cl">EOF
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="时间同步">时间同步
+</h3><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">systemctl status crond
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">crontab -e 
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">* * * * * /usr/sbin/ntpdate time1.aliyun.com &gt; /dev/null 2&gt;&amp;1
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">#检查
+</span></span><span class="line"><span class="cl">[root@template-linux01 ~]#crontab -l
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="关闭swap">关闭swap
+</h3><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">取消swap的功能，不适用这个从磁盘获取而来的部分内存容量，因为效率太差，企业里的服务器内存都巨大
+</span></span><span class="line"><span class="cl">[root@lj-template-100 ~]# swapoff -a
+</span></span><span class="line"><span class="cl">[root@lj-template-100 ~]# free -m
+</span></span><span class="line"><span class="cl">              total        used        free      shared  buff/cache   available
+</span></span><span class="line"><span class="cl">Mem:           1982          97        1409           9         475        1699
+</span></span><span class="line"><span class="cl">Swap:             0           0           0
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">[root@lj-template-100 ~]# vim /etc/fstab 
+</span></span><span class="line"><span class="cl">[root@lj-template-100 ~]# cat /etc/fstab 
+</span></span><span class="line"><span class="cl">#
+</span></span><span class="line"><span class="cl"># /etc/fstab
+</span></span><span class="line"><span class="cl"># Created by anaconda on Mon Apr 18 01:03:08 2022
+</span></span><span class="line"><span class="cl">#
+</span></span><span class="line"><span class="cl"># Accessible filesystems, by reference, are maintained under &#39;/dev/disk&#39;
+</span></span><span class="line"><span class="cl"># See man pages fstab(5), findfs(8), mount(8) and/or blkid(8) for more info
+</span></span><span class="line"><span class="cl">#
+</span></span><span class="line"><span class="cl">/dev/mapper/centos-root /                       xfs     defaults        0 0
+</span></span><span class="line"><span class="cl">UUID=16dbd4b1-60b3-4770-b20a-4d0b59b39e4a /boot                   xfs     defaults        0 0
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="6修改ip的脚本">6.修改ip的脚本
+</h2><p>至此，上述所有的初始化操作，已经针对模板机修改好了，然后克隆该机器，也自动有了所有的配置</p>
+<p>未读需要修改的就是ip地址、主机名，每一个机器都不一样，因此你可设置一个简单脚本。</p>
+<p>network_init.sh</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="cp">#!/bin/bash
+</span></span></span><span class="line"><span class="cl"><span class="cp"></span><span class="nb">read</span> -p <span class="s2">&#34;请输入IP主机位：&#34;</span> my_ip
+</span></span><span class="line"><span class="cl"><span class="nb">read</span> -p <span class="s2">&#34;请输入主机名：&#34;</span>  host_name
+</span></span><span class="line"><span class="cl"><span class="nb">echo</span> <span class="s1">&#39;正在修改网卡配置文件eth0&#39;</span>
+</span></span><span class="line"><span class="cl">sed -i <span class="s2">&#34;/IPADDR/s#100#</span><span class="si">${</span><span class="nv">my_ip</span><span class="si">}</span><span class="s2">#g&#34;</span>  /etc/sysconfig/network-scripts/ifcfg-eth0
+</span></span><span class="line"><span class="cl"><span class="nb">echo</span> <span class="s1">&#39;正在修改网卡配置文件eth1&#39;</span>
+</span></span><span class="line"><span class="cl">sed -i <span class="s2">&#34;/IPADDR/s#100#</span><span class="si">${</span><span class="nv">my_ip</span><span class="si">}</span><span class="s2">#g&#34;</span>  /etc/sysconfig/network-scripts/ifcfg-eth1
+</span></span><span class="line"><span class="cl"><span class="nb">echo</span> <span class="s1">&#39;网卡配置文件修改完毕&#39;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="nb">echo</span> <span class="s1">&#39;正在修改主机名&#39;</span>
+</span></span><span class="line"><span class="cl">hostnamectl set-hostname <span class="si">${</span><span class="nv">host_name</span><span class="si">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="nb">echo</span> <span class="s2">&#34;==========================&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="nb">echo</span> <span class="s2">&#34;此时的eth0配置是：&#34;</span>  <span class="sb">`</span>cat /etc/sysconfig/network-scripts/ifcfg-eth0<span class="sb">`</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="nb">echo</span> <span class="s2">&#34;==========================&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="nb">echo</span> <span class="s2">&#34;此时的eth1配置是：&#34;</span>   <span class="sb">`</span>cat /etc/sysconfig/network-scripts/ifcfg-eth1<span class="sb">`</span>
+</span></span><span class="line"><span class="cl"><span class="nb">echo</span> <span class="s2">&#34;当前的主机名是：&#34;</span>   <span class="sb">`</span>hostname<span class="sb">`</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="nb">echo</span> <span class="s1">&#39;重启network服务中&#39;</span>
+</span></span><span class="line"><span class="cl">systemctl restart network
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="D:/desktop/myblog/myblog/content/post/Linux%e7%bb%bc%e5%90%88%e6%9e%b6%e6%9e%84/assets/image-20220417210343097.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="image-20220417210343097"
+	
+	
+></p>
+<h2 id="7拍摄快照">7.拍摄快照
+</h2><p><img src="D:/desktop/myblog/myblog/content/post/Linux%e7%bb%bc%e5%90%88%e6%9e%b6%e6%9e%84/assets/image-20220417210549324.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="image-20220417210549324"
+	
+	
+></p>
+<h2 id="8克隆新的虚拟机">8.克隆新的虚拟机
+</h2><p>新虚拟机，克隆完毕后</p>
+<ul>
+<li>检查一下初始化的配置是否正确</li>
+<li>ip、主机名是否正确，按照规划的来</li>
+<li>是否可以ssh</li>
+<li>是否可以上网</li>
+<li>全部做好首次的快照</li>
+</ul>
+<p>循环操作，完成9台机器的创建</p>
+
+</section>
+
+
+    <footer class="article-footer">
+    
+
+    </footer>
+
+
+    
+</article>
+
+    
+
+    
+
+     
+    
+        
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+        2025 小诗
+    </section>
+    
+    <section class="powerby">
+        使用 <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> 构建 <br />
+        主题 <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.26.0">Stack</a></b> 由 <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a> 设计
+    </section>
+</footer>
+
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css"crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css"crossorigin="anonymous"
+            >
+
+            </main>
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.6/dist/vibrant.min.js"integrity="sha256-awcR2jno4kI5X0zL8ex0vi2z&#43;KMkF24hUW8WePSA9HM="crossorigin="anonymous"
+                
+                >
+            </script><script type="text/javascript" src="/xiaoshi/ts/main.js" defer></script>
+<script>
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+
+    </body>
+</html>
