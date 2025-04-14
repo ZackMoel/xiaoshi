@@ -1,0 +1,711 @@
+<!DOCTYPE html>
+<html lang="zh-cn" dir="ltr">
+    <head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content="文件共享服务 文件共享服务方案有很多，了解即可 ftp（简单文件传输服务） 提供用户认证机制 可以输入账号密码 python -m SimpleHTTPServer 1 2 平时，简易的快速进行文件下载">
+<title>FTP服务</title>
+
+<link rel='canonical' href='https://ZackMoel.github.io/xiaoshi/p/ftp%E6%9C%8D%E5%8A%A1/'>
+
+<link rel="stylesheet" href="/xiaoshi/scss/style.min.0304c6baf04e01a8fe70693791cb744d56a3578a3120a8796cefc66825aa39c7.css"><meta property='og:title' content="FTP服务">
+<meta property='og:description' content="文件共享服务 文件共享服务方案有很多，了解即可 ftp（简单文件传输服务） 提供用户认证机制 可以输入账号密码 python -m SimpleHTTPServer 1 2 平时，简易的快速进行文件下载">
+<meta property='og:url' content='https://ZackMoel.github.io/xiaoshi/p/ftp%E6%9C%8D%E5%8A%A1/'>
+<meta property='og:site_name' content='小诗的博客'>
+<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:published_time' content='2025-04-14T15:25:11&#43;08:00'/><meta property='article:modified_time' content='2025-04-14T15:25:11&#43;08:00'/>
+<meta name="twitter:title" content="FTP服务">
+<meta name="twitter:description" content="文件共享服务 文件共享服务方案有很多，了解即可 ftp（简单文件传输服务） 提供用户认证机制 可以输入账号密码 python -m SimpleHTTPServer 1 2 平时，简易的快速进行文件下载">
+  
+
+
+    </head>
+    <body class="
+    article-page
+    ">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex on-phone--column extended"><aside class="sidebar left-sidebar sticky ">
+    <button class="hamburger hamburger--spin" type="button" id="toggle-menu" aria-label="切换菜单">
+        <span class="hamburger-box">
+            <span class="hamburger-inner"></span>
+        </span>
+    </button>
+
+    <header>
+        
+            
+            <figure class="site-avatar">
+                <a href="/xiaoshi/">
+                
+                    
+                    
+                    
+                        
+                        <img src="/xiaoshi/img/avatar_hu8920112365793990935.png" width="300"
+                            height="300" class="site-logo" loading="lazy" alt="Avatar">
+                    
+                
+                </a>
+                
+                    <span class="emoji">🍥</span>
+                
+            </figure>
+            
+        
+        
+        <div class="site-meta">
+            <h1 class="site-name"><a href="/xiaoshi">小诗的博客</a></h1>
+            <h2 class="site-description">欢迎来到小诗的博客</h2>
+        </div>
+    </header><ol class="menu-social">
+            
+                <li>
+                    <a 
+                        href='https://space.bilibili.com/1055981889?spm_id_from=333.1007.0.0'
+                        target="_blank"
+                        title="bilibili"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg  xmlns="http://www.w3.org/2000/svg"  width="24"  height="24"  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  stroke-width="2"  stroke-linecap="round"  stroke-linejoin="round"  class="icon icon-tabler icons-tabler-outline icon-tabler-brand-bilibili"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M3 10a4 4 0 0 1 4 -4h10a4 4 0 0 1 4 4v6a4 4 0 0 1 -4 4h-10a4 4 0 0 1 -4 -4v-6z" /><path d="M8 3l2 3" /><path d="M16 3l-2 3" /><path d="M9 13v-2" /><path d="M15 11v2" /></svg>
+                        
+                    </a>
+                </li>
+            
+                <li>
+                    <a 
+                        href='https://github.com/ZackMoel/xiaoshi.github.io'
+                        target="_blank"
+                        title="GitHub"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-github" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M9 19c-4.3 1.4 -4.3 -2.5 -6 -3m12 5v-3.5c0 -1 .1 -1.4 -.5 -2c2.8 -.3 5.5 -1.4 5.5 -6a4.6 4.6 0 0 0 -1.3 -3.2a4.2 4.2 0 0 0 -.1 -3.2s-1.1 -.3 -3.5 1.3a12.3 12.3 0 0 0 -6.2 0c-2.4 -1.6 -3.5 -1.3 -3.5 -1.3a4.2 4.2 0 0 0 -.1 3.2a4.6 4.6 0 0 0 -1.3 3.2c0 4.6 2.7 5.7 5.5 6c-.6 .6 -.6 1.2 -.5 2v3.5" />
+</svg>
+
+
+
+                        
+                    </a>
+                </li>
+            
+        </ol><ol class="menu" id="main-menu">
+        
+        
+        
+        <li >
+            <a href='/xiaoshi/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-home" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <polyline points="5 12 3 12 12 3 21 12 19 12" />
+  <path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7" />
+  <path d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6" />
+</svg>
+
+
+
+                
+                <span>主页</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/xiaoshi/%E5%85%B3%E4%BA%8E/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-user" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="7" r="4" />
+  <path d="M6 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2" />
+</svg>
+
+
+
+                
+                <span>关于</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/xiaoshi/archives/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-archive" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <rect x="3" y="4" width="18" height="4" rx="2" />
+  <path d="M5 8v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-10" />
+  <line x1="10" y1="12" x2="14" y2="12" />
+</svg>
+
+
+
+                
+                <span>归档</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/xiaoshi/search/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-search" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="10" cy="10" r="7" />
+  <line x1="21" y1="21" x2="15" y2="15" />
+</svg>
+
+
+
+                
+                <span>搜索</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/xiaoshi/%E5%8F%8B%E6%83%85%E9%93%BE%E6%8E%A5/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-link" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M10 14a3.5 3.5 0 0 0 5 0l4 -4a3.5 3.5 0 0 0 -5 -5l-.5 .5" />
+  <path d="M14 10a3.5 3.5 0 0 0 -5 0l-4 4a3.5 3.5 0 0 0 5 5l.5 -.5" />
+</svg>
+
+
+
+                
+                <span>友情链接</span>
+            </a>
+        </li>
+        
+        <li class="menu-bottom-section">
+            <ol class="menu">
+
+                
+                    <li id="dark-mode-toggle">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="8" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="16" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <span>暗色模式</span>
+                    </li>
+                
+            </ol>
+        </li>
+    </ol>
+</aside>
+
+    
+
+            <main class="main full-width">
+    <article class="main-article">
+    <header class="article-header">
+
+    <div class="article-details">
+    
+
+    <div class="article-title-wrapper">
+        <h2 class="article-title">
+            <a href="/xiaoshi/p/ftp%E6%9C%8D%E5%8A%A1/">FTP服务</a>
+        </h2>
+    
+        
+    </div>
+
+    
+    
+    
+    
+    <footer class="article-time">
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
+  <circle cx="18" cy="18" r="4" />
+  <path d="M15 3v4" />
+  <path d="M7 3v4" />
+  <path d="M3 11h16" />
+  <path d="M18 16.496v1.504l1 1" />
+</svg>
+                <time class="article-time--published">2025-04-14</time>
+            </div>
+        
+
+        
+    </footer>
+    
+
+    
+</div>
+
+</header>
+
+    <section class="article-content">
+    
+    
+    <h1 id="文件共享服务">文件共享服务
+</h1><p>文件共享服务方案有很多，了解即可</p>
+<ul>
+<li>
+<p>ftp（简单文件传输服务）</p>
+<ul>
+<li>提供用户认证机制</li>
+<li>可以输入账号密码</li>
+</ul>
+</li>
+<li>
+<p>python -m SimpleHTTPServer</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">平时，简易的快速进行文件下载，下载服务器上的资料
+</span></span><span class="line"><span class="cl">python -m SimpleHTTPServer
+</span></span></code></pre></td></tr></table>
+</div>
+</div></li>
+<li>
+<p>nginx也提供了文件下载的功能</p>
+<ul>
+<li>提供用户认证机制</li>
+<li>反向代理，负载均衡</li>
+<li>web服务器，静态文件服务器的作用</li>
+<li>如ftp服务器的作用</li>
+</ul>
+</li>
+<li>
+<p>samba(linux和windows之间共享数据)</p>
+<ul>
+<li>提供用户认证机制</li>
+</ul>
+</li>
+<li>
+<p>nfs（实际工作中主要用这个）</p>
+</li>
+</ul>
+<h1 id="搭建ftp服务">搭建ftp服务
+</h1><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span><span class="lnt">43
+</span><span class="lnt">44
+</span><span class="lnt">45
+</span><span class="lnt">46
+</span><span class="lnt">47
+</span><span class="lnt">48
+</span><span class="lnt">49
+</span><span class="lnt">50
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">1.需要安装vsftpd服务
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">yum install vsftpd -y
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">2.修改ftp配置文件，设置账号密码，登录ftp服务器，可以查看某文件夹下的数据资料（共享文件夹）
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">3.创建一个linux的用户（ftp使用linux的用户信息，不靠谱）
+</span></span><span class="line"><span class="cl">useradd ops01
+</span></span><span class="line"><span class="cl">设置该用户密码
+</span></span><span class="line"><span class="cl">[root@nfs-31 ~]#echo &#39;123456&#39; | passwd --stdin  ops01
+</span></span><span class="line"><span class="cl">Changing password for user ops01.
+</span></span><span class="line"><span class="cl">passwd: all authentication tokens updated successfully.
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">4.修改ftp配置文件，设置用于共享的目录
+</span></span><span class="line"><span class="cl">[root@nfs-31 ~]#rpm -ql vsftpd |grep &#39;.conf$&#39;
+</span></span><span class="line"><span class="cl">/etc/vsftpd/vsftpd.conf
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">4.1 关闭所有的匿名用户功能，不安全
+</span></span><span class="line"><span class="cl">找出和匿名用户相关的配置参数
+</span></span><span class="line"><span class="cl">[root@nfs-31 ~]#grep &#39;^anonymous&#39;  /etc/vsftpd/vsftpd.conf
+</span></span><span class="line"><span class="cl">anonymous_enable=NO
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">4.2添加自定义的共享文件夹配置参数，笔记的解释，别写入linux中，写笔记上，否则可能会导致编码不识别，程序出错
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">直接在文件最低下，添加如下配置
+</span></span><span class="line"><span class="cl"># 配置解释
+</span></span><span class="line"><span class="cl"># local_root=/data/kefu  指定本地用户的默认数据根目录 
+</span></span><span class="line"><span class="cl"># chroot_local_user=YES 禁锢本地用户的默认数据目录（禁止用户切换到其他目录）
+</span></span><span class="line"><span class="cl"># allow_writeable_chroot=YES 允许ftp用户登录后，可以创建数据
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">你只需要修改如下三个参数即可
+</span></span><span class="line"><span class="cl"># ftp用户，ops01登录ftp之后，只能看到/test_0224这个文件夹下的数据
+</span></span><span class="line"><span class="cl">## by myself
+</span></span><span class="line"><span class="cl">local_root=/test_0224/
+</span></span><span class="line"><span class="cl">chroot_local_user=YES
+</span></span><span class="line"><span class="cl">allow_writeable_chroot=YES
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">5.创建用于共享的文件夹
+</span></span><span class="line"><span class="cl">mkdir /test_0224/
+</span></span><span class="line"><span class="cl">touch /test_0224/wenjie.png
+</span></span><span class="line"><span class="cl">别忘记修改文件夹的权限，否则无法读取了，修改为刚才自定义的用户
+</span></span><span class="line"><span class="cl">chown -R ops01:ops01  /test_0224/
+</span></span><span class="line"><span class="cl">[root@nfs-31 ~]#ll -d /test_0224/
+</span></span><span class="line"><span class="cl">drwxr-xr-x 2 ops01 ops01 24 Apr 19 14:53 /test_0224/
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">6.此时可以重启vsftpd服务
+</span></span><span class="line"><span class="cl">[root@nfs-31 ~]#systemctl restart vsftpd
+</span></span><span class="line"><span class="cl">[root@nfs-31 ~]#ps -ef|grep vsftpd
+</span></span><span class="line"><span class="cl">root       2221      1  0 15:01 ?        00:00:00 /usr/sbin/vsftpd /etc/vsftpd/vsftpd.conf
+</span></span><span class="line"><span class="cl">root       2226   1168  0 15:02 pts/0    00:00:00 grep --color=auto vsftpd
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h1 id="使用客户端验证ftp的登录数据查看">使用客户端，验证ftp的登录，数据查看
+</h1><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">你可以用另一台机器，安装ftp程序，登录vsftpd服务端
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">yum install ftp -y
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">登录ftp设备的命令
+</span></span><span class="line"><span class="cl">ftp 机器的ip地址
+</span></span><span class="line"><span class="cl">如
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">ftp 172.16.1.31
+</span></span><span class="line"><span class="cl">输入账号密码 ops01 123456
+</span></span><span class="line"><span class="cl">进入之后，输入? 查看ftp提供的命令帮助
+</span></span><span class="line"><span class="cl">ftp&gt; pwd  查看当前的ftp目录位置
+</span></span><span class="line"><span class="cl">257 &#34;/&#34;
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">ftp提供的上传下载
+</span></span><span class="line"><span class="cl">下载功能
+</span></span><span class="line"><span class="cl">ftp&gt; get 
+</span></span><span class="line"><span class="cl">(remote-file) 文杰.png
+</span></span><span class="line"><span class="cl">(local-file) 文杰1.png
+</span></span><span class="line"><span class="cl">local: 文杰1.png remote: 文杰.png
+</span></span><span class="line"><span class="cl">227 Entering Passive Mode (10,0,0,31,149,223).
+</span></span><span class="line"><span class="cl">150 Opening BINARY mode data connection for 文杰.png (0 bytes).
+</span></span><span class="line"><span class="cl">226 Transfer complete.
+</span></span><span class="line"><span class="cl">ftp&gt; 
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">上传功能
+</span></span><span class="line"><span class="cl">ftp&gt; 
+</span></span><span class="line"><span class="cl">ftp&gt; put
+</span></span><span class="line"><span class="cl">(local-file) /opt/4111111.jpg
+</span></span><span class="line"><span class="cl">(remote-file) 4444444.jpg
+</span></span><span class="line"><span class="cl">local: /opt/4111111.jpg remote: 4444444.jpg
+</span></span><span class="line"><span class="cl">227 Entering Passive Mode (10,0,0,31,185,67).
+</span></span><span class="line"><span class="cl">150 Ok to send data.
+</span></span><span class="line"><span class="cl">226 Transfer complete.
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h1 id="windows的ftp客户端">windows的ftp客户端
+</h1><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">windows访问ftp
+</span></span><span class="line"><span class="cl">命令行操作
+</span></span><span class="line"><span class="cl">C:\Users\lj&gt;ftp
+</span></span><span class="line"><span class="cl">ftp&gt; bye
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">C:\Users\lj&gt;ftp 10.0.0.31
+</span></span><span class="line"><span class="cl">连接到 10.0.0.31。
+</span></span><span class="line"><span class="cl">220 (vsFTPd 3.0.2)
+</span></span><span class="line"><span class="cl">200 Always in UTF8 mode.
+</span></span><span class="line"><span class="cl">用户(10.0.0.31:(none)): ops01
+</span></span><span class="line"><span class="cl">331 Please specify the password.
+</span></span><span class="line"><span class="cl">密码:
+</span></span><span class="line"><span class="cl">230 Login successful.
+</span></span><span class="line"><span class="cl">ftp&gt; ls
+</span></span><span class="line"><span class="cl">200 PORT command successful. Consider using PASV.
+</span></span><span class="line"><span class="cl">150 Here comes the directory listing.
+</span></span><span class="line"><span class="cl">41.png
+</span></span><span class="line"><span class="cl">4444444.jpg
+</span></span><span class="line"><span class="cl">佳强.png
+</span></span><span class="line"><span class="cl">文杰.png
+</span></span><span class="line"><span class="cl">226 Directory send OK.
+</span></span><span class="line"><span class="cl">ftp: 收到 48 字节，用时 0.00秒 48000.00千字节/秒。
+</span></span><span class="line"><span class="cl">ftp&gt;
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">图形化连接ftp设备:
+</span></span><span class="line"><span class="cl">指定协议语法
+</span></span><span class="line"><span class="cl">ftp://10.0.0.31/
+</span></span></code></pre></td></tr></table>
+</div>
+</div>
+</section>
+
+
+    <footer class="article-footer">
+    
+
+    </footer>
+
+
+    
+</article>
+
+    
+
+    
+
+     
+    
+        
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+        2025 小诗
+    </section>
+    
+    <section class="powerby">
+        使用 <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> 构建 <br />
+        主题 <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.26.0">Stack</a></b> 由 <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a> 设计
+    </section>
+</footer>
+
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css"crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css"crossorigin="anonymous"
+            >
+
+            </main>
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.6/dist/vibrant.min.js"integrity="sha256-awcR2jno4kI5X0zL8ex0vi2z&#43;KMkF24hUW8WePSA9HM="crossorigin="anonymous"
+                
+                >
+            </script><script type="text/javascript" src="/xiaoshi/ts/main.js" defer></script>
+<script>
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+
+    </body>
+</html>

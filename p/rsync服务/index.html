@@ -1,0 +1,1286 @@
+<!DOCTYPE html>
+<html lang="zh-cn" dir="ltr">
+    <head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content="第1章 Rsync介绍 备份是太常见、且太重要的一个日常工作了。 备份源码、文档、数据库、等等。 类似cp命令拷贝，但是支持服务器之间的网络拷贝，且">
+<title>Rsync服务</title>
+
+<link rel='canonical' href='https://ZackMoel.github.io/xiaoshi/p/rsync%E6%9C%8D%E5%8A%A1/'>
+
+<link rel="stylesheet" href="/xiaoshi/scss/style.min.0304c6baf04e01a8fe70693791cb744d56a3578a3120a8796cefc66825aa39c7.css"><meta property='og:title' content="Rsync服务">
+<meta property='og:description' content="第1章 Rsync介绍 备份是太常见、且太重要的一个日常工作了。 备份源码、文档、数据库、等等。 类似cp命令拷贝，但是支持服务器之间的网络拷贝，且">
+<meta property='og:url' content='https://ZackMoel.github.io/xiaoshi/p/rsync%E6%9C%8D%E5%8A%A1/'>
+<meta property='og:site_name' content='小诗的博客'>
+<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:published_time' content='2025-04-14T15:26:03&#43;08:00'/><meta property='article:modified_time' content='2025-04-14T15:26:03&#43;08:00'/>
+<meta name="twitter:title" content="Rsync服务">
+<meta name="twitter:description" content="第1章 Rsync介绍 备份是太常见、且太重要的一个日常工作了。 备份源码、文档、数据库、等等。 类似cp命令拷贝，但是支持服务器之间的网络拷贝，且">
+  
+
+
+    </head>
+    <body class="
+    article-page
+    ">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex on-phone--column extended"><aside class="sidebar left-sidebar sticky ">
+    <button class="hamburger hamburger--spin" type="button" id="toggle-menu" aria-label="切换菜单">
+        <span class="hamburger-box">
+            <span class="hamburger-inner"></span>
+        </span>
+    </button>
+
+    <header>
+        
+            
+            <figure class="site-avatar">
+                <a href="/xiaoshi/">
+                
+                    
+                    
+                    
+                        
+                        <img src="/xiaoshi/img/avatar_hu8920112365793990935.png" width="300"
+                            height="300" class="site-logo" loading="lazy" alt="Avatar">
+                    
+                
+                </a>
+                
+                    <span class="emoji">🍥</span>
+                
+            </figure>
+            
+        
+        
+        <div class="site-meta">
+            <h1 class="site-name"><a href="/xiaoshi">小诗的博客</a></h1>
+            <h2 class="site-description">欢迎来到小诗的博客</h2>
+        </div>
+    </header><ol class="menu-social">
+            
+                <li>
+                    <a 
+                        href='https://space.bilibili.com/1055981889?spm_id_from=333.1007.0.0'
+                        target="_blank"
+                        title="bilibili"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg  xmlns="http://www.w3.org/2000/svg"  width="24"  height="24"  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  stroke-width="2"  stroke-linecap="round"  stroke-linejoin="round"  class="icon icon-tabler icons-tabler-outline icon-tabler-brand-bilibili"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M3 10a4 4 0 0 1 4 -4h10a4 4 0 0 1 4 4v6a4 4 0 0 1 -4 4h-10a4 4 0 0 1 -4 -4v-6z" /><path d="M8 3l2 3" /><path d="M16 3l-2 3" /><path d="M9 13v-2" /><path d="M15 11v2" /></svg>
+                        
+                    </a>
+                </li>
+            
+                <li>
+                    <a 
+                        href='https://github.com/ZackMoel/xiaoshi.github.io'
+                        target="_blank"
+                        title="GitHub"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-github" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M9 19c-4.3 1.4 -4.3 -2.5 -6 -3m12 5v-3.5c0 -1 .1 -1.4 -.5 -2c2.8 -.3 5.5 -1.4 5.5 -6a4.6 4.6 0 0 0 -1.3 -3.2a4.2 4.2 0 0 0 -.1 -3.2s-1.1 -.3 -3.5 1.3a12.3 12.3 0 0 0 -6.2 0c-2.4 -1.6 -3.5 -1.3 -3.5 -1.3a4.2 4.2 0 0 0 -.1 3.2a4.6 4.6 0 0 0 -1.3 3.2c0 4.6 2.7 5.7 5.5 6c-.6 .6 -.6 1.2 -.5 2v3.5" />
+</svg>
+
+
+
+                        
+                    </a>
+                </li>
+            
+        </ol><ol class="menu" id="main-menu">
+        
+        
+        
+        <li >
+            <a href='/xiaoshi/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-home" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <polyline points="5 12 3 12 12 3 21 12 19 12" />
+  <path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7" />
+  <path d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6" />
+</svg>
+
+
+
+                
+                <span>主页</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/xiaoshi/%E5%85%B3%E4%BA%8E/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-user" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="7" r="4" />
+  <path d="M6 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2" />
+</svg>
+
+
+
+                
+                <span>关于</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/xiaoshi/archives/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-archive" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <rect x="3" y="4" width="18" height="4" rx="2" />
+  <path d="M5 8v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-10" />
+  <line x1="10" y1="12" x2="14" y2="12" />
+</svg>
+
+
+
+                
+                <span>归档</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/xiaoshi/search/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-search" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="10" cy="10" r="7" />
+  <line x1="21" y1="21" x2="15" y2="15" />
+</svg>
+
+
+
+                
+                <span>搜索</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/xiaoshi/%E5%8F%8B%E6%83%85%E9%93%BE%E6%8E%A5/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-link" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M10 14a3.5 3.5 0 0 0 5 0l4 -4a3.5 3.5 0 0 0 -5 -5l-.5 .5" />
+  <path d="M14 10a3.5 3.5 0 0 0 -5 0l-4 4a3.5 3.5 0 0 0 5 5l.5 -.5" />
+</svg>
+
+
+
+                
+                <span>友情链接</span>
+            </a>
+        </li>
+        
+        <li class="menu-bottom-section">
+            <ol class="menu">
+
+                
+                    <li id="dark-mode-toggle">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="8" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="16" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <span>暗色模式</span>
+                    </li>
+                
+            </ol>
+        </li>
+    </ol>
+</aside>
+
+    <aside class="sidebar right-sidebar sticky">
+        
+            
+                
+    <section class="widget archives">
+        <div class="widget-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <line x1="5" y1="9" x2="19" y2="9" />
+  <line x1="5" y1="15" x2="19" y2="15" />
+  <line x1="11" y1="4" x2="7" y2="20" />
+  <line x1="17" y1="4" x2="13" y2="20" />
+</svg>
+
+
+
+        </div>
+        <h2 class="widget-title section-title">目录</h2>
+        
+        <div class="widget--toc">
+            <nav id="TableOfContents">
+  <ol>
+    <li><a href="#1rsync三种工作模式">1.rsync三种工作模式</a></li>
+    <li><a href="#2rsync的备份方式">2.rsync的备份方式</a></li>
+    <li><a href="#3rsync的备份架构">3.rsync的备份架构</a></li>
+  </ol>
+
+  <ol>
+    <li><a href="#1命令说明">1.命令说明</a></li>
+    <li><a href="#2本地模式">2.本地模式</a></li>
+    <li><a href="#3远程模式">3.远程模式</a></li>
+  </ol>
+
+  <ol>
+    <li><a href="#0为什么需要服务模式">0.为什么需要服务模式</a></li>
+    <li><a href="#1安装rsync">1.安装rsync</a></li>
+    <li><a href="#2修改配置文件">2.修改配置文件</a></li>
+    <li><a href="#3创建用户以及数据目录">3.创建用户以及数据目录</a></li>
+    <li><a href="#4创建rsync专用的账户密码这一步很重要有错基本也是来这排查">4.创建rsync专用的账户密码（这一步很重要，有错基本也是来这排查）</a></li>
+    <li><a href="#5加入开机自启动">5.加入开机自启动</a></li>
+    <li><a href="#6检查服务是否运行">6.检查服务是否运行</a></li>
+  </ol>
+
+  <ol>
+    <li><a href="#推送备份发送nfs-31的数据发给rsync-41">推送，备份，发送nfs-31的数据发给rsync-41</a></li>
+    <li><a href="#下载备份服务器的数据">下载备份服务器的数据</a></li>
+  </ol>
+
+  <ol>
+    <li><a href="#rsync服务端排错思路">Rsync服务端排错思路</a></li>
+    <li><a href="#rsync客户端排错">Rsync客户端排错</a></li>
+  </ol>
+</nav>
+        </div>
+    </section>
+
+            
+        
+    </aside>
+
+
+            <main class="main full-width">
+    <article class="main-article">
+    <header class="article-header">
+
+    <div class="article-details">
+    
+
+    <div class="article-title-wrapper">
+        <h2 class="article-title">
+            <a href="/xiaoshi/p/rsync%E6%9C%8D%E5%8A%A1/">Rsync服务</a>
+        </h2>
+    
+        
+    </div>
+
+    
+    
+    
+    
+    <footer class="article-time">
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
+  <circle cx="18" cy="18" r="4" />
+  <path d="M15 3v4" />
+  <path d="M7 3v4" />
+  <path d="M3 11h16" />
+  <path d="M18 16.496v1.504l1 1" />
+</svg>
+                <time class="article-time--published">2025-04-14</time>
+            </div>
+        
+
+        
+    </footer>
+    
+
+    
+</div>
+
+</header>
+
+    <section class="article-content">
+    
+    
+    <h1 id="第1章-rsync介绍">第1章 Rsync介绍
+</h1><p>备份是太常见、且太重要的一个日常工作了。</p>
+<p>备份源码、文档、数据库、等等。</p>
+<p>类似cp命令拷贝，但是支持服务器之间的网络拷贝，且保证安全性。</p>
+<p>Rsync是一款开源的、快速的、多功能的、可实现全量及增量的本地或远程数据同步备份的优秀工具。并且 可以不进行改变原有数据的属性信息，实现数据的备份迁移特性。</p>
+<p>Rsync软件适用于unix/linux/windows等多种操作系统平台。</p>
+<p>Rsync是一个快速和非常通用的文件复制工具。它能本地复制，远程复制，或者远程守护进程方式复制。</p>
+<p>它提供了大量的参数来控制其行为的各个方面，并且允许非常灵活的方式来实现文件的传输复制。它以其 delta-transfer算法闻名。减少通过网络数据发送数量，利用只发送源文件和目标文件之间的差异信息，从而 实现数据的增量同步复制。</p>
+<p>Rsync被广泛用于数据备份和镜像，并且作为一种改进后的复制命令用于日常运维。</p>
+<p>Rsync具备使本地和远程两台主机之间的数据快速复制，远程备份的功能，Rsync命令本身即可实现异地主机 复制数据，功能类似scp又优于scp,scp每次都是全量备份，rsync可以实现增量拷贝(和scp一样都是基于 ssh服务传输),Rsync软件还支持配置守护进程，实现异机数据复制。</p>
+<p>增量复制是Rsync—特点，优于scp,cp命令。</p>
+<p>Rsync实现如下功能</p>
+<ul>
+<li>本地数据同步复制，效果如cp</li>
+<li>远程数据同步复制，如scp</li>
+<li>本地数据删除，如rm</li>
+<li>远程数据查看，如ls</li>
+</ul>
+<h2 id="1rsync三种工作模式">1.rsync三种工作模式
+</h2><ul>
+<li>本地模式，类似cp</li>
+<li>远程模式，常用，类似scp,不同的机器之间，通过网络拷贝数据</li>
+<li>后台服务模式，常用，用于实时数据同步，安全性更高</li>
+</ul>
+<h2 id="2rsync的备份方式">2.rsync的备份方式
+</h2><ul>
+<li>
+<p>全量备份</p>
+<p>就是完全备份，所有指定的客户端的数据，全部被备份到server01机器上(效率太低，重复性备份文件)</p>
+</li>
+<li>
+<p>增量备份</p>
+<p>rsync自动检测，只会将新增加的文件，备份到server01下，而不会重复备份已存在的数据，备份效率高</p>
+</li>
+</ul>
+<h2 id="3rsync的备份架构">3.rsync的备份架构
+</h2><p><img src="D:/desktop/myblog/myblog/content/post/Rsync%e6%9c%8d%e5%8a%a1/assets/clipImg.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="clipImg"
+	
+	
+></p>
+<p><img src="D:/desktop/myblog/myblog/content/post/Rsync%e6%9c%8d%e5%8a%a1/assets/clipImg-1725541020620-2.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="clipImg"
+	
+	
+></p>
+<p><img src="D:/desktop/myblog/myblog/content/post/Rsync%e6%9c%8d%e5%8a%a1/assets/clipImg-1725541093664-4.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="clipImg"
+	
+	
+></p>
+<h1 id="第2章-rsync本地模式和远程模式">第2章 Rsync本地模式和远程模式
+</h1><h2 id="1命令说明">1.命令说明
+</h2><p>单纯通过rsync的命令，来实现数据目录A  拷贝到数据目录B</p>
+<p>也就是模拟cp的用法 很简单</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span><span class="lnt">43
+</span><span class="lnt">44
+</span><span class="lnt">45
+</span><span class="lnt">46
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">rsync  <span class="o">[</span>选项<span class="o">]</span>  源数据   目的数据
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">1.安装
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@rsync-41 ~<span class="o">]</span><span class="c1">#yum install rsync -y</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">2.命令语法，分几个模式
+</span></span><span class="line"><span class="cl">- 本地模式
+</span></span><span class="line"><span class="cl">rsync 参数   源路径  目标路径
+</span></span><span class="line"><span class="cl">rsync  -xxxxx    /var/log    /tmp
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">- 远程模式，推送方式，把自己的数据推送到另一台机器上（上传）
+</span></span><span class="line"><span class="cl">语法1 ，rsync默认走ssh协议
+</span></span><span class="line"><span class="cl">rsync 参数  源路径  user@ip:目标路径
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@rsync-41 ~<span class="o">]</span><span class="c1">#rsync  -avzP  /var/log/      root@10.0.0.31:/tmp/</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">语法2
+</span></span><span class="line"><span class="cl">rsync 参数 源路径  user@ip::目标路径
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">- 远程模式，拉取方式，拉取别人机器的数据到自己的机器上（下载）
+</span></span><span class="line"><span class="cl">rsync  参数   user@ip:源路径   目标路径
+</span></span><span class="line"><span class="cl">rsync  参数   user@ip::源路径目标路径
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@rsync-41 ~<span class="o">]</span><span class="c1">#rsync -avzP  root@10.0.0.31:/var/log/   /tmp/</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">参数解释
+</span></span><span class="line"><span class="cl">    -v        详细模式输出
+</span></span><span class="line"><span class="cl">    -a        归档模式，递归的方式传输文件，并保持文件的属性，等同于 -rlptgoD
+</span></span><span class="line"><span class="cl">    -r        递归拷贝目录
+</span></span><span class="line"><span class="cl">    -l        保留软链接
+</span></span><span class="line"><span class="cl">    -p        保留原有权限
+</span></span><span class="line"><span class="cl">    -t         保留原有时间（修改）
+</span></span><span class="line"><span class="cl">    -g        保留属组权限
+</span></span><span class="line"><span class="cl">    -o         保留属主权限
+</span></span><span class="line"><span class="cl">    -D        等于--devices  --specials    表示支持b,c,s,p类型的文件
+</span></span><span class="line"><span class="cl">    -R        保留相对路径
+</span></span><span class="line"><span class="cl">    -H        保留硬链接
+</span></span><span class="line"><span class="cl">    -A        保留ACL策略
+</span></span><span class="line"><span class="cl">    -e         指定要执行的远程shell命令
+</span></span><span class="line"><span class="cl">    -E         保留可执行权限
+</span></span><span class="line"><span class="cl">    -X         保留扩展属性信息  a属性
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">比较常用的组合参数
+</span></span><span class="line"><span class="cl">rsync -avzP
+</span></span><span class="line"><span class="cl">-a    保持文件原有属性
+</span></span><span class="line"><span class="cl">-v    显示传输细节情况
+</span></span><span class="line"><span class="cl">-z    对传输数据压缩传输
+</span></span><span class="line"><span class="cl">-P    显示文件传输的进度信息
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="2本地模式">2.本地模式
+</h2><p>linux机器本身，数据来回发送</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">对文件同步
+</span></span><span class="line"><span class="cl">把本地的的/var/log/messages 文件 拷贝到/opt下 
+</span></span><span class="line"><span class="cl">拷贝单个文件
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@rsync-41 ~<span class="o">]</span><span class="c1">#rsync -avzP /var/log/messages /opt</span>
+</span></span><span class="line"><span class="cl">sending incremental file list
+</span></span><span class="line"><span class="cl">messages
+</span></span><span class="line"><span class="cl">        985,500 100%   56.79MB/s    0:00:00 <span class="o">(</span>xfr#1, to-chk<span class="o">=</span>0/1<span class="o">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">sent 123,300 bytes  received <span class="m">35</span> bytes  246,670.00 bytes/sec
+</span></span><span class="line"><span class="cl">total size is 985,500  speedup is 7.99
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">拷贝单个大文件，拷贝大文件时，要注意限速，否则占用磁盘IO太多，以及如果是网络传输的话，占用网络带宽，会导致其他程序受影响所以rsync这样的备份服务，都是在夜里，凌晨操作，尽量不影响其他程序
+</span></span><span class="line"><span class="cl">先生成一个5G文件
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@rsync-41 ~<span class="o">]</span><span class="c1">#dd bs=100M count=50 if=/dev/zero  of=/var/log/my_self.log</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@rsync-41 ~<span class="o">]</span><span class="c1">#rsync -avzP /var/log/my_self.log  /opt</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">查看磁盘的读写IO情况
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@rsync-41 ~<span class="o">]</span><span class="c1">#iotop</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="sb">`</span>借助--bwlimit<span class="o">=</span>xx（单位MB）限制单个大文件的传输，速度只给他20M每秒<span class="sb">`</span>
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@rsync-41 ~<span class="o">]</span><span class="c1">#rsync -avzP --bwlimit=20   /var/log/my_self.log  /opt</span>
+</span></span><span class="line"><span class="cl">sending incremental file list
+</span></span><span class="line"><span class="cl">my_self.log
+</span></span><span class="line"><span class="cl">    393,117,696   7%   20.14MB/s    0:03:55  
+</span></span></code></pre></td></tr></table>
+</div>
+</div><blockquote>
+<p>扩展</p>
+<p>dd: 是一个用于复制和转换文件命令</p>
+<p>if=/dev/zero: 指定输入文件（input file）为 /dev/zero。/dev/zero 是一个特殊的设备文件，它只生成空字符（null bytes，即值为 0 的字节）。
+of=ceshi.txt: 指定输出文件（output file）为 ceshi.txt。这意味着 dd 命令将把从 /dev/zero 读取的数据写入到 ceshi.txt 文件中
+count=1: 表示只复制 1 个块（block）的数据。
+bs=10M: 设置块大小（block size）为 10 兆字节（Megabytes）
+这种操作通常用于快速生成一个指定大小的文件，尤其是当你需要一个大文件来进行某种测试或填充磁盘空间时。</p>
+</blockquote>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">对目录同步（注意语法的区别）
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">拷贝后的数据，会携带该目录本身
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@rsync-41 ~<span class="o">]</span><span class="c1">#rsync -avzP /var/log    /opt</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">不拷贝该目录本身，仅拷贝目录下的数据
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@rsync-41 ~<span class="o">]</span><span class="c1">#rsync -avzP /var/log/    /opt</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">测试文件夹的增量拷贝
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@rsync-41 ~<span class="o">]</span><span class="c1">#rsync -avzP /test1/   /test2</span>
+</span></span><span class="line"><span class="cl">sending incremental file list
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">sent <span class="m">118</span> bytes  received <span class="m">12</span> bytes  260.00 bytes/sec
+</span></span><span class="line"><span class="cl">total size is <span class="m">0</span>  speedup is 0.00
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@rsync-41 ~<span class="o">]</span><span class="c1">#echo &#34;123&#34; &gt;/test1/1.png </span>
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@rsync-41 ~<span class="o">]</span><span class="c1">#rsync -avzP /test1/   /test2</span>
+</span></span><span class="line"><span class="cl">sending incremental file list
+</span></span><span class="line"><span class="cl">1.png
+</span></span><span class="line"><span class="cl">              <span class="m">4</span> 100%    0.00kB/s    0:00:00 <span class="o">(</span>xfr#1, to-chk<span class="o">=</span>4/6<span class="o">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">sent <span class="m">175</span> bytes  received <span class="m">35</span> bytes  420.00 bytes/sec
+</span></span><span class="line"><span class="cl">total size is <span class="m">4</span>  speedup is 0.02
+</span></span></code></pre></td></tr></table>
+</div>
+</div><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">无差异化拷贝
+</span></span><span class="line"><span class="cl">使用--delete参数 将目标目录的数据清空，保证完全和源目录的数据一致
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@rsync-41 /test2<span class="o">]</span><span class="c1">#rsync -azvP --delete  /test1/   /test2/</span>
+</span></span><span class="line"><span class="cl">sending incremental file list
+</span></span><span class="line"><span class="cl">deleting 行者孙.png
+</span></span><span class="line"><span class="cl">./
+</span></span><span class="line"><span class="cl">白龙马.png
+</span></span><span class="line"><span class="cl">              <span class="m">0</span> 100%    0.00kB/s    0:00:00 <span class="o">(</span>xfr#1, to-chk<span class="o">=</span>0/12<span class="o">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">sent <span class="m">269</span> bytes  received <span class="m">55</span> bytes  648.00 bytes/sec
+</span></span><span class="line"><span class="cl">total size is <span class="m">4</span>  speedup is 0.01
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@rsync-41 /test2<span class="o">]</span><span class="c1">#ls /test1/</span>
+</span></span><span class="line"><span class="cl">1.png  2.png  3.png  4.png  5.png  孙悟空1  孙悟空2  孙悟空3  孙悟空4  孙悟空5  白龙马.png
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@rsync-41 /test2<span class="o">]</span><span class="c1">#ls /test2</span>
+</span></span><span class="line"><span class="cl">1.png  2.png  3.png  4.png  5.png  孙悟空1  孙悟空2  孙悟空3  孙悟空4  孙悟空5  白龙马.png
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="3远程模式">3.远程模式
+</h2><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">把rsync-41   /root下的数据
+</span></span><span class="line"><span class="cl">拷贝到 nfs-31   /tmp下
+</span></span></code></pre></td></tr></table>
+</div>
+</div><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span><span class="lnt">9
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">PUSH 推送模式，上传模式
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">把rsync-41   /root下的数据，拷贝到 nfs-31   /tmp下
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">登录rsync41
+</span></span><span class="line"><span class="cl">用ip形式、再用主机名形式
+</span></span><span class="line"><span class="cl">添加无差异化参数，该参数，慎用！搞清楚了你在做什么！
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@rsync-41 ~<span class="o">]</span><span class="c1">#rsync -avzP  --delete  /root/    root@172.16.1.31:/tmp/</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">PULL 拉取模式（你要琢磨，数据最终放在了哪）
+</span></span><span class="line"><span class="cl">把rsync-41   /root下的数据，拷贝到 nfs-31   /tmp下
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@nfs-31 ~<span class="o">]</span><span class="c1">#rsync -avzP   root@172.16.1.41:/root/    /tmp/</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">拉取rsync41的/etc/passwd文件到 nfs-31的/opt下，使用主机名通信
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@nfs-31 ~<span class="o">]</span><span class="c1">#rsync -avzP root@rsync-41:/etc/passwd    /opt/</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">传输整个目录,包含目录本身
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@nfs-31 ~<span class="o">]</span><span class="c1">#rsync -avzP   root@172.16.1.41:/root    /tmp/</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">只传输目录下的文件,不包含目录本身
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@nfs-31 ~<span class="o">]</span><span class="c1">#rsync -avzP   root@172.16.1.41:/root/    /tmp/</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">不同主机之间同步数据 --delete
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@nfs-31 ~<span class="o">]</span><span class="c1">#rsync -avzP --delete   root@172.16.1.41:/root    /tmp/</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">注意:如果/和一个空目录进行完全同步,那么效果和删根目录一样
+</span></span></code></pre></td></tr></table>
+</div>
+</div><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">注意:传输过程不限速导致带宽被占满 ,--bwlimit<span class="o">=</span><span class="m">50</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">远程传输 nfs-31下的 /tmp/2G.log   备份到  rsync-41的/opt下
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@nfs-31 ~<span class="o">]</span><span class="c1">#dd bs=100M count=20 if=/dev/zero  of=/tmp/2G.log</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@nfs-31 ~<span class="o">]</span><span class="c1">#rsync -avzP   /tmp/2G.log   root@172.16.1.41:/opt</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">远程备份文件，且改名
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@nfs-31 /tmp<span class="o">]</span><span class="c1">#rsync -avzP   /tmp/2G.log   root@172.16.1.41:/opt/2G.logggggggggggggggggggggg</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">远程传输 nfs-31下的 /tmp/2G.log   备份到  rsync-41的/opt下，且是无差异化备份
+</span></span><span class="line"><span class="cl">等于清空原有/opt下的数据
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@nfs-31 ~<span class="o">]</span><span class="c1">#rsync -avzP --delete   /tmp/2G.log   root@172.16.1.41:/opt/2G.log</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h1 id="第3章-rsync服务模式-服务端配置">第3章 Rsync服务模式-服务端配置
+</h1><h2 id="0为什么需要服务模式">0.为什么需要服务模式
+</h2><p>​	Rsync 借助 SSH 协议同步数据存在的缺陷:
+​	1.使用系统用户（不安全） /etc/passwd
+​	2.使用普通用户（会导致权限不足情况）
+​	3.守护进程传输方式: rsync 自身非常重要的功能(不使用系统用户，更加安全)</p>
+<h2 id="1安装rsync">1.安装rsync
+</h2><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="o">[</span>root@rsync-41 ~<span class="o">]</span><span class="c1">#yum install rsync -y</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="2修改配置文件">2.修改配置文件
+</h2><p>复制粘贴如下代码即可</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="o">[</span>root@rsync-41 ~<span class="o">]</span><span class="c1">#cat &gt; /etc/rsyncd.conf &lt;&lt; &#39;EOF&#39;</span>
+</span></span><span class="line"><span class="cl"><span class="nv">uid</span> <span class="o">=</span> www 
+</span></span><span class="line"><span class="cl"><span class="nv">gid</span> <span class="o">=</span> www 
+</span></span><span class="line"><span class="cl"><span class="nv">port</span> <span class="o">=</span> <span class="m">873</span>
+</span></span><span class="line"><span class="cl">fake <span class="nv">super</span> <span class="o">=</span> yes
+</span></span><span class="line"><span class="cl">use <span class="nv">chroot</span> <span class="o">=</span> no
+</span></span><span class="line"><span class="cl">max <span class="nv">connections</span> <span class="o">=</span> <span class="m">200</span>
+</span></span><span class="line"><span class="cl"><span class="nv">timeout</span> <span class="o">=</span> <span class="m">600</span>
+</span></span><span class="line"><span class="cl">ignore errors
+</span></span><span class="line"><span class="cl"><span class="nb">read</span> <span class="nv">only</span> <span class="o">=</span> <span class="nb">false</span>
+</span></span><span class="line"><span class="cl"><span class="nv">list</span> <span class="o">=</span> <span class="nb">false</span>
+</span></span><span class="line"><span class="cl">auth <span class="nv">users</span> <span class="o">=</span> rsync_backup
+</span></span><span class="line"><span class="cl">secrets <span class="nv">file</span> <span class="o">=</span> /etc/rsync.passwd 
+</span></span><span class="line"><span class="cl">log <span class="nv">file</span> <span class="o">=</span> /var/log/rsyncd.log
+</span></span><span class="line"><span class="cl"><span class="c1">#####################################</span>
+</span></span><span class="line"><span class="cl"><span class="o">[</span>backup<span class="o">]</span>
+</span></span><span class="line"><span class="cl"><span class="nv">comment</span> <span class="o">=</span> this is first backup dir
+</span></span><span class="line"><span class="cl"><span class="nv">path</span> <span class="o">=</span> /backup
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="o">[</span>data<span class="o">]</span>
+</span></span><span class="line"><span class="cl"><span class="nv">comment</span> <span class="o">=</span> this is second backup dir,to website data..
+</span></span><span class="line"><span class="cl"><span class="nv">path</span> <span class="o">=</span> /data
+</span></span><span class="line"><span class="cl">EOF
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>配置信息说明：</p>
+<p><img src="D:/desktop/myblog/myblog/content/post/Rsync%e6%9c%8d%e5%8a%a1/assets/clipImg-1725547817021-8.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="clipImg"
+	
+	
+></p>
+<h2 id="3创建用户以及数据目录">3.创建用户以及数据目录
+</h2><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">根据你的配置文件中定义的信息，创建对应的用户，备份的目录
+</span></span><span class="line"><span class="cl">该无法登录的用户，只是用于运行进程的账户
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@rsync-41 ~<span class="o">]</span><span class="c1">#useradd -u 1000 -M -s /sbin/nologin www</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">创建配置文件中定义的2个备份目录
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@rsync-41 ~<span class="o">]</span><span class="c1">#mkdir -p /data/   /backup/</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">修改备份目录的权限
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@rsync-41 ~<span class="o">]</span><span class="c1">#chown -R www:www /data/</span>
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@rsync-41 ~<span class="o">]</span><span class="c1">#chown -R www:www /backup/</span>
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@rsync-41 ~<span class="o">]</span><span class="c1">#ll -d /data /backup/</span>
+</span></span><span class="line"><span class="cl">drwxr-xr-x <span class="m">2</span> www www <span class="m">6</span> Apr <span class="m">20</span> 11:34 /backup/
+</span></span><span class="line"><span class="cl">drwxr-xr-x <span class="m">2</span> www www <span class="m">6</span> Apr <span class="m">20</span> 11:34 /data
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="4创建rsync专用的账户密码这一步很重要有错基本也是来这排查">4.创建rsync专用的账户密码（这一步很重要，有错基本也是来这排查）
+</h2><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">1.创建密码文件，写入账户和密码，用于和客户端连接时候的认证
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@rsync-41 ~<span class="o">]</span><span class="c1">#vim /etc/rsync.passwd</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">2.写入账户密码
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@rsync-41 ~<span class="o">]</span><span class="c1">#cat /etc/rsync.passwd </span>
+</span></span><span class="line"><span class="cl">rsync_backup:lj666
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">3.这一步，非常重要，rsync要求降低密码文件的权限，且必须是600
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@rsync-41 ~<span class="o">]</span><span class="c1">#chmod 600 /etc/rsync.passwd </span>
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@rsync-41 ~<span class="o">]</span><span class="c1">#ll /etc/rsync.passwd </span>
+</span></span><span class="line"><span class="cl">-rw------- <span class="m">1</span> root root <span class="m">23</span> Apr <span class="m">20</span> 11:36 /etc/rsync.passwd
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="5加入开机自启动">5.加入开机自启动
+</h2><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">设置rsyncd服务，运行，且开机自启
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@rsync-41 ~<span class="o">]</span><span class="c1">#systemctl start rsyncd</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">检查rsyncd服务是否运行，以及该服务的运行日志 
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@rsync-41 ~<span class="o">]</span><span class="c1">#systemctl status rsyncd</span>
+</span></span><span class="line"><span class="cl">● rsyncd.service - fast remote file copy program daemon
+</span></span><span class="line"><span class="cl">   Loaded: loaded <span class="o">(</span>/usr/lib/systemd/system/rsyncd.service<span class="p">;</span> disabled<span class="p">;</span> vendor preset: disabled<span class="o">)</span>
+</span></span><span class="line"><span class="cl">   Active: active <span class="o">(</span>running<span class="o">)</span> since Wed 2022-04-20 11:46:57 CST<span class="p">;</span> 4s ago
+</span></span><span class="line"><span class="cl"> Main PID: <span class="m">6078</span> <span class="o">(</span>rsync<span class="o">)</span>
+</span></span><span class="line"><span class="cl">   CGroup: /system.slice/rsyncd.service
+</span></span><span class="line"><span class="cl">           └─6078 /usr/bin/rsync --daemon --no-detach
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">Apr <span class="m">20</span> 11:46:57 rsync-41 systemd<span class="o">[</span>1<span class="o">]</span>: Started fast remote file copy program daemon.
+</span></span><span class="line"><span class="cl">Apr <span class="m">20</span> 11:46:57 rsync-41 systemd<span class="o">[</span>1<span class="o">]</span>: Starting fast remote file copy program daemon...
+</span></span><span class="line"><span class="cl">Apr <span class="m">20</span> 11:46:57 rsync-41 rsyncd<span class="o">[</span>6078<span class="o">]</span>: params.c:Parameter<span class="o">()</span> - Ignoring badly formed line in config file: ignore errors
+</span></span><span class="line"><span class="cl">Apr <span class="m">20</span> 11:46:57 rsync-41 rsyncd<span class="o">[</span>6078<span class="o">]</span>: rsyncd version 3.1.2 starting, listening on port <span class="m">873</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="6检查服务是否运行">6.检查服务是否运行
+</h2><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="o">[</span>root@rsync-41 ~<span class="o">]</span><span class="c1">#systemctl status rsyncd</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># 无论是学习期间还是上班了，都养成好习惯</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># 给别人启动了某程序后，给自己启动某程序</span>
+</span></span><span class="line"><span class="cl">务必去检查，验证是否正确
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@rsync-41 ~<span class="o">]</span><span class="c1">#ps -ef|grep &#39;rsync&#39; | grep -v &#39;grep&#39;</span>
+</span></span><span class="line"><span class="cl">root       <span class="m">6078</span>      <span class="m">1</span>  <span class="m">0</span> 11:46 ?        00:00:00 /usr/bin/rsync --daemon --no-detach
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@rsync-41 ~<span class="o">]</span><span class="c1">#netstat -tunlp|grep rsync</span>
+</span></span><span class="line"><span class="cl">tcp        <span class="m">0</span>      <span class="m">0</span> 0.0.0.0:873             0.0.0.0:*               LISTEN      6078/rsync          
+</span></span><span class="line"><span class="cl">tcp6       <span class="m">0</span>      <span class="m">0</span> :::873                  :::*                    LISTEN      6078/rsync 
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h1 id="第4章-rsync服务模式-客户端配置">第4章 Rsync服务模式-客户端配置
+</h1><p>安装rsync</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="o">[</span>root@nfs-31 ~<span class="o">]</span><span class="c1">#yum install rsync -y</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h1 id="第5章-操作服务端rsync-41的数据">第5章 操作服务端rsync-41的数据
+</h1><h2 id="推送备份发送nfs-31的数据发给rsync-41">推送，备份，发送nfs-31的数据发给rsync-41
+</h2><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">把客户端的数据，发送给服务端的backup备份模块下
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">把客户端的 /tmp/200M.log 备份，发送到rsync-41机器上的 backup模块下
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">rsync -avzP   /tmp/200M.log  账户@主机名::模块名
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">默认无密码变量，也无密码文件，需要你自己输入该rsync_backup虚拟用户的密码
+</span></span><span class="line"><span class="cl">需要交互式的输入密码，无法再脚本中使用rsync同步命令
+</span></span><span class="line"><span class="cl">rsync基本都是和脚本结合使用
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@nfs-31 ~<span class="o">]</span><span class="c1">#rsync -avzP   /tmp/200M.log  rsync_backup@rsync-41::backup</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">非交互式密码的操作，如下2个方法
+</span></span><span class="line"><span class="cl">1. 生成密码文件，每次连接都指定这个密码文件（在客户端生成）
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@nfs-31 ~<span class="o">]</span><span class="c1">#echo &#39;lj666&#39;  &gt; /etc/my_rsync.pwd</span>
+</span></span><span class="line"><span class="cl">还必须降低密码文件的权限才行，必须是600
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@nfs-31 ~<span class="o">]</span><span class="c1">#chmod 600 /etc/my_rsync.pwd</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">此时可以传输数据了，往data模块下传输
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@nfs-31 ~<span class="o">]</span><span class="c1">#rsync -avzP  --password-file=/etc/my_rsync.pwd   /tmp/200M.log  rsync_backup@rsync-41::data</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">如果是脚本中的话，去掉vP显示过程的参数去掉
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@nfs-31 ~<span class="o">]</span><span class="c1">#rsync -az  --password-file=/etc/my_rsync.pwd   /tmp/200M.log  rsync_backup@rsync-41::data</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">2. 生成密码变量，让当前系统中存在叫做 RSYNC_PASSWORD 这个变量，以及变量的值，是配置文件中的密码即可
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@nfs-31 ~<span class="o">]</span><span class="c1">#export RSYNC_PASSWORD=&#39;lj666&#39;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@nfs-31 ~<span class="o">]</span><span class="c1">#rsync -avzP    /tmp/200M.log  rsync_backup@rsync-41::backup</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">上传过程中文件改名
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@nfs-31 ~<span class="o">]</span><span class="c1">#rsync -avzP    /tmp/200M.log  rsync_backup@rsync-41::backup/11111.log</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="下载备份服务器的数据">下载备份服务器的数据
+</h2><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">rsync -avzP   账户@主机名::模块名  下载的目标路径 
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">如果需要输入密码，则可以撤销这个密码变量
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@nfs-31 ~<span class="o">]</span><span class="c1">#unset RSYNC_PASSWORD</span>
+</span></span><span class="line"><span class="cl">或者重新登录，只要密码变量失效，就必须得输入密码了，或者使用密码文件
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@nfs-31 ~<span class="o">]</span><span class="c1">#rsync -avzP rsync_backup@rsync-41::backup   /tmp/</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">非交互式的密码认证方式
+</span></span><span class="line"><span class="cl">1，使用密码变量
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@nfs-31 ~<span class="o">]</span><span class="c1">#export RSYNC_PASSWORD=&#39;lj666&#39;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">2.指定密码文件
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@nfs-31 ~<span class="o">]</span><span class="c1">#rsync -avzP --password-file=/etc/my_rsync.pwd  rsync_backup@rsync-41::backup   /tmp/</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">下载过程中文件改名
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@nfs-31 ~<span class="o">]</span><span class="c1">#rsync -avzP --password-file=/etc/my_rsync.pwd  rsync_backup@rsync-41::backup/222222222.log   /tmp/</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h1 id="第6章-关于rsync的常见错误">第6章 关于rsync的常见错误
+</h1><p>rsync由于配置步骤比较细节，比较坑比较多，你可能会遇见各种错误</p>
+<h2 id="rsync服务端排错思路">Rsync服务端排错思路
+</h2><p>1.检查rsync服务端的配置文件路径是否正确：/etc/rsyncd.conf
+2.查看配置文件的host allow ,host deny允许的ip网段是否允许客户端访问
+3.查看配置文件中的path参数路径是否存在，权限是否正确(和配置文件的UUID参数对应)
+4.查看rsync服务是否启动，端口、进程是否存活
+5.查看iptables防火墙、selinux是否允许rsync服务通过，或是关闭
+6.查看服务端rsync配置文件的密码文件，权限是否600,格式，语法是否正确，且和配置文件的secrect files参数对应
+7.如果是推送数据，要查看配置rsyncd.conf中的用户对该rsync模块下的文件是否可以读取</p>
+<h2 id="rsync客户端排错">Rsync客户端排错
+</h2><p>1.查看rsync客户端配置的密码文件权限是否600,密码文件格式是否正确，是否和服务端的密码一致
+2.尝试telnet连接rsync服务端的873端口，检测服务是否可以连接
+3.客户端执行命令语法要检查，细心</p>
+
+</section>
+
+
+    <footer class="article-footer">
+    
+
+    </footer>
+
+
+    
+</article>
+
+    
+
+    
+
+     
+    
+        
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+        2025 小诗
+    </section>
+    
+    <section class="powerby">
+        使用 <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> 构建 <br />
+        主题 <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.26.0">Stack</a></b> 由 <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a> 设计
+    </section>
+</footer>
+
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css"crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css"crossorigin="anonymous"
+            >
+
+            </main>
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.6/dist/vibrant.min.js"integrity="sha256-awcR2jno4kI5X0zL8ex0vi2z&#43;KMkF24hUW8WePSA9HM="crossorigin="anonymous"
+                
+                >
+            </script><script type="text/javascript" src="/xiaoshi/ts/main.js" defer></script>
+<script>
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+
+    </body>
+</html>
