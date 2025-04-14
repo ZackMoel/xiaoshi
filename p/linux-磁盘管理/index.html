@@ -1,0 +1,1117 @@
+<!DOCTYPE html>
+<html lang="zh-cn" dir="ltr">
+    <head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content="Linux-磁盘管理 1. 磁盘管理工具 (1)硬盘概念结构 机械硬盘：依赖于磁盘上的磁性材料记录数据，内部构造包括磁盘盘片、磁头和主轴电机等。在读写">
+<title>Linux 磁盘管理</title>
+
+<link rel='canonical' href='https://ZackMoel.github.io/xiaoshi/p/linux-%E7%A3%81%E7%9B%98%E7%AE%A1%E7%90%86/'>
+
+<link rel="stylesheet" href="/xiaoshi/scss/style.min.0304c6baf04e01a8fe70693791cb744d56a3578a3120a8796cefc66825aa39c7.css"><meta property='og:title' content="Linux 磁盘管理">
+<meta property='og:description' content="Linux-磁盘管理 1. 磁盘管理工具 (1)硬盘概念结构 机械硬盘：依赖于磁盘上的磁性材料记录数据，内部构造包括磁盘盘片、磁头和主轴电机等。在读写">
+<meta property='og:url' content='https://ZackMoel.github.io/xiaoshi/p/linux-%E7%A3%81%E7%9B%98%E7%AE%A1%E7%90%86/'>
+<meta property='og:site_name' content='小诗的博客'>
+<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:published_time' content='2025-04-14T15:03:08&#43;08:00'/><meta property='article:modified_time' content='2025-04-14T15:03:08&#43;08:00'/>
+<meta name="twitter:title" content="Linux 磁盘管理">
+<meta name="twitter:description" content="Linux-磁盘管理 1. 磁盘管理工具 (1)硬盘概念结构 机械硬盘：依赖于磁盘上的磁性材料记录数据，内部构造包括磁盘盘片、磁头和主轴电机等。在读写">
+  
+
+
+    </head>
+    <body class="
+    article-page
+    ">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex on-phone--column extended"><aside class="sidebar left-sidebar sticky ">
+    <button class="hamburger hamburger--spin" type="button" id="toggle-menu" aria-label="切换菜单">
+        <span class="hamburger-box">
+            <span class="hamburger-inner"></span>
+        </span>
+    </button>
+
+    <header>
+        
+            
+            <figure class="site-avatar">
+                <a href="/xiaoshi/">
+                
+                    
+                    
+                    
+                        
+                        <img src="/xiaoshi/img/avatar_hu8920112365793990935.png" width="300"
+                            height="300" class="site-logo" loading="lazy" alt="Avatar">
+                    
+                
+                </a>
+                
+                    <span class="emoji">🍥</span>
+                
+            </figure>
+            
+        
+        
+        <div class="site-meta">
+            <h1 class="site-name"><a href="/xiaoshi">小诗的博客</a></h1>
+            <h2 class="site-description">欢迎来到小诗的博客</h2>
+        </div>
+    </header><ol class="menu-social">
+            
+                <li>
+                    <a 
+                        href='https://space.bilibili.com/1055981889?spm_id_from=333.1007.0.0'
+                        target="_blank"
+                        title="bilibili"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg  xmlns="http://www.w3.org/2000/svg"  width="24"  height="24"  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  stroke-width="2"  stroke-linecap="round"  stroke-linejoin="round"  class="icon icon-tabler icons-tabler-outline icon-tabler-brand-bilibili"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M3 10a4 4 0 0 1 4 -4h10a4 4 0 0 1 4 4v6a4 4 0 0 1 -4 4h-10a4 4 0 0 1 -4 -4v-6z" /><path d="M8 3l2 3" /><path d="M16 3l-2 3" /><path d="M9 13v-2" /><path d="M15 11v2" /></svg>
+                        
+                    </a>
+                </li>
+            
+                <li>
+                    <a 
+                        href='https://github.com/ZackMoel/xiaoshi.github.io'
+                        target="_blank"
+                        title="GitHub"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-github" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M9 19c-4.3 1.4 -4.3 -2.5 -6 -3m12 5v-3.5c0 -1 .1 -1.4 -.5 -2c2.8 -.3 5.5 -1.4 5.5 -6a4.6 4.6 0 0 0 -1.3 -3.2a4.2 4.2 0 0 0 -.1 -3.2s-1.1 -.3 -3.5 1.3a12.3 12.3 0 0 0 -6.2 0c-2.4 -1.6 -3.5 -1.3 -3.5 -1.3a4.2 4.2 0 0 0 -.1 3.2a4.6 4.6 0 0 0 -1.3 3.2c0 4.6 2.7 5.7 5.5 6c-.6 .6 -.6 1.2 -.5 2v3.5" />
+</svg>
+
+
+
+                        
+                    </a>
+                </li>
+            
+        </ol><ol class="menu" id="main-menu">
+        
+        
+        
+        <li >
+            <a href='/xiaoshi/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-home" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <polyline points="5 12 3 12 12 3 21 12 19 12" />
+  <path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7" />
+  <path d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6" />
+</svg>
+
+
+
+                
+                <span>主页</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/xiaoshi/%E5%85%B3%E4%BA%8E/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-user" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="7" r="4" />
+  <path d="M6 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2" />
+</svg>
+
+
+
+                
+                <span>关于</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/xiaoshi/archives/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-archive" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <rect x="3" y="4" width="18" height="4" rx="2" />
+  <path d="M5 8v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-10" />
+  <line x1="10" y1="12" x2="14" y2="12" />
+</svg>
+
+
+
+                
+                <span>归档</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/xiaoshi/search/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-search" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="10" cy="10" r="7" />
+  <line x1="21" y1="21" x2="15" y2="15" />
+</svg>
+
+
+
+                
+                <span>搜索</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/xiaoshi/%E5%8F%8B%E6%83%85%E9%93%BE%E6%8E%A5/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-link" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M10 14a3.5 3.5 0 0 0 5 0l4 -4a3.5 3.5 0 0 0 -5 -5l-.5 .5" />
+  <path d="M14 10a3.5 3.5 0 0 0 -5 0l-4 4a3.5 3.5 0 0 0 5 5l.5 -.5" />
+</svg>
+
+
+
+                
+                <span>友情链接</span>
+            </a>
+        </li>
+        
+        <li class="menu-bottom-section">
+            <ol class="menu">
+
+                
+                    <li id="dark-mode-toggle">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="8" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="16" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <span>暗色模式</span>
+                    </li>
+                
+            </ol>
+        </li>
+    </ol>
+</aside>
+
+    <aside class="sidebar right-sidebar sticky">
+        
+            
+                
+    <section class="widget archives">
+        <div class="widget-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <line x1="5" y1="9" x2="19" y2="9" />
+  <line x1="5" y1="15" x2="19" y2="15" />
+  <line x1="11" y1="4" x2="7" y2="20" />
+  <line x1="17" y1="4" x2="13" y2="20" />
+</svg>
+
+
+
+        </div>
+        <h2 class="widget-title section-title">目录</h2>
+        
+        <div class="widget--toc">
+            <nav id="TableOfContents">
+  <ol>
+    <li><a href="#1-磁盘管理工具">1. 磁盘管理工具</a>
+      <ol>
+        <li><a href="#1硬盘概念结构">(1)硬盘概念结构</a></li>
+        <li><a href="#2使用-fdisk-分区工具">(2)使用 fdisk 分区工具</a></li>
+        <li><a href="#3格式化分区">(3)格式化分区</a>
+          <ol>
+            <li><a href="#常用的格式化工具">常用的格式化工具</a></li>
+            <li><a href="#挂载使用">挂载使用</a></li>
+          </ol>
+        </li>
+        <li><a href="#开机自动挂载-etcfstab">开机自动挂载 /etc/fstab</a></li>
+        <li><a href="#4综合分区">(4)综合分区</a></li>
+        <li><a href="#5-gpt分区模式">(5) GPT分区模式</a></li>
+        <li><a href="#添加全新的硬盘为gpt分区模式准备">添加全新的硬盘，为GPT分区模式准备</a></li>
+        <li><a href="#gpt分区模式分区进阶">GPT分区模式，分区进阶</a></li>
+      </ol>
+    </li>
+    <li><a href="#2-交换空间虚拟内存">2. 交换空间（虚拟内存）</a>
+      <ol>
+        <li><a href="#1方式一----利用未使用的分区空间制作交换空间">(1）方式一    利用未使用的分区空间制作交换空间</a></li>
+        <li><a href="#2方式二-----利用一个文件进行制作交换空间">(2）方式二     利用一个文件，进行制作交换空间</a></li>
+      </ol>
+    </li>
+    <li><a href="#3-逻辑卷管理">3. 逻辑卷管理</a>
+      <ol>
+        <li><a href="#1什么是-lvm">(1）什么是 LVM？</a></li>
+        <li><a href="#2lvm-核心概念">(2）LVM 核心概念</a></li>
+        <li><a href="#3主要命令语法">（3）主要命令语法</a></li>
+        <li><a href="#4配置案例">（4）配置案例</a></li>
+        <li><a href="#heading"></a></li>
+      </ol>
+    </li>
+  </ol>
+</nav>
+        </div>
+    </section>
+
+            
+        
+    </aside>
+
+
+            <main class="main full-width">
+    <article class="main-article">
+    <header class="article-header">
+
+    <div class="article-details">
+    
+
+    <div class="article-title-wrapper">
+        <h2 class="article-title">
+            <a href="/xiaoshi/p/linux-%E7%A3%81%E7%9B%98%E7%AE%A1%E7%90%86/">Linux 磁盘管理</a>
+        </h2>
+    
+        
+    </div>
+
+    
+    
+    
+    
+    <footer class="article-time">
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
+  <circle cx="18" cy="18" r="4" />
+  <path d="M15 3v4" />
+  <path d="M7 3v4" />
+  <path d="M3 11h16" />
+  <path d="M18 16.496v1.504l1 1" />
+</svg>
+                <time class="article-time--published">2025-04-14</time>
+            </div>
+        
+
+        
+    </footer>
+    
+
+    
+</div>
+
+</header>
+
+    <section class="article-content">
+    
+    
+    <h1 id="linux-磁盘管理">Linux-磁盘管理
+</h1><h2 id="1-磁盘管理工具">1. 磁盘管理工具
+</h2><h3 id="1硬盘概念结构">(1)硬盘概念结构
+</h3><ul>
+<li>
+<p>机械硬盘：依赖于磁盘上的磁性材料记录数据，内部构造包括磁盘盘片、磁头和主轴电机等。在读写数据时，磁头通过高速旋转的盘片记录或读取磁性信息。由于机械部件的存在，HDD在工作时会产生噪音‌。</p>
+</li>
+<li>
+<p>固态硬盘：基于闪存技术（通常是NAND闪存）存储数据，没有任何机械结构。数据通过电子传输直接读写，因此读取速度比HDD快得多，且更为安静‌。</p>
+</li>
+</ul>
+<p><img src="/xiaoshi/p/linux-%E7%A3%81%E7%9B%98%E7%AE%A1%E7%90%86/assets/image-20240428152557-n9oud72.png"
+	width="668"
+	height="448"
+	srcset="/xiaoshi/p/linux-%E7%A3%81%E7%9B%98%E7%AE%A1%E7%90%86/assets/image-20240428152557-n9oud72_hu3087653208426879075.png 480w, /xiaoshi/p/linux-%E7%A3%81%E7%9B%98%E7%AE%A1%E7%90%86/assets/image-20240428152557-n9oud72_hu7617001033190213722.png 1024w"
+	loading="lazy"
+	
+		alt="image"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="149"
+		data-flex-basis="357px"
+	
+>​</p>
+<blockquote>
+<p>💡硬盘接口类型：IDE、SATA、SCSI、FC</p>
+</blockquote>
+<div class="table-wrapper"><table>
+<thead>
+<tr>
+<th>磁盘接口类型</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>IDE（Integrated Device Electronics:电子集成驱动器）</td>
+<td>最初硬盘的通用标准，任何电子集成驱动器都属于IDE，甚至包括SCSI；</td>
+</tr>
+<tr>
+<td>SATA（Serial-ATA：串行ATA）</td>
+<td>SATA的出现将ATA和IDE区分开来，而IDE则属于Parallel-ATA(并行ATA)。所以，一般来说，IDE称为并口，SATA称为串口。</td>
+</tr>
+<tr>
+<td>SCSI（Small Computer System Interface：小型计算机系统专用接口）</td>
+<td>SCSI硬盘就是采用这种接口的硬盘。SAS(Serial Attached SCSI)就是串口的SCSI接口。一般服务器硬盘采用这两类接口，其性能比上述两种硬盘要高，稳定性更强，支持热插拔，但是价格高，容量小，噪音大。</td>
+</tr>
+<tr>
+<td>FC（FibreChannel）</td>
+<td>使光纤通道能够直接作为硬盘连接接口，为高吞度吐量性能密集型系统的设计者开辟了一条提高I/O性能水平的途径。</td>
+</tr>
+</tbody>
+</table></div>
+<h3 id="2使用-fdisk-分区工具">(2)使用 fdisk 分区工具
+</h3><ul>
+<li>
+<p><strong>查看分区表</strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">fdisk -l /dev/sda
+</span></span></code></pre></td></tr></table>
+</div>
+</div></li>
+<li>
+<p><strong>硬盘分区</strong></p>
+<ul>
+<li>
+<p>主分区：也称为主磁盘分区，主分区中不能再划分其他类型的分区，因此每个主分区都相当于一个逻辑磁盘。</p>
+</li>
+<li>
+<p>逻辑分区：扩展分区与逻辑分区是为了突破分区表中只能保存4个分区的限制而出现的，扩展分区不能直接使用，需要在扩展分区内划分一个或多个逻辑分区后才能使用。</p>
+<ul>
+<li>扩展分区：在扩展分区上面，可以创建多个逻辑分区，硬逻辑分区是盘上一块连续的区域，它是扩展分区的组成部分。</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="c1"># 通常所说的“硬盘分区”就是指修改磁盘分区表，注意以下情况：</span>
+</span></span><span class="line"><span class="cl"><span class="m">1</span> 考虑到磁盘的连续性，一般建议将扩展分区放在最后面的柱面内。
+</span></span><span class="line"><span class="cl"><span class="m">2</span> 一个硬盘只有一个扩展分区，除去主分区，其它空间都分配给扩展分区。
+</span></span><span class="line"><span class="cl"><span class="m">3</span> <span class="nv">硬盘容量</span><span class="o">=</span>主分区+扩展分区；扩展分区容量<span class="o">=</span>各个逻辑分区容量之和
+</span></span></code></pre></td></tr></table>
+</div>
+</div><ul>
+<li>
+<p><strong>修改硬盘的分区表</strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">[root@localhost ~]# fdisk   /dev/sdb  
+</span></span><span class="line"><span class="cl">n 创建新的分区-----&gt;分区类型 回车-----&gt;分区编号 回车----&gt;起始扇区 回车-----&gt;在last结束时 +2G
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">p 查看分区表
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">n 创建新的分区-----&gt;分区类型 回车-----&gt;分区编号 回车----&gt;起始扇区 回车-----&gt;在last结束时 +1G
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">w 保存并退出
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">[root@localhost ~]# lsblk
+</span></span><span class="line"><span class="cl">[root@localhost ~]# ls   /dev/sdb[1-2]
+</span></span></code></pre></td></tr></table>
+</div>
+</div></li>
+<li>
+<p><strong>常用交互指令：</strong></p>
+<p><strong>m  列出指令帮助</strong></p>
+<p><strong>p  查看现有的分区表</strong></p>
+<p><strong>n  新建分区</strong></p>
+<p><strong>d  删除分区</strong></p>
+<p><strong>q  放弃更改并退出</strong></p>
+<p><strong>w  保存更改并退出</strong></p>
+</li>
+</ul>
+<h3 id="3格式化分区">(3)格式化分区
+</h3><ul>
+<li>
+<h4 id="常用的格式化工具">常用的格式化工具
+</h4><p><strong>mkfs  工具集</strong></p>
+<p>mkfs.ext3  分区设备路径</p>
+<p>mkfs. ext4  分区设备路径</p>
+<p>mkfs.xfs  分区设备路径</p>
+<p>mkfs.vfat   分区设备路径</p>
+<p>格式化：赋予空间文件系统类型过程</p>
+<p>文件系统：空间存储数据的规则</p>
+<p><strong>Windows常见文件系统：NTFS、FAT、FAT32</strong></p>
+<p><strong>Linux常见文件系统: ext4(RHEL6)、XFS(RHEL7)</strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">[root@localhost ~]# mkfs.ext4   /dev/sdb1  
+</span></span><span class="line"><span class="cl">[root@localhost ~]# blkid  /dev/sdb1     #查看文件系统类型
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">[root@localhost ~]# mkfs.xfs  /dev/sdb2
+</span></span><span class="line"><span class="cl">[root@localhost ~]# blkid  /dev/sdb2     #查看文件系统类型
+</span></span></code></pre></td></tr></table>
+</div>
+</div></li>
+<li>
+<h4 id="挂载使用">挂载使用
+</h4><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">[root@localhost ~]# mkdir   /mypart1
+</span></span><span class="line"><span class="cl">[root@localhost ~]# mount   /dev/sdb1    /mypart1
+</span></span><span class="line"><span class="cl">[root@localhost ~]# df  -h   #查看当前系统正在挂载设备
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">[root@localhost ~]# mkdir   /mypart2
+</span></span><span class="line"><span class="cl">[root@localhost ~]# mount   /dev/sdb2    /mypart2
+</span></span><span class="line"><span class="cl">[root@localhost ~]# df  -h    #查看当前系统正在挂载设备
+</span></span></code></pre></td></tr></table>
+</div>
+</div></li>
+<li>
+<h3 id="开机自动挂载-etcfstab">开机自动挂载 /etc/fstab
+</h3><p><strong>格式：设备路径  挂载点    类型   参数   备份标记   检测顺序</strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">[root@localhost ~]# blkid /dev/sdb1    #查看文件系统类型
+</span></span><span class="line"><span class="cl">[root@localhost ~]# blkid /dev/sdb2   #查看文件系统类型
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">[root@localhost ~]# vim  /etc/fstab  
+</span></span><span class="line"><span class="cl">/dev/sdb1   /mypart1   ext4   defaults   0  0
+</span></span><span class="line"><span class="cl">/dev/sdb2   /mypart2   xfs   defaults   0  0
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">[root@localhost ~]# umount   /mypart1
+</span></span><span class="line"><span class="cl">[root@localhost ~]# umount   /mypart2
+</span></span><span class="line"><span class="cl">[root@localhost ~]# df -h  | grep sdb
+</span></span><span class="line"><span class="cl">[root@localhost ~]# mount  -a
+</span></span><span class="line"><span class="cl">检测/etc/fstab开机自动挂载配置文件,格式是否正确
+</span></span><span class="line"><span class="cl">检测/etc/fstab中,书写完成,但当前没有挂载的设备,进行挂载 
+</span></span><span class="line"><span class="cl">[root@localhost ~]# df -h   |   grep   sdb
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>/etc/fstab书写错误：</p>
+<p>输入root的密码（输入的内容不显示）</p>
+<p>继续编辑/etc/fstab内容进行修复      vim  /etc/fstab</p>
+</li>
+</ul>
+<h3 id="4综合分区">(4)综合分区
+</h3><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">[root@localhost ~]# fdisk   /dev/sdb
+</span></span><span class="line"><span class="cl">p 查看分区表
+</span></span><span class="line"><span class="cl">n 创建主分区-----&gt;回车-----&gt;回车----&gt;回车-----&gt;在last结束时 +2G
+</span></span><span class="line"><span class="cl">p 查看分区表
+</span></span><span class="line"><span class="cl">n 创建扩展分区 -----&gt;回车----&gt;起始回车-----&gt;结束回车 将所有空间给扩展分区
+</span></span><span class="line"><span class="cl">p 查看分区表
+</span></span><span class="line"><span class="cl">n 创建逻辑分区-----&gt;起始回车------&gt;结束+2G
+</span></span><span class="line"><span class="cl">n 创建逻辑分区-----&gt;起始回车------&gt;结束+2G
+</span></span><span class="line"><span class="cl">n 创建逻辑分区-----&gt;起始回车------&gt;结束+2G
+</span></span><span class="line"><span class="cl">p 查看分区表
+</span></span><span class="line"><span class="cl">w 保存并退出
+</span></span><span class="line"><span class="cl">[root@localhost ~]# partprobe   #刷新分区表
+</span></span><span class="line"><span class="cl">Warning: 无法以读写方式打开 /dev/sr0 (只读文件系统)。/dev/sr0 已按照只读方式打开。
+</span></span><span class="line"><span class="cl">[root@localhost ~]# lsblk
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><strong>总结：</strong></p>
+<p><strong>1.识别硬盘   lsblk</strong></p>
+<p><strong>2.分区规划   fdisk   分区模式MBR</strong></p>
+<p><strong>3.刷新分区表  partprobe</strong></p>
+<p><strong>4.格式化  mkfs.ext4  mkfs.xfs  blkid</strong></p>
+<p><strong>5.挂载使用  mount   /etc/fstab   mount  -a   df  -h</strong></p>
+<h3 id="5-gpt分区模式">(5) GPT分区模式
+</h3><ul>
+<li>
+<h3 id="添加全新的硬盘为gpt分区模式准备">添加全新的硬盘，为GPT分区模式准备
+</h3><p><strong>关闭虚拟机</strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">[root@localhost ~]# poweroff
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><strong>添加一块5硬盘</strong></p>
+<p><strong>查看系统识别的硬盘</strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">[root@localhost ~]# lsblk
+</span></span></code></pre></td></tr></table>
+</div>
+</div></li>
+<li>
+<h3 id="gpt分区模式分区进阶">GPT分区模式，分区进阶
+</h3><p><strong>全局唯一标识分区表</strong></p>
+<p><strong>突破固定大小64字节的分区表限制</strong></p>
+<p><strong>最多可支持128个主分区，最大支持18EB容量</strong></p>
+<p><strong>1 EB =</strong>  <strong>1024 PB =</strong>  <strong>1024 x 1024 TB</strong></p>
+</li>
+<li>
+<p><strong>parted常用分区指令（专门划分GPT分区模式）</strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">[root@localhost ~]# parted  /dev/sdc   
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">(parted) mktable  gpt       #指定分区模式为GPT 
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">(parted) mkpart            #划分新的分区
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">分区名称？ []? Haha          #分区的名字，随意起名
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">文件系统类型？  [ext2]? ext4    #文件系统类型，随意写
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">起始点？ 0                  #起始点
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">结束点？ 4G                  #结束点
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">忽略/Ignore/放弃/Cancel? Ignore   #忽略分区表占用的空间
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">(parted) print 
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">(parted) unit  GB               #采用GB作为单位
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">(parted) print
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">(parted) mkpart 
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">分区名称？  []? haha   
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">文件系统类型？  [ext2]? ext4 
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">起始点？ 4G
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">结束点？ 100%                 #全部空间
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">(parted) print          
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">(parted) quit 
+</span></span></code></pre></td></tr></table>
+</div>
+</div></li>
+</ul>
+<h2 id="2-交换空间虚拟内存">2. 交换空间（虚拟内存）
+</h2><p><strong>利用硬盘的空间，充当真正内存</strong></p>
+<p><strong>作用：当物理内存不够时候，暂时将物理内存中的数据，放到交换空间中，缓解真实物理内存的不足</strong></p>
+<p><strong>CPU&mdash;&ndash;&gt;内存&mdash;&mdash;&gt;硬盘</strong></p>
+<h3 id="1方式一----利用未使用的分区空间制作交换空间">(1）方式一    利用未使用的分区空间制作交换空间
+</h3><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">]# ls  /dev/sdc1
+</span></span><span class="line"><span class="cl">]# mkswap  /dev/sdc1  #格式化交换文件系统
+</span></span><span class="line"><span class="cl">]# blkid  /dev/sdc1     #查看文件系统
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">]# swapon  /dev/sdc1   #启用交换分区
+</span></span><span class="line"><span class="cl">]# swapon     #查看组成交换空间的成员信息
+</span></span><span class="line"><span class="cl">]# free -m     #查看交换空间总共的大小
+</span></span><span class="line"><span class="cl"> 
+</span></span><span class="line"><span class="cl">]# swapoff  /dev/sdc1   #停用交换分区
+</span></span><span class="line"><span class="cl">]# swapon     #查看组成交换空间的成员信息
+</span></span><span class="line"><span class="cl">]# free -m     #查看交换空间总共的大小
+</span></span><span class="line"><span class="cl"> 
+</span></span><span class="line"><span class="cl">]# vim  /etc/fstab  #开机自动启用交换分区
+</span></span><span class="line"><span class="cl">/dev/sdc1   swap   swap   defaults  0   0
+</span></span><span class="line"><span class="cl">]# swapon
+</span></span><span class="line"><span class="cl">]# swapon  -a   #专门用于检测交换分区
+</span></span><span class="line"><span class="cl">]# swapon
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="2方式二-----利用一个文件进行制作交换空间">(2）方式二     利用一个文件，进行制作交换空间
+</h3><ul>
+<li>
+<p><strong>生成一个2G的文件</strong></p>
+<p><strong>dd  if=源设备  of=目标设备  bs=块大小  count=次数</strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">]# ls  /dev/zero   #永远产生数据
+</span></span><span class="line"><span class="cl">]# dd  if=/dev/zero  of=/opt/swap.txt  bs=1M  count=2048
+</span></span><span class="line"><span class="cl">]# du -sh  /opt/swap.txt   #查看占用磁盘空间大小
+</span></span></code></pre></td></tr></table>
+</div>
+</div></li>
+<li>
+<p><strong>利用文件占用空间，充当交换空间</strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">]# mkswap  /opt/swap.txt   #格式化交换文件系统
+</span></span><span class="line"><span class="cl">]# swapon  /opt/swap.txt    #启用交换文件
+</span></span><span class="line"><span class="cl">swapon: /opt/swap.txt：不安全的权限 0644，建议使用 0600。
+</span></span><span class="line"><span class="cl">]# swapon       #查看交接空间组成的成员信息
+</span></span></code></pre></td></tr></table>
+</div>
+</div></li>
+</ul>
+<h2 id="3-逻辑卷管理">3. 逻辑卷管理
+</h2><h3 id="1什么是-lvm">(1）什么是 LVM？
+</h3><blockquote>
+<p>💡逻辑卷管理（Logical Volume Management, LVM）是一种灵活的磁盘管理机制，允许动态调整磁盘空间。</p>
+</blockquote>
+<ul>
+<li>
+<p>优点:</p>
+<ul>
+<li>动态调整分区大小。</li>
+<li>支持在线扩展和缩减。</li>
+<li>支持快照功能，便于备份和恢复。</li>
+</ul>
+</li>
+</ul>
+<h3 id="2lvm-核心概念">(2）LVM 核心概念
+</h3><ul>
+<li>物理卷 (Physical Volume, PV): 物理硬盘或分区。</li>
+<li>卷组 (Volume Group, VG): 由一个或多个物理卷组成的存储池。</li>
+<li>逻辑卷 (Logical Volume, LV): 从卷组中划分出的虚拟分区，可格式化和挂载使用。</li>
+</ul>
+<p><img src="/xiaoshi/p/linux-%E7%A3%81%E7%9B%98%E7%AE%A1%E7%90%86/assets/image-20250212092231-p2jd4ll.png"
+	width="1385"
+	height="380"
+	srcset="/xiaoshi/p/linux-%E7%A3%81%E7%9B%98%E7%AE%A1%E7%90%86/assets/image-20250212092231-p2jd4ll_hu4235506712970104587.png 480w, /xiaoshi/p/linux-%E7%A3%81%E7%9B%98%E7%AE%A1%E7%90%86/assets/image-20250212092231-p2jd4ll_hu5605176732576456388.png 1024w"
+	loading="lazy"
+	
+		alt="image"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="364"
+		data-flex-basis="874px"
+	
+>​</p>
+<h3 id="3主要命令语法">（3）主要命令语法
+</h3><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="c1"># 语法格式</span>
+</span></span><span class="line"><span class="cl">pvcreate  设备名1  <span class="o">[</span>设备名2   … …<span class="o">]</span>                <span class="c1">#创建物理卷</span>
+</span></span><span class="line"><span class="cl">vgcreate  卷组名  物理卷名1  物理卷名2              <span class="c1">#创建卷组</span>
+</span></span><span class="line"><span class="cl">lvcreate   -L  容量大小  -n  逻辑卷名  卷组名       <span class="c1">#创建逻辑卷</span>
+</span></span><span class="line"><span class="cl">lvextend  -L  +大小  /dev/卷组名/逻辑卷名          <span class="c1">#扩展逻辑卷</span>
+</span></span><span class="line"><span class="cl">lvreduce -L -大小 /dev/卷组名/逻辑卷名             <span class="c1">#缩减逻辑卷</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="4配置案例">（4）配置案例
+</h3><ul>
+<li>创建和管理物理卷</li>
+</ul>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="o">[</span>root@centos ~<span class="o">]</span><span class="c1">#fdisk  /dev/sdb  进行分区</span>
+</span></span><span class="line"><span class="cl">注意：分区类型一定要改成8e（lvm类型）
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@centos ~<span class="o">]</span><span class="c1">#pvcreate  /dev/sdb1   /dev/sdb2 把1和2创建成物理卷</span>
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@centos ~<span class="o">]</span><span class="c1">#pvscan 扫描物理卷</span>
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@centos ~<span class="o">]</span><span class="c1">#pvdisplay  显示物理卷（查看物理卷）</span>
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@centos ~<span class="o">]</span><span class="c1"># pvremove   /dev/sdb2   删除物理卷</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><ul>
+<li>创建和管理卷组</li>
+</ul>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="o">[</span>root@centos ~<span class="o">]</span><span class="c1"># vgscan  ---扫描卷组</span>
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@centos ~<span class="o">]</span><span class="c1"># vgcreate  hb2022  /dev/sdb1  /dev/sdb2  /dev/sdc1  ----创建卷组名称为hb2022 把物理卷sdb1、sdb2、sdc1加入到组内</span>
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@centos ~<span class="o">]</span><span class="c1"># vgdisplay   hb2022  ---查看卷组名字为hb2022的卷组的详细信息</span>
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@centos ~<span class="o">]</span><span class="c1"># vgextend  hb2022  /dev/sdc2  ---扩展卷组大小，把物理卷sdc2加入到卷组</span>
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@centos ~<span class="o">]</span><span class="c1"># vgreduce  hb2022  /dev/sdc2  ----缩小卷组大小，把物理卷sdc2减掉</span>
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@centos ~<span class="o">]</span><span class="c1"># vgremove  hb2022  ----移除卷组</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><ul>
+<li>创建和管理逻辑卷</li>
+</ul>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="o">[</span>root@centos ~<span class="o">]</span><span class="c1"># lvscan ----扫描逻辑卷</span>
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@centos ~<span class="o">]</span><span class="c1"># lvcreate  -L  20G  -n  benet  hb2022  ---创建逻辑卷空间为20G，名称为benet，所占用的卷组为hb2022</span>
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@centos ~<span class="o">]</span><span class="c1"># lvdisplay  hb2022—查看逻辑卷详细信息</span>
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@centos ~<span class="o">]</span><span class="c1"># lvextend  -L  +9G  /dev/hb2022/benet  ---扩展逻辑卷的大小，增加9G</span>
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@centos ~<span class="o">]</span><span class="c1"># lvreduce  -L  -9G  /dev/hb2022/benet  ---扩展逻辑卷的大小，减少9G（需要y的确认）</span>
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@centos ~<span class="o">]</span><span class="c1"># lvremove  /dev/hb2022/benet  ------删除逻辑卷</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><ul>
+<li>逻辑卷格式化</li>
+</ul>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="o">[</span>root@centos ~<span class="o">]</span><span class="c1"># mkfs  -t  xfs  /dev/hb2022/benet ---把逻辑卷benet格式为xfs</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><ul>
+<li>挂载逻辑卷</li>
+</ul>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="o">[</span>root@centos ~<span class="o">]</span><span class="c1"># mkdir  benet  ---在宿主目录创建一个benet目录（作为挂载点）</span>
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@centos ~<span class="o">]</span><span class="c1"># mount  /dev/hb2022/benet  /root/benet  ----挂载benet逻辑卷到宿主目录下benet目录（挂载点）</span>
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@centos ~<span class="o">]</span><span class="c1"># df  -Th  ---查看挂载情况</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><ul>
+<li>永久挂载逻辑卷</li>
+</ul>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="o">[</span>root@centos ~<span class="o">]</span><span class="c1"># vi  /etc/fstab  ---修改永久挂载</span>
+</span></span><span class="line"><span class="cl">/dev/hb2022/benet         /root/benet            xfs     defaults        <span class="m">0</span> <span class="m">0</span>
+</span></span><span class="line"><span class="cl">或者
+</span></span><span class="line"><span class="cl">/dev/mapper/hb2022-benet  /root/benet            xfs     defaults        <span class="m">0</span> <span class="m">0</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="heading">
+</h3><p>‍</p>
+
+</section>
+
+
+    <footer class="article-footer">
+    
+
+    </footer>
+
+
+    
+</article>
+
+    
+
+    
+
+     
+    
+        
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+        2025 小诗
+    </section>
+    
+    <section class="powerby">
+        使用 <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> 构建 <br />
+        主题 <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.26.0">Stack</a></b> 由 <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a> 设计
+    </section>
+</footer>
+
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css"crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css"crossorigin="anonymous"
+            >
+
+            </main>
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.6/dist/vibrant.min.js"integrity="sha256-awcR2jno4kI5X0zL8ex0vi2z&#43;KMkF24hUW8WePSA9HM="crossorigin="anonymous"
+                
+                >
+            </script><script type="text/javascript" src="/xiaoshi/ts/main.js" defer></script>
+<script>
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+
+    </body>
+</html>
