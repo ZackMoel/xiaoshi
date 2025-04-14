@@ -54,14 +54,18 @@
 &lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;root@centos ~&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;# ifconfig&lt;/span&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
 &lt;/div&gt;
-&lt;/div&gt;&lt;p&gt;&lt;img src=&#34;D:/desktop/seekwork/%e7%9b%b8%e5%85%b3%e7%9f%a5%e8%af%86/baizhi/6.Linux-%e7%bd%91%e7%bb%9c%e9%85%8d%e7%bd%ae%e4%b8%8e%e9%98%b2%e7%81%ab%e5%a2%99.md/Linux&amp;#43;Shell&amp;#43;%e7%bd%91%e7%bb%9c/assets/image-20250212153050-9em8qyx.png&#34;
-	
-	
-	
+&lt;/div&gt;&lt;p&gt;&lt;img src=&#34;https://ZackMoel.github.io/xiaoshi/xiaoshi/p/linux-%E7%BD%91%E7%BB%9C%E9%85%8D%E7%BD%AE%E4%B8%8E%E9%98%B2%E7%81%AB%E5%A2%99/assets/image-20250212153050-9em8qyx.png&#34;
+	width=&#34;1834&#34;
+	height=&#34;631&#34;
+	srcset=&#34;https://ZackMoel.github.io/xiaoshi/xiaoshi/p/linux-%E7%BD%91%E7%BB%9C%E9%85%8D%E7%BD%AE%E4%B8%8E%E9%98%B2%E7%81%AB%E5%A2%99/assets/image-20250212153050-9em8qyx_hu10100262495792770813.png 480w, https://ZackMoel.github.io/xiaoshi/xiaoshi/p/linux-%E7%BD%91%E7%BB%9C%E9%85%8D%E7%BD%AE%E4%B8%8E%E9%98%B2%E7%81%AB%E5%A2%99/assets/image-20250212153050-9em8qyx_hu9373006023879786909.png 1024w&#34;
 	loading=&#34;lazy&#34;
 	
 		alt=&#34;image&#34;
 	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;290&#34;
+		data-flex-basis=&#34;697px&#34;
 	
 &gt;​&lt;/p&gt;
 &lt;h3 id=&#34;3配置网卡ip地址子网掩码网关地址&#34;&gt;（3）配置网卡IP地址、子网掩码、网关地址
