@@ -6823,14 +6823,18 @@
 &lt;/li&gt;
 &lt;li&gt;
 &lt;p&gt;② 连接MySQL服务器&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;D:/desktop/seekwork/%e7%9b%b8%e5%85%b3%e7%9f%a5%e8%af%86/baizhi/16.MySQL%e7%ac%94%e8%ae%b02/assets/image-20231030113728-emd2gv3.png&#34;
-	
-	
-	
+&lt;p&gt;&lt;img src=&#34;https://ZackMoel.github.io/xiaoshi/xiaoshi/p/mysql%E5%9F%BA%E7%A1%80%E8%AF%AD%E6%B3%95/assets/image-20231030113728-emd2gv3.png&#34;
+	width=&#34;1145&#34;
+	height=&#34;675&#34;
+	srcset=&#34;https://ZackMoel.github.io/xiaoshi/xiaoshi/p/mysql%E5%9F%BA%E7%A1%80%E8%AF%AD%E6%B3%95/assets/image-20231030113728-emd2gv3_hu17494927844762231982.png 480w, https://ZackMoel.github.io/xiaoshi/xiaoshi/p/mysql%E5%9F%BA%E7%A1%80%E8%AF%AD%E6%B3%95/assets/image-20231030113728-emd2gv3_hu4074428578601914233.png 1024w&#34;
 	loading=&#34;lazy&#34;
 	
 		alt=&#34;image&#34;
 	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;169&#34;
+		data-flex-basis=&#34;407px&#34;
 	
 &gt;&lt;/p&gt;
 &lt;/li&gt;
@@ -6894,14 +6898,18 @@
 &lt;/div&gt;&lt;ul&gt;
 &lt;li&gt;结果说明&lt;/li&gt;
 &lt;/ul&gt;
-&lt;p&gt;&lt;img src=&#34;D:/desktop/seekwork/%e7%9b%b8%e5%85%b3%e7%9f%a5%e8%af%86/baizhi/16.MySQL%e7%ac%94%e8%ae%b02/assets/image-20231031110536-henms4u.png&#34;
-	
-	
-	
+&lt;p&gt;&lt;img src=&#34;https://ZackMoel.github.io/xiaoshi/xiaoshi/p/mysql%E5%9F%BA%E7%A1%80%E8%AF%AD%E6%B3%95/assets/image-20231031110536-henms4u.png&#34;
+	width=&#34;1056&#34;
+	height=&#34;388&#34;
+	srcset=&#34;https://ZackMoel.github.io/xiaoshi/xiaoshi/p/mysql%E5%9F%BA%E7%A1%80%E8%AF%AD%E6%B3%95/assets/image-20231031110536-henms4u_hu10386962426158796251.png 480w, https://ZackMoel.github.io/xiaoshi/xiaoshi/p/mysql%E5%9F%BA%E7%A1%80%E8%AF%AD%E6%B3%95/assets/image-20231031110536-henms4u_hu18289909833663962237.png 1024w&#34;
 	loading=&#34;lazy&#34;
 	
 		alt=&#34;image&#34;
 	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;272&#34;
+		data-flex-basis=&#34;653px&#34;
 	
 &gt;&lt;/p&gt;
 &lt;/li&gt;
@@ -6930,14 +6938,18 @@
 &lt;/div&gt;&lt;/li&gt;
 &lt;li&gt;
 &lt;p&gt;数据库数据管理：&lt;code&gt;row行数据&lt;/code&gt;​、&lt;code&gt;table表&lt;/code&gt;​、&lt;code&gt;database库&lt;/code&gt;​。&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;D:/desktop/seekwork/%e7%9b%b8%e5%85%b3%e7%9f%a5%e8%af%86/baizhi/16.MySQL%e7%ac%94%e8%ae%b02/assets/image-20231031113328-9uk1a9j.png&#34;
-	
-	
-	
+&lt;p&gt;&lt;img src=&#34;https://ZackMoel.github.io/xiaoshi/xiaoshi/p/mysql%E5%9F%BA%E7%A1%80%E8%AF%AD%E6%B3%95/assets/image-20231031113328-9uk1a9j.png&#34;
+	width=&#34;1025&#34;
+	height=&#34;700&#34;
+	srcset=&#34;https://ZackMoel.github.io/xiaoshi/xiaoshi/p/mysql%E5%9F%BA%E7%A1%80%E8%AF%AD%E6%B3%95/assets/image-20231031113328-9uk1a9j_hu16005488133524572281.png 480w, https://ZackMoel.github.io/xiaoshi/xiaoshi/p/mysql%E5%9F%BA%E7%A1%80%E8%AF%AD%E6%B3%95/assets/image-20231031113328-9uk1a9j_hu4466399873508696349.png 1024w&#34;
 	loading=&#34;lazy&#34;
 	
 		alt=&#34;image&#34;
 	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;146&#34;
+		data-flex-basis=&#34;351px&#34;
 	
 &gt;&lt;/p&gt;
 &lt;table&gt;
@@ -7042,14 +7054,18 @@
 &lt;/li&gt;
 &lt;li&gt;
 &lt;p&gt;列信息：① 列名 ② 数据类型 ③ 约束&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;D:/desktop/seekwork/%e7%9b%b8%e5%85%b3%e7%9f%a5%e8%af%86/baizhi/16.MySQL%e7%ac%94%e8%ae%b02/assets/image-20231031150428-5tu3s6n.png&#34;
-	
-	
-	
+&lt;p&gt;&lt;img src=&#34;https://ZackMoel.github.io/xiaoshi/xiaoshi/p/mysql%E5%9F%BA%E7%A1%80%E8%AF%AD%E6%B3%95/assets/image-20231031150428-5tu3s6n.png&#34;
+	width=&#34;955&#34;
+	height=&#34;278&#34;
+	srcset=&#34;https://ZackMoel.github.io/xiaoshi/xiaoshi/p/mysql%E5%9F%BA%E7%A1%80%E8%AF%AD%E6%B3%95/assets/image-20231031150428-5tu3s6n_hu5993940088961821827.png 480w, https://ZackMoel.github.io/xiaoshi/xiaoshi/p/mysql%E5%9F%BA%E7%A1%80%E8%AF%AD%E6%B3%95/assets/image-20231031150428-5tu3s6n_hu7139624420966838153.png 1024w&#34;
 	loading=&#34;lazy&#34;
 	
 		alt=&#34;image&#34;
 	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;343&#34;
+		data-flex-basis=&#34;824px&#34;
 	
 &gt;​&lt;/p&gt;
 &lt;/li&gt;
@@ -8074,7 +8090,7 @@
 &lt;li&gt;
 &lt;p&gt;场景：
 用户选择数据过滤的条件，然后出发查询操作，获得满足过滤条件的数据。&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;C:/Users/Administrator/Downloads/02-MySQL%E6%9F%A5%E8%AF%A2.md/%E6%95%B0%E6%8D%AE%E5%BA%93%E8%BF%90%E7%BB%B4/02-MySQL%E6%95%B0%E6%8D%AE%E5%BA%93/%E8%AF%BE%E4%BB%B6/assets/image-20231030172509-n6i6kza.png&#34;
+&lt;p&gt;&lt;img src=&#34;https://ZackMoel.github.io/xiaoshi/xiaoshi/assets/image-20231030172509-n6i6kza.png&#34;
 	
 	
 	
@@ -8094,7 +8110,7 @@
 &lt;p&gt;运行机制&lt;/p&gt;
 &lt;p&gt;① from表中所有数据，逐条进行where条件判断。&lt;/p&gt;
 &lt;p&gt;② 只有满足where条件，才会被保留在查询结果中。&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;C:/Users/Administrator/Downloads/02-MySQL%E6%9F%A5%E8%AF%A2.md/%E6%95%B0%E6%8D%AE%E5%BA%93%E8%BF%90%E7%BB%B4/02-MySQL%E6%95%B0%E6%8D%AE%E5%BA%93/%E8%AF%BE%E4%BB%B6/assets/image-20231101111439-cqnw3k9.png&#34;
+&lt;p&gt;&lt;img src=&#34;https://ZackMoel.github.io/xiaoshi/xiaoshi/assets/image-20231101111439-cqnw3k9.png&#34;
 	
 	
 	
@@ -8413,7 +8429,7 @@ where salary &amp;gt;= 8000 and salary &amp;lt;=10000;&lt;/p&gt;
 &lt;/h3&gt;&lt;ul&gt;
 &lt;li&gt;
 &lt;p&gt;场景：为了方便用户查看信息，数据展示往往会提供可以排序的功能。&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;C:/Users/Administrator/Downloads/02-MySQL%E6%9F%A5%E8%AF%A2.md/%E6%95%B0%E6%8D%AE%E5%BA%93%E8%BF%90%E7%BB%B4/02-MySQL%E6%95%B0%E6%8D%AE%E5%BA%93/%E8%AF%BE%E4%BB%B6/assets/image-20231101143141-4gwsq5g.png&#34;
+&lt;p&gt;&lt;img src=&#34;https://ZackMoel.github.io/xiaoshi/xiaoshi/assets/image-20231101143141-4gwsq5g.png&#34;
 	
 	
 	
@@ -8481,7 +8497,7 @@ desc：降序&lt;/p&gt;
 &lt;/h3&gt;&lt;ul&gt;
 &lt;li&gt;
 &lt;p&gt;场景：往往每次查询返回给用户的数据并不是全部数据，而是进行截取分批查询，&lt;code&gt;分页展示&lt;/code&gt;​。&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;C:/Users/Administrator/Downloads/02-MySQL%E6%9F%A5%E8%AF%A2.md/%E6%95%B0%E6%8D%AE%E5%BA%93%E8%BF%90%E7%BB%B4/02-MySQL%E6%95%B0%E6%8D%AE%E5%BA%93/%E8%AF%BE%E4%BB%B6/assets/image-20231101143209-enj89bh.png&#34;
+&lt;p&gt;&lt;img src=&#34;https://ZackMoel.github.io/xiaoshi/xiaoshi/assets/image-20231101143209-enj89bh.png&#34;
 	
 	
 	
@@ -8565,7 +8581,7 @@ desc：降序&lt;/p&gt;
 &lt;p&gt;被单行函数处理的数据，&lt;strong&gt;输入n条&lt;/strong&gt;，&lt;strong&gt;输出n个结果&lt;/strong&gt;。逐条数据进行处理。
 总结：单行函数处理的目标数据一行一行，一行数据产生一条结果。&lt;/p&gt;
 &lt;/blockquote&gt;
-&lt;p&gt;&lt;img src=&#34;C:/Users/Administrator/Downloads/02-MySQL%E6%9F%A5%E8%AF%A2.md/%E6%95%B0%E6%8D%AE%E5%BA%93%E8%BF%90%E7%BB%B4/02-MySQL%E6%95%B0%E6%8D%AE%E5%BA%93/%E8%AF%BE%E4%BB%B6/assets/image-20231102095849-14wa6cn.png&#34;
+&lt;p&gt;&lt;img src=&#34;https://ZackMoel.github.io/xiaoshi/xiaoshi/assets/image-20231102095849-14wa6cn.png&#34;
 	
 	
 	
@@ -8840,7 +8856,7 @@ desc：降序&lt;/p&gt;
 &lt;blockquote&gt;
 &lt;p&gt;对组数据进行处理的，&lt;strong&gt;输入n组&lt;/strong&gt;数据，&lt;strong&gt;产生n条&lt;/strong&gt;结果。&lt;/p&gt;
 &lt;/blockquote&gt;
-&lt;p&gt;&lt;img src=&#34;C:/Users/Administrator/Downloads/02-MySQL%E6%9F%A5%E8%AF%A2.md/%E6%95%B0%E6%8D%AE%E5%BA%93%E8%BF%90%E7%BB%B4/02-MySQL%E6%95%B0%E6%8D%AE%E5%BA%93/%E8%AF%BE%E4%BB%B6/assets/image-20231102112100-tu75xil.png&#34;
+&lt;p&gt;&lt;img src=&#34;https://ZackMoel.github.io/xiaoshi/xiaoshi/assets/image-20231102112100-tu75xil.png&#34;
 	
 	
 	
@@ -8921,7 +8937,7 @@ desc：降序&lt;/p&gt;
 &lt;li&gt;
 &lt;p&gt;思路&lt;/p&gt;
 &lt;p&gt;① 第一步：按照某个列，将数据分成多组。&lt;/p&gt;
-&lt;p&gt;② 第二步：对每组数据，进行组函数统计。&lt;img src=&#34;C:/Users/Administrator/Downloads/02-MySQL%E6%9F%A5%E8%AF%A2.md/%E6%95%B0%E6%8D%AE%E5%BA%93%E8%BF%90%E7%BB%B4/02-MySQL%E6%95%B0%E6%8D%AE%E5%BA%93/%E8%AF%BE%E4%BB%B6/assets/image-20231102112100-tu75xil.png&#34;
+&lt;p&gt;② 第二步：对每组数据，进行组函数统计。&lt;img src=&#34;https://ZackMoel.github.io/xiaoshi/xiaoshi/assets/image-20231102112100-tu75xil.png&#34;
 	
 	
 	
@@ -8987,7 +9003,7 @@ desc：降序&lt;/p&gt;
 &lt;/li&gt;
 &lt;li&gt;
 &lt;p&gt;思路：&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;C:/Users/Administrator/Downloads/02-MySQL%E6%9F%A5%E8%AF%A2.md/%E6%95%B0%E6%8D%AE%E5%BA%93%E8%BF%90%E7%BB%B4/02-MySQL%E6%95%B0%E6%8D%AE%E5%BA%93/%E8%AF%BE%E4%BB%B6/assets/image-20231102150534-vkbia7t.png&#34;
+&lt;p&gt;&lt;img src=&#34;https://ZackMoel.github.io/xiaoshi/xiaoshi/assets/image-20231102150534-vkbia7t.png&#34;
 	
 	
 	
@@ -9164,7 +9180,7 @@ desc：降序&lt;/p&gt;
 &lt;/h3&gt;&lt;ul&gt;
 &lt;li&gt;
 &lt;p&gt;SQL关键词执行顺序&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;C:/Users/Administrator/Downloads/02-MySQL%E6%9F%A5%E8%AF%A2.md/%E6%95%B0%E6%8D%AE%E5%BA%93%E8%BF%90%E7%BB%B4/02-MySQL%E6%95%B0%E6%8D%AE%E5%BA%93/%E8%AF%BE%E4%BB%B6/assets/%E6%9C%AA%E5%91%BD%E5%90%8D%E7%BB%98%E5%9B%BE-20231102154857-cctela1.jpg&#34;
+&lt;p&gt;&lt;img src=&#34;https://ZackMoel.github.io/xiaoshi/xiaoshi/assets/%E6%9C%AA%E5%91%BD%E5%90%8D%E7%BB%98%E5%9B%BE-20231102154857-cctela1.jpg&#34;
 	
 	
 	
@@ -9491,7 +9507,7 @@ desc：降序&lt;/p&gt;
 &lt;/div&gt;&lt;ul&gt;
 &lt;li&gt;
 &lt;p&gt;思路&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;C:/Users/Administrator/Downloads/02-MySQL%E6%9F%A5%E8%AF%A2.md/%E6%95%B0%E6%8D%AE%E5%BA%93%E8%BF%90%E7%BB%B4/02-MySQL%E6%95%B0%E6%8D%AE%E5%BA%93/%E8%AF%BE%E4%BB%B6/assets/image-20231103105250-ozkopvq.png&#34;
+&lt;p&gt;&lt;img src=&#34;https://ZackMoel.github.io/xiaoshi/xiaoshi/assets/image-20231103105250-ozkopvq.png&#34;
 	
 	
 	
