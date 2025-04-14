@@ -1,0 +1,1346 @@
+<!DOCTYPE html>
+<html lang="zh-cn" dir="ltr">
+    <head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content="Linux-网络配置与防火墙 一、Linux网络配置 （1）配置永久主机名 1 2 3 4 5 6 7 8 9 10 11 [root@localhost ~]# echo svr7.tedu.cn &gt; /etc/hostname [root@localhost ~]# cat /etc/hostname svr7.tedu.cn [root@localhost ~]# hostname svr7.tedu.cn #修改当前 [root@localhost ~]# hostname svr7.tedu.cn">
+<title>Linux 网络配置与防火墙</title>
+
+<link rel='canonical' href='https://ZackMoel.github.io/xiaoshi/p/linux-%E7%BD%91%E7%BB%9C%E9%85%8D%E7%BD%AE%E4%B8%8E%E9%98%B2%E7%81%AB%E5%A2%99/'>
+
+<link rel="stylesheet" href="/xiaoshi/scss/style.min.0304c6baf04e01a8fe70693791cb744d56a3578a3120a8796cefc66825aa39c7.css"><meta property='og:title' content="Linux 网络配置与防火墙">
+<meta property='og:description' content="Linux-网络配置与防火墙 一、Linux网络配置 （1）配置永久主机名 1 2 3 4 5 6 7 8 9 10 11 [root@localhost ~]# echo svr7.tedu.cn &gt; /etc/hostname [root@localhost ~]# cat /etc/hostname svr7.tedu.cn [root@localhost ~]# hostname svr7.tedu.cn #修改当前 [root@localhost ~]# hostname svr7.tedu.cn">
+<meta property='og:url' content='https://ZackMoel.github.io/xiaoshi/p/linux-%E7%BD%91%E7%BB%9C%E9%85%8D%E7%BD%AE%E4%B8%8E%E9%98%B2%E7%81%AB%E5%A2%99/'>
+<meta property='og:site_name' content='小诗的博客'>
+<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:published_time' content='2025-04-14T14:32:32&#43;08:00'/><meta property='article:modified_time' content='2025-04-14T14:32:32&#43;08:00'/>
+<meta name="twitter:title" content="Linux 网络配置与防火墙">
+<meta name="twitter:description" content="Linux-网络配置与防火墙 一、Linux网络配置 （1）配置永久主机名 1 2 3 4 5 6 7 8 9 10 11 [root@localhost ~]# echo svr7.tedu.cn &gt; /etc/hostname [root@localhost ~]# cat /etc/hostname svr7.tedu.cn [root@localhost ~]# hostname svr7.tedu.cn #修改当前 [root@localhost ~]# hostname svr7.tedu.cn">
+  
+
+
+    </head>
+    <body class="
+    article-page
+    ">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex on-phone--column extended"><aside class="sidebar left-sidebar sticky ">
+    <button class="hamburger hamburger--spin" type="button" id="toggle-menu" aria-label="切换菜单">
+        <span class="hamburger-box">
+            <span class="hamburger-inner"></span>
+        </span>
+    </button>
+
+    <header>
+        
+            
+            <figure class="site-avatar">
+                <a href="/xiaoshi/">
+                
+                    
+                    
+                    
+                        
+                        <img src="/xiaoshi/img/avatar_hu8920112365793990935.png" width="300"
+                            height="300" class="site-logo" loading="lazy" alt="Avatar">
+                    
+                
+                </a>
+                
+                    <span class="emoji">🍥</span>
+                
+            </figure>
+            
+        
+        
+        <div class="site-meta">
+            <h1 class="site-name"><a href="/xiaoshi">小诗的博客</a></h1>
+            <h2 class="site-description">欢迎来到小诗的博客</h2>
+        </div>
+    </header><ol class="menu-social">
+            
+                <li>
+                    <a 
+                        href='https://space.bilibili.com/1055981889?spm_id_from=333.1007.0.0'
+                        target="_blank"
+                        title="bilibili"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg  xmlns="http://www.w3.org/2000/svg"  width="24"  height="24"  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  stroke-width="2"  stroke-linecap="round"  stroke-linejoin="round"  class="icon icon-tabler icons-tabler-outline icon-tabler-brand-bilibili"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M3 10a4 4 0 0 1 4 -4h10a4 4 0 0 1 4 4v6a4 4 0 0 1 -4 4h-10a4 4 0 0 1 -4 -4v-6z" /><path d="M8 3l2 3" /><path d="M16 3l-2 3" /><path d="M9 13v-2" /><path d="M15 11v2" /></svg>
+                        
+                    </a>
+                </li>
+            
+                <li>
+                    <a 
+                        href='https://github.com/ZackMoel/xiaoshi.github.io'
+                        target="_blank"
+                        title="GitHub"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-github" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M9 19c-4.3 1.4 -4.3 -2.5 -6 -3m12 5v-3.5c0 -1 .1 -1.4 -.5 -2c2.8 -.3 5.5 -1.4 5.5 -6a4.6 4.6 0 0 0 -1.3 -3.2a4.2 4.2 0 0 0 -.1 -3.2s-1.1 -.3 -3.5 1.3a12.3 12.3 0 0 0 -6.2 0c-2.4 -1.6 -3.5 -1.3 -3.5 -1.3a4.2 4.2 0 0 0 -.1 3.2a4.6 4.6 0 0 0 -1.3 3.2c0 4.6 2.7 5.7 5.5 6c-.6 .6 -.6 1.2 -.5 2v3.5" />
+</svg>
+
+
+
+                        
+                    </a>
+                </li>
+            
+        </ol><ol class="menu" id="main-menu">
+        
+        
+        
+        <li >
+            <a href='/xiaoshi/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-home" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <polyline points="5 12 3 12 12 3 21 12 19 12" />
+  <path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7" />
+  <path d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6" />
+</svg>
+
+
+
+                
+                <span>主页</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/xiaoshi/%E5%85%B3%E4%BA%8E/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-user" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="7" r="4" />
+  <path d="M6 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2" />
+</svg>
+
+
+
+                
+                <span>关于</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/xiaoshi/archives/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-archive" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <rect x="3" y="4" width="18" height="4" rx="2" />
+  <path d="M5 8v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-10" />
+  <line x1="10" y1="12" x2="14" y2="12" />
+</svg>
+
+
+
+                
+                <span>归档</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/xiaoshi/search/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-search" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="10" cy="10" r="7" />
+  <line x1="21" y1="21" x2="15" y2="15" />
+</svg>
+
+
+
+                
+                <span>搜索</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/xiaoshi/%E5%8F%8B%E6%83%85%E9%93%BE%E6%8E%A5/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-link" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M10 14a3.5 3.5 0 0 0 5 0l4 -4a3.5 3.5 0 0 0 -5 -5l-.5 .5" />
+  <path d="M14 10a3.5 3.5 0 0 0 -5 0l-4 4a3.5 3.5 0 0 0 5 5l.5 -.5" />
+</svg>
+
+
+
+                
+                <span>友情链接</span>
+            </a>
+        </li>
+        
+        <li class="menu-bottom-section">
+            <ol class="menu">
+
+                
+                    <li id="dark-mode-toggle">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="8" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="16" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <span>暗色模式</span>
+                    </li>
+                
+            </ol>
+        </li>
+    </ol>
+</aside>
+
+    <aside class="sidebar right-sidebar sticky">
+        
+            
+                
+    <section class="widget archives">
+        <div class="widget-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <line x1="5" y1="9" x2="19" y2="9" />
+  <line x1="5" y1="15" x2="19" y2="15" />
+  <line x1="11" y1="4" x2="7" y2="20" />
+  <line x1="17" y1="4" x2="13" y2="20" />
+</svg>
+
+
+
+        </div>
+        <h2 class="widget-title section-title">目录</h2>
+        
+        <div class="widget--toc">
+            <nav id="TableOfContents">
+  <ol>
+    <li><a href="#一linux网络配置">一、Linux网络配置</a>
+      <ol>
+        <li><a href="#1配置永久主机名">（1）配置永久主机名</a></li>
+        <li><a href="#2查看网络接口信息">（2）查看网络接口信息</a></li>
+        <li><a href="#3配置网卡ip地址子网掩码网关地址">（3）配置网卡IP地址、子网掩码、网关地址</a>
+          <ol>
+            <li><a href="#重启网络服务令配置命令生效">重启网络服务，令配置命令生效</a></li>
+          </ol>
+        </li>
+        <li><a href="#4配置dns服务器地址">（4）配置DNS服务器地址</a></li>
+        <li><a href="#5设置路由route">（5）设置路由route</a></li>
+        <li><a href="#6常用网络测试工具">（6）常用网络测试工具</a></li>
+      </ol>
+    </li>
+    <li><a href="#二物理机与虚拟机的通信">二、物理机与虚拟机的通信</a>
+      <ol>
+        <li><a href="#1vmware网络连接常用的三种方式">（1）VMware网络连接常用的三种方式</a></li>
+        <li><a href="#2查看物理机虚拟网卡">（2）查看物理机虚拟网卡</a></li>
+        <li><a href="#3查看vmnet8的网络信息">（3）查看VMnet8的网络信息</a></li>
+        <li><a href="#4测试通信">（4）测试通信</a></li>
+        <li><a href="#5课堂练习">（5）课堂练习</a></li>
+      </ol>
+    </li>
+    <li><a href="#三远程管理linux与linux">三、远程管理(Linux与Linux)</a></li>
+    <li><a href="#四linux防火墙">四、Linux防火墙</a>
+      <ol>
+        <li><a href="#1防火墙">（1）防火墙</a></li>
+        <li><a href="#2-防火墙判定的规则">（2） 防火墙判定的规则：</a>
+          <ol>
+            <li></li>
+          </ol>
+        </li>
+        <li><a href="#3修改默认区域">（3）<strong>修改默认区域</strong></a></li>
+        <li><a href="#4区域中添加允许的协议">（4）<strong>区域中添加允许的协议</strong></a></li>
+        <li><a href="#5永久规则">（5）<strong>永久规则</strong></a></li>
+        <li><a href="#6单独拒绝1921684207所有访问允许其他机器">（6）<strong>单独拒绝192.168.4.207所有访问，允许其他机器</strong></a>
+          <ol>
+            <li></li>
+          </ol>
+        </li>
+      </ol>
+    </li>
+  </ol>
+</nav>
+        </div>
+    </section>
+
+            
+        
+    </aside>
+
+
+            <main class="main full-width">
+    <article class="main-article">
+    <header class="article-header">
+
+    <div class="article-details">
+    
+
+    <div class="article-title-wrapper">
+        <h2 class="article-title">
+            <a href="/xiaoshi/p/linux-%E7%BD%91%E7%BB%9C%E9%85%8D%E7%BD%AE%E4%B8%8E%E9%98%B2%E7%81%AB%E5%A2%99/">Linux 网络配置与防火墙</a>
+        </h2>
+    
+        
+    </div>
+
+    
+    
+    
+    
+    <footer class="article-time">
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
+  <circle cx="18" cy="18" r="4" />
+  <path d="M15 3v4" />
+  <path d="M7 3v4" />
+  <path d="M3 11h16" />
+  <path d="M18 16.496v1.504l1 1" />
+</svg>
+                <time class="article-time--published">2025-04-14</time>
+            </div>
+        
+
+        
+    </footer>
+    
+
+    
+</div>
+
+</header>
+
+    <section class="article-content">
+    
+    
+    <h1 id="linux-网络配置与防火墙">Linux-网络配置与防火墙
+</h1><h2 id="一linux网络配置">一、Linux网络配置
+</h2><h3 id="1配置永久主机名">（1）配置永久主机名
+</h3><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">[root@localhost ~]# echo svr7.tedu.cn  &gt;  /etc/hostname
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">[root@localhost ~]# cat  /etc/hostname
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">svr7.tedu.cn
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">[root@localhost ~]# hostname svr7.tedu.cn  #修改当前
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">[root@localhost ~]# hostname
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">svr7.tedu.cn
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>开启一个新的终端查看提示符的变化</p>
+<h3 id="2查看网络接口信息">（2）查看网络接口信息
+</h3><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="o">[</span>root@centos ~<span class="o">]</span><span class="c1"># ifconfig</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="D:/desktop/seekwork/%e7%9b%b8%e5%85%b3%e7%9f%a5%e8%af%86/baizhi/6.Linux-%e7%bd%91%e7%bb%9c%e9%85%8d%e7%bd%ae%e4%b8%8e%e9%98%b2%e7%81%ab%e5%a2%99.md/Linux&#43;Shell&#43;%e7%bd%91%e7%bb%9c/assets/image-20250212153050-9em8qyx.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="image"
+	
+	
+>​</p>
+<h3 id="3配置网卡ip地址子网掩码网关地址">（3）配置网卡IP地址、子网掩码、网关地址
+</h3><ul>
+<li>
+<p><strong>设置网卡相关参数</strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="o">]</span><span class="c1"># vi /etc/sysconfig/network-scripts/ifcfg-ens33    </span>
+</span></span><span class="line"><span class="cl"><span class="c1">#不同版本操作系统网卡命名规则不同，可到/etc/sysconfig/network-scripts/目录下查看网卡具体名称</span>
+</span></span><span class="line"><span class="cl"><span class="nv">TYPE</span><span class="o">=</span>Ethernet          ----设置网卡类型，Ethernet表示以太网。
+</span></span><span class="line"><span class="cl"><span class="nv">BOOTPROTO</span><span class="o">=</span>static      ----网络接口配置方式。Static为静态，dhcp为动态获取。
+</span></span><span class="line"><span class="cl"><span class="nv">DEVICE</span><span class="o">=</span>ens33          ----设置网络接口名称
+</span></span><span class="line"><span class="cl"><span class="nv">ONBOOT</span><span class="o">=</span>yes           ----系统启动时是否激活
+</span></span><span class="line"><span class="cl"><span class="nv">IPADDR</span><span class="o">=</span>192.168.4.11    ----ip地址
+</span></span><span class="line"><span class="cl"><span class="nv">NETMASK</span><span class="o">=</span>255.255.255.0  ----子网掩码
+</span></span><span class="line"><span class="cl"><span class="nv">GATEWAY</span><span class="o">=</span>192.168.4.1    ----网关
+</span></span><span class="line"><span class="cl"><span class="nv">DNS1</span><span class="o">=</span>8.8.8.8           ----NDS地址
+</span></span><span class="line"><span class="cl"><span class="nv">DNS2</span><span class="o">=</span>114.114.114.114   ----NDS地址
+</span></span></code></pre></td></tr></table>
+</div>
+</div></li>
+<li>
+<h4 id="重启网络服务令配置命令生效">重启网络服务，令配置命令生效
+</h4><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="o">[</span>root@svr7 ~<span class="o">]</span><span class="c1"># systemctgl restart network    </span>
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@svr7 ~<span class="o">]</span><span class="c1"># ipconfig  #查看结果</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div></li>
+</ul>
+<h3 id="4配置dns服务器地址">（4）配置DNS服务器地址
+</h3><p><strong>DNS服务器：负责域名解析的机器，将域名解析为IP地址</strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">[root@svr7 ~]# echo nameserver  8.8.8.8  &gt; /etc/resolv.conf
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">[root@svr7 ~]# cat  /etc/resolv.conf
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">nameserver  8.8.8.8
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="5设置路由route">（5）设置路由route
+</h3><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="c1">#添加到指定网段的路由记录</span>
+</span></span><span class="line"><span class="cl">语法：route add  -net  网段地址  gw  IP地址
+</span></span><span class="line"><span class="cl">例子：<span class="o">[</span>root@centos ~<span class="o">]</span><span class="c1"># route  add  -net  192.168.10.0/24  gw  192.168.4.1</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">#删除到指定网段的路由记录</span>
+</span></span><span class="line"><span class="cl">语法：route  del  -net  网段地址
+</span></span><span class="line"><span class="cl">例子：<span class="o">[</span>root@centos ~<span class="o">]</span><span class="c1"># route  del  -net  192.168.10.0/24</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">#删除路由表中的默认网关记录</span>
+</span></span><span class="line"><span class="cl">语法：route  del  default  gw  IP地址
+</span></span><span class="line"><span class="cl">例子：<span class="o">[</span>root@centos ~<span class="o">]</span><span class="c1"># route  del  default  gw  192.168.137.2</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">#向路由表中添加默认网关记录</span>
+</span></span><span class="line"><span class="cl">语法：route add  default  gw  IP地址
+</span></span><span class="line"><span class="cl">例子：<span class="o">[</span>root@centos ~<span class="o">]</span><span class="c1"># route  add  default  gw  192.168.137.2</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="6常用网络测试工具">（6）常用网络测试工具
+</h3><p><strong>测试网络连接 ping</strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">ping命令
+</span></span><span class="line"><span class="cl">测试网络连通性
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@centos ~<span class="o">]</span><span class="c1"># ping www.baidu.com</span>
+</span></span><span class="line"><span class="cl">按Ctrl+C中止测试
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><strong>跟踪数据包 traceroute</strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">测试从当前主机到目的主机之间经过的网络节点
+</span></span><span class="line"><span class="cl">traceroute 目标主机地址
+</span></span><span class="line"><span class="cl">无法响应的主机会显示*
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@centos ~<span class="o">]</span><span class="c1"># traceroute  www.baidu.com</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">通过最多 <span class="m">30</span> 个跃点跟踪
+</span></span><span class="line"><span class="cl">到 www.baidu.com <span class="o">[</span>110.242.68.3<span class="o">]</span> 的路由:
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="m">1</span>    <span class="m">23</span> ms    <span class="m">27</span> ms    <span class="m">19</span> ms  bogon <span class="o">[</span>192.168.20.1<span class="o">]</span>
+</span></span><span class="line"><span class="cl">  <span class="m">2</span>    <span class="m">12</span> ms     <span class="m">7</span> ms    <span class="m">10</span> ms  dns1.online.tj.cn <span class="o">[</span>111.162.92.1<span class="o">]</span>
+</span></span><span class="line"><span class="cl">  <span class="m">3</span>     *        *        *     请求超时。
+</span></span><span class="line"><span class="cl">  <span class="m">4</span>     *        *        *     请求超时。
+</span></span><span class="line"><span class="cl">  <span class="m">5</span>     *        *        *     请求超时。
+</span></span><span class="line"><span class="cl">  <span class="m">6</span>     *       <span class="m">15</span> ms     *     110.242.66.178
+</span></span><span class="line"><span class="cl">  <span class="m">7</span>    <span class="m">34</span> ms    <span class="m">32</span> ms    <span class="m">22</span> ms  221.194.45.134
+</span></span><span class="line"><span class="cl">  <span class="m">8</span>     *        *        *     请求超时。
+</span></span><span class="line"><span class="cl">  <span class="m">9</span>     *        *        *     请求超时。
+</span></span><span class="line"><span class="cl"> <span class="m">10</span>     *        *        *     请求超时。
+</span></span><span class="line"><span class="cl"> <span class="m">11</span>    <span class="m">18</span> ms   <span class="m">189</span> ms   <span class="m">297</span> ms  110.242.68.3
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">跟踪完成。
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><strong>域名解析 nslookup</strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">测试DNS域名解析
+</span></span><span class="line"><span class="cl">nslookup 目标主机地址  <span class="o">[</span>DNS服务器地址<span class="o">]</span>
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@centos ~<span class="o">]</span><span class="c1"># nslookup  www.baidu.com</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="二物理机与虚拟机的通信">二、物理机与虚拟机的通信
+</h2><h3 id="1vmware网络连接常用的三种方式">（1）VMware网络连接常用的三种方式
+</h3><ul>
+<li><strong>桥接模式</strong>：将虚拟机直接连接到物理网络，虚拟机会获得与主机相同的网络中的独立 IP 地址，就像一台独立的物理设备。</li>
+</ul>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="c1">#特点</span>
+</span></span><span class="line"><span class="cl">* 虚拟机与主机处于同一局域网。
+</span></span><span class="line"><span class="cl">* 虚拟机可以访问外部网络（如互联网），也可以被同一局域网中的其他设备访问。
+</span></span><span class="line"><span class="cl">* 虚拟机的 IP 地址由局域网中的 DHCP 服务器分配，或手动配置。
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">#使用场景</span>
+</span></span><span class="line"><span class="cl">* 需要虚拟机作为独立设备运行，并与局域网中的其他设备通信。
+</span></span><span class="line"><span class="cl">* 需要虚拟机对外提供服务（如 Web 服务器、数据库服务器）。
+</span></span></code></pre></td></tr></table>
+</div>
+</div><ul>
+<li><strong>NAT模式</strong>：通过主机的网络连接共享外部网络访问权限。虚拟机通过主机的 IP 地址与外部网络通信。</li>
+</ul>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="c1">#特点</span>
+</span></span><span class="line"><span class="cl">* 虚拟机可以访问外部网络（如互联网），但外部网络无法直接访问虚拟机。
+</span></span><span class="line"><span class="cl">* 虚拟机的 IP 地址由 VMware 虚拟网络中的 DHCP 服务器分配。
+</span></span><span class="line"><span class="cl">* 主机充当虚拟机的网关。
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">#使用场景</span>
+</span></span><span class="line"><span class="cl">* 需要虚拟机访问外部网络，但不希望虚拟机暴露在局域网中。
+</span></span><span class="line"><span class="cl">* 适合个人开发、测试环境。
+</span></span></code></pre></td></tr></table>
+</div>
+</div><ul>
+<li><strong>仅主机模式</strong>：将虚拟机与主机连接到一个私有网络中，虚拟机只能与主机通信，无法访问外部网络。</li>
+</ul>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="c1">#特点</span>
+</span></span><span class="line"><span class="cl">* 虚拟机与主机之间可以互相通信。
+</span></span><span class="line"><span class="cl">* 虚拟机无法访问外部网络（如互联网）。
+</span></span><span class="line"><span class="cl">* 虚拟机的 IP 地址由 VMware 虚拟网络中的 DHCP 服务器分配。
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">#使用场景</span>
+</span></span><span class="line"><span class="cl">* 需要虚拟机与主机之间进行隔离通信。
+</span></span><span class="line"><span class="cl">* 适合测试和开发环境，尤其是需要隔离外部网络的场景。
+</span></span></code></pre></td></tr></table>
+</div>
+</div><div class="table-wrapper"><table>
+<thead>
+<tr>
+<th style="text-align:center"><strong>特性</strong></th>
+<th style="text-align:center"><strong>桥接模式</strong></th>
+<th style="text-align:center"><strong>NAT 模式</strong></th>
+<th style="text-align:center"><strong>仅主机模式</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center"><strong>网络访问</strong></td>
+<td style="text-align:center">可以访问外部网络</td>
+<td style="text-align:center">可以访问外部网络</td>
+<td style="text-align:center">无法访问外部网络</td>
+</tr>
+<tr>
+<td style="text-align:center"><strong>外部访问虚拟机</strong></td>
+<td style="text-align:center">可以</td>
+<td style="text-align:center">不可以</td>
+<td style="text-align:center">不可以</td>
+</tr>
+<tr>
+<td style="text-align:center"><strong>IP 地址来源</strong></td>
+<td style="text-align:center">局域网 DHCP 或手动配置</td>
+<td style="text-align:center">VMware 虚拟网络 DHCP</td>
+<td style="text-align:center">VMware 虚拟网络 DHCP</td>
+</tr>
+<tr>
+<td style="text-align:center"><strong>虚拟机与主机通信</strong></td>
+<td style="text-align:center">可以</td>
+<td style="text-align:center">可以</td>
+<td style="text-align:center">可以</td>
+</tr>
+<tr>
+<td style="text-align:center"><strong>适用场景</strong></td>
+<td style="text-align:center">虚拟机作为独立设备运行</td>
+<td style="text-align:center">虚拟机访问外部网络</td>
+<td style="text-align:center">虚拟机与主机隔离通信</td>
+</tr>
+</tbody>
+</table></div>
+<h3 id="2查看物理机虚拟网卡">（2）查看物理机虚拟网卡
+</h3><blockquote>
+<p>💡物理机网络连接中可以看到用于与虚拟机连接的虚拟网卡，其中vmnet1虚拟网卡用于仅主机模式，vmnet8用于NAT模式，vmnet0没有显示出来，用于桥接模式的连接。</p>
+</blockquote>
+<p><img src="D:/desktop/seekwork/%e7%9b%b8%e5%85%b3%e7%9f%a5%e8%af%86/baizhi/6.Linux-%e7%bd%91%e7%bb%9c%e9%85%8d%e7%bd%ae%e4%b8%8e%e9%98%b2%e7%81%ab%e5%a2%99.md/Linux&#43;Shell&#43;%e7%bd%91%e7%bb%9c/assets/image-20250212150425-1jo4ou3.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="image"
+	
+	
+>​</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">虚拟机需要与外网通信，可以使用桥接模式，NAT模式这两种网络连接方式
+</span></span><span class="line"><span class="cl">桥接模式需要设置局域网同段地址，会引起地址冲突问题，设置IP地址前需要通过ping命令测试改地址是否有人使用
+</span></span><span class="line"><span class="cl">为避免冲突，建议使用NAT模式设置网络连接（创建虚拟机网卡时选择该模式或在虚拟机设置——网络适配器中选择该模式）
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="3查看vmnet8的网络信息">（3）查看VMnet8的网络信息
+</h3><p><strong>NAT模式网段信息</strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">‍VMware虚拟机依次点击菜单栏编辑——虚拟网络编辑器——VMnet8，可以看到当前默认的网段信息，如需更改网段，在下方子网IP处进行修改。
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><strong>NAT模式网关的查看</strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">点击NAT设置按钮，可以看到该网段默认的网关地址
+</span></span><span class="line"><span class="cl">注意：查看到网段及网关信息，在虚拟机网卡设置中未使用DHCP自动获取方式，通过手工静态方式设置，那么就要使用该网段及网关进行设置
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="D:/desktop/seekwork/%e7%9b%b8%e5%85%b3%e7%9f%a5%e8%af%86/baizhi/6.Linux-%e7%bd%91%e7%bb%9c%e9%85%8d%e7%bd%ae%e4%b8%8e%e9%98%b2%e7%81%ab%e5%a2%99.md/Linux&#43;Shell&#43;%e7%bd%91%e7%bb%9c/assets/image-20250212151736-kd117pl.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="image"
+	
+	
+>​<img src="D:/desktop/seekwork/%e7%9b%b8%e5%85%b3%e7%9f%a5%e8%af%86/baizhi/6.Linux-%e7%bd%91%e7%bb%9c%e9%85%8d%e7%bd%ae%e4%b8%8e%e9%98%b2%e7%81%ab%e5%a2%99.md/Linux&#43;Shell&#43;%e7%bd%91%e7%bb%9c/assets/image-20250212152117-ua03q6x.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="image"
+	
+	
+>​</p>
+<h3 id="4测试通信">（4）测试通信
+</h3><p><strong>ping命令测试网络联通性</strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">ping -c <span class="m">3</span> 192.168.91.2     <span class="c1">#测试与网关之间的联通</span>
+</span></span><span class="line"><span class="cl">ping -c <span class="m">3</span> www.baidu.com    <span class="c1">#测试与外网之间的联通，前提需要配置好DNS地址</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="5课堂练习">（5）课堂练习
+</h3><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">1、创建一台CentOS主机，要求能够访问外网，可以分别尝试桥接、NAT这两种不同的模式来实现
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">2、创建两台CentOS主机，不仅要求能够访问外网，彼此之间要求能够相互访问
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="三远程管理linux与linux">三、远程管理(Linux与Linux)
+</h2><ul>
+<li>
+<p><strong>软件包的安装</strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">[root@svr7 /]# rpm  -qa   |  grep  openssh
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">openssh-7.4p1-16.el7.x86_64
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">openssh-server-7.4p1-16.el7.x86_64
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">openssh-clients-7.4p1-16.el7.x86_64
+</span></span></code></pre></td></tr></table>
+</div>
+</div></li>
+<li>
+<p><strong>远程登录工具 ssh</strong></p>
+<p>虚拟机A：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">[root@svr7 /]#  &gt;  /etc/resolv.conf
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">[root@svr7 /]#  	ssh   root@192.168.4.207
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">………necting (yes/no)? yes
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">root@192.168.4.207&#39;s password:    #输入密码
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">[root@pc207 ~]# touch  /root/hahaxixi.txt
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">[root@pc207 ~]# exit
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">登出
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">Connection to 192.168.4.207 closed.
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">[root@svr7 /]# cat /root/.ssh/known_hosts  #记录曾经远程管理的机器
+</span></span></code></pre></td></tr></table>
+</div>
+</div></li>
+<li>
+<p><strong>实现ssh远程管理无密码验证</strong></p>
+<p>虚拟机A：</p>
+<p>1.生成公钥(锁)与私钥(钥匙)进行验证</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">[root@svr7 ~]# ssh-keygen    #一路回车
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">…….save the key (/root/.ssh/id_rsa):   #保存位置
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">……..assphrase):   #设置密码为空
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">…….. again:   #设置密码为空
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">[root@svr7 ~]# ls /root/.ssh/
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">id_rsa(私钥)   id_rsa.pub(公钥)   known_hosts
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>2.将公钥(锁)传递给虚拟机B</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">[root@svr7 ~]# ssh-copy-id  root@192.168.4.207  
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">[root@svr7 ~]# ssh  root@192.168.4.207  #测试无密码
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">[root@pc207 ~]# exit
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">登出
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">Connection to 192.168.4.207 closed.
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">[root@svr7 ~]#
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">虚拟机B   
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">[root@pc207 ~]# ls   /root/.ssh/
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">authorized_keys(别的机器传递过来的公钥)   known_hosts
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">[root@pc207 ~]#
+</span></span></code></pre></td></tr></table>
+</div>
+</div></li>
+<li>
+<p><strong>安全复制工具 scp=ssh+cp</strong></p>
+<p><strong>– scp  [-r]  用户名@服务器:路径    本地路径</strong></p>
+<p><strong>– scp  [-r]  本地路径   用户名@服务器:路径</strong></p>
+<p><strong>虚拟机A：</strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">]# scp  /etc/passwd    root@192.168.4.207:/root
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">]# scp  -r  /home    root@192.168.4.207:/root/
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">]# scp  root@192.168.4.207:/etc/passwd    /mnt/
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><strong>虚拟机B：</strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">]# ls  /root
+</span></span></code></pre></td></tr></table>
+</div>
+</div></li>
+</ul>
+<h2 id="四linux防火墙">四、Linux防火墙
+</h2><h3 id="1防火墙">（1）防火墙
+</h3><p><strong>作用：隔离，严格过滤入站，放行出站</strong></p>
+<p><strong>硬件防火墙：保护一个网络中所有机器</strong></p>
+<p><strong>软件防火墙：保护本机</strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">• 管理工具：firewall-cmd(命令)、firewall-config(图形工具)
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">• 根据所在的网络场所区分，预设保护规则集
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">• public：仅允许访问本机的ssh、dhcp、ping服务
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">• trusted：允许任何访问
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">• block：拒绝任何来访请求，有明确的回应
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">• drop：丢弃任何来访的数据包，没有明确的回应
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="2-防火墙判定的规则">（2） 防火墙判定的规则：
+</h3><h5 id="1查看请求中源ip地址查看自己所有区域哪个区域有该源ip地址规则则进入哪个区域">1.查看请求中源IP地址，查看自己所有区域，哪个区域有该源IP地址规则，则进入哪个区域
+</h5><h5 id="2进入默认区域默认情况下为public">2.进入默认区域（默认情况下为public）
+</h5><h3 id="3修改默认区域">（3）<strong>修改默认区域</strong>
+</h3><ul>
+<li>
+<p><strong>虚拟机A：</strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">[root@svr7 ~]# rpm -q  firewalld  #防火墙软件
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">firewalld-0.4.4.4-14.el7.noarch
+</span></span></code></pre></td></tr></table>
+</div>
+</div></li>
+<li>
+<p><strong>虚拟机A：</strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">]# firewall-cmd  --get-default-zone   #查看默认区域
+</span></span></code></pre></td></tr></table>
+</div>
+</div></li>
+<li>
+<p><strong>虚拟机B</strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">[root@pc207 /]#  ping  -c  2  192.168.4.7   #成功
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">[root@pc207 /]#  curl  http://192.168.4.7  #失败
+</span></span></code></pre></td></tr></table>
+</div>
+</div></li>
+<li>
+<p><strong>虚拟机A：</strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">]# firewall-cmd  --set-default-zone=trusted   #修改默认区域
+</span></span></code></pre></td></tr></table>
+</div>
+</div></li>
+<li>
+<p><strong>虚拟机B</strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">[root@pc207 /]#  ping -c 2 192.168.4.7   #成功
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">[root@pc207 /]#  curl  http://192.168.4.7  #成功
+</span></span></code></pre></td></tr></table>
+</div>
+</div></li>
+</ul>
+<h3 id="4区域中添加允许的协议">（4）<strong>区域中添加允许的协议</strong>
+</h3><ul>
+<li>
+<p><strong>虚拟机A：</strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span><span class="lnt">9
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">]# firewall-cmd  --set-default-zone=public  #修改默认区域
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">]# firewall-cmd  --get-default-zone   #查看默认区域
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">]# firewall-cmd  --zone=public  --list-all  #查看区域规则
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">]# firewall-cmd  --zone=public  --add-service=http  #添加协议
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">]# firewall-cmd  --zone=public  --list-all   #查看区域规则
+</span></span></code></pre></td></tr></table>
+</div>
+</div></li>
+<li>
+<p><strong>虚拟机B</strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">[root@pc207 /]#  curl http://192.168.4.7   #访问成功
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">hahaxixihehelele哈哈嘻嘻
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">[root@pc207 /]#
+</span></span></code></pre></td></tr></table>
+</div>
+</div></li>
+</ul>
+<h3 id="5永久规则">（5）<strong>永久规则</strong>
+</h3><p><strong>永久（&ndash;permanent）</strong></p>
+<p><strong>默认区域的修改，默认就是永久的</strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-gdscript3" data-lang="gdscript3"><span class="line"><span class="cl"><span class="p">]</span><span class="c1"># firewall-cmd  --reload     #重新加载防火墙永久的配置</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="p">]</span><span class="c1"># firewall-cmd  --zone=public  --list-all   #查看区域规则</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="p">]</span><span class="c1"># firewall-cmd  --permanent --zone=public  --add-service=http     #永久规则</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"> 
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="p">]</span><span class="c1"># firewall-cmd  --zone=public  --list-all  #查看区域规则 </span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="p">]</span><span class="c1"># firewall-cmd  --reload   #重新加载防火墙永久的配置 </span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="p">]</span><span class="c1"># firewall-cmd  --zone=public  --list-all   #查看区域规则 </span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="6单独拒绝1921684207所有访问允许其他机器">（6）<strong>单独拒绝192.168.4.207所有访问，允许其他机器</strong>
+</h3><h5 id="防火墙判定的规则">防火墙判定的规则:
+</h5><p><strong>1.查看请求中源IP地址，查看自己所有区域，哪个区域有该源IP地址规则，则进入哪个区域</strong></p>
+<p><strong>2.进入默认区域（默认情况下为public）</strong></p>
+<ul>
+<li>
+<p><strong>虚拟机A</strong></p>
+<p>.添加源IP地址规则</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">]# firewall-cmd --zone=block   --add-source=192.168.4.207
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">]# firewall-cmd --get-default-zone  #查看默认区域
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">public
+</span></span></code></pre></td></tr></table>
+</div>
+</div></li>
+<li>
+<p><strong>虚拟机B</strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">]# curl http://192.168.4.7  #访问失败
+</span></span></code></pre></td></tr></table>
+</div>
+</div></li>
+</ul>
+<p>‍</p>
+
+</section>
+
+
+    <footer class="article-footer">
+    
+
+    </footer>
+
+
+    
+</article>
+
+    
+
+    
+
+     
+    
+        
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+        2025 小诗
+    </section>
+    
+    <section class="powerby">
+        使用 <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> 构建 <br />
+        主题 <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.26.0">Stack</a></b> 由 <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a> 设计
+    </section>
+</footer>
+
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css"crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css"crossorigin="anonymous"
+            >
+
+            </main>
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.6/dist/vibrant.min.js"integrity="sha256-awcR2jno4kI5X0zL8ex0vi2z&#43;KMkF24hUW8WePSA9HM="crossorigin="anonymous"
+                
+                >
+            </script><script type="text/javascript" src="/xiaoshi/ts/main.js" defer></script>
+<script>
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+
+    </body>
+</html>
