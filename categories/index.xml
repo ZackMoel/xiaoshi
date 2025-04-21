@@ -6,6 +6,103 @@
         <description>Recent content in Categories on 小诗</description>
         <generator>Hugo -- gohugo.io</generator>
         <language>zh-cn</language>
-        <copyright>小诗</copyright><atom:link href="https://ZackMoel.github.io/xiaoshi/categories/index.xml" rel="self" type="application/rss+xml" />
+        <copyright>小诗</copyright>
+        <lastBuildDate>Tue, 15 Apr 2025 20:26:37 +0800</lastBuildDate><atom:link href="https://ZackMoel.github.io/xiaoshi/categories/index.xml" rel="self" type="application/rss+xml" /><item>
+        <title>Docker</title>
+        <link>https://ZackMoel.github.io/xiaoshi/categories/docker/</link>
+        <pubDate>Tue, 15 Apr 2025 20:26:37 +0800</pubDate>
+        
+        <guid>https://ZackMoel.github.io/xiaoshi/categories/docker/</guid>
+        <description>&lt;img src="https://ZackMoel.github.io/xiaoshi/categories/docker/1.jpg" alt="Featured image of post Docker" /&gt;</description>
+        </item>
+        <item>
+        <title>zabbix</title>
+        <link>https://ZackMoel.github.io/xiaoshi/categories/zabbix/</link>
+        <pubDate>Mon, 14 Apr 2025 17:09:05 +0800</pubDate>
+        
+        <guid>https://ZackMoel.github.io/xiaoshi/categories/zabbix/</guid>
+        <description>&lt;img src="https://ZackMoel.github.io/xiaoshi/categories/zabbix/1.jpg" alt="Featured image of post zabbix" /&gt;</description>
+        </item>
+        <item>
+        <title>nginx</title>
+        <link>https://ZackMoel.github.io/xiaoshi/categories/nginx/</link>
+        <pubDate>Mon, 14 Apr 2025 16:58:32 +0800</pubDate>
+        
+        <guid>https://ZackMoel.github.io/xiaoshi/categories/nginx/</guid>
+        <description>&lt;img src="https://ZackMoel.github.io/xiaoshi/categories/nginx/1.jpg" alt="Featured image of post nginx" /&gt;</description>
+        </item>
+        <item>
+        <title>Ansible</title>
+        <link>https://ZackMoel.github.io/xiaoshi/categories/ansible/</link>
+        <pubDate>Mon, 14 Apr 2025 16:39:02 +0800</pubDate>
+        
+        <guid>https://ZackMoel.github.io/xiaoshi/categories/ansible/</guid>
+        <description>&lt;img src="https://ZackMoel.github.io/xiaoshi/categories/ansible/1.jpg" alt="Featured image of post Ansible" /&gt;</description>
+        </item>
+        <item>
+        <title>MySQL</title>
+        <link>https://ZackMoel.github.io/xiaoshi/categories/mysql/</link>
+        <pubDate>Mon, 14 Apr 2025 16:12:13 +0800</pubDate>
+        
+        <guid>https://ZackMoel.github.io/xiaoshi/categories/mysql/</guid>
+        <description>&lt;img src="https://ZackMoel.github.io/xiaoshi/categories/mysql/1.jpg" alt="Featured image of post MySQL" /&gt;</description>
+        </item>
+        <item>
+        <title>Xtrabackup</title>
+        <link>https://ZackMoel.github.io/xiaoshi/categories/xtrabackup/</link>
+        <pubDate>Mon, 14 Apr 2025 16:12:13 +0800</pubDate>
+        
+        <guid>https://ZackMoel.github.io/xiaoshi/categories/xtrabackup/</guid>
+        <description>&lt;img src="https://ZackMoel.github.io/xiaoshi/categories/xtrabackup/1.jpg" alt="Featured image of post Xtrabackup" /&gt;</description>
+        </item>
+        <item>
+        <title>Mysqldump</title>
+        <link>https://ZackMoel.github.io/xiaoshi/categories/mysqldump/</link>
+        <pubDate>Mon, 14 Apr 2025 16:10:17 +0800</pubDate>
+        
+        <guid>https://ZackMoel.github.io/xiaoshi/categories/mysqldump/</guid>
+        <description>&lt;img src="https://ZackMoel.github.io/xiaoshi/categories/mysqldump/1.jpg" alt="Featured image of post Mysqldump" /&gt;</description>
+        </item>
+        <item>
+        <title>Rsync</title>
+        <link>https://ZackMoel.github.io/xiaoshi/categories/rsync/</link>
+        <pubDate>Mon, 14 Apr 2025 16:10:17 +0800</pubDate>
+        
+        <guid>https://ZackMoel.github.io/xiaoshi/categories/rsync/</guid>
+        <description>&lt;img src="https://ZackMoel.github.io/xiaoshi/categories/rsync/1.jpg" alt="Featured image of post Rsync" /&gt;</description>
+        </item>
+        <item>
+        <title>Linux</title>
+        <link>https://ZackMoel.github.io/xiaoshi/categories/linux/</link>
+        <pubDate>Mon, 14 Apr 2025 15:40:04 +0800</pubDate>
+        
+        <guid>https://ZackMoel.github.io/xiaoshi/categories/linux/</guid>
+        <description>&lt;img src="https://ZackMoel.github.io/xiaoshi/categories/linux/1.jpg" alt="Featured image of post Linux" /&gt;</description>
+        </item>
+        <item>
+        <title>Inotify</title>
+        <link>https://ZackMoel.github.io/xiaoshi/categories/inotify/</link>
+        <pubDate>Mon, 14 Apr 2025 15:38:22 +0800</pubDate>
+        
+        <guid>https://ZackMoel.github.io/xiaoshi/categories/inotify/</guid>
+        <description>&lt;img src="https://ZackMoel.github.io/xiaoshi/categories/inotify/1.jpg" alt="Featured image of post Inotify" /&gt;</description>
+        </item>
+        <item>
+        <title>Nfs</title>
+        <link>https://ZackMoel.github.io/xiaoshi/categories/nfs/</link>
+        <pubDate>Mon, 14 Apr 2025 15:36:22 +0800</pubDate>
+        
+        <guid>https://ZackMoel.github.io/xiaoshi/categories/nfs/</guid>
+        <description>&lt;img src="https://ZackMoel.github.io/xiaoshi/categories/nfs/1.jpg" alt="Featured image of post Nfs" /&gt;</description>
+        </item>
+        <item>
+        <title>FTP</title>
+        <link>https://ZackMoel.github.io/xiaoshi/categories/ftp/</link>
+        <pubDate>Mon, 14 Apr 2025 15:25:11 +0800</pubDate>
+        
+        <guid>https://ZackMoel.github.io/xiaoshi/categories/ftp/</guid>
+        <description>&lt;img src="https://ZackMoel.github.io/xiaoshi/categories/ftp/1.jpg" alt="Featured image of post FTP" /&gt;</description>
+        </item>
+        
     </channel>
 </rss>

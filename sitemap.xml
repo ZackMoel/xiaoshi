@@ -5,11 +5,20 @@
     <loc>https://ZackMoel.github.io/xiaoshi/</loc>
     <lastmod>2025-04-15T20:26:37+08:00</lastmod>
   </url><url>
+    <loc>https://ZackMoel.github.io/xiaoshi/categories/</loc>
+    <lastmod>2025-04-15T20:26:37+08:00</lastmod>
+  </url><url>
+    <loc>https://ZackMoel.github.io/xiaoshi/categories/docker/</loc>
+    <lastmod>2025-04-15T20:26:37+08:00</lastmod>
+  </url><url>
     <loc>https://ZackMoel.github.io/xiaoshi/p/docker%E7%9B%B8%E5%85%B3%E7%AC%94%E8%AE%B0/</loc>
     <lastmod>2025-04-15T20:26:37+08:00</lastmod>
   </url><url>
     <loc>https://ZackMoel.github.io/xiaoshi/post/</loc>
     <lastmod>2025-04-15T20:26:37+08:00</lastmod>
+  </url><url>
+    <loc>https://ZackMoel.github.io/xiaoshi/categories/zabbix/</loc>
+    <lastmod>2025-04-14T17:09:05+08:00</lastmod>
   </url><url>
     <loc>https://ZackMoel.github.io/xiaoshi/p/zabbix%E5%AE%9E%E7%8E%B0%E9%92%89%E9%92%89%E6%8A%A5%E8%AD%A6-zabbix%E7%9B%91%E6%8E%A7%E6%A0%B8%E5%BF%83/</loc>
     <lastmod>2025-04-14T17:09:05+08:00</lastmod>
@@ -22,6 +31,9 @@
   </url><url>
     <loc>https://ZackMoel.github.io/xiaoshi/p/zabbix%E5%AE%89%E8%A3%85/</loc>
     <lastmod>2025-04-14T17:07:51+08:00</lastmod>
+  </url><url>
+    <loc>https://ZackMoel.github.io/xiaoshi/categories/nginx/</loc>
+    <lastmod>2025-04-14T16:58:32+08:00</lastmod>
   </url><url>
     <loc>https://ZackMoel.github.io/xiaoshi/p/%E9%83%A8%E7%BD%B2python%E7%BD%91%E7%AB%99/</loc>
     <lastmod>2025-04-14T16:58:32+08:00</lastmod>
@@ -47,6 +59,9 @@
     <loc>https://ZackMoel.github.io/xiaoshi/p/web%E5%9F%BA%E7%A1%80%E5%8D%8F%E8%AE%AE/</loc>
     <lastmod>2025-04-14T16:48:29+08:00</lastmod>
   </url><url>
+    <loc>https://ZackMoel.github.io/xiaoshi/categories/ansible/</loc>
+    <lastmod>2025-04-14T16:39:02+08:00</lastmod>
+  </url><url>
     <loc>https://ZackMoel.github.io/xiaoshi/p/ansible%E8%A7%92%E8%89%B2/</loc>
     <lastmod>2025-04-14T16:39:02+08:00</lastmod>
   </url><url>
@@ -56,8 +71,20 @@
     <loc>https://ZackMoel.github.io/xiaoshi/p/ansible%E5%9F%BA%E7%A1%80/</loc>
     <lastmod>2025-04-14T16:38:41+08:00</lastmod>
   </url><url>
+    <loc>https://ZackMoel.github.io/xiaoshi/categories/mysql/</loc>
+    <lastmod>2025-04-14T16:12:13+08:00</lastmod>
+  </url><url>
+    <loc>https://ZackMoel.github.io/xiaoshi/categories/xtrabackup/</loc>
+    <lastmod>2025-04-14T16:12:13+08:00</lastmod>
+  </url><url>
     <loc>https://ZackMoel.github.io/xiaoshi/p/%E7%89%A9%E7%90%86%E5%A4%87%E4%BB%BD%E5%B7%A5%E5%85%B7xtrabackup/</loc>
     <lastmod>2025-04-14T16:12:13+08:00</lastmod>
+  </url><url>
+    <loc>https://ZackMoel.github.io/xiaoshi/categories/mysqldump/</loc>
+    <lastmod>2025-04-14T16:10:17+08:00</lastmod>
+  </url><url>
+    <loc>https://ZackMoel.github.io/xiaoshi/categories/rsync/</loc>
+    <lastmod>2025-04-14T16:10:17+08:00</lastmod>
   </url><url>
     <loc>https://ZackMoel.github.io/xiaoshi/p/%E5%A4%87%E4%BB%BD%E8%BF%9B%E9%98%B6gtid/</loc>
     <lastmod>2025-04-14T16:10:17+08:00</lastmod>
@@ -77,17 +104,29 @@
     <loc>https://ZackMoel.github.io/xiaoshi/p/mysql%E6%A0%B8%E5%BF%83%E5%85%A5%E9%97%A8/</loc>
     <lastmod>2025-04-14T15:41:38+08:00</lastmod>
   </url><url>
+    <loc>https://ZackMoel.github.io/xiaoshi/categories/linux/</loc>
+    <lastmod>2025-04-14T15:40:04+08:00</lastmod>
+  </url><url>
     <loc>https://ZackMoel.github.io/xiaoshi/p/linux%E7%BB%BC%E5%90%88%E6%9E%B6%E6%9E%84/</loc>
     <lastmod>2025-04-14T15:40:04+08:00</lastmod>
   </url><url>
+    <loc>https://ZackMoel.github.io/xiaoshi/categories/inotify/</loc>
+    <lastmod>2025-04-14T15:38:22+08:00</lastmod>
+  </url><url>
     <loc>https://ZackMoel.github.io/xiaoshi/p/%E5%AE%9E%E6%97%B6%E5%90%8C%E6%AD%A5/</loc>
     <lastmod>2025-04-14T15:38:22+08:00</lastmod>
+  </url><url>
+    <loc>https://ZackMoel.github.io/xiaoshi/categories/nfs/</loc>
+    <lastmod>2025-04-14T15:36:22+08:00</lastmod>
   </url><url>
     <loc>https://ZackMoel.github.io/xiaoshi/p/nfs%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/</loc>
     <lastmod>2025-04-14T15:36:22+08:00</lastmod>
   </url><url>
     <loc>https://ZackMoel.github.io/xiaoshi/p/rsync%E6%9C%8D%E5%8A%A1/</loc>
     <lastmod>2025-04-14T15:26:03+08:00</lastmod>
+  </url><url>
+    <loc>https://ZackMoel.github.io/xiaoshi/categories/ftp/</loc>
+    <lastmod>2025-04-14T15:25:11+08:00</lastmod>
   </url><url>
     <loc>https://ZackMoel.github.io/xiaoshi/p/ftp%E6%9C%8D%E5%8A%A1/</loc>
     <lastmod>2025-04-14T15:25:11+08:00</lastmod>
@@ -112,8 +151,6 @@
   </url><url>
     <loc>https://ZackMoel.github.io/xiaoshi/archives/</loc>
     <lastmod>2019-05-28T00:00:00+00:00</lastmod>
-  </url><url>
-    <loc>https://ZackMoel.github.io/xiaoshi/categories/</loc>
   </url><url>
     <loc>https://ZackMoel.github.io/xiaoshi/tags/</loc>
   </url><url>
