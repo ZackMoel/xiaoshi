@@ -7,7 +7,15 @@
         <generator>Hugo -- gohugo.io</generator>
         <language>zh-cn</language>
         <copyright>小诗</copyright>
-        <lastBuildDate>Tue, 15 Apr 2025 20:26:37 +0800</lastBuildDate><atom:link href="https://ZackMoel.github.io/xiaoshi/categories/index.xml" rel="self" type="application/rss+xml" /><item>
+        <lastBuildDate>Wed, 23 Apr 2025 18:07:23 +0800</lastBuildDate><atom:link href="https://ZackMoel.github.io/xiaoshi/categories/index.xml" rel="self" type="application/rss+xml" /><item>
+        <title>MySQL</title>
+        <link>https://ZackMoel.github.io/xiaoshi/categories/mysql/</link>
+        <pubDate>Wed, 23 Apr 2025 18:07:23 +0800</pubDate>
+        
+        <guid>https://ZackMoel.github.io/xiaoshi/categories/mysql/</guid>
+        <description>&lt;img src="https://ZackMoel.github.io/xiaoshi/categories/mysql/1.jpg" alt="Featured image of post MySQL" /&gt;</description>
+        </item>
+        <item>
         <title>Docker</title>
         <link>https://ZackMoel.github.io/xiaoshi/categories/docker/</link>
         <pubDate>Tue, 15 Apr 2025 20:26:37 +0800</pubDate>
@@ -38,14 +46,6 @@
         
         <guid>https://ZackMoel.github.io/xiaoshi/categories/ansible/</guid>
         <description>&lt;img src="https://ZackMoel.github.io/xiaoshi/categories/ansible/1.jpg" alt="Featured image of post Ansible" /&gt;</description>
-        </item>
-        <item>
-        <title>MySQL</title>
-        <link>https://ZackMoel.github.io/xiaoshi/categories/mysql/</link>
-        <pubDate>Mon, 14 Apr 2025 16:12:13 +0800</pubDate>
-        
-        <guid>https://ZackMoel.github.io/xiaoshi/categories/mysql/</guid>
-        <description>&lt;img src="https://ZackMoel.github.io/xiaoshi/categories/mysql/1.jpg" alt="Featured image of post MySQL" /&gt;</description>
         </item>
         <item>
         <title>Xtrabackup</title>

@@ -1,0 +1,2034 @@
+<!DOCTYPE html>
+<html lang="zh-cn" dir="ltr">
+    <head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content="0.爱奇艺的数据库高可用方案 https://mp.weixin.qq.com/s/_rlHJKrYXyiXgqUEwTwS9A 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 MHA市面上，还是比较主流的，能实现，数据库集群的 高可用性">
+<title>MHA架构</title>
+
+<link rel='canonical' href='https://ZackMoel.github.io/xiaoshi/p/mha%E6%9E%B6%E6%9E%84/'>
+
+<link rel="stylesheet" href="/xiaoshi/scss/style.min.a27e74b30b44d959c0c932eb5ee46d6cb0bece1f7dd20391aea298e2910d7fa7.css"><meta property='og:title' content="MHA架构">
+<meta property='og:description' content="0.爱奇艺的数据库高可用方案 https://mp.weixin.qq.com/s/_rlHJKrYXyiXgqUEwTwS9A 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 MHA市面上，还是比较主流的，能实现，数据库集群的 高可用性">
+<meta property='og:url' content='https://ZackMoel.github.io/xiaoshi/p/mha%E6%9E%B6%E6%9E%84/'>
+<meta property='og:site_name' content='小诗'>
+<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:published_time' content='2025-04-23T18:07:23&#43;08:00'/><meta property='article:modified_time' content='2025-04-23T18:07:23&#43;08:00'/>
+<meta name="twitter:title" content="MHA架构">
+<meta name="twitter:description" content="0.爱奇艺的数据库高可用方案 https://mp.weixin.qq.com/s/_rlHJKrYXyiXgqUEwTwS9A 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 MHA市面上，还是比较主流的，能实现，数据库集群的 高可用性">
+  
+
+
+    </head>
+    <body class="
+    article-page
+    ">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex on-phone--column extended"><aside class="sidebar left-sidebar sticky ">
+    <button class="hamburger hamburger--spin" type="button" id="toggle-menu" aria-label="切换菜单">
+        <span class="hamburger-box">
+            <span class="hamburger-inner"></span>
+        </span>
+    </button>
+
+    <header>
+        
+            
+            <figure class="site-avatar">
+                <a href="/xiaoshi/">
+                
+                    
+                    
+                    
+                        
+                        <img src="/xiaoshi/img/avatar_hu8920112365793990935.png" width="300"
+                            height="300" class="site-logo" loading="lazy" alt="Avatar">
+                    
+                
+                </a>
+                
+                    <span class="emoji">🍥</span>
+                
+            </figure>
+            
+        
+        
+        <div class="site-meta">
+            <h1 class="site-name"><a href="/xiaoshi">小诗</a></h1>
+            <h2 class="site-description">世界和平</h2>
+        </div>
+    </header><ol class="menu-social">
+            
+                <li>
+                    <a 
+                        href='https://space.bilibili.com/1055981889?spm_id_from=333.1007.0.0'
+                        target="_blank"
+                        title="bilibili"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg  xmlns="http://www.w3.org/2000/svg"  width="24"  height="24"  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  stroke-width="2"  stroke-linecap="round"  stroke-linejoin="round"  class="icon icon-tabler icons-tabler-outline icon-tabler-brand-bilibili"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M3 10a4 4 0 0 1 4 -4h10a4 4 0 0 1 4 4v6a4 4 0 0 1 -4 4h-10a4 4 0 0 1 -4 -4v-6z" /><path d="M8 3l2 3" /><path d="M16 3l-2 3" /><path d="M9 13v-2" /><path d="M15 11v2" /></svg>
+                        
+                    </a>
+                </li>
+            
+                <li>
+                    <a 
+                        href='https://github.com/ZackMoel/xiaoshi.github.io'
+                        target="_blank"
+                        title="GitHub"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-github" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M9 19c-4.3 1.4 -4.3 -2.5 -6 -3m12 5v-3.5c0 -1 .1 -1.4 -.5 -2c2.8 -.3 5.5 -1.4 5.5 -6a4.6 4.6 0 0 0 -1.3 -3.2a4.2 4.2 0 0 0 -.1 -3.2s-1.1 -.3 -3.5 1.3a12.3 12.3 0 0 0 -6.2 0c-2.4 -1.6 -3.5 -1.3 -3.5 -1.3a4.2 4.2 0 0 0 -.1 3.2a4.6 4.6 0 0 0 -1.3 3.2c0 4.6 2.7 5.7 5.5 6c-.6 .6 -.6 1.2 -.5 2v3.5" />
+</svg>
+
+
+
+                        
+                    </a>
+                </li>
+            
+        </ol><ol class="menu" id="main-menu">
+        
+        
+        
+        <li >
+            <a href='/xiaoshi/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-home" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <polyline points="5 12 3 12 12 3 21 12 19 12" />
+  <path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7" />
+  <path d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6" />
+</svg>
+
+
+
+                
+                <span>主页</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/xiaoshi/%E5%85%B3%E4%BA%8E/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-user" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="7" r="4" />
+  <path d="M6 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2" />
+</svg>
+
+
+
+                
+                <span>关于</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/xiaoshi/archives/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-archive" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <rect x="3" y="4" width="18" height="4" rx="2" />
+  <path d="M5 8v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-10" />
+  <line x1="10" y1="12" x2="14" y2="12" />
+</svg>
+
+
+
+                
+                <span>归档</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/xiaoshi/search/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-search" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="10" cy="10" r="7" />
+  <line x1="21" y1="21" x2="15" y2="15" />
+</svg>
+
+
+
+                
+                <span>搜索</span>
+            </a>
+        </li>
+        
+        <li class="menu-bottom-section">
+            <ol class="menu">
+
+                
+                    <li id="dark-mode-toggle">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="8" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="16" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <span>暗色模式</span>
+                    </li>
+                
+            </ol>
+        </li>
+    </ol>
+</aside>
+
+    <aside class="sidebar right-sidebar sticky">
+        
+            
+                
+    <section class="widget archives">
+        <div class="widget-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <line x1="5" y1="9" x2="19" y2="9" />
+  <line x1="5" y1="15" x2="19" y2="15" />
+  <line x1="11" y1="4" x2="7" y2="20" />
+  <line x1="17" y1="4" x2="13" y2="20" />
+</svg>
+
+
+
+        </div>
+        <h2 class="widget-title section-title">目录</h2>
+        
+        <div class="widget--toc">
+            <nav id="TableOfContents">
+  <ol>
+    <li><a href="#1配置文件设置">1.配置文件设置</a></li>
+    <li><a href="#2主从关系检查">2.主从关系检查</a></li>
+    <li><a href="#3设置从库只读db-52db53">3.设置从库只读db-52,db53</a></li>
+    <li><a href="#4关于select权限和-只读锁的作用">4.关于select权限和 只读锁的作用</a></li>
+  </ol>
+
+  <ol>
+    <li><a href="#1所有节点软连接设置">1.所有节点软连接设置</a></li>
+    <li><a href="#2所有节点执行-全部互相通信">2.所有节点执行-全部互相通信</a></li>
+    <li><a href="#3所有节点安装mha-node">3.所有节点安装MHA-node</a></li>
+    <li><a href="#4db-53安装mha-manager">4.db-53安装MHA-Manager</a></li>
+    <li><a href="#5所有节点创建mha用户">5.所有节点创建mha用户</a></li>
+    <li><a href="#6创建db-53的manager配置文件">6.创建db-53的manager配置文件</a>
+      <ol>
+        <li><a href="#使用该配置即可">使用该配置即可</a></li>
+        <li><a href="#创建基于vip的mha高可用性数据库">创建基于VIP的MHA高可用性数据库</a></li>
+        <li><a href="#给当前的主库机器添加vip">给当前的主库机器，添加VIP</a></li>
+      </ol>
+    </li>
+    <li><a href="#7状态检查db-53">7.状态检查db-53</a></li>
+    <li><a href="#启动mha程序故障演练">启动MHA程序,故障演练</a>
+      <ol>
+        <li><a href="#故障演练">故障演练</a></li>
+      </ol>
+    </li>
+    <li><a href="#测试新的主从关系是否正常">测试新的主从关系是否正常</a>
+      <ol>
+        <li><a href="#至此新的主从关系又建立了">至此，新的主从关系又建立了</a></li>
+      </ol>
+    </li>
+    <li><a href="#主从故障恢复再次开启mha">主从故障恢复，再次开启MHA</a>
+      <ol>
+        <li><a href="#恢复51机器以及mha再次做高可用检测">恢复51机器，以及MHA再次做高可用检测</a></li>
+      </ol>
+    </li>
+    <li><a href="#再次开启mha">再次开启MHA</a></li>
+    <li><a href="#再次新一轮的主从切换查看日志恢复原理过程">====再次新一轮的主从切换，查看日志恢复原理过程====</a></li>
+  </ol>
+</nav>
+        </div>
+    </section>
+
+            
+        
+    </aside>
+
+
+            <main class="main full-width">
+    <article class="main-article">
+    <header class="article-header">
+
+    <div class="article-details">
+    
+
+    <div class="article-title-wrapper">
+        <h2 class="article-title">
+            <a href="/xiaoshi/p/mha%E6%9E%B6%E6%9E%84/">MHA架构</a>
+        </h2>
+    
+        
+    </div>
+
+    
+    <header class="article-category">
+        
+            <a href="/xiaoshi/categories/mysql/" style="background-color: #2a9d8f; color: #fff;">
+                MySQL
+            </a>
+        
+    </header>
+    
+
+    
+    
+    
+    
+    <footer class="article-time">
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
+  <circle cx="18" cy="18" r="4" />
+  <path d="M15 3v4" />
+  <path d="M7 3v4" />
+  <path d="M3 11h16" />
+  <path d="M18 16.496v1.504l1 1" />
+</svg>
+                <time class="article-time--published">2025-04-23</time>
+            </div>
+        
+
+        
+    </footer>
+    
+
+    
+</div>
+
+</header>
+
+    <section class="article-content">
+    
+    
+    <h1 id="0爱奇艺的数据库高可用方案">0.爱奇艺的数据库高可用方案
+</h1><p><a class="link" href="https://mp.weixin.qq.com/s/_rlHJKrYXyiXgqUEwTwS9A"  target="_blank" rel="noopener"
+    >https://mp.weixin.qq.com/s/_rlHJKrYXyiXgqUEwTwS9A</a></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">MHA市面上，还是比较主流的，能实现，数据库集群的 高可用性的部署工具。
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">最次的 ，单实例数据库  db-51  3306 mysql  ，单点故障
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">其次， 升级为  主从复制，  1 主 多从 ， 
+</span></span><span class="line"><span class="cl">主库的数据，再从库有了备份
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">三台机器，提供了数据库的功能，数据库集群
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">给从库设置只读模式
+</span></span><span class="line"><span class="cl">主库允许读写
+</span></span><span class="line"><span class="cl">代码链接的ip地址是谁。 
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">加负载均衡ip
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">master（new_slave） 挂了  db-51 
+</span></span><span class="line"><span class="cl">↓
+</span></span><span class="line"><span class="cl">slave1 同步1      db-52
+</span></span><span class="line"><span class="cl">↓
+</span></span><span class="line"><span class="cl">slave2（new_master） (reset slave all;  reset master 重置自己的从库角色)  db-53
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">还希望，至少是 1主 2从 
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">快速切换回，主从关系，还得再找一个主库
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">目前基于主从复制，实现了数据库集群玩法
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h1 id="1什么是mha">1.什么是MHA
+</h1><p>MHA(Master High Availability)目前在MySQL高可用方面是一个相对成熟的解决方案,是一套优秀的作为MySQL高可用性环境下故障切换和主从提升的高可用软件。</p>
+<p>MHA作用是保证MySQL主从复制集群中的master高可用性,也就保证整个数据库集群业务不被故障影响。</p>
+<ul>
+<li>master故障时,MHA会在30s内实现故障自动检测+故障转移</li>
+<li>选择一个最优的slave接替为新的master,并且保证new_master和其他slave继续保持数据一致性</li>
+</ul>
+<blockquote>
+<p>高可用性HA、high availability
+指的是一个经过设计的系统,能保证减少架构故障时的停工时间,保证业务程序的高度可用性
+无论是web、数据库、还是后端</p>
+</blockquote>
+<p>MHA的优势</p>
+<p>MHA 由两个模块组成：Manager 和 Node。</p>
+<h1 id="2学习mha的优势">2.学习MHA的优势
+</h1><p>1.自动故障转移快</p>
+<p>2.主库崩溃仍能保证数据一致性</p>
+<p>3.安装配置过程,不需要调整当前mysql实例</p>
+<p>4.不需要额外的服务器,一个manager可以管理N个replication,性能强悍</p>
+<p>5.支持半同步复制,异步复制</p>
+<p>6.只要replication支持的存储引擎,MHA软件都支持,支持多种引擎</p>
+<h1 id="3mha架构原理">3.MHA架构原理
+</h1><p>整个MHA软件由两部分角色组成,即MHA Manager(管理节点)和MHA Node(数据节点)</p>
+<p>MHA Manager服务可以独立部署在一台Linux机器,也可以部署在某一台主从复制从节点或者其他应用服务器节点上。</p>
+<p>而 MHA Node服务需要运行在每一个MySQL服务器上。</p>
+<p>MHA Manager会定时通过主库上的MHA Node服务监测主库,当master出现故障时,它可以自动将最优slave(可以提前指定或由MHA判定)提升为新的master,然后让所有其他的从库与新的主库重新保持正常的复制状态。</p>
+<p>故障的整个切换和转移的过程对客户以及应用程序几乎是完全透明的(也就是用户不会感知到有故障发生)</p>
+<p><img src="/xiaoshi/p/mha%E6%9E%B6%E6%9E%84/assets/clipImg-1729688189729-6.png"
+	width="516"
+	height="339"
+	srcset="/xiaoshi/p/mha%E6%9E%B6%E6%9E%84/assets/clipImg-1729688189729-6_hu4313803054736515402.png 480w, /xiaoshi/p/mha%E6%9E%B6%E6%9E%84/assets/clipImg-1729688189729-6_hu1939053418110715769.png 1024w"
+	loading="lazy"
+	
+		alt="clipImg"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="152"
+		data-flex-basis="365px"
+	
+></p>
+<h1 id="4mha工作原理">4.MHA工作原理
+</h1><p>MHA主要功能</p>
+<ul>
+<li>master宕机、切换新的master,且保证其他slave和新的master保持一致复制</li>
+<li>故障切换过程中,集群数据丢失量最小</li>
+</ul>
+<p><strong>一、选择新master</strong></p>
+<p>old_master宕机,在集群中选择一个新的slave作为new_master,这要根据MHA的配置,如根据其他slave的
+binlog位置点,选择最新的slave作为new_master</p>
+<p><strong>二、数据补全</strong></p>
+<p>进行故障切换、转移之前,必须要进行数据补全,否则即使故障切换了,数据丢了那也是不允许的</p>
+<blockquote>
+<p>数据补全过程</p>
+</blockquote>
+<ul>
+<li>old_master数据库服务器还可以连接,MHA会SSH连接主库,保存主库所有的binlog
+<ul>
+<li>若ssh无法连接,放弃主库的binlog数据</li>
+</ul>
+</li>
+<li>以切换好的new_master主库的binlog位置点位基准点,通过relay_1og进行数据补全,使得其他所有slave和new_master数据一直</li>
+<li>将宕机时从old_master上保存下来的binlog日志(如果存在的话)恢复到所有的数据库节点.</li>
+</ul>
+<p><strong>三、角色切换</strong></p>
+<ul>
+<li>已选择好的new_master正式提升为主库角色</li>
+<li>其他的slave和new_master保持主从复制关系</li>
+</ul>
+<h1 id="5mha软件包介绍">5.MHA软件包介绍
+</h1><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">MHA由2部分组成
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">Manager节点
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">Node节点
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"># 安装主程序软件包，会生成如下命令
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">manager 组件
+</span></span><span class="line"><span class="cl">masterha_manger        启动MHA
+</span></span><span class="line"><span class="cl">masterha_check_ssh         检查MHA的SSH配置状况，MHA，免密登录到目标机器，拷贝binlog，传输relaylog
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">masterha_check_repl     检查MySQL复制状况，配置信息，MHA再启动前，需要先确保，维护的主从集群，主从复制关系是正常的，
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">masterha_master_monitor    检测master是否宕机
+</span></span><span class="line"><span class="cl">masterha_check_status         检测当前MHA运行状态
+</span></span><span class="line"><span class="cl">masterha_master_switch     控制故障转移(自动或者手动)
+</span></span><span class="line"><span class="cl">masterha_conf_host        添加或删除配置的server信息
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">node 组件
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">save_binary_logs              保存和复制master的二进制日志
+</span></span><span class="line"><span class="cl">apply_diff_relay_logs         识别差异的中继日志事件并将其差异的事件应用于其他的
+</span></span><span class="line"><span class="cl">purge_relay_logs              清除中继日志(不会阻塞SQL线程)
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h1 id="6基础主从复制环境部署">6.基础主从复制环境部署
+</h1><p>准备3个机器，准备基于GTID的主从复制，不用pos值的binlog，都给开启GTID</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span><span class="lnt">9
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">注意逻辑
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">1. 部署3个节点，  51,52,53  ，1主2从的关系
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">2. 数据库都要开启GTID功能
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">3. 注意server_id区别开
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">4. 最终主从检查命令，确保主从赋值线程都正确就行。
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="1配置文件设置">1.配置文件设置
+</h2><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-gdscript3" data-lang="gdscript3"><span class="line"><span class="cl"><span class="err">让数据库自动提交事务，每一个操作都是一个事务记录。</span>
+</span></span><span class="line"><span class="cl"><span class="p">[</span><span class="n">root</span><span class="err">@</span><span class="n">db</span><span class="o">-</span><span class="mi">51</span> <span class="o">~</span><span class="p">]</span><span class="c1">#cat /etc/my.cnf</span>
+</span></span><span class="line"><span class="cl"><span class="p">[</span><span class="n">mysqld</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl"><span class="n">user</span><span class="o">=</span><span class="n">mysql</span> 
+</span></span><span class="line"><span class="cl"><span class="n">datadir</span><span class="o">=/</span><span class="n">data</span><span class="o">/</span><span class="n">mysql_3306</span> 
+</span></span><span class="line"><span class="cl"><span class="n">basedir</span><span class="o">=/</span><span class="n">opt</span><span class="o">/</span><span class="n">mysql</span><span class="o">/</span> 
+</span></span><span class="line"><span class="cl"><span class="n">socket</span><span class="o">=/</span><span class="n">tmp</span><span class="o">/</span><span class="n">mysql</span><span class="o">.</span><span class="n">sock</span>
+</span></span><span class="line"><span class="cl"><span class="n">port</span><span class="o">=</span><span class="mi">3306</span> 
+</span></span><span class="line"><span class="cl"><span class="n">log_error</span><span class="o">=/</span><span class="k">var</span><span class="o">/</span><span class="nb">log</span><span class="o">/</span><span class="n">mysql</span><span class="o">/</span><span class="n">mysql</span><span class="o">.</span><span class="n">err</span> 
+</span></span><span class="line"><span class="cl"><span class="n">server_id</span><span class="o">=</span><span class="mi">51</span> 
+</span></span><span class="line"><span class="cl"><span class="n">log_bin</span><span class="o">=/</span><span class="n">mysql_binlog</span><span class="o">/</span><span class="n">mysql</span><span class="o">-</span><span class="n">bin</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">binlog_format</span><span class="o">=</span><span class="n">row</span>
+</span></span><span class="line"><span class="cl"><span class="n">gtid</span><span class="o">-</span><span class="n">mode</span><span class="o">=</span><span class="n">on</span> 
+</span></span><span class="line"><span class="cl"><span class="n">enforce</span><span class="o">-</span><span class="n">gtid</span><span class="o">-</span><span class="n">consistency</span><span class="o">=</span><span class="bp">true</span>
+</span></span><span class="line"><span class="cl"><span class="nb">log</span><span class="o">-</span><span class="n">slave</span><span class="o">-</span><span class="n">updates</span><span class="o">=</span><span class="mi">1</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="p">[</span><span class="n">mysql</span><span class="p">]</span> 
+</span></span><span class="line"><span class="cl"><span class="n">socket</span><span class="o">=/</span><span class="n">tmp</span><span class="o">/</span><span class="n">mysql</span><span class="o">.</span><span class="n">sock</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="p">[</span><span class="n">client</span><span class="p">]</span> 
+</span></span><span class="line"><span class="cl"><span class="n">socket</span><span class="o">=/</span><span class="n">tmp</span><span class="o">/</span><span class="n">mysql</span><span class="o">.</span><span class="n">sock</span> 
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>刚刚初始化的机器如下：</p>
+<p>db-51    master</p>
+<p>db-52   slave</p>
+<p>db-53  slave</p>
+<h2 id="2主从关系检查">2.主从关系检查
+</h2><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl"># 设置密码
+</span></span><span class="line"><span class="cl">mysqladmin password linux0224
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"># db-51创建复制账号
+</span></span><span class="line"><span class="cl">mysql -uroot -plinux0224 -e &#34;grant replication slave on*.* to repl@&#39;10.0.0.%&#39; identified by &#39;repl0224&#39;;&#34;
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">mysql&gt; select user,host  from mysql.user;
+</span></span><span class="line"><span class="cl">+---------------+-----------+
+</span></span><span class="line"><span class="cl">| user          | host      |
+</span></span><span class="line"><span class="cl">+---------------+-----------+
+</span></span><span class="line"><span class="cl">| repl          | 10.0.0.%  |
+</span></span><span class="line"><span class="cl">| mysql.session | localhost |
+</span></span><span class="line"><span class="cl">| mysql.sys     | localhost |
+</span></span><span class="line"><span class="cl">| root          | localhost |
+</span></span><span class="line"><span class="cl">+---------------+-----------+
+</span></span><span class="line"><span class="cl">4 rows in set (0.00 sec)
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"># db52，db53
+</span></span><span class="line"><span class="cl">mysqladmin password linux0224
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">mysql -uroot -plinux0224
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"># 让slave和master建立链接，主从关系
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">change master to master_host=&#39;10.0.0.51&#39;, master_user=&#39;repl&#39;, master_password=&#39;repl0224&#39; , MASTER_AUTO_POSITION=1;
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">start slave;
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"># 检查复制关系
+</span></span><span class="line"><span class="cl">mysql&gt; show slave status\G
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"># 主库创建数据，确认从库的复制关系
+</span></span><span class="line"><span class="cl">mysql&gt; select * from db0224.tb0224;
+</span></span><span class="line"><span class="cl">+------+
+</span></span><span class="line"><span class="cl">| id   |
+</span></span><span class="line"><span class="cl">+------+
+</span></span><span class="line"><span class="cl">| 1111 |
+</span></span><span class="line"><span class="cl">| 2222 |
+</span></span><span class="line"><span class="cl">| 3333 |
+</span></span><span class="line"><span class="cl">+------+
+</span></span><span class="line"><span class="cl">3 rows in set (0.01 sec)
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="3设置从库只读db-52db53">3.设置从库只读db-52,db53
+</h2><ul>
+<li>
+<p>注意，不得是root用户，否则该参数不生效</p>
+</li>
+<li>
+<p>生产下也会用普通账号去链接数据的，因此没问题。</p>
+</li>
+<li>
+<p>注意你链接的地址，链接的到底是哪个库</p>
+</li>
+</ul>
+<p><img src="/xiaoshi/p/mha%E6%9E%B6%E6%9E%84/pic/1660275417020.png"
+	width="1571"
+	height="991"
+	srcset="/xiaoshi/p/mha%E6%9E%B6%E6%9E%84/pic/1660275417020_hu11277927814316976087.png 480w, /xiaoshi/p/mha%E6%9E%B6%E6%9E%84/pic/1660275417020_hu17770205390621050328.png 1024w"
+	loading="lazy"
+	
+		alt="1660275417020"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="158"
+		data-flex-basis="380px"
+	
+></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span><span class="lnt">43
+</span><span class="lnt">44
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-gdscript3" data-lang="gdscript3"><span class="line"><span class="cl"><span class="c1"># 实现，从库的只读效果查看</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># 1.创建普通用户，让从库链接</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># 一定要再51机器上执行，对所有目标机器生效</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># slave 1 slave 2 应该提供完全一致的服务器，账户也是</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># 51机器执行</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">grant</span> <span class="n">select</span>  <span class="n">on</span> <span class="n">db0224</span><span class="o">.*</span> <span class="n">to</span> <span class="n">dev0224</span><span class="err">@</span><span class="s1">&#39;10.0.0.%&#39;</span> <span class="n">identified</span> <span class="n">by</span> <span class="s1">&#39;dev0224&#39;</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="o">=============================================================================</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># 先用root账户，登录 52,53机器，设置当前实例的 全局读锁</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># 普通用户链接</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">mysql</span><span class="o">&gt;</span> <span class="n">show</span> <span class="n">variables</span> <span class="n">like</span> <span class="s1">&#39;read_only%&#39;</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="o">+---------------+-------+</span>
+</span></span><span class="line"><span class="cl"><span class="o">|</span> <span class="n">Variable_name</span> <span class="o">|</span> <span class="n">Value</span> <span class="o">|</span>
+</span></span><span class="line"><span class="cl"><span class="o">+---------------+-------+</span>
+</span></span><span class="line"><span class="cl"><span class="o">|</span> <span class="n">read_only</span>     <span class="o">|</span> <span class="n">OFF</span>   <span class="o">|</span>
+</span></span><span class="line"><span class="cl"><span class="o">+---------------+-------+</span>
+</span></span><span class="line"><span class="cl"><span class="mi">1</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">set</span> <span class="p">(</span><span class="mf">0.00</span> <span class="n">sec</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># 用root设置全局读锁</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">mysql</span><span class="o">&gt;</span> <span class="n">set</span> <span class="n">global</span> <span class="n">read_only</span><span class="o">=</span><span class="mi">1</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="n">Query</span> <span class="n">OK</span><span class="p">,</span> <span class="mi">0</span> <span class="n">rows</span> <span class="n">affected</span> <span class="p">(</span><span class="mf">0.00</span> <span class="n">sec</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">mysql</span><span class="o">&gt;</span> <span class="n">show</span> <span class="n">variables</span> <span class="n">like</span> <span class="s1">&#39;read_only%&#39;</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="o">+---------------+-------+</span>
+</span></span><span class="line"><span class="cl"><span class="o">|</span> <span class="n">Variable_name</span> <span class="o">|</span> <span class="n">Value</span> <span class="o">|</span>
+</span></span><span class="line"><span class="cl"><span class="o">+---------------+-------+</span>
+</span></span><span class="line"><span class="cl"><span class="o">|</span> <span class="n">read_only</span>     <span class="o">|</span> <span class="n">ON</span>    <span class="o">|</span>
+</span></span><span class="line"><span class="cl"><span class="o">+---------------+-------+</span>
+</span></span><span class="line"><span class="cl"><span class="mi">1</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">set</span> <span class="p">(</span><span class="mf">0.00</span> <span class="n">sec</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="o">=============================================================================</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># 分别用两个普通用户，登录具体的 从库实例，查看权限操作</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">mysql</span> <span class="o">-</span><span class="n">udev0224</span> <span class="o">-</span><span class="n">pdev0224</span> <span class="o">-</span><span class="n">h10</span><span class="o">.</span><span class="mf">0.0</span><span class="o">.</span><span class="mi">52</span> <span class="o">-</span><span class="n">P3306</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">mysql</span> <span class="o">-</span><span class="n">udev0224</span> <span class="o">-</span><span class="n">pdev0224</span> <span class="o">-</span><span class="n">h10</span><span class="o">.</span><span class="mf">0.0</span><span class="o">.</span><span class="mi">53</span> <span class="o">-</span><span class="n">P3306</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># 测试俩从库是否能读取数据，写入数据</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="4关于select权限和-只读锁的作用">4.关于select权限和 只读锁的作用
+</h2><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">1. grant select 是我们主动给用户账户，限制只查询的权限，只是针对这个账号而已
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">2. 设置--read-only只读会话，是针对当前数据库实例而言的，所有用户而言
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">https://dev.mysql.com/doc/refman/8.0/en/innodb-read-only-instance.html
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/xiaoshi/p/mha%E6%9E%B6%E6%9E%84/pic/1660276166781.png"
+	width="2087"
+	height="1175"
+	srcset="/xiaoshi/p/mha%E6%9E%B6%E6%9E%84/pic/1660276166781_hu8741184504631559486.png 480w, /xiaoshi/p/mha%E6%9E%B6%E6%9E%84/pic/1660276166781_hu362490951071176415.png 1024w"
+	loading="lazy"
+	
+		alt="1660276166781"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="177"
+		data-flex-basis="426px"
+	
+></p>
+<h1 id="7mha架构部署">7.MHA架构部署
+</h1><p>原理性操作理解</p>
+<h2 id="1所有节点软连接设置">1.所有节点软连接设置
+</h2><p>MHA工具会检测mysql命令，这里还需要加软连接</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl"># 用如下命令验证
+</span></span><span class="line"><span class="cl">which  mysqlbinlog
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">which mysql
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">ln -s /opt/mysql/bin/mysqlbinlog /usr/bin/mysqlbinlog
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">ln -s /opt/mysql/bin/mysql /usr/bin/mysql
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="2所有节点执行-全部互相通信">2.所有节点执行-全部互相通信
+</h2><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span><span class="lnt">9
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">yum install sshpass -y
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">ssh-keygen
+</span></span><span class="line"><span class="cl">sshpass -p &#39;123123&#39; ssh-copy-id 10.0.0.51 -o StrictHostKeyChecking=no
+</span></span><span class="line"><span class="cl">sshpass -p &#39;123123&#39; ssh-copy-id 10.0.0.52 -o StrictHostKeyChecking=no
+</span></span><span class="line"><span class="cl">sshpass -p &#39;123123&#39; ssh-copy-id 10.0.0.53 -o StrictHostKeyChecking=no
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"># 免密验证
+</span></span><span class="line"><span class="cl">for i in 51 52 53;do ssh root@10.0.0.$i &#34;hostname;echo &#39;hello linux&#39;&#34;;done
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="3所有节点安装mha-node">3.所有节点安装MHA-node
+</h2><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">mha-node软件，--mha-manage通信
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"># mha perl语言开发的
+</span></span><span class="line"><span class="cl"># 1.先安装依赖环境
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">yum install  -y perl-DBD-MySQL -y
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"># 2.安装软件
+</span></span><span class="line"><span class="cl">yum localinstall mha4mysql-node-0.58-0.el7.centos.noarch.rpm -y
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="4db-53安装mha-manager">4.db-53安装MHA-Manager
+</h2><p>MHA管理节点可以装在任何节点，老师这里就给安装到了<code>slave03 节点</code></p>
+<p>因为Manager管理节点，通过ssh检测mysql集群，如果<code>master</code>节点服务器宕机，或者网络故障，MHA也无法完成故障切换了。</p>
+<p><strong>因此mha-manager不能装在<code>master节点</code></strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">yum install epel-release -y
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">yum install  -y perl-DBD-MySQL perl-Config-Tiny perl-Log-Dispatch perl-Parallel-ForkManager perl-ExtUtils-CBuilder perl-ExtUtils-MakeMaker perl-CPAN perl-Time-HiRes 
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">yum localinstall -y mha4mysql-manager-0.58-0.el7.centos.noarch.rpm
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="5所有节点创建mha用户">5.所有节点创建mha用户
+</h2><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">mha命令，脚本，通过这个用户，检测 所有机器的 主从复制状态
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"># db-51执行即可
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">mysql&gt; 
+</span></span><span class="line"><span class="cl">mysql&gt; grant all privileges on *.* to mha_0224@&#39;%&#39; identified by &#39;mha666&#39;;
+</span></span><span class="line"><span class="cl">Query OK, 0 rows affected, 1 warning (0.00 sec)
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">mysql&gt; flush privileges;
+</span></span><span class="line"><span class="cl">Query OK, 0 rows affected (0.00 sec)
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="6创建db-53的manager配置文件">6.创建db-53的manager配置文件
+</h2><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-gdscript3" data-lang="gdscript3"><span class="line"><span class="cl"><span class="n">mkdir</span> <span class="o">-</span><span class="n">p</span> <span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">mha</span>           <span class="c1">#&lt;==在/etc下创建mha目录。</span>
+</span></span><span class="line"><span class="cl"><span class="n">mkdir</span> <span class="o">-</span><span class="n">p</span> <span class="o">/</span><span class="k">var</span><span class="o">/</span><span class="nb">log</span><span class="o">/</span><span class="n">mha</span><span class="o">/</span><span class="n">app1</span>  <span class="c1">#&lt;==在/var/log/下创建mha日志目录。</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="使用该配置即可">使用该配置即可
+</h3><p>记得删除文中的注释</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">cat &gt; /etc/mha/app1.cnf <span class="s">&lt;&lt; &#39;EOF&#39;
+</span></span></span><span class="line"><span class="cl"><span class="s">[server default]
+</span></span></span><span class="line"><span class="cl"><span class="s">manager_log=/var/log/mha/app1/manager.log
+</span></span></span><span class="line"><span class="cl"><span class="s">manager_workdir=/var/log/mha/app1.log
+</span></span></span><span class="line"><span class="cl"><span class="s">master_binlog_dir=/mysql_binlog/
+</span></span></span><span class="line"><span class="cl"><span class="s">
+</span></span></span><span class="line"><span class="cl"><span class="s">master_ip_failover_script=/usr/local/bin/master_ip_failover
+</span></span></span><span class="line"><span class="cl"><span class="s">user=mha_0224
+</span></span></span><span class="line"><span class="cl"><span class="s">password=mha666
+</span></span></span><span class="line"><span class="cl"><span class="s">ping_interval=2
+</span></span></span><span class="line"><span class="cl"><span class="s"># 填入你当前主从复制，账号密码
+</span></span></span><span class="line"><span class="cl"><span class="s">
+</span></span></span><span class="line"><span class="cl"><span class="s">repl_user=repl_0224
+</span></span></span><span class="line"><span class="cl"><span class="s">repl_password=repl666
+</span></span></span><span class="line"><span class="cl"><span class="s">
+</span></span></span><span class="line"><span class="cl"><span class="s">#  mha 用这个账户，免密登录3个节点机器
+</span></span></span><span class="line"><span class="cl"><span class="s">ssh_user=root
+</span></span></span><span class="line"><span class="cl"><span class="s">
+</span></span></span><span class="line"><span class="cl"><span class="s">[server1]
+</span></span></span><span class="line"><span class="cl"><span class="s">hostname=10.0.0.51
+</span></span></span><span class="line"><span class="cl"><span class="s">port=3306
+</span></span></span><span class="line"><span class="cl"><span class="s">
+</span></span></span><span class="line"><span class="cl"><span class="s">[server2]
+</span></span></span><span class="line"><span class="cl"><span class="s">hostname=10.0.0.52
+</span></span></span><span class="line"><span class="cl"><span class="s">port=3306
+</span></span></span><span class="line"><span class="cl"><span class="s">
+</span></span></span><span class="line"><span class="cl"><span class="s">[server3]
+</span></span></span><span class="line"><span class="cl"><span class="s">hostname=10.0.0.53
+</span></span></span><span class="line"><span class="cl"><span class="s">port=3306
+</span></span></span><span class="line"><span class="cl"><span class="s">EOF</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="创建基于vip的mha高可用性数据库">创建基于VIP的MHA高可用性数据库
+</h3><ul>
+<li><strong>虚拟 IP（VIP）</strong>：是一个不绑定到特定物理主机的 IP 地址。它可以在不同的主机之间快速切换。</li>
+<li><strong>用途</strong>：在故障切换时，VIP 可以迅速指向新的主库，客户端无需更改配置即可继续访问数据库。</li>
+</ul>
+<p>只需要修改这个脚本，填入你的网卡环境即可</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span><span class="lnt">43
+</span><span class="lnt">44
+</span><span class="lnt">45
+</span><span class="lnt">46
+</span><span class="lnt">47
+</span><span class="lnt">48
+</span><span class="lnt">49
+</span><span class="lnt">50
+</span><span class="lnt">51
+</span><span class="lnt">52
+</span><span class="lnt">53
+</span><span class="lnt">54
+</span><span class="lnt">55
+</span><span class="lnt">56
+</span><span class="lnt">57
+</span><span class="lnt">58
+</span><span class="lnt">59
+</span><span class="lnt">60
+</span><span class="lnt">61
+</span><span class="lnt">62
+</span><span class="lnt">63
+</span><span class="lnt">64
+</span><span class="lnt">65
+</span><span class="lnt">66
+</span><span class="lnt">67
+</span><span class="lnt">68
+</span><span class="lnt">69
+</span><span class="lnt">70
+</span><span class="lnt">71
+</span><span class="lnt">72
+</span><span class="lnt">73
+</span><span class="lnt">74
+</span><span class="lnt">75
+</span><span class="lnt">76
+</span><span class="lnt">77
+</span><span class="lnt">78
+</span><span class="lnt">79
+</span><span class="lnt">80
+</span><span class="lnt">81
+</span><span class="lnt">82
+</span><span class="lnt">83
+</span><span class="lnt">84
+</span><span class="lnt">85
+</span><span class="lnt">86
+</span><span class="lnt">87
+</span><span class="lnt">88
+</span><span class="lnt">89
+</span><span class="lnt">90
+</span><span class="lnt">91
+</span><span class="lnt">92
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-perl" data-lang="perl"><span class="line"><span class="cl"><span class="n">创建如下脚本</span><span class="err">，</span><span class="n">mha配置文件</span><span class="err">，</span><span class="n">会自动调用它</span><span class="err">，</span><span class="n">perl语言脚本</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="sr">/usr/</span><span class="nb">local</span><span class="sr">/bin/m</span><span class="n">aster_ip_failover</span>
+</span></span><span class="line"><span class="cl"> <span class="n">并给该脚本添加x执行权限</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># 填入如下内容</span>
+</span></span><span class="line"><span class="cl"><span class="c1">#!/usr/bin/env perl</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">use</span> <span class="nn">strict</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="k">use</span> <span class="nn">warnings</span> <span class="n">FATAL</span> <span class="o">=&gt;</span> <span class="s">&#39;all&#39;</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">use</span> <span class="nn">Getopt::Long</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">my</span> <span class="p">(</span>
+</span></span><span class="line"><span class="cl">    <span class="nv">$command</span><span class="p">,</span>          <span class="nv">$ssh_user</span><span class="p">,</span>        <span class="nv">$orig_master_host</span><span class="p">,</span> <span class="nv">$orig_master_ip</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">    <span class="nv">$orig_master_port</span><span class="p">,</span> <span class="nv">$new_master_host</span><span class="p">,</span> <span class="nv">$new_master_ip</span><span class="p">,</span>    <span class="nv">$new_master_port</span>
+</span></span><span class="line"><span class="cl"><span class="p">);</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">my</span> <span class="nv">$vip</span> <span class="o">=</span> <span class="s">&#39;10.0.0.55/24&#39;</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># 给网卡添加的别名</span>
+</span></span><span class="line"><span class="cl"><span class="k">my</span> <span class="nv">$key</span> <span class="o">=</span> <span class="s">&#39;1&#39;</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="k">my</span> <span class="nv">$ssh_start_vip</span> <span class="o">=</span> <span class="s">&#34;/sbin/ifconfig eth0:$key $vip&#34;</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="k">my</span> <span class="nv">$ssh_stop_vip</span> <span class="o">=</span> <span class="s">&#34;/sbin/ifconfig eth0:$key down&#34;</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="k">my</span> <span class="nv">$ssh_Bcast_arp</span><span class="o">=</span><span class="s">&#34;/sbin/arping -I eth0 -c 3 -A 10.0.0.55&#34;</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">GetOptions</span><span class="p">(</span>
+</span></span><span class="line"><span class="cl">    <span class="s">&#39;command=s&#39;</span>          <span class="o">=&gt;</span> <span class="o">\</span><span class="nv">$command</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">    <span class="s">&#39;ssh_user=s&#39;</span>         <span class="o">=&gt;</span> <span class="o">\</span><span class="nv">$ssh_user</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">    <span class="s">&#39;orig_master_host=s&#39;</span> <span class="o">=&gt;</span> <span class="o">\</span><span class="nv">$orig_master_host</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">    <span class="s">&#39;orig_master_ip=s&#39;</span>   <span class="o">=&gt;</span> <span class="o">\</span><span class="nv">$orig_master_ip</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">    <span class="s">&#39;orig_master_port=i&#39;</span> <span class="o">=&gt;</span> <span class="o">\</span><span class="nv">$orig_master_port</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">    <span class="s">&#39;new_master_host=s&#39;</span>  <span class="o">=&gt;</span> <span class="o">\</span><span class="nv">$new_master_host</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">    <span class="s">&#39;new_master_ip=s&#39;</span>    <span class="o">=&gt;</span> <span class="o">\</span><span class="nv">$new_master_ip</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">    <span class="s">&#39;new_master_port=i&#39;</span>  <span class="o">=&gt;</span> <span class="o">\</span><span class="nv">$new_master_port</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl"><span class="p">);</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="nb">exit</span> <span class="o">&amp;</span><span class="n">main</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">sub</span> <span class="nf">main</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="k">print</span> <span class="s">&#34;\n\nIN SCRIPT TEST====$ssh_stop_vip==$ssh_start_vip===\n\n&#34;</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="p">(</span> <span class="nv">$command</span> <span class="ow">eq</span> <span class="s">&#34;stop&#34;</span> <span class="o">||</span> <span class="nv">$command</span> <span class="ow">eq</span> <span class="s">&#34;stopssh&#34;</span> <span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">        <span class="k">my</span> <span class="nv">$exit_code</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">        <span class="nb">eval</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">            <span class="k">print</span> <span class="s">&#34;Disabling the VIP on old master: $orig_master_host \n&#34;</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">            <span class="o">&amp;</span><span class="n">stop_vip</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl">            <span class="nv">$exit_code</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">        <span class="p">};</span>
+</span></span><span class="line"><span class="cl">        <span class="k">if</span> <span class="p">(</span><span class="vg">$@</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">            <span class="nb">warn</span> <span class="s">&#34;Got Error: $@\n&#34;</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">            <span class="nb">exit</span> <span class="nv">$exit_code</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">        <span class="p">}</span>
+</span></span><span class="line"><span class="cl">        <span class="nb">exit</span> <span class="nv">$exit_code</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="k">elsif</span> <span class="p">(</span> <span class="nv">$command</span> <span class="ow">eq</span> <span class="s">&#34;start&#34;</span> <span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">        <span class="k">my</span> <span class="nv">$exit_code</span> <span class="o">=</span> <span class="mi">10</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">        <span class="nb">eval</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">            <span class="k">print</span> <span class="s">&#34;Enabling the VIP - $vip on the new master - $new_master_host \n&#34;</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">            <span class="o">&amp;</span><span class="n">start_vip</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl">            <span class="nv">$exit_code</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">        <span class="p">};</span>
+</span></span><span class="line"><span class="cl">        <span class="k">if</span> <span class="p">(</span><span class="vg">$@</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">            <span class="nb">warn</span> <span class="vg">$@</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">            <span class="nb">exit</span> <span class="nv">$exit_code</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">        <span class="p">}</span>
+</span></span><span class="line"><span class="cl">        <span class="nb">exit</span> <span class="nv">$exit_code</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="k">elsif</span> <span class="p">(</span> <span class="nv">$command</span> <span class="ow">eq</span> <span class="s">&#34;status&#34;</span> <span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="k">print</span> <span class="s">&#34;Checking the Status of the script.. OK \n&#34;</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">        <span class="nb">exit</span> <span class="mi">0</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="k">else</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="o">&amp;</span><span class="n">usage</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl">        <span class="nb">exit</span> <span class="mi">1</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">sub</span> <span class="nf">start_vip</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="sb">`ssh $ssh_user\@$new_master_host \&#34; $ssh_start_vip \&#34;`</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="k">sub</span> <span class="nf">stop_vip</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">     <span class="k">return</span> <span class="mi">0</span>  <span class="k">unless</span>  <span class="p">(</span><span class="nv">$ssh_user</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="sb">`ssh $ssh_user\@$orig_master_host \&#34; $ssh_stop_vip \&#34;`</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">sub</span> <span class="nf">usage</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">print</span>
+</span></span><span class="line"><span class="cl">    <span class="s">&#34;Usage: master_ip_failover --command=start|stop|stopssh|status --orig_master_host=host --orig_master_ip=ip --orig_master_port=port --new_master_host=host --new_master_ip=ip --new_master_port=port\n&#34;</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="给当前的主库机器添加vip">给当前的主库机器，添加VIP
+</h3><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl"># 创建
+</span></span><span class="line"><span class="cl">ifconfig eth0:1 10.0.0.55/24
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"># 删除
+</span></span><span class="line"><span class="cl">ifconfig eth0:1 del 10.0.0.55
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"># 停止
+</span></span><span class="line"><span class="cl">ifconfig eth0:1 down
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="7状态检查db-53">7.状态检查db-53
+</h2><p>准备启动MHA了</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">检测如下MHA运行条件
+</span></span><span class="line"><span class="cl"># mha提供了很方便的脚本，检测你的mha环境搭建情况
+</span></span><span class="line"><span class="cl">- SSH免密登录
+</span></span><span class="line"><span class="cl">- MySQL主从复制
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">[root@db-53 ~]#masterha_check_ssh --conf=/etc/mha/app1.cnf 
+</span></span><span class="line"><span class="cl">Tue Aug  2 00:36:08 2022 - [info] All SSH connection tests passed successfully.
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"># 主从检测脚本，会用到mha账号，在三个机器上进行检测登录
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"># 再检查主从复制状态
+</span></span><span class="line"><span class="cl">masterha_check_repl --conf=/etc/mha/app1.cnf
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/xiaoshi/p/mha%E6%9E%B6%E6%9E%84/pic/1660278423532.png"
+	width="2453"
+	height="1111"
+	srcset="/xiaoshi/p/mha%E6%9E%B6%E6%9E%84/pic/1660278423532_hu4917652601787334930.png 480w, /xiaoshi/p/mha%E6%9E%B6%E6%9E%84/pic/1660278423532_hu2592514252026545148.png 1024w"
+	loading="lazy"
+	
+		alt="1660278423532"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="220"
+		data-flex-basis="529px"
+	
+></p>
+<p><img src="/xiaoshi/p/mha%E6%9E%B6%E6%9E%84/pic/1660278724121.png"
+	width="2572"
+	height="1664"
+	srcset="/xiaoshi/p/mha%E6%9E%B6%E6%9E%84/pic/1660278724121_hu853717295009362639.png 480w, /xiaoshi/p/mha%E6%9E%B6%E6%9E%84/pic/1660278724121_hu1899090497446889268.png 1024w"
+	loading="lazy"
+	
+		alt="1660278724121"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="154"
+		data-flex-basis="370px"
+	
+></p>
+<h2 id="启动mha程序故障演练">启动MHA程序,故障演练
+</h2><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-gdscript3" data-lang="gdscript3"><span class="line"><span class="cl"><span class="mf">1.</span> <span class="err">启动</span><span class="n">mha的管理节点</span><span class="err">，后台运行即可</span><span class="o">---</span><span class="err">用的是</span> <span class="n">db</span><span class="o">-</span><span class="mi">53</span><span class="err">机器</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="p">[</span><span class="n">root</span><span class="err">@</span><span class="n">db</span><span class="o">-</span><span class="mi">53</span> <span class="o">~</span><span class="p">]</span><span class="c1">#nohup masterha_manager --conf=/etc/mha/app1.cnf  --remove_dead_master_conf  --ignore_last_failover /var/log/mha/app1/manager.log 2&gt;&amp;1 &amp;</span>
+</span></span><span class="line"><span class="cl"><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="mi">3647</span>
+</span></span><span class="line"><span class="cl"><span class="p">[</span><span class="n">root</span><span class="err">@</span><span class="n">db</span><span class="o">-</span><span class="mi">53</span> <span class="o">~</span><span class="p">]</span><span class="c1">#nohup: ignoring input and appending output to ‘nohup.out’</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="p">[</span><span class="n">root</span><span class="err">@</span><span class="n">db</span><span class="o">-</span><span class="mi">53</span> <span class="o">~</span><span class="p">]</span><span class="c1">#</span>
+</span></span><span class="line"><span class="cl"><span class="p">[</span><span class="n">root</span><span class="err">@</span><span class="n">db</span><span class="o">-</span><span class="mi">53</span> <span class="o">~</span><span class="p">]</span><span class="c1">#</span>
+</span></span><span class="line"><span class="cl"><span class="p">[</span><span class="n">root</span><span class="err">@</span><span class="n">db</span><span class="o">-</span><span class="mi">53</span> <span class="o">~</span><span class="p">]</span><span class="c1">#jobs</span>
+</span></span><span class="line"><span class="cl"><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">+</span>  <span class="n">Running</span>                 <span class="n">nohup</span> <span class="n">masterha_manager</span> <span class="o">--</span><span class="n">conf</span><span class="o">=/</span><span class="n">etc</span><span class="o">/</span><span class="n">mha</span><span class="o">/</span><span class="n">app1</span><span class="o">.</span><span class="n">cnf</span> <span class="o">--</span><span class="n">remove_dead_master_conf</span> <span class="o">--</span><span class="n">ignore_last_failover</span> <span class="o">/</span><span class="k">var</span><span class="o">/</span><span class="nb">log</span><span class="o">/</span><span class="n">mha</span><span class="o">/</span><span class="n">app1</span><span class="o">/</span><span class="n">manager</span><span class="o">.</span><span class="n">log</span> <span class="mi">2</span><span class="o">&gt;&amp;</span><span class="mi">1</span> <span class="o">&amp;</span>
+</span></span><span class="line"><span class="cl"><span class="p">[</span><span class="n">root</span><span class="err">@</span><span class="n">db</span><span class="o">-</span><span class="mi">53</span> <span class="o">~</span><span class="p">]</span><span class="c1">#</span>
+</span></span><span class="line"><span class="cl"><span class="p">[</span><span class="n">root</span><span class="err">@</span><span class="n">db</span><span class="o">-</span><span class="mi">53</span> <span class="o">~</span><span class="p">]</span><span class="c1">#</span>
+</span></span><span class="line"><span class="cl"><span class="p">[</span><span class="n">root</span><span class="err">@</span><span class="n">db</span><span class="o">-</span><span class="mi">53</span> <span class="o">~</span><span class="p">]</span><span class="c1">#ps -ef|grep mha</span>
+</span></span><span class="line"><span class="cl"><span class="n">root</span>       <span class="mi">3647</span>   <span class="mi">1634</span>  <span class="mi">1</span> <span class="mi">20</span><span class="p">:</span><span class="mi">37</span> <span class="n">pts</span><span class="o">/</span><span class="mi">0</span>    <span class="mi">00</span><span class="p">:</span><span class="mi">00</span><span class="p">:</span><span class="mi">00</span> <span class="n">perl</span> <span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="n">bin</span><span class="o">/</span><span class="n">masterha_manager</span> <span class="o">--</span><span class="n">conf</span><span class="o">=/</span><span class="n">etc</span><span class="o">/</span><span class="n">mha</span><span class="o">/</span><span class="n">app1</span><span class="o">.</span><span class="n">cnf</span> <span class="o">--</span><span class="n">remove_dead_master_conf</span> <span class="o">--</span><span class="n">ignore_last_failover</span> <span class="o">/</span><span class="k">var</span><span class="o">/</span><span class="nb">log</span><span class="o">/</span><span class="n">mha</span><span class="o">/</span><span class="n">app1</span><span class="o">/</span><span class="n">manager</span><span class="o">.</span><span class="n">log</span>
+</span></span><span class="line"><span class="cl"><span class="n">root</span>       <span class="mi">3664</span>   <span class="mi">1634</span>  <span class="mi">0</span> <span class="mi">20</span><span class="p">:</span><span class="mi">37</span> <span class="n">pts</span><span class="o">/</span><span class="mi">0</span>    <span class="mi">00</span><span class="p">:</span><span class="mi">00</span><span class="p">:</span><span class="mi">00</span> <span class="n">grep</span> <span class="o">--</span><span class="n">color</span><span class="o">=</span><span class="n">auto</span> <span class="n">mha</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="mi">2</span> <span class="o">.</span><span class="err">检查</span><span class="n">MHA是否运行中</span>
+</span></span><span class="line"><span class="cl"><span class="p">[</span><span class="n">root</span><span class="err">@</span><span class="n">db</span><span class="o">-</span><span class="mi">53</span> <span class="o">~</span><span class="p">]</span><span class="c1">#masterha_check_status --conf=/etc/mha/app1.cnf</span>
+</span></span><span class="line"><span class="cl"><span class="n">app1</span> <span class="p">(</span><span class="n">pid</span><span class="p">:</span><span class="mi">3647</span><span class="p">)</span> <span class="n">is</span> <span class="n">running</span><span class="p">(</span><span class="mi">0</span><span class="p">:</span><span class="n">PING_OK</span><span class="p">),</span> <span class="n">master</span><span class="p">:</span><span class="mf">10.0</span><span class="o">.</span><span class="mf">0.51</span>
+</span></span><span class="line"><span class="cl"><span class="p">[</span><span class="n">root</span><span class="err">@</span><span class="n">db</span><span class="o">-</span><span class="mi">53</span> <span class="o">~</span><span class="p">]</span><span class="c1">#</span>
+</span></span><span class="line"><span class="cl"><span class="p">[</span><span class="n">root</span><span class="err">@</span><span class="n">db</span><span class="o">-</span><span class="mi">53</span> <span class="o">~</span><span class="p">]</span><span class="c1">#</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># mha此时确认主库正常，还是 51机器</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="故障演练">故障演练
+</h3><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">期望的结果是
+</span></span><span class="line"><span class="cl">1. 当前环境
+</span></span><span class="line"><span class="cl">db-51    master 
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">db-52   slave  
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">db-53    slave  
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">2. 干掉主库
+</span></span><span class="line"><span class="cl">pkill mysql
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">2.1 查看VIP的状态，MHA脚本切换VIP到新的主库上，51机器的VIP没了
+</span></span><span class="line"><span class="cl">已确认 51机器的VIP没了
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">3. 查看主从复制关系
+</span></span><span class="line"><span class="cl">[root@db-53 ~]#mysql -uroot -plinux0224
+</span></span><span class="line"><span class="cl">mysql&gt; show slave status\G
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">得到结论，MHA自动选举 db-52为新的主库
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">还得做数据的验证，看看旧的主库51机器的binlog，和52新主库对比
+</span></span><span class="line"><span class="cl">[root@db-51 /mysql_binlog]#mysqlbinlog -vv  mysql-bin.000002 |grep -i &#39;gtid&#39;
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">最后一次提交是 事务id是 8
+</span></span><span class="line"><span class="cl">自动下一次的事务，9开始
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">---看52机器
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">----52机器
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">4.  MHA再发生切换后，该程序会挂掉
+</span></span><span class="line"><span class="cl">也确认了
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="测试新的主从关系是否正常">测试新的主从关系是否正常
+</h2><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span><span class="lnt">9
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">52机器写入数据
+</span></span><span class="line"><span class="cl">已确认 事务提交更新，写入到新机器 52的 GTID版本号里了
+</span></span><span class="line"><span class="cl">6a952706-1a30-11ed-882e-000c294c7d18:2
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">去新的从库查看数据，以及比对GTID号码
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">GTID号码
+</span></span><span class="line"><span class="cl">以配置文件里 server_id 
+</span></span><span class="line"><span class="cl">SHOW GLOBAL VARIABLES LIKE &#39;server_uuid&#39;;
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="至此新的主从关系又建立了">至此，新的主从关系又建立了
+</h3><h2 id="主从故障恢复再次开启mha">主从故障恢复，再次开启MHA
+</h2><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">1.刚才以明确，  db-51挂了，且截止的最新binlog，和 新主库 db-52的GTID版本是一致的。
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">确保，主从切换之后，旧的主库数据，都得到 新主库里
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">- 放心用52作为新的主库
+</span></span><span class="line"><span class="cl">- 51机器挂了，日志肯定都是旧的数据
+</span></span><span class="line"><span class="cl">- 模拟52作增量写入，新数据。53立即同步
+</span></span><span class="line"><span class="cl">- 51机器恢复后，它的数据会如何？
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">先看看mha的配置文件
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">2. db-51加入的话，会默认被设置为slave身份，是因为mha的配置文件决定的。
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">3.且 db-51加入后，会基于GTID的历史记录，自动更新增量后的差异数据。
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/xiaoshi/p/mha%E6%9E%B6%E6%9E%84/pic/1660281120033.png"
+	width="2388"
+	height="1328"
+	srcset="/xiaoshi/p/mha%E6%9E%B6%E6%9E%84/pic/1660281120033_hu10141539860111024497.png 480w, /xiaoshi/p/mha%E6%9E%B6%E6%9E%84/pic/1660281120033_hu5347346987439412568.png 1024w"
+	loading="lazy"
+	
+		alt="1660281120033"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="179"
+		data-flex-basis="431px"
+	
+></p>
+<h3 id="恢复51机器以及mha再次做高可用检测">恢复51机器，以及MHA再次做高可用检测
+</h3><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">1. 51机器，直接启动，和新的主库建立复制就行，预测，51机器，是否能看到最新的 52机器的数据
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"># 1.启动
+</span></span><span class="line"><span class="cl">systemctl start mysqld
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"># 2. 加入主从
+</span></span><span class="line"><span class="cl">mysql -uroot -plinux0224
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">change master to master_host=&#39;10.0.0.52&#39;, master_user=&#39;repl&#39;, master_password=&#39;repl0224&#39; , MASTER_AUTO_POSITION=1;
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">start slave;
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">show slave status;
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/xiaoshi/p/mha%E6%9E%B6%E6%9E%84/pic/1660281431590.png"
+	width="3375"
+	height="1555"
+	srcset="/xiaoshi/p/mha%E6%9E%B6%E6%9E%84/pic/1660281431590_hu14570718072983322395.png 480w, /xiaoshi/p/mha%E6%9E%B6%E6%9E%84/pic/1660281431590_hu16501425557300844440.png 1024w"
+	loading="lazy"
+	
+		alt="1660281431590"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="217"
+		data-flex-basis="520px"
+	
+></p>
+<h2 id="再次开启mha">再次开启MHA
+</h2><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span><span class="lnt">43
+</span><span class="lnt">44
+</span><span class="lnt">45
+</span><span class="lnt">46
+</span><span class="lnt">47
+</span><span class="lnt">48
+</span><span class="lnt">49
+</span><span class="lnt">50
+</span><span class="lnt">51
+</span><span class="lnt">52
+</span><span class="lnt">53
+</span><span class="lnt">54
+</span><span class="lnt">55
+</span><span class="lnt">56
+</span><span class="lnt">57
+</span><span class="lnt">58
+</span><span class="lnt">59
+</span><span class="lnt">60
+</span><span class="lnt">61
+</span><span class="lnt">62
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-gdscript3" data-lang="gdscript3"><span class="line"><span class="cl"><span class="p">[</span><span class="n">root</span><span class="err">@</span><span class="n">db</span><span class="o">-</span><span class="mi">53</span> <span class="o">~</span><span class="p">]</span><span class="c1">#cat /etc/mha/app1.cnf </span>
+</span></span><span class="line"><span class="cl"><span class="p">[</span><span class="n">server</span> <span class="n">default</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl"><span class="n">manager_log</span><span class="o">=/</span><span class="k">var</span><span class="o">/</span><span class="nb">log</span><span class="o">/</span><span class="n">mha</span><span class="o">/</span><span class="n">app1</span><span class="o">/</span><span class="n">manager</span><span class="o">.</span><span class="n">log</span>
+</span></span><span class="line"><span class="cl"><span class="n">manager_workdir</span><span class="o">=/</span><span class="k">var</span><span class="o">/</span><span class="nb">log</span><span class="o">/</span><span class="n">mha</span><span class="o">/</span><span class="n">app1</span><span class="o">.</span><span class="n">log</span>
+</span></span><span class="line"><span class="cl"><span class="n">master_binlog_dir</span><span class="o">=/</span><span class="n">mysql_binlog</span><span class="o">/</span>
+</span></span><span class="line"><span class="cl"><span class="n">master_ip_failover_script</span><span class="o">=/</span><span class="n">usr</span><span class="o">/</span><span class="n">local</span><span class="o">/</span><span class="n">bin</span><span class="o">/</span><span class="n">master_ip_failover</span>
+</span></span><span class="line"><span class="cl"><span class="n">password</span><span class="o">=</span><span class="n">mha666</span>
+</span></span><span class="line"><span class="cl"><span class="n">ping_interval</span><span class="o">=</span><span class="mi">2</span>
+</span></span><span class="line"><span class="cl"><span class="n">repl_password</span><span class="o">=</span><span class="n">repl0224</span>
+</span></span><span class="line"><span class="cl"><span class="n">repl_user</span><span class="o">=</span><span class="n">repl</span>
+</span></span><span class="line"><span class="cl"><span class="n">ssh_user</span><span class="o">=</span><span class="n">root</span>
+</span></span><span class="line"><span class="cl"><span class="n">user</span><span class="o">=</span><span class="n">mha_0224</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="p">[</span><span class="n">server2</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl"><span class="n">hostname</span><span class="o">=</span><span class="mf">10.0</span><span class="o">.</span><span class="mf">0.52</span>
+</span></span><span class="line"><span class="cl"><span class="n">port</span><span class="o">=</span><span class="mi">3306</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="p">[</span><span class="n">server3</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl"><span class="n">hostname</span><span class="o">=</span><span class="mf">10.0</span><span class="o">.</span><span class="mf">0.53</span>
+</span></span><span class="line"><span class="cl"><span class="n">port</span><span class="o">=</span><span class="mi">3306</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="mf">1.</span><span class="err">添加</span><span class="n">db</span><span class="o">-</span><span class="mi">51</span><span class="err">机器的</span> <span class="err">配置信息</span>
+</span></span><span class="line"><span class="cl"><span class="n">masterha_conf_host</span> <span class="o">--</span><span class="n">command</span><span class="o">=</span><span class="n">add</span> <span class="o">--</span><span class="n">conf</span><span class="o">=/</span><span class="n">etc</span><span class="o">/</span><span class="n">mha</span><span class="o">/</span><span class="n">app1</span><span class="o">.</span><span class="n">cnf</span> <span class="o">--</span><span class="n">hostname</span><span class="o">=</span><span class="mf">10.0</span><span class="o">.</span><span class="mf">0.51</span> <span class="o">--</span><span class="n">block</span><span class="o">=</span><span class="n">server1</span> <span class="o">--</span><span class="n">params</span><span class="o">=</span><span class="s2">&#34;port=3306&#34;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="p">[</span><span class="n">root</span><span class="err">@</span><span class="n">db</span><span class="o">-</span><span class="mi">53</span> <span class="o">~</span><span class="p">]</span><span class="c1">#cat /etc/mha/app1.cnf </span>
+</span></span><span class="line"><span class="cl"><span class="p">[</span><span class="n">server</span> <span class="n">default</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl"><span class="n">manager_log</span><span class="o">=/</span><span class="k">var</span><span class="o">/</span><span class="nb">log</span><span class="o">/</span><span class="n">mha</span><span class="o">/</span><span class="n">app1</span><span class="o">/</span><span class="n">manager</span><span class="o">.</span><span class="n">log</span>
+</span></span><span class="line"><span class="cl"><span class="n">manager_workdir</span><span class="o">=/</span><span class="k">var</span><span class="o">/</span><span class="nb">log</span><span class="o">/</span><span class="n">mha</span><span class="o">/</span><span class="n">app1</span><span class="o">.</span><span class="n">log</span>
+</span></span><span class="line"><span class="cl"><span class="n">master_binlog_dir</span><span class="o">=/</span><span class="n">mysql_binlog</span><span class="o">/</span>
+</span></span><span class="line"><span class="cl"><span class="n">master_ip_failover_script</span><span class="o">=/</span><span class="n">usr</span><span class="o">/</span><span class="n">local</span><span class="o">/</span><span class="n">bin</span><span class="o">/</span><span class="n">master_ip_failover</span>
+</span></span><span class="line"><span class="cl"><span class="n">password</span><span class="o">=</span><span class="n">mha666</span>
+</span></span><span class="line"><span class="cl"><span class="n">ping_interval</span><span class="o">=</span><span class="mi">2</span>
+</span></span><span class="line"><span class="cl"><span class="n">repl_password</span><span class="o">=</span><span class="n">repl0224</span>
+</span></span><span class="line"><span class="cl"><span class="n">repl_user</span><span class="o">=</span><span class="n">repl</span>
+</span></span><span class="line"><span class="cl"><span class="n">ssh_user</span><span class="o">=</span><span class="n">root</span>
+</span></span><span class="line"><span class="cl"><span class="n">user</span><span class="o">=</span><span class="n">mha_0224</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="p">[</span><span class="n">server1</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl"><span class="n">hostname</span><span class="o">=</span><span class="mf">10.0</span><span class="o">.</span><span class="mf">0.51</span>
+</span></span><span class="line"><span class="cl"><span class="n">port</span><span class="o">=</span><span class="mi">3306</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="p">[</span><span class="n">server2</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl"><span class="n">hostname</span><span class="o">=</span><span class="mf">10.0</span><span class="o">.</span><span class="mf">0.52</span>
+</span></span><span class="line"><span class="cl"><span class="n">port</span><span class="o">=</span><span class="mi">3306</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="p">[</span><span class="n">server3</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl"><span class="n">hostname</span><span class="o">=</span><span class="mf">10.0</span><span class="o">.</span><span class="mf">0.53</span>
+</span></span><span class="line"><span class="cl"><span class="n">port</span><span class="o">=</span><span class="mi">3306</span>
+</span></span><span class="line"><span class="cl"><span class="p">[</span><span class="n">root</span><span class="err">@</span><span class="n">db</span><span class="o">-</span><span class="mi">53</span> <span class="o">~</span><span class="p">]</span><span class="c1">#</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="mf">2.</span><span class="err">重新检测</span><span class="mi">2</span> <span class="n">ssh</span><span class="err">，</span><span class="n">repl</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="err">先检查复制情况</span>
+</span></span><span class="line"><span class="cl"><span class="p">[</span><span class="n">root</span><span class="err">@</span><span class="n">db</span><span class="o">-</span><span class="mi">53</span> <span class="o">~</span><span class="p">]</span><span class="c1">#masterha_check_repl --conf=/etc/mha/app1.cnf</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">masterha_check_ssh</span> <span class="o">--</span><span class="n">conf</span><span class="o">=/</span><span class="n">etc</span><span class="o">/</span><span class="n">mha</span><span class="o">/</span><span class="n">app1</span><span class="o">.</span><span class="n">cnf</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="mf">3.</span> <span class="err">启动即可</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">nohup</span> <span class="n">masterha_manager</span> <span class="o">--</span><span class="n">conf</span><span class="o">=/</span><span class="n">etc</span><span class="o">/</span><span class="n">mha</span><span class="o">/</span><span class="n">app1</span><span class="o">.</span><span class="n">cnf</span>  <span class="o">--</span><span class="n">remove_dead_master_conf</span>  <span class="o">--</span><span class="n">ignore_last_failover</span> <span class="o">/</span><span class="k">var</span><span class="o">/</span><span class="nb">log</span><span class="o">/</span><span class="n">mha</span><span class="o">/</span><span class="n">app1</span><span class="o">/</span><span class="n">manager</span><span class="o">.</span><span class="n">log</span> <span class="mi">2</span><span class="o">&gt;&amp;</span><span class="mi">1</span> <span class="o">&amp;</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="再次新一轮的主从切换查看日志恢复原理过程">====再次新一轮的主从切换，查看日志恢复原理过程====
+</h2><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">1. 停止52机器
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">2. 查看VIP关系
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">3.查看日志，掌握原理过程
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/xiaoshi/p/mha%E6%9E%B6%E6%9E%84/pic/1660282419139.png"
+	width="2880"
+	height="1542"
+	srcset="/xiaoshi/p/mha%E6%9E%B6%E6%9E%84/pic/1660282419139_hu552734140503894453.png 480w, /xiaoshi/p/mha%E6%9E%B6%E6%9E%84/pic/1660282419139_hu1346553451895166268.png 1024w"
+	loading="lazy"
+	
+		alt="1660282419139"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="186"
+		data-flex-basis="448px"
+	
+></p>
+<hr>
+<p><img src="/xiaoshi/p/mha%E6%9E%B6%E6%9E%84/pic/1660282561359.png"
+	width="3193"
+	height="1369"
+	srcset="/xiaoshi/p/mha%E6%9E%B6%E6%9E%84/pic/1660282561359_hu14250625483445404008.png 480w, /xiaoshi/p/mha%E6%9E%B6%E6%9E%84/pic/1660282561359_hu9277491308798522017.png 1024w"
+	loading="lazy"
+	
+		alt="1660282561359"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="233"
+		data-flex-basis="559px"
+	
+></p>
+<hr>
+<p><img src="/xiaoshi/p/mha%E6%9E%B6%E6%9E%84/pic/1660282813713.png"
+	width="3209"
+	height="1673"
+	srcset="/xiaoshi/p/mha%E6%9E%B6%E6%9E%84/pic/1660282813713_hu13270277957665258710.png 480w, /xiaoshi/p/mha%E6%9E%B6%E6%9E%84/pic/1660282813713_hu10355167261480266768.png 1024w"
+	loading="lazy"
+	
+		alt="1660282813713"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="191"
+		data-flex-basis="460px"
+	
+></p>
+<hr>
+<p><img src="/xiaoshi/p/mha%E6%9E%B6%E6%9E%84/pic/1660283042715.png"
+	width="3154"
+	height="1660"
+	srcset="/xiaoshi/p/mha%E6%9E%B6%E6%9E%84/pic/1660283042715_hu6293337454717692074.png 480w, /xiaoshi/p/mha%E6%9E%B6%E6%9E%84/pic/1660283042715_hu3710572102833799455.png 1024w"
+	loading="lazy"
+	
+		alt="1660283042715"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="190"
+		data-flex-basis="456px"
+	
+></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">你学的是看懂MHA日志，分析原理
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">以后维护其他软件，套路都是一样
+</span></span></code></pre></td></tr></table>
+</div>
+</div>
+</section>
+
+
+    <footer class="article-footer">
+    
+
+    </footer>
+
+
+    
+</article>
+
+    
+
+    
+
+<aside class="related-content--wrapper">
+    <h2 class="section-title">相关文章</h2>
+    <div class="related-content">
+        <div class="flex article-list--tile">
+            
+                
+<article class="">
+    <a href="/xiaoshi/p/mysql%E9%9B%86%E7%BE%A4/">
+        
+        
+
+        <div class="article-details">
+            <h2 class="article-title">MySQL集群</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="">
+    <a href="/xiaoshi/p/%E7%89%A9%E7%90%86%E5%A4%87%E4%BB%BD%E5%B7%A5%E5%85%B7xtrabackup/">
+        
+        
+
+        <div class="article-details">
+            <h2 class="article-title">物理备份工具（xtrabackup）</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="">
+    <a href="/xiaoshi/p/%E5%A4%87%E4%BB%BD%E8%BF%9B%E9%98%B6gtid/">
+        
+        
+
+        <div class="article-details">
+            <h2 class="article-title">备份进阶（GTID）</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="">
+    <a href="/xiaoshi/p/%E5%A4%87%E4%BB%BD%E4%B8%8E%E6%97%A5%E5%BF%97mysqldump/">
+        
+        
+
+        <div class="article-details">
+            <h2 class="article-title">备份与日志（Mysqldump）</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="">
+    <a href="/xiaoshi/p/mysql%E6%9D%83%E9%99%90%E7%AF%87/">
+        
+        
+
+        <div class="article-details">
+            <h2 class="article-title">MySQL权限篇</h2>
+        </div>
+    </a>
+</article>
+
+            
+        </div>
+    </div>
+</aside>
+
+     
+    
+        
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+        2025 小诗
+    </section>
+    
+    <section class="powerby">
+        使用 <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> 构建 <br />
+        主题 <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.26.0">Stack</a></b> 由 <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a> 设计
+    </section>
+</footer>
+
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css"crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css"crossorigin="anonymous"
+            >
+
+            </main>
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.6/dist/vibrant.min.js"integrity="sha256-awcR2jno4kI5X0zL8ex0vi2z&#43;KMkF24hUW8WePSA9HM="crossorigin="anonymous"
+                
+                >
+            </script><script type="text/javascript" src="/xiaoshi/ts/main.js" defer></script>
+<script>
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+
+    </body>
+</html>
