@@ -94,86 +94,118 @@
 &lt;p&gt;模板机需要配置的内容：网络，软件，环境&lt;/p&gt;
 &lt;/blockquote&gt;
 &lt;h3 id=&#34;配置vmware的网络编辑器&#34;&gt;配置VMware的网络编辑器
-&lt;/h3&gt;&lt;p&gt;&lt;img src=&#34;D:/desktop/Linux%e5%88%86%e5%b8%83%e5%bc%8f%e6%9e%b6%e6%9e%84/asset/image-20250504145112513.png&#34;
-	
-	
-	
+&lt;/h3&gt;&lt;p&gt;&lt;img src=&#34;https://ZackMoel.github.io/xiaoshi/xiaoshi/p/linux%E5%88%86%E5%B8%83%E5%BC%8F%E7%B3%BB%E7%BB%9F/asset/image-20250504145112513.png&#34;
+	width=&#34;712&#34;
+	height=&#34;418&#34;
+	srcset=&#34;https://ZackMoel.github.io/xiaoshi/xiaoshi/p/linux%E5%88%86%E5%B8%83%E5%BC%8F%E7%B3%BB%E7%BB%9F/asset/image-20250504145112513_hu4180010984965116919.png 480w, https://ZackMoel.github.io/xiaoshi/xiaoshi/p/linux%E5%88%86%E5%B8%83%E5%BC%8F%E7%B3%BB%E7%BB%9F/asset/image-20250504145112513_hu4219074564710473744.png 1024w&#34;
 	loading=&#34;lazy&#34;
 	
 		alt=&#34;image-20250504145112513&#34;
 	
 	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;170&#34;
+		data-flex-basis=&#34;408px&#34;
+	
 &gt;&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;D:/desktop/Linux%e5%88%86%e5%b8%83%e5%bc%8f%e6%9e%b6%e6%9e%84/asset/image-20250504145458151.png&#34;
-	
-	
-	
+&lt;p&gt;&lt;img src=&#34;https://ZackMoel.github.io/xiaoshi/xiaoshi/p/linux%E5%88%86%E5%B8%83%E5%BC%8F%E7%B3%BB%E7%BB%9F/asset/image-20250504145458151.png&#34;
+	width=&#34;1306&#34;
+	height=&#34;1011&#34;
+	srcset=&#34;https://ZackMoel.github.io/xiaoshi/xiaoshi/p/linux%E5%88%86%E5%B8%83%E5%BC%8F%E7%B3%BB%E7%BB%9F/asset/image-20250504145458151_hu2758796266930210236.png 480w, https://ZackMoel.github.io/xiaoshi/xiaoshi/p/linux%E5%88%86%E5%B8%83%E5%BC%8F%E7%B3%BB%E7%BB%9F/asset/image-20250504145458151_hu5981936575581740974.png 1024w&#34;
 	loading=&#34;lazy&#34;
 	
 		alt=&#34;image-20250504145458151&#34;
 	
 	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;129&#34;
+		data-flex-basis=&#34;310px&#34;
+	
 &gt;&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;D:/desktop/Linux%e5%88%86%e5%b8%83%e5%bc%8f%e6%9e%b6%e6%9e%84/asset/image-20250504145636747.png&#34;
-	
-	
-	
+&lt;p&gt;&lt;img src=&#34;https://ZackMoel.github.io/xiaoshi/xiaoshi/p/linux%E5%88%86%E5%B8%83%E5%BC%8F%E7%B3%BB%E7%BB%9F/asset/image-20250504145636747.png&#34;
+	width=&#34;998&#34;
+	height=&#34;999&#34;
+	srcset=&#34;https://ZackMoel.github.io/xiaoshi/xiaoshi/p/linux%E5%88%86%E5%B8%83%E5%BC%8F%E7%B3%BB%E7%BB%9F/asset/image-20250504145636747_hu15094169544380499239.png 480w, https://ZackMoel.github.io/xiaoshi/xiaoshi/p/linux%E5%88%86%E5%B8%83%E5%BC%8F%E7%B3%BB%E7%BB%9F/asset/image-20250504145636747_hu7135479816034819650.png 1024w&#34;
 	loading=&#34;lazy&#34;
 	
 		alt=&#34;image-20250504145636747&#34;
 	
 	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;99&#34;
+		data-flex-basis=&#34;239px&#34;
+	
 &gt;&lt;/p&gt;
 &lt;h3 id=&#34;装机准备&#34;&gt;装机准备
 &lt;/h3&gt;&lt;h4 id=&#34;新建虚拟机&#34;&gt;新建虚拟机
-&lt;/h4&gt;&lt;p&gt;&lt;img src=&#34;D:/desktop/Linux%e5%88%86%e5%b8%83%e5%bc%8f%e6%9e%b6%e6%9e%84/asset/image-20250504145758239.png&#34;
-	
-	
-	
+&lt;/h4&gt;&lt;p&gt;&lt;img src=&#34;https://ZackMoel.github.io/xiaoshi/xiaoshi/p/linux%E5%88%86%E5%B8%83%E5%BC%8F%E7%B3%BB%E7%BB%9F/asset/image-20250504145758239.png&#34;
+	width=&#34;939&#34;
+	height=&#34;881&#34;
+	srcset=&#34;https://ZackMoel.github.io/xiaoshi/xiaoshi/p/linux%E5%88%86%E5%B8%83%E5%BC%8F%E7%B3%BB%E7%BB%9F/asset/image-20250504145758239_hu17429900974864229277.png 480w, https://ZackMoel.github.io/xiaoshi/xiaoshi/p/linux%E5%88%86%E5%B8%83%E5%BC%8F%E7%B3%BB%E7%BB%9F/asset/image-20250504145758239_hu8088126508963819426.png 1024w&#34;
 	loading=&#34;lazy&#34;
 	
 		alt=&#34;image-20250504145758239&#34;
 	
 	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;106&#34;
+		data-flex-basis=&#34;255px&#34;
+	
 &gt;&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;D:/desktop/Linux%e5%88%86%e5%b8%83%e5%bc%8f%e6%9e%b6%e6%9e%84/asset/image-20250504150041449.png&#34;
-	
-	
-	
+&lt;p&gt;&lt;img src=&#34;https://ZackMoel.github.io/xiaoshi/xiaoshi/p/linux%E5%88%86%E5%B8%83%E5%BC%8F%E7%B3%BB%E7%BB%9F/asset/image-20250504150041449.png&#34;
+	width=&#34;930&#34;
+	height=&#34;880&#34;
+	srcset=&#34;https://ZackMoel.github.io/xiaoshi/xiaoshi/p/linux%E5%88%86%E5%B8%83%E5%BC%8F%E7%B3%BB%E7%BB%9F/asset/image-20250504150041449_hu8100684679018614216.png 480w, https://ZackMoel.github.io/xiaoshi/xiaoshi/p/linux%E5%88%86%E5%B8%83%E5%BC%8F%E7%B3%BB%E7%BB%9F/asset/image-20250504150041449_hu18050811268336109919.png 1024w&#34;
 	loading=&#34;lazy&#34;
 	
 		alt=&#34;image-20250504150041449&#34;
 	
 	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;105&#34;
+		data-flex-basis=&#34;253px&#34;
+	
 &gt;&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;D:/desktop/Linux%e5%88%86%e5%b8%83%e5%bc%8f%e6%9e%b6%e6%9e%84/asset/image-20250504150152721.png&#34;
-	
-	
-	
+&lt;p&gt;&lt;img src=&#34;https://ZackMoel.github.io/xiaoshi/xiaoshi/p/linux%E5%88%86%E5%B8%83%E5%BC%8F%E7%B3%BB%E7%BB%9F/asset/image-20250504150152721.png&#34;
+	width=&#34;923&#34;
+	height=&#34;889&#34;
+	srcset=&#34;https://ZackMoel.github.io/xiaoshi/xiaoshi/p/linux%E5%88%86%E5%B8%83%E5%BC%8F%E7%B3%BB%E7%BB%9F/asset/image-20250504150152721_hu7123757805031626472.png 480w, https://ZackMoel.github.io/xiaoshi/xiaoshi/p/linux%E5%88%86%E5%B8%83%E5%BC%8F%E7%B3%BB%E7%BB%9F/asset/image-20250504150152721_hu9326833683790269023.png 1024w&#34;
 	loading=&#34;lazy&#34;
 	
 		alt=&#34;image-20250504150152721&#34;
 	
 	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;103&#34;
+		data-flex-basis=&#34;249px&#34;
+	
 &gt;&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;D:/desktop/Linux%e5%88%86%e5%b8%83%e5%bc%8f%e6%9e%b6%e6%9e%84/asset/image-20250504150236462.png&#34;
-	
-	
-	
+&lt;p&gt;&lt;img src=&#34;https://ZackMoel.github.io/xiaoshi/xiaoshi/p/linux%E5%88%86%E5%B8%83%E5%BC%8F%E7%B3%BB%E7%BB%9F/asset/image-20250504150236462.png&#34;
+	width=&#34;939&#34;
+	height=&#34;885&#34;
+	srcset=&#34;https://ZackMoel.github.io/xiaoshi/xiaoshi/p/linux%E5%88%86%E5%B8%83%E5%BC%8F%E7%B3%BB%E7%BB%9F/asset/image-20250504150236462_hu14212681291692736525.png 480w, https://ZackMoel.github.io/xiaoshi/xiaoshi/p/linux%E5%88%86%E5%B8%83%E5%BC%8F%E7%B3%BB%E7%BB%9F/asset/image-20250504150236462_hu13879831531039975685.png 1024w&#34;
 	loading=&#34;lazy&#34;
 	
 		alt=&#34;image-20250504150236462&#34;
 	
 	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;106&#34;
+		data-flex-basis=&#34;254px&#34;
+	
 &gt;&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;D:/desktop/Linux%e5%88%86%e5%b8%83%e5%bc%8f%e6%9e%b6%e6%9e%84/asset/image-20250504150332765.png&#34;
-	
-	
-	
+&lt;p&gt;&lt;img src=&#34;https://ZackMoel.github.io/xiaoshi/xiaoshi/p/linux%E5%88%86%E5%B8%83%E5%BC%8F%E7%B3%BB%E7%BB%9F/asset/image-20250504150332765.png&#34;
+	width=&#34;1360&#34;
+	height=&#34;1459&#34;
+	srcset=&#34;https://ZackMoel.github.io/xiaoshi/xiaoshi/p/linux%E5%88%86%E5%B8%83%E5%BC%8F%E7%B3%BB%E7%BB%9F/asset/image-20250504150332765_hu7738021704656332250.png 480w, https://ZackMoel.github.io/xiaoshi/xiaoshi/p/linux%E5%88%86%E5%B8%83%E5%BC%8F%E7%B3%BB%E7%BB%9F/asset/image-20250504150332765_hu6508340871496078077.png 1024w&#34;
 	loading=&#34;lazy&#34;
 	
 		alt=&#34;image-20250504150332765&#34;
 	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;93&#34;
+		data-flex-basis=&#34;223px&#34;
 	
 &gt;&lt;/p&gt;
 &lt;p&gt;&lt;img src=&#34;D:%5cdesktop%5cLinux%e5%88%86%e5%b8%83%e5%bc%8f%e6%9e%b6%e6%9e%84%5casset%5cSnipaste_2025-05-04_15-08-44.png&#34;
@@ -452,14 +484,18 @@
 &lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
 &lt;/div&gt;
 &lt;/div&gt;&lt;p&gt;这样就配置好了公网网卡与局域网网卡&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;D:/desktop/Linux%e5%88%86%e5%b8%83%e5%bc%8f%e6%9e%b6%e6%9e%84/asset/image-20250504161709613.png&#34;
-	
-	
-	
+&lt;p&gt;&lt;img src=&#34;https://ZackMoel.github.io/xiaoshi/xiaoshi/p/linux%E5%88%86%E5%B8%83%E5%BC%8F%E7%B3%BB%E7%BB%9F/asset/image-20250504161709613.png&#34;
+	width=&#34;1263&#34;
+	height=&#34;1053&#34;
+	srcset=&#34;https://ZackMoel.github.io/xiaoshi/xiaoshi/p/linux%E5%88%86%E5%B8%83%E5%BC%8F%E7%B3%BB%E7%BB%9F/asset/image-20250504161709613_hu10415897884141971977.png 480w, https://ZackMoel.github.io/xiaoshi/xiaoshi/p/linux%E5%88%86%E5%B8%83%E5%BC%8F%E7%B3%BB%E7%BB%9F/asset/image-20250504161709613_hu17359094731874564839.png 1024w&#34;
 	loading=&#34;lazy&#34;
 	
 		alt=&#34;image-20250504161709613&#34;
 	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;119&#34;
+		data-flex-basis=&#34;287px&#34;
 	
 &gt;&lt;/p&gt;
 &lt;h3 id=&#34;系统初始化&#34;&gt;系统初始化
