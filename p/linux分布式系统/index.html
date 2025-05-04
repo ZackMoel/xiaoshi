@@ -1,0 +1,1317 @@
+<!DOCTYPE html>
+<html lang="zh-cn" dir="ltr">
+    <head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content="Linux多层分布式系统架构 之前学习的时候，跟着老师搭建了一个分布式系统，完成了很多知识点的学习。现在随着学习的继续深入，我想自己动手实现一">
+<title>Linux分布式系统</title>
+
+<link rel='canonical' href='https://ZackMoel.github.io/xiaoshi/p/linux%E5%88%86%E5%B8%83%E5%BC%8F%E7%B3%BB%E7%BB%9F/'>
+
+<link rel="stylesheet" href="/xiaoshi/scss/style.min.a27e74b30b44d959c0c932eb5ee46d6cb0bece1f7dd20391aea298e2910d7fa7.css"><meta property='og:title' content="Linux分布式系统">
+<meta property='og:description' content="Linux多层分布式系统架构 之前学习的时候，跟着老师搭建了一个分布式系统，完成了很多知识点的学习。现在随着学习的继续深入，我想自己动手实现一">
+<meta property='og:url' content='https://ZackMoel.github.io/xiaoshi/p/linux%E5%88%86%E5%B8%83%E5%BC%8F%E7%B3%BB%E7%BB%9F/'>
+<meta property='og:site_name' content='小诗'>
+<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:published_time' content='2025-05-04T21:31:34&#43;08:00'/><meta property='article:modified_time' content='2025-05-04T21:31:34&#43;08:00'/>
+<meta name="twitter:title" content="Linux分布式系统">
+<meta name="twitter:description" content="Linux多层分布式系统架构 之前学习的时候，跟着老师搭建了一个分布式系统，完成了很多知识点的学习。现在随着学习的继续深入，我想自己动手实现一">
+  
+
+
+    </head>
+    <body class="
+    article-page
+    ">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex on-phone--column extended"><aside class="sidebar left-sidebar sticky ">
+    <button class="hamburger hamburger--spin" type="button" id="toggle-menu" aria-label="切换菜单">
+        <span class="hamburger-box">
+            <span class="hamburger-inner"></span>
+        </span>
+    </button>
+
+    <header>
+        
+            
+            <figure class="site-avatar">
+                <a href="/xiaoshi/">
+                
+                    
+                    
+                    
+                        
+                        <img src="/xiaoshi/img/avatar_hu8920112365793990935.png" width="300"
+                            height="300" class="site-logo" loading="lazy" alt="Avatar">
+                    
+                
+                </a>
+                
+                    <span class="emoji">🍥</span>
+                
+            </figure>
+            
+        
+        
+        <div class="site-meta">
+            <h1 class="site-name"><a href="/xiaoshi">小诗</a></h1>
+            <h2 class="site-description">世界和平</h2>
+        </div>
+    </header><ol class="menu-social">
+            
+                <li>
+                    <a 
+                        href='https://space.bilibili.com/1055981889?spm_id_from=333.1007.0.0'
+                        target="_blank"
+                        title="bilibili"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg  xmlns="http://www.w3.org/2000/svg"  width="24"  height="24"  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  stroke-width="2"  stroke-linecap="round"  stroke-linejoin="round"  class="icon icon-tabler icons-tabler-outline icon-tabler-brand-bilibili"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M3 10a4 4 0 0 1 4 -4h10a4 4 0 0 1 4 4v6a4 4 0 0 1 -4 4h-10a4 4 0 0 1 -4 -4v-6z" /><path d="M8 3l2 3" /><path d="M16 3l-2 3" /><path d="M9 13v-2" /><path d="M15 11v2" /></svg>
+                        
+                    </a>
+                </li>
+            
+                <li>
+                    <a 
+                        href='https://github.com/ZackMoel/xiaoshi.github.io'
+                        target="_blank"
+                        title="GitHub"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-github" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M9 19c-4.3 1.4 -4.3 -2.5 -6 -3m12 5v-3.5c0 -1 .1 -1.4 -.5 -2c2.8 -.3 5.5 -1.4 5.5 -6a4.6 4.6 0 0 0 -1.3 -3.2a4.2 4.2 0 0 0 -.1 -3.2s-1.1 -.3 -3.5 1.3a12.3 12.3 0 0 0 -6.2 0c-2.4 -1.6 -3.5 -1.3 -3.5 -1.3a4.2 4.2 0 0 0 -.1 3.2a4.6 4.6 0 0 0 -1.3 3.2c0 4.6 2.7 5.7 5.5 6c-.6 .6 -.6 1.2 -.5 2v3.5" />
+</svg>
+
+
+
+                        
+                    </a>
+                </li>
+            
+        </ol><ol class="menu" id="main-menu">
+        
+        
+        
+        <li >
+            <a href='/xiaoshi/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-home" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <polyline points="5 12 3 12 12 3 21 12 19 12" />
+  <path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7" />
+  <path d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6" />
+</svg>
+
+
+
+                
+                <span>主页</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/xiaoshi/%E5%85%B3%E4%BA%8E/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-user" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="7" r="4" />
+  <path d="M6 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2" />
+</svg>
+
+
+
+                
+                <span>关于</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/xiaoshi/archives/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-archive" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <rect x="3" y="4" width="18" height="4" rx="2" />
+  <path d="M5 8v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-10" />
+  <line x1="10" y1="12" x2="14" y2="12" />
+</svg>
+
+
+
+                
+                <span>归档</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/xiaoshi/search/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-search" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="10" cy="10" r="7" />
+  <line x1="21" y1="21" x2="15" y2="15" />
+</svg>
+
+
+
+                
+                <span>搜索</span>
+            </a>
+        </li>
+        
+        <li class="menu-bottom-section">
+            <ol class="menu">
+
+                
+                    <li id="dark-mode-toggle">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="8" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="16" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <span>暗色模式</span>
+                    </li>
+                
+            </ol>
+        </li>
+    </ol>
+</aside>
+
+    <aside class="sidebar right-sidebar sticky">
+        
+            
+                
+    <section class="widget archives">
+        <div class="widget-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <line x1="5" y1="9" x2="19" y2="9" />
+  <line x1="5" y1="15" x2="19" y2="15" />
+  <line x1="11" y1="4" x2="7" y2="20" />
+  <line x1="17" y1="4" x2="13" y2="20" />
+</svg>
+
+
+
+        </div>
+        <h2 class="widget-title section-title">目录</h2>
+        
+        <div class="widget--toc">
+            <nav id="TableOfContents">
+  <ol>
+    <li><a href="#模板机的创建">模板机的创建</a>
+      <ol>
+        <li><a href="#配置vmware的网络编辑器">配置VMware的网络编辑器</a></li>
+        <li><a href="#装机准备">装机准备</a>
+          <ol>
+            <li><a href="#新建虚拟机">新建虚拟机</a></li>
+            <li><a href="#安装centos7">安装centos7</a></li>
+            <li><a href="#简化网卡配置文件">简化网卡配置文件</a></li>
+          </ol>
+        </li>
+        <li><a href="#系统初始化">系统初始化</a>
+          <ol>
+            <li><a href="#关闭networkmanager注意">关闭NetworkManager【注意！】</a></li>
+            <li><a href="#关闭防火墙selinux">关闭防火墙、selinux</a></li>
+            <li><a href="#优化ps1变量">优化ps1变量</a></li>
+            <li><a href="#yum源优化">yum源优化</a></li>
+            <li><a href="#安装软件">安装软件</a></li>
+            <li><a href="#关闭邮件告警">关闭邮件告警</a></li>
+            <li><a href="#配置host解析">配置host解析</a></li>
+            <li><a href="#时间同步">时间同步</a></li>
+            <li><a href="#关闭swap">关闭swap</a></li>
+            <li><a href="#修改ip">修改ip</a></li>
+          </ol>
+        </li>
+        <li><a href="#拍摄快照">拍摄快照</a></li>
+      </ol>
+    </li>
+  </ol>
+</nav>
+        </div>
+    </section>
+
+            
+        
+    </aside>
+
+
+            <main class="main full-width">
+    <article class="main-article">
+    <header class="article-header">
+
+    <div class="article-details">
+    
+
+    <div class="article-title-wrapper">
+        <h2 class="article-title">
+            <a href="/xiaoshi/p/linux%E5%88%86%E5%B8%83%E5%BC%8F%E7%B3%BB%E7%BB%9F/">Linux分布式系统</a>
+        </h2>
+    
+        
+    </div>
+
+    
+    <header class="article-category">
+        
+            <a href="/xiaoshi/categories/linux/" style="background-color: #2a9d8f; color: #fff;">
+                Linux
+            </a>
+        
+    </header>
+    
+
+    
+    
+    
+    
+    <footer class="article-time">
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
+  <circle cx="18" cy="18" r="4" />
+  <path d="M15 3v4" />
+  <path d="M7 3v4" />
+  <path d="M3 11h16" />
+  <path d="M18 16.496v1.504l1 1" />
+</svg>
+                <time class="article-time--published">2025-05-04</time>
+            </div>
+        
+
+        
+    </footer>
+    
+
+    
+</div>
+
+</header>
+
+    <section class="article-content">
+    
+    
+    <h1 id="linux多层分布式系统架构">Linux多层分布式系统架构
+</h1><blockquote>
+<p>之前学习的时候，跟着老师搭建了一个分布式系统，完成了很多知识点的学习。现在随着学习的继续深入，我想自己动手实现一下分布式的架构搭建，以此来巩固知识的掌握。</p>
+</blockquote>
+<div class="table-wrapper"><table>
+<thead>
+<tr>
+<th>服务器作用</th>
+<th>主机名</th>
+<th>外网地址</th>
+<th>内网地址</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>管理机</td>
+<td>master-61</td>
+<td>10.0.0.61</td>
+<td>172.16.1.61</td>
+</tr>
+<tr>
+<td>负载均衡服务器</td>
+<td>slb-5</td>
+<td>10.0.0.5</td>
+<td>172.16.1.5</td>
+</tr>
+<tr>
+<td>负载均衡服务器</td>
+<td>slb-6</td>
+<td>10.0.0.6</td>
+<td>172.16.1.6</td>
+</tr>
+<tr>
+<td>web服务器</td>
+<td>web-7</td>
+<td>10.0.0.7</td>
+<td>172.16.1.7</td>
+</tr>
+<tr>
+<td>web服务器</td>
+<td>web-8</td>
+<td>10.0.0.8</td>
+<td>172.16.1.8</td>
+</tr>
+<tr>
+<td>web服务器</td>
+<td>web-9</td>
+<td>10.0.0.9</td>
+<td>172.16.1.9</td>
+</tr>
+<tr>
+<td>存储服务器</td>
+<td>nfs-31</td>
+<td>10.0.0.31</td>
+<td>172.16.1.31</td>
+</tr>
+<tr>
+<td>备份服务器</td>
+<td>rsync-41</td>
+<td>10.0.0.41</td>
+<td>172.16.1.41</td>
+</tr>
+<tr>
+<td>数据库服务器</td>
+<td>db-51</td>
+<td>10.0.0.51</td>
+<td>172.16.1.51</td>
+</tr>
+</tbody>
+</table></div>
+<blockquote>
+<p>内网地址用来模仿公司内部的局域网</p>
+<p>外网地址就是可以访问的地址</p>
+</blockquote>
+<h2 id="模板机的创建">模板机的创建
+</h2><blockquote>
+<p>创建好模板机之后，后续时候就可以直接链接克隆，执行脚本即可完成新机器的配置</p>
+<p>链接克隆：克隆出来的机器大部分文件仍然使用的是被克隆机器的，只有少部分关键信息被隔离掉</p>
+<p>模板机需要配置的内容：网络，软件，环境</p>
+</blockquote>
+<h3 id="配置vmware的网络编辑器">配置VMware的网络编辑器
+</h3><p><img src="D:/desktop/Linux%e5%88%86%e5%b8%83%e5%bc%8f%e6%9e%b6%e6%9e%84/asset/image-20250504145112513.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="image-20250504145112513"
+	
+	
+></p>
+<p><img src="D:/desktop/Linux%e5%88%86%e5%b8%83%e5%bc%8f%e6%9e%b6%e6%9e%84/asset/image-20250504145458151.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="image-20250504145458151"
+	
+	
+></p>
+<p><img src="D:/desktop/Linux%e5%88%86%e5%b8%83%e5%bc%8f%e6%9e%b6%e6%9e%84/asset/image-20250504145636747.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="image-20250504145636747"
+	
+	
+></p>
+<h3 id="装机准备">装机准备
+</h3><h4 id="新建虚拟机">新建虚拟机
+</h4><p><img src="D:/desktop/Linux%e5%88%86%e5%b8%83%e5%bc%8f%e6%9e%b6%e6%9e%84/asset/image-20250504145758239.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="image-20250504145758239"
+	
+	
+></p>
+<p><img src="D:/desktop/Linux%e5%88%86%e5%b8%83%e5%bc%8f%e6%9e%b6%e6%9e%84/asset/image-20250504150041449.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="image-20250504150041449"
+	
+	
+></p>
+<p><img src="D:/desktop/Linux%e5%88%86%e5%b8%83%e5%bc%8f%e6%9e%b6%e6%9e%84/asset/image-20250504150152721.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="image-20250504150152721"
+	
+	
+></p>
+<p><img src="D:/desktop/Linux%e5%88%86%e5%b8%83%e5%bc%8f%e6%9e%b6%e6%9e%84/asset/image-20250504150236462.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="image-20250504150236462"
+	
+	
+></p>
+<p><img src="D:/desktop/Linux%e5%88%86%e5%b8%83%e5%bc%8f%e6%9e%b6%e6%9e%84/asset/image-20250504150332765.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="image-20250504150332765"
+	
+	
+></p>
+<p><img src="D:%5cdesktop%5cLinux%e5%88%86%e5%b8%83%e5%bc%8f%e6%9e%b6%e6%9e%84%5casset%5cSnipaste_2025-05-04_15-08-44.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="Snipaste_2025-05-04_15-08-44"
+	
+	
+><img src="D:%5cdesktop%5cLinux%e5%88%86%e5%b8%83%e5%bc%8f%e6%9e%b6%e6%9e%84%5casset%5cSnipaste_2025-05-04_15-07-41.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="Snipaste_2025-05-04_15-07-41"
+	
+	
+></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">提示，常见的LAN和WAN是什么？
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">WAN接口，也就是广域网（WAN，Wide Area Network）的缩写，也称之为远程网（long haul network ）。
+</span></span><span class="line"><span class="cl">而LAN接口，也就是局域网（Local Area Network，LAN）的缩写，它是指在某一区域内由多台计算机互联成的计算机组。
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h4 id="安装centos7">安装centos7
+</h4><p><img src="D:%5cdesktop%5cLinux%e5%88%86%e5%b8%83%e5%bc%8f%e6%9e%b6%e6%9e%84%5casset%5cSnipaste_2025-05-04_15-09-14.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="Snipaste_2025-05-04_15-09-14"
+	
+	
+></p>
+<p><img src="D:%5cdesktop%5cLinux%e5%88%86%e5%b8%83%e5%bc%8f%e6%9e%b6%e6%9e%84%5casset%5cSnipaste_2025-05-04_15-12-59.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="Snipaste_2025-05-04_15-11-25"
+	
+	
+></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">1.进入内核选择界面时，按上下方向键，取消自动选择
+</span></span><span class="line"><span class="cl">2.输入tab键，复制粘贴进去如下代码，以下代码的作用是禁用基于硬件设备的命名风格，使网卡的命名风格回退到eth0、eth1的形式：
+</span></span><span class="line"><span class="cl">net.ifnames=0 biosdevname=0
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">3.输入回车，启动
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">4.请注意，必须是英文，以后再也别用中文了，因为你要看日志
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">5.只需要修改亚洲上海时区,其他全部默认
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">6.网络设置、修改静态ip地址、设置主机名
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">模板机，主机名 lj-template-100
+</span></span><span class="line"><span class="cl">ip，10.0.0.100
+</span></span><span class="line"><span class="cl">网关，10.0.0.254
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="D:%5cdesktop%5cLinux%e5%88%86%e5%b8%83%e5%bc%8f%e6%9e%b6%e6%9e%84%5casset%5cSnipaste_2025-05-04_15-20-43.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="Snipaste_2025-05-04_15-20-43"
+	
+	
+><img src="D:%5cdesktop%5cLinux%e5%88%86%e5%b8%83%e5%bc%8f%e6%9e%b6%e6%9e%84%5casset%5cSnipaste_2025-05-04_15-21-04.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="Snipaste_2025-05-04_15-21-04"
+	
+	
+></p>
+<p><img src="D:%5cdesktop%5cLinux%e5%88%86%e5%b8%83%e5%bc%8f%e6%9e%b6%e6%9e%84%5casset%5cSnipaste_2025-05-04_15-23-22.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="Snipaste_2025-05-04_15-23-22"
+	
+	
+></p>
+<p><img src="D:%5cdesktop%5cLinux%e5%88%86%e5%b8%83%e5%bc%8f%e6%9e%b6%e6%9e%84%5casset%5cSnipaste_2025-05-04_15-24-22.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="Snipaste_2025-05-04_15-24-22"
+	
+	
+></p>
+<p><img src="D:%5cdesktop%5cLinux%e5%88%86%e5%b8%83%e5%bc%8f%e6%9e%b6%e6%9e%84%5casset%5cSnipaste_2025-05-04_15-25-23.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="Snipaste_2025-05-04_15-25-23"
+	
+	
+></p>
+<p><img src="D:%5cdesktop%5cLinux%e5%88%86%e5%b8%83%e5%bc%8f%e6%9e%b6%e6%9e%84%5casset%5cSnipaste_2025-05-04_15-31-59.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="Snipaste_2025-05-04_15-31-59"
+	
+	
+></p>
+<p>至此，模板机安装成功</p>
+<h4 id="简化网卡配置文件">简化网卡配置文件
+</h4><blockquote>
+<p>友情提醒，sed是一个双刃剑</p>
+<p>用好了、高效修改配置文件</p>
+<p>用坏了，可能不小心会清空你的配置文件</p>
+<p>所以自己看着来，细心是第一位，做好备份是第一位</p>
+</blockquote>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">1.删除网卡配置文件中关于ipv4、ipv6的行
+</span></span><span class="line"><span class="cl">[root@lj-template-100 ~]# sed -i &#39;/ipv[46]/Id&#39; /etc/sysconfig/network-scripts/ifcfg-eth0 
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">2.再删除如下四行
+</span></span><span class="line"><span class="cl">proxy_method 代理
+</span></span><span class="line"><span class="cl">browser_only 仅浏览器
+</span></span><span class="line"><span class="cl">defroute 
+</span></span><span class="line"><span class="cl">uuid
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">sed -r -i   &#39;/(proxy_method|browser_only|uuid|defroute)/Id&#39; /etc/sysconfig/network-scripts/ifcfg-eth0 
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">3.上述俩语句，你也可以一行搞定
+</span></span><span class="line"><span class="cl">确保最终的配置如下，和我一样即可
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">[root@lj-template-100 network-scripts]# sed -ri  &#39;/(proxy_method|browser_only|uuid|defroute)/Id&#39; /etc/sysconfig/network-scripts/ifcfg-eth0 
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">[root@lj-template-100 network-scripts]# 
+</span></span><span class="line"><span class="cl">[root@lj-template-100 network-scripts]# cat ifcfg-eth0 
+</span></span><span class="line"><span class="cl">TYPE=Ethernet
+</span></span><span class="line"><span class="cl">BOOTPROTO=none
+</span></span><span class="line"><span class="cl">NAME=eth0
+</span></span><span class="line"><span class="cl">DEVICE=eth0
+</span></span><span class="line"><span class="cl">ONBOOT=yes
+</span></span><span class="line"><span class="cl">IPADDR=10.0.0.100
+</span></span><span class="line"><span class="cl">PREFIX=24
+</span></span><span class="line"><span class="cl">GATEWAY=10.0.0.254
+</span></span><span class="line"><span class="cl">DNS1=223.5.5.5
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">4.如果你不这么做，你后续克隆虚拟机，会导致无法上网，必须要删除网卡配置文件的uuid
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>还需要编辑eth1的网卡（局域网网卡）</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">[root@lj-template-100 network-scripts]# sed -r -e &#39;s#eth0#eth1#g&#39; -e &#39;s#10.0.0.100#172.16.1.100#g&#39; -e &#39;s#10.0.0.254#172.16.1.254#g&#39; ifcfg-eth0 &gt;ifcfg-eth1
+</span></span><span class="line"><span class="cl">[root@lj-template-100 network-scripts]# cat ifcfg-eth1
+</span></span><span class="line"><span class="cl">TYPE=Ethernet
+</span></span><span class="line"><span class="cl">BOOTPROTO=none
+</span></span><span class="line"><span class="cl">NAME=eth1
+</span></span><span class="line"><span class="cl">DEVICE=eth1
+</span></span><span class="line"><span class="cl">ONBOOT=yes
+</span></span><span class="line"><span class="cl">IPADDR=172.16.1.100
+</span></span><span class="line"><span class="cl">PREFIX=24
+</span></span><span class="line"><span class="cl">GATEWAY=172.16.1.254
+</span></span><span class="line"><span class="cl">DNS1=223.5.5.5
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">如果sed用的不熟，实在不行，vim去手动改也一样
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>最后重启网络服务，确保ip正常</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">[root@lj-template-100 network-scripts]# systemctl restart network
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">[root@lj-template-100 network-scripts]# ip addr show |grep -E &#39;eth0|eth1&#39;
+</span></span><span class="line"><span class="cl">2: eth0: &lt;BROADCAST,MULTICAST,UP,LOWER_UP&gt; mtu 1500 qdisc pfifo_fast state UP group default qlen 1000
+</span></span><span class="line"><span class="cl">    inet 10.0.0.100/24 brd 10.0.0.255 scope global noprefixroute eth0
+</span></span><span class="line"><span class="cl">3: eth1: &lt;BROADCAST,MULTICAST,UP,LOWER_UP&gt; mtu 1500 qdisc pfifo_fast state UP group default qlen 1000
+</span></span><span class="line"><span class="cl">    inet 172.16.1.100/24 brd 172.16.1.255 scope global noprefixroute eth1
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>这样就配置好了公网网卡与局域网网卡</p>
+<p><img src="D:/desktop/Linux%e5%88%86%e5%b8%83%e5%bc%8f%e6%9e%b6%e6%9e%84/asset/image-20250504161709613.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="image-20250504161709613"
+	
+	
+></p>
+<h3 id="系统初始化">系统初始化
+</h3><h4 id="关闭networkmanager注意">关闭NetworkManager【注意！】
+</h4><p><strong>NetworkManager</strong> 服务是一个用于管理和配置网络连接的后台守护进程。它的主要目的是简化网络配置，特别是在动态环境中（如笔记本电脑或移动设备），<strong>所以如果你的网络环境是WIFI，请不要关闭该服务</strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">[root@lj-template-100 ~]# systemctl stop NetworkManager
+</span></span><span class="line"><span class="cl">[root@lj-template-100 ~]# systemctl disable NetworkManager
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h4 id="关闭防火墙selinux">关闭防火墙、selinux
+</h4><blockquote>
+<p>避免之后安装一次软件需要配置一次防火墙</p>
+</blockquote>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">[root@lj-template-100 ~]# systemctl stop firewalld 
+</span></span><span class="line"><span class="cl">[root@lj-template-100 ~]# systemctl disable firewalld 
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">[root@lj-template-100 ~]# sed -i &#39;/^SELINUX=/c SELINUX=disabled&#39; /etc/selinux/config
+</span></span><span class="line"><span class="cl">[root@lj-template-100 ~]# grep -i &#39;selinux=&#39; /etc/selinux/config 
+</span></span><span class="line"><span class="cl"># SELINUX= can take one of these three values:
+</span></span><span class="line"><span class="cl">SELINUX=disabled
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">[root@lj-template-100 ~]# setenforce 0
+</span></span><span class="line"><span class="cl">[root@lj-template-100 ~]# getenforce 
+</span></span><span class="line"><span class="cl">Permissive
+</span></span><span class="line"><span class="cl">[root@lj-template-100 ~]# iptables -F
+</span></span><span class="line"><span class="cl">[root@lj-template-100 ~]# iptables -X
+</span></span><span class="line"><span class="cl">[root@lj-template-100 ~]# iptables -Z
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">最后检查
+</span></span><span class="line"><span class="cl">[root@lj-template-100 ~]# iptables -L
+</span></span><span class="line"><span class="cl">[root@lj-template-100 ~]# systemctl is-enabled firewalld NetworkManager
+</span></span><span class="line"><span class="cl">disabled
+</span></span><span class="line"><span class="cl">disabled
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>加速SSH连接</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">[root@lj-template-100 yum.repos.d]# grep -Ei &#39;^(usedns|gssapiauth)&#39; /etc/ssh/sshd_config 
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">vi /etc/ssh/sshd_config
+</span></span><span class="line"><span class="cl">GSSAPIAuthentication no
+</span></span><span class="line"><span class="cl">UseDNS no
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">[root@lj-template-100 yum.repos.d]# systemctl restart sshd.service
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h4 id="优化ps1变量">优化ps1变量
+</h4><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-gdscript3" data-lang="gdscript3"><span class="line"><span class="cl"><span class="n">echo</span>  <span class="s1">&#39;export PS1=&#34;[\[\e[34;1m\]\u@\[\e[0m\]\[\e[32;1m\]\H\[\e[0m\] \[\e[31;1m\]\w\[\e[0m\]]</span><span class="se">\\</span><span class="s1">$&#34;&#39;</span>   <span class="o">&gt;&gt;</span> <span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">profile</span> 
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h4 id="yum源优化">yum源优化
+</h4><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">1.备份旧的默认repo
+</span></span><span class="line"><span class="cl">[root@lj-template-100 ~]# cd /etc/yum.repos.d/
+</span></span><span class="line"><span class="cl">[root@lj-template-100 yum.repos.d]# mkdir bakrepo
+</span></span><span class="line"><span class="cl">[root@lj-template-100 yum.repos.d]# mv *.repo bakrepo/
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">2.下载新的repo
+</span></span><span class="line"><span class="cl">curl https://mirrors.aliyun.com/repo/Centos-7.repo &gt; /etc/yum.repos.d/centos-base.repo
+</span></span><span class="line"><span class="cl">curl -o /etc/yum.repos.d/epel.repo  http://mirrors.aliyun.com/repo/epel-7.repo
+</span></span><span class="line"><span class="cl">或
+</span></span><span class="line"><span class="cl">wget -O /etc/yum.repos.d/CentOS-Base.repo https://mirrors.aliyun.com/repo/Centos-7.repo
+</span></span><span class="line"><span class="cl">wget -O /etc/yum.repos.d/epel.repo http://mirrors.aliyun.com/repo/epel-7.repo
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">3.清楚旧的yum缓存  生成新的缓存
+</span></span><span class="line"><span class="cl">yum clean all &amp;&amp; yum makecache
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h4 id="安装软件">安装软件
+</h4><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-gdscript3" data-lang="gdscript3"><span class="line"><span class="cl"><span class="n">yum</span> <span class="n">install</span> <span class="o">-</span><span class="n">y</span> <span class="n">tree</span> <span class="n">wget</span> <span class="n">bash</span><span class="o">-</span><span class="n">completion</span> <span class="n">bash</span><span class="o">-</span><span class="n">completion</span><span class="o">-</span><span class="n">extras</span> <span class="n">lrzsz</span> <span class="n">net</span><span class="o">-</span><span class="n">tools</span> <span class="n">sysstat</span> <span class="n">iotop</span> <span class="n">iftop</span> <span class="n">htop</span> <span class="n">unzip</span> <span class="n">telnet</span> <span class="n">ntpdate</span> <span class="n">lsof</span> <span class="n">vim</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h4 id="关闭邮件告警">关闭邮件告警
+</h4><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-gdscript3" data-lang="gdscript3"><span class="line"><span class="cl"><span class="err">你所有的操作，都会被</span><span class="n">linux内置的邮件服务器记录</span><span class="err">，不断的写入</span> <span class="o">/</span><span class="k">var</span><span class="o">/</span><span class="n">log下的日志文件</span><span class="err">，可能会占用多余的磁盘</span>
+</span></span><span class="line"><span class="cl"><span class="p">[</span><span class="n">root</span><span class="err">@</span><span class="n">lj</span><span class="o">-</span><span class="n">template</span><span class="o">-</span><span class="mi">100</span> <span class="o">~</span><span class="p">]</span><span class="c1"># echo &#39;unset mailcheck&#39; &gt;&gt; /etc/profile</span>
+</span></span><span class="line"><span class="cl"><span class="p">[</span><span class="n">root</span><span class="err">@</span><span class="n">lj</span><span class="o">-</span><span class="n">template</span><span class="o">-</span><span class="mi">100</span> <span class="o">~</span><span class="p">]</span><span class="c1"># source /etc/profile</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h4 id="配置host解析">配置host解析
+</h4><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">cat &gt; /etc/hosts &lt;&lt;EOF
+</span></span><span class="line"><span class="cl"># 外网地址   内网地址     主机名
+</span></span><span class="line"><span class="cl">10.0.0.61  172.16.1.61  master-61
+</span></span><span class="line"><span class="cl">10.0.0.5   172.16.1.5   slb-5
+</span></span><span class="line"><span class="cl">10.0.0.6   172.16.1.6   slb-6
+</span></span><span class="line"><span class="cl">10.0.0.7   172.16.1.7   web-7
+</span></span><span class="line"><span class="cl">10.0.0.8   172.16.1.8   web-8
+</span></span><span class="line"><span class="cl">10.0.0.9   172.16.1.9   web-9
+</span></span><span class="line"><span class="cl">10.0.0.31  172.16.1.31  nfs-31
+</span></span><span class="line"><span class="cl">10.0.0.41  172.16.1.41  rsync-41
+</span></span><span class="line"><span class="cl">10.0.0.51  172.16.1.51  db-51
+</span></span><span class="line"><span class="cl">EOF
+</span></span><span class="line"><span class="cl">有了这个就可以直接ping 主机名
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h4 id="时间同步">时间同步
+</h4><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">crontab -e 
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">* * * * * /usr/sbin/ntpdate time1.aliyun.com &gt; /dev/null 2&gt;&amp;1
+</span></span><span class="line"><span class="cl">使用 ntpdate给阿里云发送校时请求
+</span></span><span class="line"><span class="cl">&gt; /dev/null 不关心失败的结果
+</span></span><span class="line"><span class="cl">2&gt;&amp;1 文本的输出方式
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">crontab -l 查看定时任务
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h4 id="关闭swap">关闭swap
+</h4><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">取消swap的功能，不适用这个从磁盘获取而来的部分内存容量，因为效率太差，企业里的服务器内存都巨大
+</span></span><span class="line"><span class="cl">[root@lj-template-100 ~]# swapoff -a
+</span></span><span class="line"><span class="cl">[root@lj-template-100 ~]# free -m
+</span></span><span class="line"><span class="cl">              total        used        free      shared  buff/cache   available
+</span></span><span class="line"><span class="cl">Mem:           1982          97        1409           9         475        1699
+</span></span><span class="line"><span class="cl">Swap:             0           0           0
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">[root@lj-template-100 ~]# vim /etc/fstab 
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">dd删除swap的部分
+</span></span><span class="line"><span class="cl">[root@lj-template-100 ~]# cat /etc/fstab 
+</span></span><span class="line"><span class="cl">#
+</span></span><span class="line"><span class="cl"># /etc/fstab
+</span></span><span class="line"><span class="cl"># Created by anaconda on Mon Apr 18 01:03:08 2022
+</span></span><span class="line"><span class="cl">#
+</span></span><span class="line"><span class="cl"># Accessible filesystems, by reference, are maintained under &#39;/dev/disk&#39;
+</span></span><span class="line"><span class="cl"># See man pages fstab(5), findfs(8), mount(8) and/or blkid(8) for more info
+</span></span><span class="line"><span class="cl">#
+</span></span><span class="line"><span class="cl">/dev/mapper/centos-root /                       xfs     defaults        0 0
+</span></span><span class="line"><span class="cl">UUID=16dbd4b1-60b3-4770-b20a-4d0b59b39e4a /boot                   xfs     defaults        0 0
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h4 id="修改ip">修改ip
+</h4><blockquote>
+<p>脚本文件实现</p>
+<p>思路：</p>
+<p>1.输入主机的ip，输入主机名</p>
+<p>2.通过sed命令来替换配置文件中的内容</p>
+</blockquote>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">vim network_init.sh
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">#!/bin/bash</span>
+</span></span><span class="line"><span class="cl"><span class="nb">read</span> -p <span class="s2">&#34;please input ip&#34;</span> my_ip
+</span></span><span class="line"><span class="cl"><span class="nb">read</span> -p <span class="s2">&#34;please input hostname&#34;</span>  host_name
+</span></span><span class="line"><span class="cl"><span class="nb">echo</span> <span class="s1">&#39;eth0 xiugai_ing&#39;</span>
+</span></span><span class="line"><span class="cl">sed -i <span class="s2">&#34;/IPADDR/s#100#</span><span class="si">${</span><span class="nv">my_ip</span><span class="si">}</span><span class="s2">#g&#34;</span>  /etc/sysconfig/network-scripts/ifcfg-eth0
+</span></span><span class="line"><span class="cl"><span class="nb">echo</span> <span class="s1">&#39;eth1 xiugai_ing&#39;</span>
+</span></span><span class="line"><span class="cl">sed -i <span class="s2">&#34;/IPADDR/s#100#</span><span class="si">${</span><span class="nv">my_ip</span><span class="si">}</span><span class="s2">#g&#34;</span>  /etc/sysconfig/network-scripts/ifcfg-eth1
+</span></span><span class="line"><span class="cl"><span class="nb">echo</span> <span class="s1">&#39;ok&#39;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="nb">echo</span> <span class="s1">&#39;xiugai hostname&#39;</span>
+</span></span><span class="line"><span class="cl">hostnamectl set-hostname <span class="si">${</span><span class="nv">host_name</span><span class="si">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="nb">echo</span> <span class="s2">&#34;==========================&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="nb">echo</span> <span class="s2">&#34;now:&#34;</span>  <span class="sb">`</span>cat /etc/sysconfig/network-scripts/ifcfg-eth0<span class="sb">`</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="nb">echo</span> <span class="s2">&#34;==========================&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="nb">echo</span> <span class="s2">&#34;now&#34;</span>   <span class="sb">`</span>cat /etc/sysconfig/network-scripts/ifcfg-eth1<span class="sb">`</span>
+</span></span><span class="line"><span class="cl"><span class="nb">echo</span> <span class="s2">&#34;now_hostname&#34;</span>   <span class="sb">`</span>hostname<span class="sb">`</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="nb">echo</span> <span class="s1">&#39;restart network&#39;</span>
+</span></span><span class="line"><span class="cl">systemctl restart network
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="拍摄快照">拍摄快照
+</h3><p>自此模板机所有工作完成，之后只需要在此基础上克隆主机即可</p>
+
+</section>
+
+
+    <footer class="article-footer">
+    
+
+    </footer>
+
+
+    
+</article>
+
+    
+
+    
+
+<aside class="related-content--wrapper">
+    <h2 class="section-title">相关文章</h2>
+    <div class="related-content">
+        <div class="flex article-list--tile">
+            
+                
+<article class="">
+    <a href="/xiaoshi/p/linux%E7%BB%BC%E5%90%88%E6%9E%B6%E6%9E%84/">
+        
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Linux综合架构</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="">
+    <a href="/xiaoshi/p/linux-%E7%A3%81%E7%9B%98%E7%AE%A1%E7%90%86/">
+        
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Linux 磁盘管理</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="">
+    <a href="/xiaoshi/p/linux-%E7%BD%91%E7%BB%9C%E9%85%8D%E7%BD%AE%E4%B8%8E%E9%98%B2%E7%81%AB%E5%A2%99/">
+        
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Linux 网络配置与防火墙</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="">
+    <a href="/xiaoshi/p/linux-%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F%E4%B8%8E%E6%9D%83%E9%99%90%E7%AE%A1%E7%90%86/">
+        
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Linux 文件系统与权限管理</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="">
+    <a href="/xiaoshi/p/linux-%E8%BF%9B%E7%A8%8B%E7%AE%A1%E7%90%86%E4%B8%8E%E6%9C%8D%E5%8A%A1%E7%AE%A1%E7%90%86/">
+        
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Linux 进程管理与服务管理</h2>
+        </div>
+    </a>
+</article>
+
+            
+        </div>
+    </div>
+</aside>
+
+     
+    
+        
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+        2025 小诗
+    </section>
+    
+    <section class="powerby">
+        使用 <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> 构建 <br />
+        主题 <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.26.0">Stack</a></b> 由 <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a> 设计
+    </section>
+</footer>
+
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css"crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css"crossorigin="anonymous"
+            >
+
+            </main>
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.6/dist/vibrant.min.js"integrity="sha256-awcR2jno4kI5X0zL8ex0vi2z&#43;KMkF24hUW8WePSA9HM="crossorigin="anonymous"
+                
+                >
+            </script><script type="text/javascript" src="/xiaoshi/ts/main.js" defer></script>
+<script>
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+
+    </body>
+</html>
